@@ -2258,3 +2258,163 @@ body{
  .home-editorial-feature-copy h3{font-size:13px}
  .home-editorial-row{padding:12px 10px}
 }
+
+
+/* Refined homepage FAQ: elegant accessible accordion cards */
+.faq-section{
+  padding-top:clamp(52px,7vw,86px);
+  padding-bottom:clamp(56px,7vw,90px);
+  background:
+    radial-gradient(circle at 8% 12%,rgba(195,163,107,.10),transparent 28%),
+    linear-gradient(180deg,#f4f1e9 0%,#fbfaf7 100%);
+}
+.faq-layout{
+  grid-template-columns:minmax(230px,.72fr) minmax(0,1.28fr);
+  gap:clamp(28px,6vw,76px);
+}
+.faq-layout h2{font-size:clamp(25px,3vw,34px);line-height:1.9}
+.faq-layout>div:first-child>p{font-size:12px;line-height:2.35}
+.faq-list{display:grid;gap:11px;border:0}
+.faq-item{
+  overflow:hidden;
+  border:1px solid #e6dfd2;
+  border-radius:13px;
+  background:rgba(255,255,255,.88);
+  box-shadow:0 5px 18px rgba(20,39,57,.045);
+  transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+.faq-item[open]{
+  border-color:rgba(177,142,84,.58);
+  background:#fff;
+  box-shadow:0 10px 26px rgba(20,39,57,.075);
+}
+.faq-item summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  min-height:68px;
+  padding:15px 18px;
+  color:#1b344b;
+  font-size:13px;
+  font-weight:700;
+  line-height:2;
+  cursor:pointer;
+  list-style:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::marker{content:""}
+.faq-item summary b{
+  display:grid;
+  place-items:center;
+  flex:0 0 31px;
+  width:31px;
+  height:31px;
+  border:1px solid #d9c69f;
+  border-radius:50%;
+  background:#f7f3e9;
+  color:#987747;
+  font-size:22px;
+  font-weight:400;
+  line-height:1;
+  transition:transform .2s ease,background .2s ease,color .2s ease;
+}
+.faq-item[open] summary b{
+  transform:rotate(45deg);
+  background:#17334c;
+  border-color:#17334c;
+  color:#f0dcae;
+}
+.faq-item p{
+  max-width:none;
+  margin:0;
+  padding:0 18px 19px;
+  color:#657382;
+  font-size:12px;
+  line-height:2.45;
+}
+.faq-item[open] p{animation:faq-reveal .22s ease both}
+@keyframes faq-reveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* Keep the lawyer's full credentials visibly attached beneath the portrait */
+.hero-visual.attorney-profile-visual{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+  align-self:start!important;
+  height:auto!important;
+  min-height:0!important;
+  gap:0!important;
+  overflow:visible!important;
+  transform:none!important;
+}
+.attorney-profile-visual .lawyer-photo-card,
+.attorney-profile-visual .attorney-credentials{
+  position:relative!important;
+  inset:auto!important;
+  float:none!important;
+  display:block!important;
+  width:100%!important;
+  max-width:520px!important;
+  min-width:0!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:0 auto!important;
+  visibility:visible!important;
+  opacity:1!important;
+  transform:none!important;
+  clip:auto!important;
+  overflow:visible!important;
+}
+.attorney-profile-visual .lawyer-photo-card{
+  padding-bottom:12px!important;
+  border-radius:18px 18px 0 0!important;
+  border-bottom:0!important;
+}
+.attorney-profile-visual .attorney-credentials{
+  padding:19px clamp(16px,3vw,25px) 22px!important;
+  border:1px solid rgba(195,163,107,.48)!important;
+  border-top:1px solid rgba(229,210,167,.2)!important;
+  border-radius:0 0 16px 16px!important;
+  background:linear-gradient(155deg,#173550 0%,#10243d 100%)!important;
+  box-shadow:0 14px 30px rgba(5,18,32,.14)!important;
+}
+.attorney-profile-visual .attorney-summary{
+  display:block!important;
+  position:static!important;
+  max-width:100%!important;
+  height:auto!important;
+  max-height:none!important;
+  margin:13px 0 17px!important;
+  overflow:visible!important;
+  color:#e1e8ed!important;
+  font-size:13px!important;
+  line-height:2.3!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+.attorney-profile-visual .attorney-credential-grid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+@media(max-width:700px){
+  .faq-layout{grid-template-columns:minmax(0,1fr);gap:22px}
+  .faq-layout>div:first-child>p{max-width:460px}
+  .faq-item summary{min-height:64px;padding:13px 14px;font-size:12px}
+  .faq-item p{padding:0 14px 16px;font-size:12px}
+  .hero-visual.attorney-profile-visual{
+    width:100vw!important;
+    max-width:100vw!important;
+    margin-inline:calc(50% - 50vw)!important;
+    padding:8px 14px 20px!important;
+    box-sizing:border-box!important;
+  }
+  .attorney-profile-visual .lawyer-photo-card,
+  .attorney-profile-visual .attorney-credentials{max-width:520px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .faq-item,.faq-item summary b{transition:none}
+  .faq-item[open] p{animation:none}
+}
