@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { signIn } from "./actions";
 
 const errors = {
@@ -26,7 +27,7 @@ export default async function AdminLogin({ searchParams }) {
           <input id="admin-password" name="password" type="password" autoComplete="current-password" required />
           <button type="submit">ورود امن به پنل <span>←</span></button>
         </form>
-        <a className="admin-back-link" href="/">بازگشت به وب‌سایت</a>
+        <Link className="admin-back-link" href="/">بازگشت به وب‌سایت</Link>
       </section>
     </main>
   );
