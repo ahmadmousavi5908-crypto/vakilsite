@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import ServiceFinder from "../components/ServiceFinder";
 import { articles } from "../data/articles";
 
@@ -76,9 +77,9 @@ export default function Home() {
             <a href="#services">حوزه‌های فعالیت</a>
             <a href="#cities">مناطق تحت پوشش</a>
             <a href="#process">روند همکاری</a>
-            <a href="/articles">مقالات حقوقی</a>
+            <Link href="/articles">مقالات حقوقی</a>
             <a href="/ai-assistant">دستیار هوشمند</a>
-            <a href="/lawyer-cooperation">همکاری وکلا</a>
+            <Link href="/lawyer-cooperation">همکاری وکلا</a>
             <a href="#faq">پرسش‌های متداول</a>
           </nav>
           <details className="mobile-menu">
@@ -87,9 +88,9 @@ export default function Home() {
               <a href="#services">حوزه‌های فعالیت</a>
               <a href="#cities">مناطق تحت پوشش</a>
               <a href="#process">روند همکاری</a>
-              <a href="/articles">مقالات حقوقی</a>
+              <Link href="/articles">مقالات حقوقی</a>
               <a href="/ai-assistant">دستیار هوشمند</a>
-              <a href="/lawyer-cooperation">همکاری وکلا</a>
+              <Link href="/lawyer-cooperation">همکاری وکلا</a>
               <a href="#faq">پرسش‌های متداول</a>
               <a href="#contact">درخواست مشاوره</a>
             </nav>
@@ -160,7 +161,7 @@ export default function Home() {
               <div className="service-card-top"><span>{s.n}</span><span className="service-arrow">↙</span></div>
               <div className="service-symbol">{s.tag === "خانواده" ? "⌂" : s.tag === "املاک" ? "▧" : s.tag === "کیفری" ? "§" : s.tag === "قرارداد" ? "▤" : s.tag === "مطالبات" ? "◈" : "✳"}</div>
               <h3>{s.title}</h3><p>{s.desc}</p><span className="card-more">ثبت درخواست در این زمینه <b>←</b></span>
-            </a>)}
+            </Link>)}
           </div>
         </div>
       </section>
@@ -202,13 +203,13 @@ export default function Home() {
             <p>راهنماهای کوتاه و کاربردی بر پایه قوانین ایران؛ برای شناخت بهتر موضوع، آماده‌سازی مدارک و پرسیدن سؤال‌های درست.</p>
           </div>
           <div className="home-article-grid">
-            {articles.slice(0, 3).map((article, index) => <a className="home-article-card" href={"/articles/" + article.slug} key={article.slug}>
+            {articles.slice(0, 3).map((article, index) => <Link className="home-article-card" href={"/articles/" + article.slug} key={article.slug}>
               <div className="home-article-symbol">{["§","⚖","▤"][index]}</div>
               <div className="home-article-meta"><span>{article.category}</span><span>{article.readTime} مطالعه</span></div>
               <h3>{article.title}</h3><p>{article.excerpt}</p><b>مطالعه راهنما <span>←</span></b>
             </a>)}
           </div>
-          <div className="home-articles-more"><a href="/articles">مشاهده همه مقالات و راهنماها ←</a></div>
+          <div className="home-articles-more"><Link href="/articles">مشاهده همه مقالات و راهنماها ←</Link></div>
         </div>
       </section>
 
@@ -219,8 +220,8 @@ export default function Home() {
             <p>از راهنمایی هوشمند و ابزارهای مدیریت محتوا تا همکاری حرفه‌ای میان وکلا؛ مسیرهای تخصصی را از اینجا آغاز کنید.</p>
           </div>
           <div className="feature-entry-grid">
-            <a className="feature-entry-card ai-entry" href="/ai-assistant"><span className="feature-entry-mark">✦</span><span className="section-kicker">AI LEGAL ASSISTANT</span><h3>دستیار هوشمند حقوقی و سایت</h3><p>راهنمای اولیه حقوقی، کمک به پیش‌نویس اسناد، خلاصه‌سازی امن، تولید مقاله و پشتیبانی از مدیریت وب‌سایت.</p><b>ورود به مرکز هوشمند <span>←</span></b></a>
-            <a className="feature-entry-card lawyer-entry" href="/lawyer-cooperation"><span className="feature-entry-mark">§</span><span className="section-kicker">LAWYER NETWORK</span><h3>درگاه همکاری وکلا</h3><p>ارتباط وکلای سراسر کشور برای ارجاع و بررسی پرونده، همکاری محلی در خوزستان و تبادل نظر تخصصی.</p><b>ثبت درخواست همکاری <span>←</span></b></a>
+            <Link className="feature-entry-card ai-entry" href="/ai-assistant"><span className="feature-entry-mark">✦</span><span className="section-kicker">AI LEGAL ASSISTANT</span><h3>دستیار هوشمند حقوقی و سایت</h3><p>راهنمای اولیه حقوقی، کمک به پیش‌نویس اسناد، خلاصه‌سازی امن، تولید مقاله و پشتیبانی از مدیریت وب‌سایت.</p><b>ورود به مرکز هوشمند <span>←</span></b></Link>
+            <Link className="feature-entry-card lawyer-entry" href="/lawyer-cooperation"><span className="feature-entry-mark">§</span><span className="section-kicker">LAWYER NETWORK</span><h3>درگاه همکاری وکلا</h3><p>ارتباط وکلای سراسر کشور برای ارجاع و بررسی پرونده، همکاری محلی در خوزستان و تبادل نظر تخصصی.</p><b>ثبت درخواست همکاری <span>←</span></b></a>
           </div>
         </div>
       </section>
@@ -228,7 +229,7 @@ export default function Home() {
       <section className="connection-section" aria-labelledby="connection-title">
         <div className="container connection-card">
           <div className="connection-copy">
-            <span className="section-kicker">LET'S TALK</span>
+            <span className="section-kicker">LET&apos;S TALK</span>
             <h2 id="connection-title">برای شروع، لازم نیست همه‌چیز را بدانید.</h2>
             <p>کافی است مسئله‌تان را کوتاه مطرح کنید. مسیر مناسب ارتباط و بررسی اولیه، متناسب با شرایط شما مشخص می‌شود.</p>
             <div className="connection-assurance"><span>✓</span> بدون نیاز به اصطلاحات پیچیده حقوقی</div>
@@ -278,7 +279,7 @@ export default function Home() {
           <p>آگاهی حقوقی، نخستین قدم برای انتخاب درست است.</p>
           <a href="#contact" className="footer-link">ثبت درخواست <span>←</span></a>
         </div>
-        <div className="container footer-bottom"><span>© تمامی حقوق این وب‌سایت محفوظ است.</span><span>اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span><a href="/privacy">حریم خصوصی</a><a href="/articles">مقالات</a><a href="/lawyer-cooperation">همکاری وکلا</a></div>
+        <div className="container footer-bottom"><span>© تمامی حقوق این وب‌سایت محفوظ است.</span><span>اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span><Link href="/privacy">حریم خصوصی</a><Link href="/articles">مقالات</a><Link href="/lawyer-cooperation">همکاری وکلا</a></div>
       </footer>
     </main>
   );
