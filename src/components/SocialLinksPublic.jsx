@@ -56,6 +56,14 @@ export default function SocialLinksPublic() {
 
   const contacts = links.filter((item) => item.link_type === "contact");
   const socials = links.filter((item) => item.link_type === "social");
+  // Keep both published office phone numbers visible even if the CMS has only
+  // one contact entry configured. Custom contact links remain untouched.
+  const completeContacts = [...contacts];
+  for (const fallback of fallbackContacts) {
+    if (!completeContacts.some((item) => item.url === fallback.url)) {
+      completeContacts.push(fallback);
+    }
+  }
 
   return (
     <div className="social-hub" aria-label="راه‌های ارتباط و شبکه‌های اجتماعی">
@@ -65,7 +73,7 @@ export default function SocialLinksPublic() {
           <div><h3 id="contact-channels-title">ارتباط با دفتر</h3><p>برای تماس یا ارسال درخواست اولیه</p></div>
         </div>
         <div className="social-link-grid">
-          {(contacts.length ? contacts : fallbackContacts).map((item, index) => (
+          {completeContacts.map((item, index) => (
             <LinkCard key={item.id || item.platform + index} item={item} />
           ))}
         </div>
