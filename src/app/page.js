@@ -65,7 +65,7 @@ export default function Home() {
       <a className="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
       <div className="topline">
         <div className="container topline-inner">
-          <span>پاسخ‌گویی به درخواست‌های حقوقی از خوزستان و سراسر ایران</span>
+          <span>پاسخ‌گویی به درخواست‌های حقوقی از سراسر ایران با مرکزیت اهواز، خوزستان</span>
           <span className="topline-note"><i /> مسیر روشن، تصمیم آگاهانه</span>
         </div>
       </div>
@@ -74,7 +74,7 @@ export default function Home() {
         <div className="container nav-wrap">
           <a className="brand" href="#" aria-label="صفحه اصلی">
             <span className="brand-mark"><span>و</span></span>
-            <span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز · خوزستان · سراسر ایران</small></span>
+            <span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز، خوزستان · پذیرش درخواست از سراسر ایران</small></span>
           </a>
           <nav className="desktop-nav" aria-label="منوی اصلی">
             <a href="#services">حوزه‌های فعالیت</a>
@@ -160,7 +160,7 @@ export default function Home() {
             <div className="floating-note"><span className="note-icon">§</span><span><b>بررسی دقیق موضوع</b><small>پیش از انتخاب مسیر قانونی</small></span></div>
           </div>
         </div>
-        <div className="hero-bottom-line"><span /> <span>اهواز، نقطه شروع ارتباط با سراسر خوزستان</span></div>
+        <div className="hero-bottom-line"><span /> <span>پایگاه فعالیت در اهواز، پاسخ‌گو به درخواست‌ها از سراسر ایران</span></div>
       </section>
 
       <section className="trust-strip">
@@ -195,7 +195,7 @@ export default function Home() {
           <div className="city-intro">
             <span className="section-kicker">KHOUZESTAN & IRAN</span>
             <h2>فاصله، مانع<br/><em>ثبت درخواست</em> نیست.</h2>
-            <p>تمرکز جغرافیایی مجموعه در اهواز است؛ با این حال، درخواست‌های اولیه از شهرهای مختلف خوزستان و سایر استان‌ها قابل ثبت و بررسی است. امکان پذیرش هر پرونده به موضوع، مرجع رسیدگی و شرایط آن بستگی دارد.</p>
+            <p>دفتر و پایگاه فعالیت مجموعه در اهواز، استان خوزستان قرار دارد؛ با این حال، متقاضیان از سراسر ایران می‌توانند درخواست اولیه خود را ثبت کنند. امکان پذیرش و شیوه ارائه خدمت پس از بررسی موضوع و شرایط پرونده مشخص می‌شود. امکان پذیرش هر پرونده به موضوع، مرجع رسیدگی و شرایط آن بستگی دارد.</p>
             <a href="#contact" className="city-cta">درخواست از شهر خودتان <span>←</span></a>
           </div>
           <div className="city-panel">
