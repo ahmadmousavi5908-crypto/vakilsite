@@ -191,6 +191,7 @@ export default function Home() {
             <label>موضوع درخواست</label>
             <select value={topic} onChange={e => setTopic(e.target.value)} required>
               <option value="موضوع پرونده را انتخاب کنید" disabled>موضوع پرونده را انتخاب کنید</option>
+              {!services.some((s) => s.title === topic) && topic !== "موضوع پرونده را انتخاب کنید" && <option value={topic}>{topic}</option>}
               {services.map(s => <option key={s.n} value={s.title}>{s.title}</option>)}
               <option value="سایر موضوعات حقوقی">سایر موضوعات حقوقی</option>
             </select>
