@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 
 const fallback = [
-  { platform: "phone", label: "تماس با دفتر · 0916 916 5902", url: "tel:09169165902", link_type: "contact" },
+  { platform: "phone", label: "تماس اول · 0916 916 5902", url: "tel:09169165902", link_type: "contact" },
   { platform: "phone", label: "تماس دوم · 0938 832 2230", url: "tel:09388322230", link_type: "contact" },
-  { platform: "whatsapp", label: "واتساپ", url: "https://wa.me/989169165902", link_type: "contact" },
+  { platform: "whatsapp", label: "واتساپ دفتر", url: "https://wa.me/989169165902", link_type: "contact" },
 ];
 
 const symbols = {
@@ -15,84 +15,68 @@ const symbols = {
 };
 
 export default function SocialContactDock() {
+  const [open, setOpen] = useState(false);
   const [links, setLinks] = useState(fallback);
-  const dockRef = useRef(null);
+  const rootRef = useRef(null);
 
   useEffect(() => {
-    let mounted = true;
+    let active = true;
     fetch("/api/social-links", { cache: "no-store" })
       .then((response) => response.ok ? response.json() : Promise.reject())
       .then((data) => {
-        if (mounted && Array.isArray(data.links)) {
-          setLinks(data.links.length ? data.links : fallback);
-        }
+        if (active && Array.isArray(data.links)) setLinks(data.links);
       })
       .catch(() => {});
-    return () => { mounted = false; };
+    return () => { active = false; };
   }, []);
 
   useEffect(() => {
-    const dock = dockRef.current;
-    if (!dock) return undefined;
-
-    const closeDock = () => {
-      if (dock.open) dock.open = false;
+    const onPointer = (event) => {
+      if (rootRef.current && !rootRef.current.contains(event.target)) setOpen(false);
     };
-    const closeWhenOutside = (event) => {
-      if (!dock.contains(event.target)) closeDock();
-    };
-    const closeOnEscape = (event) => {
-      if (event.key === "Escape") closeDock();
-    };
-
-    document.addEventListener("pointerdown", closeWhenOutside, true);
-    window.addEventListener("scroll", closeDock, { passive: true });
-    document.addEventListener("keydown", closeOnEscape);
+    const onKey = (event) => { if (event.key === "Escape") setOpen(false); };
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("pointerdown", closeWhenOutside, true);
-      window.removeEventListener("scroll", closeDock);
-      document.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
     };
   }, []);
 
-  const contacts = links.filter((item) => item.link_type === "contact");
-  const socials = links.filter((item) => item.link_type === "social");
-  // Never let a partially configured CMS hide either published office number.
-  const completeContacts = [...contacts];
-  for (const defaultContact of fallback.filter((item) => item.platform === "phone")) {
-    if (!completeContacts.some((item) => item.url === defaultContact.url)) {
-      completeContacts.push(defaultContact);
-    }
+  const items = [...links];
+  for (const item of fallback) {
+    if (!items.some((entry) => entry.url === item.url)) items.push(item);
   }
-  const items = [...completeContacts, ...socials];
 
   return (
-    <details className="floating-contact-dock" ref={dockRef}>
-      <summary aria-label="باز کردن راه‌های ارتباط با وکیل" title="ارتباط با وکیل">
-        <span className="dock-main-icon" aria-hidden="true">✆</span>
-        <span className="dock-pulse" aria-hidden="true" />
-      </summary>
-      <div className="dock-panel" dir="rtl">
-        <div className="dock-panel-heading">
-          <span className="dock-heading-icon">✦</span>
-          <div><strong>ارتباط با وکیل</strong><small>راه ارتباطی موردنظر را انتخاب کنید</small></div>
-        </div>
-        <div className="dock-links">
-          {items.map((item, index) => {
-            const external = /^https:\/\//i.test(item.url || "");
-            return (
-              <a key={item.id || item.platform + index} href={item.url}
-                target={external ? "_blank" : undefined}
-                rel={external ? "noopener noreferrer" : undefined}>
-                <span className={"dock-link-icon dock-" + (item.platform || "other")}>{symbols[item.platform] || symbols.other}</span>
-                <span>{item.label || item.platform || "ارتباط"}</span>
-                <b aria-hidden="true">↗</b>
-              </a>
-            );
-          })}
-        </div>
-        <small className="dock-footnote">برای افزودن یا تغییر شبکه‌ها، اطلاعات از بخش مدیریت سایت خوانده می‌شود.</small>
-      </div>
-    </details>
+    <div className="site-contact-launcher" ref={rootRef} dir="rtl">
+      {open && (
+        <section className="site-contact-panel" aria-label="راه‌های ارتباطی">
+          <div className="site-contact-panel-head">
+            <strong>ارتباط با وکیل</strong>
+            <span>تماس، واتساپ و شبکه‌های اجتماعی</span>
+          </div>
+          <div className="site-contact-items">
+            {items.map((item, index) => {
+              const external = /^https:\/\//i.test(item.url || "");
+              return (
+                <a key={item.id || item.url || index} href={item.url}
+                  target={external ? "_blank" : undefined}
+                  rel={external ? "noopener noreferrer" : undefined}>
+                  <span className={"site-contact-icon site-contact-" + (item.platform || "other")}>{symbols[item.platform] || symbols.other}</span>
+                  <span>{item.label || item.platform || "ارتباط"}</span>
+                  <b aria-hidden="true">↗</b>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
+      <button type="button" className="site-contact-toggle"
+        aria-label={open ? "بستن راه‌های ارتباطی" : "نمایش راه‌های ارتباطی"}
+        aria-expanded={open} onClick={() => setOpen((value) => !value)}>
+        <span aria-hidden="true">{open ? "×" : "☏"}</span>
+      </button>
+    </div>
   );
 }
