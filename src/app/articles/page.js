@@ -7,13 +7,6 @@ export const metadata = {
   alternates: { canonical: "/articles" },
 };
 
-const categoryNotes = [
-  { title: "حقوق مدنی و دعاوی", text: "خواسته، مدارک، دادخواست و پیگیری حقوقی", mark: "01" },
-  { title: "کیفری و دفاع", text: "آشنایی با تحقیقات، شکایت و حقوق دفاعی", mark: "02" },
-  { title: "خانواده", text: "مهریه، طلاق و مسائل مرتبط با خانواده", mark: "03" },
-  { title: "قرارداد و مطالبات", text: "تعهدات، چک، سفته و اختلافات مالی", mark: "04" },
-];
-
 export default function ArticlesPage() {
   const featured = articles[0];
   const remaining = articles.slice(1);
@@ -37,24 +30,27 @@ export default function ArticlesPage() {
         <div className="editorial-hero-aside"><span className="editorial-aside-mark">§</span><span className="section-kicker">KNOW YOUR RIGHTS</span><strong>پیش از مراجعه،<br/>آماده‌تر باشید.</strong><p>از شناخت موضوع تا مرتب‌کردن مدارک و پرسیدن سؤال‌های درست.</p></div>
       </section>
 
-      <section className="editorial-topics"><div className="container editorial-topic-grid">
-        {categoryNotes.map((item) => <div className="editorial-topic" key={item.mark}><span>{item.mark}</span><div><strong>{item.title}</strong><small>{item.text}</small></div></div>)}
-      </div></section>
-
       <section className="section editorial-library-section">
         <div className="container">
           <div className="editorial-section-heading"><div><span className="section-kicker">EDITOR&apos;S PICK</span><h2>از این راهنما شروع کنید</h2></div><p>یک نقطه شروع برای اینکه مسئله را دقیق‌تر بشناسید و با آمادگی بیشتری تصمیم بگیرید.</p></div>
           {featured && <article className="editorial-featured">
             <div className="editorial-featured-art"><span>§</span><small>راهنمای منتخب</small><b>LEGAL<br/>GUIDE</b></div>
-            <div className="editorial-featured-copy"><div className="editorial-meta"><span>{featured.category}</span><span>{featured.readTime} دقیقه مطالعه</span></div><h3><Link href={"/articles/" + featured.slug}>{featured.title}</Link></h3><p>{featured.excerpt}</p><Link className="editorial-read-link" href={"/articles/" + featured.slug}>خواندن راهنمای کامل <b>←</b></Link></div>
+            <div className="editorial-featured-copy"><div className="editorial-meta"><span>راهنمای منتخب</span><span>{featured.readTime} دقیقه مطالعه</span></div><h3><Link href={"/articles/" + featured.slug}>{featured.title}</Link></h3><p>{featured.excerpt}</p><Link className="editorial-read-link" href={"/articles/" + featured.slug}>خواندن راهنمای کامل <b>←</b></Link></div>
           </article>}
 
           <div className="editorial-section-heading editorial-all-heading"><div><span className="section-kicker">PRACTICAL LIBRARY</span><h2>همه راهنماها</h2></div><p>برای مطالعه، موضوع نزدیک به مسئله خود را انتخاب کنید.</p></div>
-          <div className="editorial-article-grid">
-            {remaining.map((article, index) => <article className="editorial-article-card" key={article.slug}>
-              <div className={"editorial-card-art editorial-art-" + (index % 4)}><span>{["⚖","▤","⌂","◈"][index % 4]}</span><small>{article.category}</small><b>{String(index + 2).padStart(2, "0")}</b></div>
-              <div className="editorial-card-content"><div className="editorial-meta"><span>{article.category}</span><span>{article.readTime} دقیقه</span></div><h3><Link href={"/articles/" + article.slug}>{article.title}</Link></h3><p>{article.excerpt}</p><Link className="editorial-read-link" href={"/articles/" + article.slug}>مطالعه راهنما <b>←</b></Link></div>
-            </article>)}
+          <div className="editorial-accordion-list">
+            {remaining.map((article, index) => <details className="editorial-accordion" key={article.slug}>
+              <summary>
+                <span className="editorial-accordion-number">{String(index + 2).padStart(2, "0")}</span>
+                <span className="editorial-accordion-title"><strong>{article.title}</strong><small>{article.readTime} دقیقه مطالعه</small></span>
+                <b aria-hidden="true">+</b>
+              </summary>
+              <div className="editorial-accordion-panel">
+                <p>{article.excerpt}</p>
+                <Link className="editorial-read-link" href={"/articles/" + article.slug}>مطالعه راهنمای کامل <b>←</b></Link>
+              </div>
+            </details>)}
           </div>
           <aside className="editorial-disclaimer"><span>نکته مهم</span><p>این مطالب برای آگاهی عمومی‌اند و جایگزین بررسی اختصاصی پرونده نیستند. قوانین و رویه‌ها ممکن است تغییر کنند؛ تصمیم درباره هر پرونده باید با توجه به اسناد، تاریخ‌ها، مرجع صالح و شرایط همان موضوع گرفته شود.</p></aside>
         </div>
