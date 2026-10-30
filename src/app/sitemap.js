@@ -26,6 +26,12 @@ export default function sitemap() {
       priority: 0.6,
     },
     {
+      url: base + "/privacy",
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
       url: base + "/articles",
       lastModified: now,
       changeFrequency: "weekly",
