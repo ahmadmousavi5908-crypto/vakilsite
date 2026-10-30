@@ -251,12 +251,20 @@ export default function Home() {
           <div className="home-editorial-layout">
             {articles.slice(0, 1).map((article) => <Link className="home-editorial-feature" href={"/articles/" + article.slug} key={article.slug}>
               <div className="home-editorial-feature-art"><span>§</span><small>راهنمای منتخب</small></div>
-              <div className="home-editorial-feature-copy"><div className="home-article-meta"><span>{article.category}</span><span>{article.readTime} دقیقه مطالعه</span></div><h3>{article.title}</h3><p>{article.excerpt}</p><b>مطالعه راهنمای کامل <span>←</span></b></div>
+              <div className="home-editorial-feature-copy"><div className="home-article-meta"><span>راهنمای منتخب</span><span>{article.readTime} دقیقه مطالعه</span></div><h3>{article.title}</h3><p>{article.excerpt}</p><b>مطالعه راهنمای کامل <span>←</span></b></div>
             </Link>)}
-            <div className="home-editorial-list">
-              {articles.slice(1, 4).map((article, index) => <Link className="home-editorial-row" href={"/articles/" + article.slug} key={article.slug}>
-                <span className="home-editorial-row-number">۰{index + 2}</span><span className="home-editorial-row-copy"><small>{article.category} · {article.readTime} دقیقه</small><strong>{article.title}</strong><em>{article.excerpt}</em></span><b>←</b>
-              </Link>)}
+            <div className="home-editorial-list home-article-accordion-list">
+              {articles.slice(1).map((article, index) => <details className="home-article-accordion" key={article.slug}>
+                <summary>
+                  <span className="home-article-accordion-number">{String(index + 2).padStart(2, "0")}</span>
+                  <span className="home-article-accordion-title"><strong>{article.title}</strong><small>{article.readTime} دقیقه مطالعه</small></span>
+                  <b aria-hidden="true">+</b>
+                </summary>
+                <div className="home-article-accordion-panel">
+                  <p>{article.excerpt}</p>
+                  <Link href={"/articles/" + article.slug}>مطالعه راهنمای کامل <span>←</span></Link>
+                </div>
+              </details>)}
             </div>
           </div>
           <div className="home-articles-more"><Link href="/articles">ورود به کتابخانه راهنماهای حقوقی <span>←</span></Link></div>
@@ -302,7 +310,7 @@ export default function Home() {
       <section className="section faq-section" id="faq">
         <div className="container faq-layout">
           <div><span className="section-kicker">GOOD TO KNOW</span><h2>پیش از شروع،<br/><em>این نکات را بدانید.</em></h2><p>پاسخ‌های کوتاه برای پرسش‌هایی که معمولاً در نخستین تماس مطرح می‌شوند.</p></div>
-          <div className="faq-list">{faqs.map((f, i) => <details className="faq-item" key={f[0]} open={i === 0}><summary><span>{f[0]}</span><b aria-hidden="true">+</b></summary><p>{f[1]}</p></details>)}</div>
+          <div className="faq-list">{faqs.map((f, i) => <details className="faq-item" key={f[0]}><summary><span>{f[0]}</span><b aria-hidden="true">+</b></summary><p>{f[1]}</p></details>)}</div>
         </div>
       </section>
 
