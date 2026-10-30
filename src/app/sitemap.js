@@ -37,6 +37,12 @@ export default function sitemap() {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    {
+      url: base + "/legal-glossary",
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
     ...articles.map((article) => ({
       url: base + "/articles/" + article.slug,
       lastModified: now,
