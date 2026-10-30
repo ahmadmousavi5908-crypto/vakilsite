@@ -636,3 +636,13 @@ html {
 .social-admin-save span{color:var(--gold-light);margin-right:10px}
 .social-admin-footnote{font-size:9px;color:#89939d;line-height:2;margin:14px 0 0}
 @media(max-width:650px){.social-admin-grid{grid-template-columns:1fr}.social-admin-actions{flex-direction:column}.social-admin-add,.social-admin-save{width:100%}.social-admin-save{margin-right:0}}
+
+
+/* Distinct nationwide intake route, separate from the Khuzestan city list */
+.city-national-link{display:flex;align-items:center;gap:12px;margin-top:15px;padding:13px 14px;background:#f5f2ec;border:1px solid #e6dfd2;transition:border-color .2s,transform .2s}
+.city-national-link:hover{border-color:#c5a46d;transform:translateY(-2px)}
+.city-national-icon{width:37px;height:37px;display:grid;place-items:center;flex:none;background:var(--navy);color:var(--gold-light);font-size:18px}
+.city-national-link>span:nth-child(2){display:grid;gap:2px;min-width:0;flex:1}
+.city-national-link strong{font-size:11px;color:var(--navy)}
+.city-national-link small{font-size:9px;color:#7b8791;line-height:1.9}
+.city-national-link>b{color:#a88951;font-size:16px}
