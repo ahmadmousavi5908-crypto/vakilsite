@@ -3,6 +3,7 @@ import ServiceFinder from "../components/ServiceFinder";
 import RequestForm from "../components/RequestForm";
 import { articles } from "../data/articles";
 import OfficeLocationPublic from "../components/OfficeLocationPublic";
+import JsonLd from "../components/JsonLd";
 
 const services = [
   { n: "۰۱", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -29,8 +30,37 @@ const faqs = [
 ];
 
 export default function Home() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  const structuredSite = siteUrl
+    ? {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": siteUrl + "/#website",
+            url: siteUrl,
+            name: "مجموعه خدمات حقوقی اهواز",
+            inLanguage: "fa-IR",
+          },
+          {
+            "@type": "LegalService",
+            "@id": siteUrl + "/#legal-service",
+            name: "مجموعه خدمات حقوقی اهواز",
+            url: siteUrl,
+            telephone: "+989169165902",
+            areaServed: [
+              { "@type": "AdministrativeArea", name: "استان خوزستان" },
+              { "@type": "Country", name: "ایران" },
+            ],
+            availableLanguage: ["Persian"],
+          },
+        ],
+      }
+    : null;
+
   return (
     <main dir="rtl">
+      {structuredSite && <JsonLd data={structuredSite} />}
       <div className="topline">
         <div className="container topline-inner">
           <span>پاسخ‌گویی به درخواست‌های حقوقی از خوزستان و سراسر ایران</span>
