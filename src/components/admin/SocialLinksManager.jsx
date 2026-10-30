@@ -6,6 +6,7 @@ const platforms = [
   ["phone", "تلفن"], ["whatsapp", "واتساپ"], ["instagram", "اینستاگرام"],
   ["bale", "بله"], ["rubika", "روبیکا"], ["eitaa", "ایتا"],
   ["soroush", "سروش"], ["telegram", "تلگرام"], ["linkedin", "لینکدین"],
+  ["youtube", "یوتیوب"], ["aparat", "آپارات"],
   ["email", "ایمیل"], ["website", "وب‌سایت"], ["other", "سایر"],
 ];
 
