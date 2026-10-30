@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-:root{--navy:#142b43;--navy2:#1d3b58;--gold:#b99a60;--gold-light:#ddc99e;--cream:#f6f3ec;--paper:#fffefa;--ink:#233448;--muted:#687582;--line:#e7e1d6}
+:root{--navy:#14243b;--navy2:#253b52;--gold:#c5a46d;--gold-light:#e1c995;--cream:#f5f2ec;--paper:#fffefa;--ink:#26364a;--muted:#6d7885;--line:#e7e2d9}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:90px}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:Tahoma,"Vazirmatn","Segoe UI",sans-serif;line-height:1.9}
@@ -590,3 +590,49 @@ html {
 .skip-link:focus{transform:translateY(0);outline:3px solid #e4cf9f;outline-offset:3px}
 :where(a,button,input,select,textarea,summary):focus-visible{outline:3px solid #b99a60;outline-offset:3px}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+
+/* Refined contact and social channel hub */
+.social-hub{display:grid;gap:19px;margin-top:8px}
+.social-hub-group{padding-top:15px;border-top:1px solid #eee8dd}
+.social-hub-heading{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.social-hub-symbol{width:34px;height:34px;display:grid;place-items:center;flex:none;background:#f3efe6;border:1px solid #e8dfcf;color:#9b7d49;font-size:18px}
+.social-hub-heading h3{margin:0;color:var(--navy);font-size:12px}
+.social-hub-heading p{margin:2px 0 0;color:#89929b;font-size:9px;line-height:1.8}
+.social-link-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.social-link-card{display:flex;align-items:center;gap:9px;min-width:0;padding:9px 10px;background:#fff;border:1px solid #e9e4da;transition:transform .18s,border-color .18s,box-shadow .18s}
+.social-link-card:hover{transform:translateY(-2px);border-color:#c5a46d;box-shadow:0 7px 18px rgba(20,36,59,.07)}
+.social-link-mark{width:29px;height:29px;display:grid;place-items:center;flex:none;border-radius:9px;background:#f4f1e9;color:#31465c;font-size:14px;font-weight:800}
+.social-mark-whatsapp{background:#e9f4eb;color:#23824a}
+.social-mark-instagram{background:#f6edf3;color:#a34d78}
+.social-mark-bale{background:#edf3f8;color:#3475a6}
+.social-mark-rubika{background:#f0eff8;color:#6557a0}
+.social-mark-eitaa{background:#edf4f7;color:#347c9b}
+.social-mark-soroush{background:#f4f0e8;color:#92723e}
+.social-mark-telegram{background:#edf5f8;color:#2580a8}
+.social-mark-linkedin{background:#edf2f8;color:#28669b}
+.social-link-label{min-width:0;flex:1;color:#405166;font-size:10px;font-weight:700;overflow-wrap:anywhere}
+.social-link-arrow{color:#ad9569;font-size:13px}
+.social-follow-group .social-link-card{background:#fbfaf7}
+@media(max-width:700px){.social-link-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.social-link-card{padding:8px}.social-link-label{font-size:9px}}
+@media(max-width:360px){.social-link-grid{grid-template-columns:1fr}}
+
+/* Admin manager for unlimited editable contact/social entries */
+.social-admin-intro{background:#f7f4ed;border-right:3px solid var(--gold);padding:13px 16px;margin-bottom:17px}
+.social-admin-intro strong{font-size:11px;color:#314255}
+.social-admin-intro p{font-size:10px;color:#73808c;line-height:2;margin:4px 0 0}
+.social-admin-list{display:grid;gap:13px}
+.social-admin-row{border:1px solid #e8ebef;background:#fff;padding:16px;border-radius:5px}
+.social-admin-row-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.social-admin-row-head strong{font-size:11px;color:#314255}
+.social-admin-remove{border:1px solid #efd9d4;background:#fff8f6;color:#a34c3b;padding:6px 10px;border-radius:3px;font-size:9px;cursor:pointer}
+.social-admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.social-admin-grid .admin-field select{width:100%;min-width:0;border:1px solid #e3ded4;background:#fff;padding:12px;color:#233448;outline:none;border-radius:3px;font-size:12px}
+.social-admin-grid .admin-field select:focus{border-color:#c5a46d;box-shadow:0 0 0 3px rgba(197,164,109,.12)}
+.social-admin-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.social-admin-add,.social-admin-save{border:1px solid #dcd5c8;padding:12px 16px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer}
+.social-admin-add{background:#fff;color:#536477}
+.social-admin-save{background:var(--navy);color:#fff;border-color:var(--navy);margin-right:auto}
+.social-admin-save span{color:var(--gold-light);margin-right:10px}
+.social-admin-footnote{font-size:9px;color:#89939d;line-height:2;margin:14px 0 0}
+@media(max-width:650px){.social-admin-grid{grid-template-columns:1fr}.social-admin-actions{flex-direction:column}.social-admin-add,.social-admin-save{width:100%}.social-admin-save{margin-right:0}}
