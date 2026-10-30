@@ -28,7 +28,7 @@ export default function ArticlesPage() {
           <div className="article-card-grid">
             {articles.map((article, index) => (
               <article className="article-card" key={article.slug}>
-                <div className="article-card-art"><span>{["§","⚖","▤","⌂"][index]}</span><small>{article.category}</small></div>
+                <div className="article-card-art"><span>{["§","⚖","▤","⌂","◈","♡","↗","✓","⌖","!"][index % 10]}</span><small>{article.category}</small></div>
                 <div className="article-card-body">
                   <div className="article-meta"><span>{article.category}</span><span>{article.readTime} مطالعه</span></div>
                   <h2><Link href={"/articles/" + article.slug}>{article.title}</Link></h2>
