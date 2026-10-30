@@ -1,5 +1,11 @@
 import "./globals.css";
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#142b43",
+};
+
 export const metadata = {
   title: {
     default: "خدمات حقوقی در اهواز و خوزستان | درخواست مشاوره حقوقی",
