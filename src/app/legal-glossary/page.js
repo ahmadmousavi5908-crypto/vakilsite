@@ -34,7 +34,7 @@ export default function LegalGlossaryPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
       <header className="article-header">
         <div className="container article-header-inner">
-          <Link href="/" className="article-brand">خدمات حقوقی <span>اهواز · خوزستان</span></Link>
+          <Link href="/" className="article-brand">خدمات حقوقی <span>دفتر اهواز · خدمات سراسر ایران</span></Link>
           <Link href="/#contact" className="article-header-cta">درخواست بررسی اولیه ←</Link>
         </div>
       </header>
