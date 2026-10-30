@@ -2688,3 +2688,105 @@ body{
   .attorney-profile-visual .attorney-credentials { padding: 16px 14px 18px; }
   .attorney-profile-visual .attorney-credential-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+
+/* Homepage legal library: clean, uniform plus-accordion presentation */
+.home-editorial-section .home-articles-heading {
+  align-items: end;
+  gap: 28px;
+  margin-bottom: 25px;
+}
+.home-editorial-section .home-articles-heading > div { min-width: 0; }
+.home-editorial-section .home-articles-heading .section-kicker {
+  display: inline-block;
+  margin-bottom: 9px;
+  color: #9b7d4b;
+  letter-spacing: .04em;
+}
+.home-editorial-section .home-articles-heading h2 {
+  margin-top: 0;
+}
+.home-editorial-section .home-articles-heading > p {
+  max-width: 390px;
+  margin: 0 0 4px;
+  color: #73808a;
+  font-size: 12px;
+  line-height: 2.2;
+}
+.home-editorial-section .home-article-accordion-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+.home-editorial-section .home-article-accordion {
+  border: 1px solid #e9e3d9;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(23, 51, 76, .035);
+}
+.home-editorial-section .home-article-accordion summary {
+  min-height: 68px;
+  padding: 13px 18px;
+}
+.home-editorial-section .home-article-accordion-title strong {
+  font-size: 13px;
+  line-height: 1.9;
+}
+.home-editorial-section .home-article-accordion-title small {
+  font-size: 10px;
+  color: #9a835d;
+}
+.home-editorial-section .home-article-accordion summary > b {
+  background: #f8f5ef;
+  border-color: #e7dcc8;
+  color: #9c7d4c;
+}
+.home-editorial-section .home-article-accordion[open] summary > b {
+  background: #20384f;
+  border-color: #20384f;
+  color: #f1dfb9;
+}
+.home-editorial-section .home-article-accordion-panel {
+  padding: 0 18px 17px;
+  margin-right: 0;
+  border-top: 1px solid #f0ece5;
+}
+.home-editorial-section .home-article-accordion-panel p {
+  margin: 12px 0 9px;
+  font-size: 11px;
+  line-height: 2.15;
+}
+.home-editorial-section .home-article-accordion-panel a {
+  font-size: 11px;
+}
+.home-editorial-section .home-articles-more {
+  margin-top: 19px;
+  text-align: center;
+}
+.home-editorial-section .home-articles-more a {
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 11px;
+}
+@media (max-width: 700px) {
+  .home-editorial-section .home-articles-heading {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 17px;
+  }
+  .home-editorial-section .home-articles-heading > p {
+    max-width: none;
+    font-size: 11px;
+  }
+  .home-editorial-section .home-article-accordion summary {
+    min-height: 65px;
+    padding: 11px 13px;
+  }
+  .home-editorial-section .home-article-accordion-title strong {
+    font-size: 11px;
+  }
+  .home-editorial-section .home-article-accordion-panel {
+    padding: 0 13px 14px;
+  }
+}
