@@ -16,6 +16,7 @@
 2. در SQL Editor فایل‌های زیر را به‌ترتیب اجرا کنید:
    - `supabase/migrations/001_social_links.sql`
    - `supabase/migrations/002_office_location.sql`
+   - `supabase/migrations/003_social_link_types.sql`
 3. در بخش Authentication یک حساب کاربری برای مدیر ایجاد کنید.
 4. UUID همان کاربر را از بخش کاربران Supabase بردارید و در SQL Editor اجرا کنید:
 
