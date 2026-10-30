@@ -2093,3 +2093,21 @@ p, li, label, input, textarea, button{
 .site-contact-empty{margin:0;padding:10px;border:1px dashed #d8d0c1;border-radius:9px;color:#778392;font-size:11px;line-height:1.9}
 .site-contact-youtube{background:#fbecec!important;color:#c4302b!important}
 .site-contact-aparat{background:#fff2e7!important;color:#ed6c1d!important}
+
+/* Persian shaping: avoid negative tracking that visually fuses words */
+body{
+  font-family: "Noto Naskh Arabic UI", "Noto Sans Arabic", Tahoma, Arial, sans-serif;
+  word-spacing: .04em;
+  hyphens: none;
+}
+:lang(fa){letter-spacing:0!important}
+:lang(fa) .section-kicker,
+:lang(fa) .eyebrow,
+:lang(fa) .admin-eyebrow,
+:lang(fa) .visual-top,
+:lang(fa) .visual-bottom{letter-spacing:.08em!important}
+:lang(fa) p,
+:lang(fa) li,
+:lang(fa) h1,
+:lang(fa) h2,
+:lang(fa) h3{overflow-wrap:break-word;word-break:normal}
