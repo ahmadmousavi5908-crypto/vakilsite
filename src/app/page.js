@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import ServiceFinder from "../components/ServiceFinder";
 import { articles } from "../data/articles";
+import OfficeLocationPublic from "../components/OfficeLocationPublic";
 
 const services = [
   { n: "۰۱", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -281,6 +282,7 @@ export default function Home() {
           <p>آگاهی حقوقی، نخستین قدم برای انتخاب درست است.</p>
           <a href="#contact" className="footer-link">ثبت درخواست <span>←</span></a>
         </div>
+        <div className="container"><OfficeLocationPublic /></div>
         <div className="container footer-bottom"><span>© تمامی حقوق این وب‌سایت محفوظ است.</span><span>اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span><Link href="/privacy">حریم خصوصی</Link><Link href="/articles">مقالات</Link><Link href="/lawyer-cooperation">همکاری وکلا</Link></div>
       </footer>
     </main>
