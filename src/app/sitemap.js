@@ -38,6 +38,11 @@ export default function sitemap() {
       priority: 0.9,
     },
     {
+      url: base + "/about",
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: base + "/locations/khuzestan",
       changeFrequency: "monthly",
       priority: 0.8,
