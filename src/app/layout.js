@@ -7,6 +7,18 @@ export const metadata = {
   },
   description: "ثبت درخواست بررسی اولیه مسائل حقوقی از اهواز، آبادان، خرمشهر، دزفول، ماهشهر و سراسر استان خوزستان و ایران. آشنایی با حوزه‌های خدمات حقوقی و مسیر ارتباط.",
   applicationName: "خدمات حقوقی اهواز",
+  ...(process.env.NEXT_PUBLIC_SITE_URL
+    ? { metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL) }
+    : {}),
+  keywords: [
+    "وکیل اهواز",
+    "وکیل خوزستان",
+    "مشاوره حقوقی",
+    "وکیل آبادان",
+    "وکیل خرمشهر",
+    "وکیل دزفول",
+    "خدمات حقوقی",
+  ],
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
