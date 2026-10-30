@@ -57,7 +57,14 @@ export default function SocialContactDock() {
 
   const contacts = links.filter((item) => item.link_type === "contact");
   const socials = links.filter((item) => item.link_type === "social");
-  const items = [...(contacts.length ? contacts : fallback), ...socials];
+  // Never let a partially configured CMS hide either published office number.
+  const completeContacts = [...contacts];
+  for (const defaultContact of fallback.filter((item) => item.platform === "phone")) {
+    if (!completeContacts.some((item) => item.url === defaultContact.url)) {
+      completeContacts.push(defaultContact);
+    }
+  }
+  const items = [...completeContacts, ...socials];
 
   return (
     <details className="floating-contact-dock" ref={dockRef}>
