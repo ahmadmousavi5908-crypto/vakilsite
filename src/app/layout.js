@@ -1,5 +1,7 @@
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
 export const viewport = {
   width: "device-width",
   initialScale: 1,
@@ -13,9 +15,8 @@ export const metadata = {
   },
   description: "آشنایی با خدمات حقوقی، ثبت درخواست بررسی اولیه و مطالعه راهنماهای کاربردی بر پایه قوانین ایران؛ با تمرکز بر اهواز و استان خوزستان و امکان ثبت درخواست از سراسر کشور.",
   applicationName: "خدمات حقوقی اهواز",
-  ...(process.env.NEXT_PUBLIC_SITE_URL
-    ? { metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL) }
-    : {}),
+  ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
+  alternates: { canonical: "/" },
   keywords: [
     "وکیل اهواز",
     "وکیل خوزستان",
@@ -31,10 +32,21 @@ export const metadata = {
     "وکیل دزفول",
     "خدمات حقوقی",
   ],
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
     type: "website",
     locale: "fa_IR",
+    ...(siteUrl ? { url: siteUrl } : {}),
     title: "خدمات حقوقی در اهواز و خوزستان",
     description: "مسئله حقوقی خود را ساده مطرح کنید و مسیر بررسی را بشناسید.",
     siteName: "خدمات حقوقی اهواز",
