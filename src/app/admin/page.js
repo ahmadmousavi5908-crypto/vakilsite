@@ -8,7 +8,8 @@ export const metadata = { title: "پنل مدیریت" };
 
 export default async function AdminDashboard({ searchParams }) {
   const params = await searchParams;
-  const { supabase, user, isAdmin } = await requireAdmin();
+  const { supabase, user, isAdmin, configured } = await requireAdmin();
+  if (!configured) redirect("/admin/login?error=config");
   if (!isAdmin) redirect("/admin/login?error=unauthorized");
 
   const { data } = await supabase
