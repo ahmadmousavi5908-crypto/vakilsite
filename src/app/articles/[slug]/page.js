@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { articles } from "../../../data/articles";
+import JsonLd from "../../../components/JsonLd";
 
 export function generateStaticParams() {
   return articles.map((article) => ({ slug: article.slug }));
@@ -10,10 +11,18 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const article = articles.find((item) => item.slug === slug);
   if (!article) return { title: "مطلب پیدا نشد" };
+  const canonicalPath = "/articles/" + article.slug;
   return {
     title: article.title,
     description: article.excerpt,
-    openGraph: { type: "article", title: article.title, description: article.excerpt, locale: "fa_IR" },
+    alternates: { canonical: canonicalPath },
+    openGraph: {
+      type: "article",
+      title: article.title,
+      description: article.excerpt,
+      locale: "fa_IR",
+      url: canonicalPath,
+    },
   };
 }
 
@@ -22,8 +31,27 @@ export default async function ArticleDetailPage({ params }) {
   const article = articles.find((item) => item.slug === slug);
   if (!article) notFound();
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  const articleUrl = siteUrl ? siteUrl + "/articles/" + article.slug : null;
+  const structuredArticle = articleUrl
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: article.title,
+        description: article.excerpt,
+        inLanguage: "fa-IR",
+        articleSection: article.category,
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": articleUrl,
+        },
+        url: articleUrl,
+      }
+    : null;
+
   return (
     <main className="article-page" dir="rtl">
+      {structuredArticle && <JsonLd data={structuredArticle} />}
       <header className="article-header">
         <div className="container article-header-inner">
           <Link href="/" className="article-brand">خدمات حقوقی <span>اهواز · خوزستان</span></Link>
