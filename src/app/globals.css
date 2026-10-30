@@ -2111,3 +2111,24 @@ body{
 :lang(fa) h1,
 :lang(fa) h2,
 :lang(fa) h3{overflow-wrap:break-word;word-break:normal}
+
+.about-attorney-layout{display:grid;grid-template-columns:minmax(260px,390px) minmax(0,1fr);gap:42px;align-items:center;padding-top:58px;padding-bottom:50px}
+.about-attorney-photo{border:1px solid #d9c69f;padding:10px;background:#f5f1e8;max-width:390px}
+.about-attorney-photo img{display:block;width:100%;height:auto;object-fit:cover}
+.about-attorney-content h2{font-size:30px;color:var(--navy);margin:12px 0}
+.about-attorney-content>p,.about-approach>p{font-size:13px;line-height:2.4;color:#5f6e7c}
+.about-attorney-content dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:24px 0 0}
+.about-attorney-content dl>div{padding:13px;border:1px solid var(--line);background:#fff;min-width:0}
+.about-attorney-content dt{font-size:10px;color:#9a7e4d;margin-bottom:5px}
+.about-attorney-content dd{font-size:13px;color:var(--navy);font-weight:700;margin:0;overflow-wrap:anywhere}
+.about-approach{padding-top:15px;padding-bottom:70px}
+.about-approach h2{font-size:22px;color:var(--navy)}
+.about-approach-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:24px}
+.about-approach-grid article{padding:20px;border:1px solid var(--line);background:#fff}
+.about-approach-grid strong{color:#b18e54;font-size:20px}
+.about-approach-grid h3{color:var(--navy);font-size:15px;margin:7px 0}
+.about-approach-grid p{color:#697887;font-size:11px;line-height:2}
+.about-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
+.about-cta a{padding:12px 18px;background:var(--navy);color:#fff;font-size:11px}
+.about-cta a+a{background:#f5f1e8;color:var(--navy);border:1px solid #d9c69f}
+@media(max-width:700px){.about-attorney-layout{grid-template-columns:minmax(0,1fr);gap:22px;padding-top:30px}.about-attorney-photo{max-width:100%;width:min(100%,430px);margin:auto}.about-attorney-content dl{grid-template-columns:minmax(0,1fr)}.about-approach-grid{grid-template-columns:minmax(0,1fr)}}
