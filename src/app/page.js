@@ -1,8 +1,6 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
 import ServiceFinder from "../components/ServiceFinder";
+import RequestForm from "../components/RequestForm";
 import { articles } from "../data/articles";
 import OfficeLocationPublic from "../components/OfficeLocationPublic";
 
@@ -31,34 +29,6 @@ const faqs = [
 ];
 
 export default function Home() {
-  const [openFaq, setOpenFaq] = useState(0);
-  const [topic, setTopic] = useState("موضوع پرونده را انتخاب کنید");
-  const [city, setCity] = useState("");
-  const [details, setDetails] = useState("");
-
-  async function prepareRequest(e) {
-    e.preventDefault();
-    const timestamp = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { dateStyle: "full", timeStyle: "short", timeZone: "Asia/Tehran" }).format(new Date());
-    const text = [
-      "درخواست بررسی اولیه",
-      "زمان تهیه درخواست (به وقت ایران): " + timestamp,
-      "موضوع: " + topic,
-      "شهر: " + (city || "اعلام نشده"),
-      "شرح کوتاه: " + (details || "در انتظار توضیحات"),
-    ].join("\n");
-    const phone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "989169165902").replace(/\D/g, "");
-    if (phone) {
-      window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(text), "_blank", "noopener,noreferrer");
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      window.alert("متن درخواست کپی شد. شماره واتساپ دفتر هنوز در تنظیمات سایت ثبت نشده است؛ پس از ثبت شماره، ارسال مستقیم فعال می‌شود.");
-    } catch {
-      window.prompt("شماره واتساپ دفتر هنوز تنظیم نشده است. متن درخواست را کپی کنید:", text);
-    }
-  }
-
   return (
     <main dir="rtl">
       <div className="topline">
@@ -160,7 +130,7 @@ export default function Home() {
             <p>از میان موضوعات زیر، نزدیک‌ترین گزینه به مسئله خود را پیدا کنید. هر موضوع می‌تواند شرایط و مسیر قانونی متفاوتی داشته باشد و نیازمند بررسی جداگانه است.</p>
           </div>
           <div className="service-grid">
-            {services.map((s) => <a className="service-card" href="#contact" key={s.n} onClick={() => setTopic(s.title)}>
+            {services.map((s) => <a className="service-card" href="#contact" key={s.n} >
               <div className="service-card-top"><span>{s.n}</span><span className="service-arrow">↙</span></div>
               <div className="service-symbol">{s.tag === "خانواده" ? "⌂" : s.tag === "املاک" ? "▧" : s.tag === "کیفری" ? "§" : s.tag === "قرارداد" ? "▤" : s.tag === "مطالبات" ? "◈" : "✳"}</div>
               <h3>{s.title}</h3><p>{s.desc}</p><span className="card-more">ثبت درخواست در این زمینه <b>←</b></span>
@@ -169,7 +139,7 @@ export default function Home() {
         </div>
       </section>
 
-      <ServiceFinder onChoose={(selection) => setTopic(selection)} />
+      <ServiceFinder />
 
       <section className="city-section" id="cities">
         <div className="container city-layout">
@@ -250,29 +220,14 @@ export default function Home() {
       <section className="contact-section" id="contact">
         <div className="container contact-layout">
           <div className="contact-copy"><span className="section-kicker">START HERE</span><h2>مسئله‌تان را<br/><em>از همین‌جا</em> مطرح کنید.</h2><p>چند مورد کوتاه را تکمیل کنید تا متن درخواست اولیه آماده شود. لطفاً در این مرحله اطلاعات محرمانه، کد ملی، شماره پرونده یا تصویر اسناد را وارد نکنید.</p><div className="contact-assurance"><span>✓</span> ثبت درخواست اولیه به معنی قبول وکالت یا تضمین نتیجه پرونده نیست.</div></div>
-          <form className="request-form" onSubmit={prepareRequest}>
-            <div className="form-heading"><span>فرم درخواست اولیه</span><small>حدود ۱ دقیقه</small></div>
-            <label>موضوع درخواست</label>
-            <select value={topic} onChange={e => setTopic(e.target.value)} required>
-              <option value="موضوع پرونده را انتخاب کنید" disabled>موضوع پرونده را انتخاب کنید</option>
-              {!services.some((s) => s.title === topic) && topic !== "موضوع پرونده را انتخاب کنید" && <option value={topic}>{topic}</option>}
-              {services.map(s => <option key={s.n} value={s.title}>{s.title}</option>)}
-              <option value="سایر موضوعات حقوقی">سایر موضوعات حقوقی</option>
-            </select>
-            <label>شهر محل سکونت یا رسیدگی</label>
-            <input value={city} onChange={e => setCity(e.target.value)} placeholder="مثلاً آبادان، دزفول، اهواز..." />
-            <label>شرح کوتاه مسئله <span className="optional">(اختیاری)</span></label>
-            <textarea value={details} onChange={e => setDetails(e.target.value)} rows="4" placeholder="در چند جمله بگویید چه اتفاقی افتاده و پرونده در چه مرحله‌ای است..." />
-            <button className="btn btn-submit" type="submit">آماده‌سازی درخواست در واتساپ <span>←</span></button>
-            <small className="form-hint">با انتخاب دکمه، متن درخواست آماده می‌شود؛ ارسال نهایی را خودتان در واتساپ انجام می‌دهید.</small>
-          </form>
+          <RequestForm services={services} />
         </div>
       </section>
 
       <section className="section faq-section" id="faq">
         <div className="container faq-layout">
           <div><span className="section-kicker">GOOD TO KNOW</span><h2>پیش از شروع،<br/><em>این نکات را بدانید.</em></h2><p>پاسخ‌های کوتاه برای پرسش‌هایی که معمولاً در نخستین تماس مطرح می‌شوند.</p></div>
-          <div className="faq-list">{faqs.map((f, i) => <div className={openFaq === i ? "faq-item faq-open" : "faq-item"} key={f[0]}><button type="button" onClick={() => setOpenFaq(openFaq === i ? -1 : i)}><span>{f[0]}</span><b>{openFaq === i ? "−" : "+"}</b></button>{openFaq === i && <p>{f[1]}</p>}</div>)}</div>
+          <div className="faq-list">{faqs.map((f, i) => <details className="faq-item" key={f[0]} open={i === 0}><summary><span>{f[0]}</span><b aria-hidden="true">+</b></summary><p>{f[1]}</p></details>)}</div>
         </div>
       </section>
 
