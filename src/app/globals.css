@@ -1665,3 +1665,80 @@ h1, h2, h3, h4, p, a, button, label, small, strong, span {
     grid-column: 1;
   }
 }
+
+
+/* Keep the portrait image in normal document flow; avoid fill/absolute overlap */
+.attorney-profile-visual .lawyer-photo-wrap {
+  display: block !important;
+  position: relative !important;
+  height: clamp(300px, 88vw, 390px);
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
+.attorney-profile-visual .lawyer-photo-wrap > .lawyer-photo-image,
+.attorney-profile-visual .lawyer-photo-wrap > img {
+  display: block !important;
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  object-fit: cover !important;
+  object-position: center 25% !important;
+  transform: none !important;
+}
+
+.attorney-profile-visual .lawyer-photo-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+}
+
+.attorney-profile-visual .visual-bottom {
+  flex: 0 0 auto !important;
+  min-height: 48px;
+  margin-top: 0 !important;
+}
+
+.attorney-profile-visual .attorney-credentials {
+  display: block !important;
+  clear: both;
+}
+
+@media (max-width: 700px) {
+  .attorney-profile-visual .lawyer-photo-wrap {
+    height: clamp(280px, 92vw, 380px) !important;
+  }
+
+  .attorney-profile-visual .visual-bottom {
+    min-height: 52px;
+    padding: 10px 4px !important;
+  }
+
+  .attorney-profile-visual .attorney-direct-lines {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 7px !important;
+  }
+
+  .attorney-profile-visual .attorney-direct-lines > span {
+    width: 100%;
+    text-align: center;
+  }
+
+  .attorney-profile-visual .attorney-direct-lines a {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 46px;
+    justify-content: center;
+    padding: 8px 12px !important;
+    border: 1px solid rgba(225, 201, 149, .25);
+    border-radius: 8px;
+    white-space: nowrap;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+  }
+}
