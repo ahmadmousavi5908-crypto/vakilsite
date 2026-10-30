@@ -26,7 +26,7 @@ export default function NotFound() {
       </section>
       <footer className="feature-footer">
         <Link href="/">صفحه اصلی</Link>
-        <span>خدمات حقوقی اهواز · خوزستان · سراسر ایران</span>
+        <span>خدمات حقوقی سراسر ایران · دفتر اهواز، خوزستان</span>
       </footer>
     </main>
   );
