@@ -364,3 +364,12 @@ button,input,select,textarea{font:inherit}
 .lawyer-entry{background:linear-gradient(140deg,#fffefa,#f0f4f5)}
 @media(max-width:800px){.feature-tool-grid{grid-template-columns:1fr 1fr}.ai-request-layout{grid-template-columns:1fr;gap:25px}.feature-hero{padding:65px 0}.feature-hero h1{font-size:34px}.feature-entry-section{padding:60px 0}}
 @media(max-width:560px){.feature-container{width:min(100% - 32px,560px)}.feature-nav{height:60px;padding:0 16px;font-size:9px}.feature-hero{padding:55px 0}.feature-hero h1{font-size:29px}.feature-hero p{font-size:12px}.feature-tool-grid,.ai-steps,.feature-entry-grid,.feature-form-grid{grid-template-columns:1fr}.feature-section{padding-top:55px;padding-bottom:55px}.feature-heading h2,.ai-request-layout h2{font-size:24px}.feature-tool-card{min-height:0}.feature-form{padding:20px 16px}.feature-footer{flex-direction:column;padding:20px 16px}.feature-entry-card{min-height:0;padding:23px 20px}}
+
+
+/* Privacy policy page */
+.privacy-content{max-width:900px;padding-top:54px;padding-bottom:76px}
+.privacy-content article{padding:24px 0;border-bottom:1px solid var(--line)}
+.privacy-content h2{font-size:19px;color:var(--navy);margin:0 0 10px}
+.privacy-content p{color:var(--muted);font-size:14px;line-height:2.2;margin:0}
+.privacy-content .feature-warning{margin:30px 0}
+.privacy-content .feature-primary{display:inline-flex;margin-top:12px}
