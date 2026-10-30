@@ -2,47 +2,66 @@ import Link from "next/link";
 import { articles } from "../../data/articles";
 
 export const metadata = {
-  title: "مقالات و راهنماهای حقوقی",
-  description: "راهنماهای کاربردی حقوقی بر پایه قوانین ایران؛ آیین دادرسی مدنی، کیفری، قراردادها و حقوق خانواده.",
+  title: "راهنماها و مقالات حقوقی | سید احمد موسوی",
+  description: "راهنماهای کاربردی و قابل فهم درباره حقوق ایران؛ از آماده‌سازی مدارک و شناخت مراحل دادرسی تا پرسش‌های مهم پیش از اقدام حقوقی.",
+  alternates: { canonical: "/articles" },
 };
 
+const categoryNotes = [
+  { title: "حقوق مدنی و دعاوی", text: "خواسته، مدارک، دادخواست و پیگیری حقوقی", mark: "01" },
+  { title: "کیفری و دفاع", text: "آشنایی با تحقیقات، شکایت و حقوق دفاعی", mark: "02" },
+  { title: "خانواده", text: "مهریه، طلاق و مسائل مرتبط با خانواده", mark: "03" },
+  { title: "قرارداد و مطالبات", text: "تعهدات، چک، سفته و اختلافات مالی", mark: "04" },
+];
+
 export default function ArticlesPage() {
+  const featured = articles[0];
+  const remaining = articles.slice(1);
   return (
-    <main className="article-page" dir="rtl">
-      <header className="article-header">
-        <div className="container article-header-inner">
-          <Link href="/" className="article-brand">خدمات حقوقی <span>دفتر اهواز · خدمات سراسر ایران</span></Link>
-          <Link href="/#contact" className="article-header-cta">درخواست بررسی اولیه ←</Link>
-        </div>
-      </header>
-      <section className="article-hero">
-        <div className="container">
-          <span className="section-kicker">LEGAL KNOWLEDGE · IRANIAN LAW</span>
-          <h1>آگاهی حقوقی،<br/><em>پیش از تصمیم مهم.</em></h1>
-          <p>راهنماهایی روشن و کاربردی درباره مسائل رایج حقوقی، با تکیه بر قوانین جمهوری اسلامی ایران. هدف این مطالب، کمک به شناخت بهتر مسئله و آماده شدن برای دریافت مشاوره تخصصی است.</p>
-        </div>
-      </section>
-      <section className="section article-list-section">
-        <div className="container">
-          <div className="article-list-heading"><div><span className="section-kicker">PRACTICAL GUIDES</span><h2>راهنماهای حقوقی</h2></div><p>هر پرونده جزئیات خودش را دارد؛ این مطالب نقطه شروع‌اند، نه نسخه یکسان برای همه.</p></div>
-          <div className="article-card-grid">
-            {articles.map((article, index) => (
-              <article className="article-card" key={article.slug}>
-                <div className="article-card-art"><span>{["§","⚖","▤","⌂","◈","♡","↗","✓","⌖","!"][index % 10]}</span><small>{article.category}</small></div>
-                <div className="article-card-body">
-                  <div className="article-meta"><span>{article.category}</span><span>{article.readTime} مطالعه</span></div>
-                  <h2><Link href={"/articles/" + article.slug}>{article.title}</Link></h2>
-                  <p>{article.excerpt}</p>
-                  <Link className="article-read-link" href={"/articles/" + article.slug}>مطالعه راهنما <b>←</b></Link>
-                </div>
-              </article>
-            ))}
+    <main className="article-page editorial-page" dir="rtl">
+      <header className="article-header"><div className="container article-header-inner">
+        <Link href="/" className="article-brand">خدمات حقوقی <span>سید احمد موسوی · اهواز و سراسر ایران</span></Link>
+        <Link href="/#contact" className="article-header-cta">درخواست بررسی اولیه ←</Link>
+      </div></header>
+
+      <section className="editorial-hero">
+        <div className="editorial-hero-text">
+          <div className="container">
+            <div className="article-breadcrumb"><Link href="/">صفحه اصلی</Link><span>←</span><span>دانشنامه حقوقی</span></div>
+            <span className="section-kicker">LEGAL INSIGHTS · IRAN</span>
+            <h1>دانستنِ قدم بعدی،<br/><em>از خودِ اقدام مهم‌تر است.</em></h1>
+            <p>راهنماهایی روشن برای فهم بهتر مسائل حقوقی، شناخت مدارک لازم و آماده کردن پرسش‌های دقیق؛ با تمرکز بر قوانین و رویه‌های حقوقی ایران.</p>
+            <div className="editorial-hero-points"><span>مطالب قابل فهم</span><span>موضوع‌محور و کاربردی</span><span>مبتنی بر حقوق ایران</span></div>
           </div>
-          <div className="article-disclaimer">مطالب این بخش برای اطلاع‌رسانی عمومی تهیه شده‌اند. قوانین ممکن است اصلاح شوند و انطباق آن‌ها با هر پرونده نیازمند بررسی شرایط و اسناد همان پرونده است.</div>
+        </div>
+        <div className="editorial-hero-aside"><span className="editorial-aside-mark">§</span><span className="section-kicker">KNOW YOUR RIGHTS</span><strong>پیش از مراجعه،<br/>آماده‌تر باشید.</strong><p>از شناخت موضوع تا مرتب‌کردن مدارک و پرسیدن سؤال‌های درست.</p></div>
+      </section>
+
+      <section className="editorial-topics"><div className="container editorial-topic-grid">
+        {categoryNotes.map((item) => <div className="editorial-topic" key={item.mark}><span>{item.mark}</span><div><strong>{item.title}</strong><small>{item.text}</small></div></div>)}
+      </div></section>
+
+      <section className="section editorial-library-section">
+        <div className="container">
+          <div className="editorial-section-heading"><div><span className="section-kicker">EDITOR&apos;S PICK</span><h2>از این راهنما شروع کنید</h2></div><p>یک نقطه شروع برای اینکه مسئله را دقیق‌تر بشناسید و با آمادگی بیشتری تصمیم بگیرید.</p></div>
+          {featured && <article className="editorial-featured">
+            <div className="editorial-featured-art"><span>§</span><small>راهنمای منتخب</small><b>LEGAL<br/>GUIDE</b></div>
+            <div className="editorial-featured-copy"><div className="editorial-meta"><span>{featured.category}</span><span>{featured.readTime} دقیقه مطالعه</span></div><h3><Link href={"/articles/" + featured.slug}>{featured.title}</Link></h3><p>{featured.excerpt}</p><Link className="editorial-read-link" href={"/articles/" + featured.slug}>خواندن راهنمای کامل <b>←</b></Link></div>
+          </article>}
+
+          <div className="editorial-section-heading editorial-all-heading"><div><span className="section-kicker">PRACTICAL LIBRARY</span><h2>همه راهنماها</h2></div><p>برای مطالعه، موضوع نزدیک به مسئله خود را انتخاب کنید.</p></div>
+          <div className="editorial-article-grid">
+            {remaining.map((article, index) => <article className="editorial-article-card" key={article.slug}>
+              <div className={"editorial-card-art editorial-art-" + (index % 4)}><span>{["⚖","▤","⌂","◈"][index % 4]}</span><small>{article.category}</small><b>{String(index + 2).padStart(2, "0")}</b></div>
+              <div className="editorial-card-content"><div className="editorial-meta"><span>{article.category}</span><span>{article.readTime} دقیقه</span></div><h3><Link href={"/articles/" + article.slug}>{article.title}</Link></h3><p>{article.excerpt}</p><Link className="editorial-read-link" href={"/articles/" + article.slug}>مطالعه راهنما <b>←</b></Link></div>
+            </article>)}
+          </div>
+          <aside className="editorial-disclaimer"><span>نکته مهم</span><p>این مطالب برای آگاهی عمومی‌اند و جایگزین بررسی اختصاصی پرونده نیستند. قوانین و رویه‌ها ممکن است تغییر کنند؛ تصمیم درباره هر پرونده باید با توجه به اسناد، تاریخ‌ها، مرجع صالح و شرایط همان موضوع گرفته شود.</p></aside>
         </div>
       </section>
-      <section className="article-contact-band"><div className="container"><div><span className="section-kicker">NEED A CASE REVIEW?</span><h2>اگر موضوع شما شرایط خاصی دارد،<br/><em>آن را جداگانه بررسی کنید.</em></h2></div><Link href="/#contact">ثبت درخواست بررسی اولیه <span>←</span></Link></div></section>
-      <footer className="article-footer"><div className="container"><Link href="/">بازگشت به صفحه اصلی</Link><span>اطلاع‌رسانی حقوقی بر پایه قوانین ایران</span></div></footer>
+
+      <section className="article-contact-band"><div className="container"><div><span className="section-kicker">YOUR CASE IS UNIQUE</span><h2>پاسخ هر پرونده،<br/><em>به جزئیات خودش وابسته است.</em></h2><p>اگر موضوع شما شرایط خاصی دارد، برای بررسی اولیه آن درخواست ثبت کنید.</p></div><Link href="/#contact">ثبت درخواست بررسی اولیه <span>←</span></Link></div></section>
+      <footer className="article-footer"><div className="container"><Link href="/">بازگشت به صفحه اصلی</Link><span>دانشنامه حقوقی · بر پایه قوانین ایران</span></div></footer>
     </main>
   );
 }
