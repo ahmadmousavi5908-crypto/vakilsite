@@ -47,6 +47,20 @@ export default function SocialContactDock() {
   for (const item of fallback) {
     if (!items.some((entry) => entry.url === item.url)) items.push(item);
   }
+  const contactItems = items.filter((item) => item.link_type !== "social");
+  const socialItems = items.filter((item) => item.link_type === "social");
+  const renderItems = (list) => list.map((item, index) => {
+    const external = /^https:\/\//i.test(item.url || "");
+    return (
+      <a key={item.id || item.url || index} href={item.url}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}>
+        <span className={"site-contact-icon site-contact-" + (item.platform || "other")}>{symbols[item.platform] || symbols.other}</span>
+        <span>{item.label || item.platform || "ارتباط"}</span>
+        <b aria-hidden="true">↗</b>
+      </a>
+    );
+  });
 
   return (
     <div className="site-contact-launcher" ref={rootRef} dir="rtl">
@@ -54,21 +68,17 @@ export default function SocialContactDock() {
         <section className="site-contact-panel" aria-label="راه‌های ارتباطی">
           <div className="site-contact-panel-head">
             <strong>ارتباط با وکیل</strong>
-            <span>تماس، واتساپ و شبکه‌های اجتماعی</span>
+            <span>تماس و راه‌های ارتباطی</span>
           </div>
-          <div className="site-contact-items">
-            {items.map((item, index) => {
-              const external = /^https:\/\//i.test(item.url || "");
-              return (
-                <a key={item.id || item.url || index} href={item.url}
-                  target={external ? "_blank" : undefined}
-                  rel={external ? "noopener noreferrer" : undefined}>
-                  <span className={"site-contact-icon site-contact-" + (item.platform || "other")}>{symbols[item.platform] || symbols.other}</span>
-                  <span>{item.label || item.platform || "ارتباط"}</span>
-                  <b aria-hidden="true">↗</b>
-                </a>
-              );
-            })}
+          <div className="site-contact-section">
+            <strong>راه‌های تماس</strong>
+            <div className="site-contact-items">{renderItems(contactItems)}</div>
+          </div>
+          <div className="site-contact-section">
+            <strong>شبکه‌های اجتماعی</strong>
+            {socialItems.length > 0
+              ? <div className="site-contact-items">{renderItems(socialItems)}</div>
+              : <p className="site-contact-empty">پیوند شبکه‌های اجتماعی هنوز در پنل مدیریت ثبت نشده است.</p>}
           </div>
         </section>
       )}
