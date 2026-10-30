@@ -107,6 +107,7 @@ export default function Home() {
               <a href="#process">روند همکاری</a>
               <Link href="/articles">مقالات حقوقی</Link>
               <Link href="/legal-glossary">واژه‌نامه حقوقی</Link>
+              <Link href="/legal-library">کتابخانه حقوقی</Link>
               <Link href="/ai-assistant">دستیار هوشمند</Link>
               <Link href="/lawyer-cooperation">همکاری وکلا</Link>
               <a href="#faq">پرسش‌های متداول</a>
