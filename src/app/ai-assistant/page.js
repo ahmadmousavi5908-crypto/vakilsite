@@ -28,7 +28,7 @@ export default function AiAssistantPage() {
       <span className="section-kicker">AI-POWERED LEGAL WORKSPACE</span>
       <h1>هوش مصنوعی، در خدمت <em>آگاهی و دقت حقوقی</em></h1>
       <p>یک فضای هوشمند برای شناخت اولیه مسائل حقوقی، آماده‌سازی پیش‌نویس‌ها و کمک به مدیریت حرفه‌ای وب‌سایت؛ با نظارت و بازبینی انسانی در تصمیم‌های مهم.</p>
-      <div className="feature-hero-actions"><a href="#ai-tools" className="feature-primary">آشنایی با قابلیت‌ها ↓</Link><a href="#ai-request" className="feature-secondary">ثبت پرسش اولیه</Link></div>
+      <div className="feature-hero-actions"><a href="#ai-tools" className="feature-primary">آشنایی با قابلیت‌ها ↓</a><a href="#ai-request" className="feature-secondary">ثبت پرسش اولیه</a></div>
     </div></section>
     <section className="feature-container feature-section" id="ai-tools">
       <div className="feature-heading"><span className="section-kicker">SMART WORKFLOW</span><h2>چه کارهایی را پوشش می‌دهد؟</h2><p>قابلیت‌ها به‌صورت مرحله‌ای فعال می‌شوند تا امنیت اطلاعات و کیفیت پاسخ قربانی عجله نشود.</p></div>
