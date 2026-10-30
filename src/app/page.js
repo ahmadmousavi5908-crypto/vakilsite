@@ -161,7 +161,7 @@ export default function Home() {
               <div className="service-card-top"><span>{s.n}</span><span className="service-arrow">↙</span></div>
               <div className="service-symbol">{s.tag === "خانواده" ? "⌂" : s.tag === "املاک" ? "▧" : s.tag === "کیفری" ? "§" : s.tag === "قرارداد" ? "▤" : s.tag === "مطالبات" ? "◈" : "✳"}</div>
               <h3>{s.title}</h3><p>{s.desc}</p><span className="card-more">ثبت درخواست در این زمینه <b>←</b></span>
-            </Link>)}
+            </a>)}
           </div>
         </div>
       </section>
