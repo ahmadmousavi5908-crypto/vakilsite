@@ -1,7 +1,11 @@
 export default function robots() {
   return {
     rules: [
-      { userAgent: "*", allow: "/" },
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/admin", "/api"],
+      },
     ],
   };
 }
