@@ -151,7 +151,7 @@ export default function Home() {
                   </g>
                 </svg>
               </div>
-              <div className="visual-bottom"><strong>سید احمد موسوی</strong><span>LEGAL COUNSEL</span></div>
+              <div className="visual-bottom attorney-photo-caption"><strong>سید احمد موسوی</strong><span>وکیل پایه یک دادگستری</span><small>شماره پروانه وکالت: <b dir="ltr">74516</b></small></div>
             </div>
             <div className="attorney-credentials" aria-label="مشخصات حرفه‌ای وکیل">
               <div className="attorney-identity">
@@ -238,20 +238,24 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section home-articles-section" id="articles">
+      <section className="section home-articles-section home-editorial-section" id="articles">
         <div className="container">
           <div className="section-heading">
-            <div><span className="section-kicker">LEGAL KNOWLEDGE · IRANIAN LAW</span><h2>پیش از تصمیم،<br/><em>آگاهانه‌تر بدانید.</em></h2></div>
-            <p>راهنماهای کوتاه و کاربردی بر پایه قوانین ایران؛ برای شناخت بهتر موضوع، آماده‌سازی مدارک و پرسیدن سؤال‌های درست.</p>
+            <div><span className="section-kicker">LEGAL KNOWLEDGE · IRANIAN LAW</span><h2>دانش حقوقی،<br/><em>برای تصمیم‌های آگاهانه.</em></h2></div>
+            <p>راهنماهای کوتاه و کاربردی بر پایه قوانین ایران؛ برای شناخت موضوع، آماده‌سازی مدارک و پرسیدن سؤال‌های درست.</p>
           </div>
-          <div className="home-article-grid">
-            {articles.slice(0, 6).map((article, index) => <Link className="home-article-card" href={"/articles/" + article.slug} key={article.slug}>
-              <div className="home-article-symbol">{["§","⚖","▤","⌂","◈","♡"][index % 6]}</div>
-              <div className="home-article-meta"><span>{article.category}</span><span>{article.readTime} مطالعه</span></div>
-              <h3>{article.title}</h3><p>{article.excerpt}</p><b>مطالعه راهنما <span>←</span></b>
+          <div className="home-editorial-layout">
+            {articles.slice(0, 1).map((article) => <Link className="home-editorial-feature" href={"/articles/" + article.slug} key={article.slug}>
+              <div className="home-editorial-feature-art"><span>§</span><small>راهنمای منتخب</small></div>
+              <div className="home-editorial-feature-copy"><div className="home-article-meta"><span>{article.category}</span><span>{article.readTime} دقیقه مطالعه</span></div><h3>{article.title}</h3><p>{article.excerpt}</p><b>مطالعه راهنمای کامل <span>←</span></b></div>
             </Link>)}
+            <div className="home-editorial-list">
+              {articles.slice(1, 4).map((article, index) => <Link className="home-editorial-row" href={"/articles/" + article.slug} key={article.slug}>
+                <span className="home-editorial-row-number">۰{index + ۲}</span><span className="home-editorial-row-copy"><small>{article.category} · {article.readTime} دقیقه</small><strong>{article.title}</strong><em>{article.excerpt}</em></span><b>←</b>
+              </Link>)}
+            </div>
           </div>
-          <div className="home-articles-more"><Link href="/articles">مشاهده همه مقالات و راهنماها ←</Link></div>
+          <div className="home-articles-more"><Link href="/articles">ورود به کتابخانه راهنماهای حقوقی <span>←</span></Link></div>
         </div>
       </section>
 
