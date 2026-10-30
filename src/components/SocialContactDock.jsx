@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const fallback = [
   { platform: "phone", label: "تماس با دفتر · 0916 916 5902", url: "tel:09169165902", link_type: "contact" },
@@ -16,6 +16,7 @@ const symbols = {
 
 export default function SocialContactDock() {
   const [links, setLinks] = useState(fallback);
+  const dockRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -30,12 +31,36 @@ export default function SocialContactDock() {
     return () => { mounted = false; };
   }, []);
 
+  useEffect(() => {
+    const dock = dockRef.current;
+    if (!dock) return undefined;
+
+    const closeDock = () => {
+      if (dock.open) dock.open = false;
+    };
+    const closeWhenOutside = (event) => {
+      if (!dock.contains(event.target)) closeDock();
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") closeDock();
+    };
+
+    document.addEventListener("pointerdown", closeWhenOutside, true);
+    window.addEventListener("scroll", closeDock, { passive: true });
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeWhenOutside, true);
+      window.removeEventListener("scroll", closeDock);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
+
   const contacts = links.filter((item) => item.link_type === "contact");
   const socials = links.filter((item) => item.link_type === "social");
   const items = [...(contacts.length ? contacts : fallback), ...socials];
 
   return (
-    <details className="floating-contact-dock">
+    <details className="floating-contact-dock" ref={dockRef}>
       <summary aria-label="باز کردن راه‌های ارتباط با وکیل" title="ارتباط با وکیل">
         <span className="dock-main-icon" aria-hidden="true">✆</span>
         <span className="dock-pulse" aria-hidden="true" />
