@@ -546,3 +546,40 @@ html {
 .public-office-copy{display:grid;gap:2px;min-width:0;flex:1}.public-office-copy strong{font-size:11px;color:#f2eadb}.public-office-copy span{font-size:10px;color:#aeb9c3;overflow-wrap:anywhere}.public-office-copy a{font-size:10px;color:#ddc99e;width:max-content}
 .public-office-map{font-size:10px;color:#e0c58f;white-space:nowrap;border:1px solid rgba(221,201,158,.3);padding:8px 11px;border-radius:2px}
 @media(max-width:600px){.public-office-location{align-items:flex-start;flex-wrap:wrap;padding:15px 0}.public-office-copy{flex-basis:calc(100% - 55px)}.public-office-map{margin-right:53px}}
+
+
+/* Native disclosure FAQ: no React state or client-side hydration required */
+.faq-item summary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 17px 2px;
+  color: #304358;
+  font-size: 12px;
+  text-align: right;
+  cursor: pointer;
+  list-style: none;
+}
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-item summary::marker {
+  content: "";
+}
+.faq-item summary b {
+  flex: none;
+  color: #a78b58;
+  font-size: 20px;
+  font-weight: 400;
+  transition: transform .2s ease;
+}
+.faq-item[open] summary b {
+  transform: rotate(45deg);
+}
+@media (max-width: 700px) {
+  .faq-item summary {
+    font-size: 11px;
+  }
+}
