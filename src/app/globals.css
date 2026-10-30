@@ -970,3 +970,90 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
 }
+
+
+/* Formal attorney portrait treatment: full-width mobile layout and a dignified architectural arch */
+.attorney-profile-visual{
+  width:100%;
+  align-items:stretch;
+}
+.lawyer-photo-card,
+.attorney-credentials{
+  box-sizing:border-box;
+  width:100%;
+  max-width:520px;
+  margin-right:auto;
+  margin-left:auto;
+}
+.lawyer-photo-card{
+  padding:18px 20px 14px;
+  border-radius:24px 24px 0 0;
+  background:linear-gradient(155deg,#203e5a 0%,#10243d 72%);
+  border:1px solid rgba(195,163,107,.48);
+  border-bottom:0;
+  box-shadow:0 20px 48px rgba(8,22,38,.2);
+}
+.lawyer-photo-card:before{
+  inset:8px 8px 5px;
+  border:1px solid rgba(229,210,167,.16);
+  border-radius:18px 18px 0 0;
+}
+.lawyer-photo-wrap{
+  height:370px;
+  margin:14px 0 12px;
+  overflow:hidden;
+  border:2px solid #c3a36b;
+  border-radius:50% 50% 12px 12px / 29% 29% 12px 12px;
+  background:#e9e4d9;
+  box-shadow:inset 0 0 0 4px rgba(255,255,255,.12),0 12px 30px rgba(3,13,25,.22);
+}
+.lawyer-photo-wrap>img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 25%;
+  transform:none;
+}
+.lawyer-photo-card .visual-bottom{
+  padding:13px 5px 3px;
+  border-top:1px solid rgba(229,210,167,.2);
+}
+.lawyer-photo-card .visual-bottom strong{
+  color:#f7f1e5;
+  font-size:16px;
+  letter-spacing:0;
+}
+.attorney-credentials{
+  margin-top:0;
+  padding:16px 18px 17px;
+  border:1px solid rgba(195,163,107,.42);
+  border-top:1px solid rgba(229,210,167,.18);
+  border-radius:0 0 18px 18px;
+  background:linear-gradient(155deg,#173550 0%,#10243d 100%);
+  box-shadow:0 18px 38px rgba(8,22,38,.15);
+}
+.attorney-identity{justify-content:center}
+.attorney-identity strong{color:#fffaf0}
+.attorney-credential-grid>div{
+  border-color:rgba(229,210,167,.16);
+  background:rgba(5,19,34,.2);
+}
+.attorney-direct-lines{border-top-color:rgba(229,210,167,.2)}
+@media(max-width:700px){
+  .attorney-profile-visual{padding:16px 0 26px}
+  .lawyer-photo-card,
+  .attorney-credentials{
+    width:100%;
+    max-width:none;
+  }
+  .lawyer-photo-card{padding:15px 14px 12px}
+  .lawyer-photo-wrap{
+    height:clamp(300px,92vw,370px);
+    margin:12px 0 10px;
+    border-radius:50% 50% 10px 10px / 31% 31% 10px 10px;
+  }
+  .attorney-credentials{padding:14px 14px 15px}
+}
+@media(prefers-reduced-motion:reduce){
+  .photo-justice-mark{animation:none}
+}
