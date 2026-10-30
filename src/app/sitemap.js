@@ -37,6 +37,11 @@ export default function sitemap() {
       changeFrequency: "monthly",
       priority: 0.9,
     },
+    {
+      url: base + "/locations/khuzestan",
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
     ...practiceAreas.map((area) => ({
       url: base + "/services/" + area.slug,
       changeFrequency: "monthly",
