@@ -185,6 +185,7 @@ export default function Home() {
             <div className="city-panel-head"><div><span className="section-kicker">KHOUZESTAN PROVINCE</span><h3>شهرهای استان خوزستان</h3></div><span className="city-count">شهرها و مناطق استان</span></div>
             <div className="city-list">{cities.map((c, i) => <span className={i === 0 ? "city-chip city-featured" : "city-chip"} key={c}>{c}{i === 0 && <b>مرکز</b>}</span>)}</div>
             <div className="city-foot"><span className="city-pin">⌖</span><span>همچنین امکان ثبت درخواست اولیه از سایر شهرهای ایران وجود دارد.</span></div>
+            <a className="city-national-link" href="#contact"><span className="city-national-icon">⌘</span><span><strong>سایر استان‌های ایران</strong><small>اگر شهر یا استان شما در فهرست بالا نیست، درخواست خود را از این بخش ثبت کنید.</small></span><b>←</b></a>
           </div>
         </div>
       </section>
