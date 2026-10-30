@@ -8,7 +8,7 @@ export default function LawyerCooperationPage() {
   function submit(e){
     e.preventDefault();
     const message=["درخواست همکاری حرفه‌ای وکلا", "نام و نام خانوادگی: "+form.name, "استان محل فعالیت: "+form.bar, "شهر: "+form.city, "راه ارتباطی: "+form.phone, "حوزه پرونده: "+form.field, "نوع همکاری: "+form.service, "شهر محل پرونده: "+form.caseCity, "مرحله پرونده: "+form.stage, "خلاصه غیرمحرمانه: "+form.summary].join("\n");
-    const phone=(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER||"").replace(/\\D/g,"");
+    const phone=(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER||"").replace(/\D/g,"");
     if(phone) window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(message),"_blank","noopener,noreferrer");
     else if(navigator.clipboard?.writeText) navigator.clipboard.writeText(message).then(()=>window.alert("متن درخواست کپی شد؛ شماره واتساپ دفتر هنوز تنظیم نشده است.")).catch(()=>window.prompt("متن درخواست را کپی کنید:",message));
     else window.prompt("متن درخواست را کپی کنید:",message);
