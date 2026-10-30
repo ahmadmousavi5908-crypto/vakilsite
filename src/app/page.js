@@ -96,9 +96,9 @@ export default function Home() {
                   <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stopColor="#e4cf9f"/><stop offset="1" stopColor="#9c7842"/></linearGradient>
                 </defs>
                 <path d="M210 64 V304 M150 304 H270 M174 326 H246 M190 346 H230" stroke="url(#gold)" strokeWidth="7" strokeLinecap="round" fill="none"/>
-                <path d="M92 120 H328 M210 64 L92 120 M210 64 L328 120" stroke="url(#gold)" strokeWidth="5" fill="none" strokeLinecap="round"/>
-                <path d="M92 120 L55 220 Q92 254 129 220 Z M328 120 L291 220 Q328 254 365 220 Z" fill="rgba(201,169,112,.16)" stroke="url(#gold)" strokeWidth="4"/>
-                <path d="M55 220 Q92 242 129 220 M291 220 Q328 242 365 220" stroke="url(#gold)" strokeWidth="3" fill="none"/>
+                <g className="scale-beam"><path d="M92 120 H328 M210 64 L92 120 M210 64 L328 120" stroke="url(#gold)" strokeWidth="5" fill="none" strokeLinecap="round"/></g>
+                <g className="scale-pan-left"><path d="M92 120 L55 220 Q92 254 129 220 Z" fill="rgba(201,169,112,.16)" stroke="url(#gold)" strokeWidth="4"/></g><g className="scale-pan-right"><path d="M328 120 L291 220 Q328 254 365 220 Z" fill="rgba(201,169,112,.16)" stroke="url(#gold)" strokeWidth="4"/></g>
+                <g className="scale-pan-left"><path d="M55 220 Q92 242 129 220" stroke="url(#gold)" strokeWidth="3" fill="none"/></g><g className="scale-pan-right"><path d="M291 220 Q328 242 365 220" stroke="url(#gold)" strokeWidth="3" fill="none"/></g>
                 <circle cx="210" cy="64" r="13" fill="#d6bd8c"/>
                 <path d="M210 34 V18 M188 40 L177 28 M232 40 L243 28" stroke="#d6bd8c" strokeWidth="3" strokeLinecap="round"/>
                 <path d="M144 370 H276" stroke="rgba(214,189,140,.35)" strokeWidth="2"/>
