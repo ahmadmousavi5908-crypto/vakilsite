@@ -20,7 +20,10 @@ export default function AboutPage() {
       <p>آشنایی با مشخصات حرفه‌ای، تحصیلات و رویکرد بررسی مسائل حقوقی پیش از انتخاب مسیر اقدام.</p>
     </div></section>
     <section className="container about-attorney-layout">
-      <div className="about-attorney-photo"><Image src="/images/lawyer.jpg" alt="تصویر سید احمد موسوی، وکیل پایه یک دادگستری" width={800} height={1000} sizes="(max-width: 700px) 100vw, 420px" /></div>
+      <figure className="about-attorney-photo">
+        <Image src="/images/lawyer.jpg" alt="تصویر سید احمد موسوی، وکیل پایه یک دادگستری" width={800} height={1000} sizes="(max-width: 700px) 100vw, 420px" />
+        <figcaption className="about-photo-caption"><strong>سید احمد موسوی</strong><span>وکیل پایه یک دادگستری</span><small>عضو مرکز وکلای قوه قضائیه</small><b>شماره پروانه وکالت: <i dir="ltr">74516</i></b></figcaption>
+      </figure>
       <div className="about-attorney-content">
         <span className="section-kicker">PROFESSIONAL INFORMATION</span>
         <h2>سید احمد موسوی</h2>
