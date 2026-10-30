@@ -18,6 +18,8 @@ const marks = {
   soroush: "س",
   telegram: "➤",
   linkedin: "in",
+  youtube: "▶",
+  aparat: "▶",
   email: "✉",
   website: "↗",
   other: "＋",
