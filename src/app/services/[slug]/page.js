@@ -13,7 +13,6 @@ export async function generateMetadata({ params }) {
   return {
     title: area.title + " | خدمات حقوقی سید احمد موسوی",
     description: area.description,
-    keywords: area.searchTerms,
     alternates: { canonical: "/services/" + area.slug },
     openGraph: { type: "website", locale: "fa_IR", title: area.title, description: area.description },
   };
@@ -44,7 +43,6 @@ export default async function PracticeAreaPage({ params }) {
           <h2>برای بررسی اولیه چه مدارکی آماده کنید؟</h2>
           <ul className="practice-check-list">{area.checks.map((item) => <li key={item}>{item}</li>)}</ul>
           <div className="article-legal-note"><b>توضیح مهم</b><p>{area.note}</p></div>
-          <p className="practice-search-terms"><strong>عبارت‌های مرتبط:</strong> {area.searchTerms.join("، ")}</p>
         </article>
         <aside className="practice-detail-aside">
           <span className="section-kicker">CASE REVIEW</span>
