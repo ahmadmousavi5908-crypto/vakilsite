@@ -81,7 +81,7 @@ export async function saveSocialLinks(formData) {
 
   const allowedPlatforms = new Set([
     "phone", "whatsapp", "instagram", "bale", "rubika", "eitaa",
-    "soroush", "telegram", "linkedin", "email", "website", "other",
+    "soroush", "telegram", "linkedin", "youtube", "aparat", "email", "website", "other",
   ]);
   const clean = [];
   for (let index = 0; index < submitted.length; index += 1) {
