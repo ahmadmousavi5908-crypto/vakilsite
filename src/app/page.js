@@ -310,7 +310,7 @@ export default function Home() {
       <section className="section faq-section" id="faq">
         <div className="container faq-layout">
           <div><span className="section-kicker">GOOD TO KNOW</span><h2>پیش از شروع،<br/><em>این نکات را بدانید.</em></h2><p>پاسخ‌های کوتاه برای پرسش‌هایی که معمولاً در نخستین تماس مطرح می‌شوند.</p></div>
-          <div className="faq-list">{faqs.map((f, i) => <details className="faq-item" key={f[0]}><summary><span>{f[0]}</span><b aria-hidden="true">+</b></summary><p>{f[1]}</p></details>)}</div>
+          <div className="faq-list">{faqs.map((f) => <details className="faq-item" key={f[0]}><summary><span>{f[0]}</span><b aria-hidden="true">+</b></summary><p>{f[1]}</p></details>)}</div>
         </div>
       </section>
 
