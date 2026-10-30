@@ -664,3 +664,57 @@ html {
 .attorney-direct-lines a{font-size:11px;font-weight:700;color:var(--gold-light);direction:ltr}
 .attorney-direct-lines a+a{padding-right:10px;border-right:1px solid rgba(255,255,255,.2)}
 @media(max-width:700px){.attorney-credentials{padding:13px;margin-top:20px}.attorney-identity strong{font-size:15px}.attorney-credential-grid{gap:10px}.attorney-credential-grid strong{font-size:9px}.attorney-direct-lines{gap:7px}.attorney-direct-lines a{font-size:10px}}
+
+
+/* Attorney portrait, credentials and persistent contact access */
+.attorney-profile-visual{height:auto;min-height:0;display:flex;flex-direction:column;align-items:center;gap:0;padding:8px 0 30px}
+.lawyer-photo-card{width:min(100%,380px);padding:18px 20px 15px;background:linear-gradient(145deg,#203e5a,#11283f);border:1px solid rgba(220,198,157,.36);position:relative;z-index:2;box-shadow:0 24px 65px rgba(0,0,0,.22)}
+.lawyer-photo-card:before{content:"";position:absolute;inset:8px;border:1px solid rgba(220,198,157,.13);pointer-events:none}
+.lawyer-photo-card .visual-top,.lawyer-photo-card .visual-bottom{position:relative;z-index:2}
+.lawyer-photo-wrap{height:310px;position:relative;margin:13px 0 12px;overflow:hidden;background:linear-gradient(145deg,#d9d1c2,#8d9aa3);border:1px solid rgba(220,198,157,.45)}
+.lawyer-photo-wrap>img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 28%}
+.photo-justice-mark{position:absolute;right:12px;bottom:12px;width:72px;height:72px;padding:10px;color:#e8d4a8;background:rgba(16,39,60,.88);border:1px solid rgba(232,212,168,.7);border-radius:50%;box-shadow:0 8px 25px rgba(0,0,0,.24);transform-origin:50% 20%;animation:justice-sway 4.5s ease-in-out infinite}
+@keyframes justice-sway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+.lawyer-photo-card .visual-bottom{padding-top:12px}
+.lawyer-photo-card .visual-bottom strong{font-size:15px}
+.attorney-credentials{width:min(100%,380px);max-width:380px;margin:0;padding:16px 18px;background:rgba(255,255,255,.065);border:1px solid rgba(225,201,149,.27);border-top:0;backdrop-filter:blur(8px);position:relative;z-index:2}
+.attorney-identity{padding-bottom:12px}
+.attorney-identity strong{font-size:18px}
+.attorney-credential-grid{grid-template-columns:1fr;gap:11px;padding:14px 0}
+.attorney-credential-grid>div{gap:3px;padding-bottom:9px;border-bottom:1px solid rgba(255,255,255,.1)}
+.attorney-credential-grid>div:last-child{border-bottom:0}
+.attorney-credential-grid span{font-size:11px;color:#d4dbe1}
+.attorney-credential-grid strong{display:block;font-size:13px;line-height:1.9;color:#fff}
+.attorney-credential-grid>div:first-child strong{direction:ltr;text-align:right;letter-spacing:1px;font-size:15px;color:var(--gold-light)}
+.attorney-direct-lines{gap:12px}
+.attorney-direct-lines>span{font-size:11px}
+.attorney-direct-lines a{font-size:13px}
+.text-link{font-size:14px;font-weight:700;display:inline-flex;align-items:center;min-height:44px}
+.text-link span{font-size:20px}
+.hero-points{font-size:12px;gap:15px}
+.faq-item summary{font-size:14px;min-height:52px}
+.faq-item summary b{font-size:25px}
+.back-link,.article-back,.back-to-articles,.breadcrumb a{font-size:14px!important;min-height:44px;display:inline-flex;align-items:center;gap:8px}
+.floating-contact-dock{position:fixed;z-index:1000;right:max(18px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));direction:rtl}
+.floating-contact-dock>summary{list-style:none;width:62px;height:62px;display:grid;place-items:center;position:relative;cursor:pointer;border-radius:50%;background:linear-gradient(145deg,#e4cf9f,#b18e54);border:2px solid rgba(255,255,255,.85);box-shadow:0 10px 32px rgba(10,25,40,.3);color:#142b43}
+.floating-contact-dock>summary::-webkit-details-marker{display:none}
+.dock-main-icon{font-size:30px;line-height:1;position:relative;z-index:2}
+.dock-pulse{position:absolute;inset:-5px;border:1px solid rgba(221,201,158,.75);border-radius:50%;animation:dock-pulse 2.5s ease-out infinite}
+@keyframes dock-pulse{0%{transform:scale(.85);opacity:.85}100%{transform:scale(1.45);opacity:0}}
+.floating-contact-dock[open]>summary{background:#142b43;color:#e4cf9f}
+.floating-contact-dock[open] .dock-main-icon{transform:rotate(45deg)}
+.dock-panel{position:absolute;right:0;bottom:76px;width:min(340px,calc(100vw - 32px));max-height:min(70vh,540px);overflow:auto;padding:17px;background:#fffefa;border:1px solid #e7dece;box-shadow:0 18px 55px rgba(10,25,40,.25);border-radius:12px}
+.dock-panel-heading{display:flex;align-items:center;gap:11px;padding-bottom:13px;border-bottom:1px solid #eee8dd}
+.dock-heading-icon{width:39px;height:39px;display:grid;place-items:center;background:#142b43;color:#e4cf9f;border-radius:10px;font-size:21px}
+.dock-panel-heading>div{display:grid;gap:3px}
+.dock-panel-heading strong{font-size:15px;color:#142b43}
+.dock-panel-heading small{font-size:11px;color:#7c8792}
+.dock-links{display:grid;gap:7px;padding-top:13px}
+.dock-links a{display:flex;align-items:center;gap:10px;padding:10px 11px;min-height:48px;border:1px solid #eee8dd;background:#fff;color:#34485d;text-decoration:none;border-radius:7px;font-size:13px;font-weight:700}
+.dock-links a:hover{border-color:#c4a36b;background:#faf7f0}
+.dock-link-icon{width:31px;height:31px;display:grid;place-items:center;flex:none;border-radius:9px;background:#f2eee5;color:#34485d;font-size:15px}
+.dock-whatsapp{background:#e9f4eb;color:#23824a}.dock-instagram{background:#f6edf3;color:#a34d78}.dock-bale{background:#edf3f8;color:#3475a6}.dock-rubika{background:#f0eff8;color:#6557a0}.dock-eitaa{background:#edf4f7;color:#347c9b}.dock-soroush{background:#f4f0e8;color:#92723e}.dock-telegram{background:#edf5f8;color:#2580a8}
+.dock-links a>span:nth-child(2){min-width:0;flex:1;overflow-wrap:anywhere}
+.dock-links a>b{color:#a88951;font-size:17px}
+.dock-footnote{display:block;margin-top:12px;color:#87919b;font-size:10px;line-height:1.9}
+@media(max-width:700px){.attorney-profile-visual{padding-top:20px}.lawyer-photo-card{width:min(100%,360px)}.lawyer-photo-wrap{height:285px}.attorney-credentials{width:min(100%,360px);padding:14px}.attorney-credential-grid strong{font-size:13px}.floating-contact-dock>summary{width:58px;height:58px}.dock-panel{bottom:70px}}
