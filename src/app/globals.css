@@ -1196,3 +1196,252 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
   }
 }
 
+
+
+/* Persian typography and mobile layout stability pass */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-family: "Vazirmatn", "Noto Sans Arabic", "Noto Naskh Arabic UI", Tahoma, system-ui, sans-serif;
+  letter-spacing: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+h1, h2, h3, h4, p, a, button, label, small, strong, span {
+  word-break: normal;
+  hyphens: none;
+}
+
+.hero h1 {
+  letter-spacing: normal;
+  line-height: 1.85;
+  overflow-wrap: normal;
+}
+
+.hero-lead,
+.section-heading > p,
+.city-intro > p,
+.connection-copy > p,
+.contact-copy > p,
+.faq-layout > div:first-child > p {
+  line-height: 2.15;
+  overflow-wrap: break-word;
+}
+
+.attorney-credential-grid,
+.attorney-credential-grid > div,
+.attorney-direct-lines,
+.attorney-direct-lines > * {
+  min-width: 0;
+}
+
+.attorney-credential-grid strong {
+  font-size: 12px;
+  line-height: 2;
+  overflow-wrap: break-word;
+}
+
+.attorney-direct-lines {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  justify-items: center;
+  gap: 10px 12px;
+}
+
+.attorney-direct-lines > span {
+  grid-column: 1 / -1;
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+.attorney-direct-lines a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  max-width: 100%;
+  padding: 5px 4px;
+  direction: ltr;
+  unicode-bidi: isolate;
+  white-space: nowrap;
+  font-size: 14px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: .2px;
+}
+
+.attorney-direct-lines a + a {
+  padding-right: 4px;
+  border-right: 0;
+}
+
+.attorney-credential-grid > div {
+  align-content: start;
+}
+
+.social-link-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.social-link-card {
+  min-width: 0;
+  min-height: 48px;
+}
+
+.social-link-label {
+  min-width: 0;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.social-link-arrow,
+.city-national-link > b,
+.connection-primary > strong,
+.connection-whatsapp > strong,
+.dock-links a > b,
+.card-more > b {
+  flex: 0 0 auto;
+  line-height: 1;
+  unicode-bidi: isolate;
+}
+
+.dock-links a > b {
+  margin-inline-start: auto;
+}
+
+.floating-contact-dock {
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+}
+
+.floating-contact-dock > summary {
+  width: 58px;
+  height: 58px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dock-panel {
+  width: min(360px, calc(100vw - 28px));
+  max-height: min(68dvh, 540px);
+  overscroll-behavior: contain;
+}
+
+.dock-links a {
+  min-width: 0;
+  line-height: 1.7;
+}
+
+.dock-links a > span:nth-child(2) {
+  min-width: 0;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .hero h1 {
+    font-size: clamp(27px, 7.4vw, 34px);
+    line-height: 1.9;
+    margin-bottom: 18px;
+  }
+
+  .hero-lead {
+    font-size: 13px;
+    line-height: 2.25;
+  }
+
+  .hero-actions {
+    flex-wrap: wrap;
+  }
+
+  .attorney-credential-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .attorney-credential-grid span {
+    font-size: 10px;
+    line-height: 1.8;
+  }
+
+  .attorney-credential-grid strong {
+    font-size: 12px;
+    line-height: 1.9;
+  }
+
+  .attorney-direct-lines a {
+    font-size: 13px;
+  }
+
+  .social-link-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .social-link-label {
+    font-size: 12px;
+  }
+
+  .connection-primary,
+  .connection-whatsapp {
+    min-width: 0;
+    gap: 9px;
+  }
+
+  .connection-primary > span:nth-child(2),
+  .connection-whatsapp > span:nth-child(2) {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .connection-primary small,
+  .connection-whatsapp small {
+    line-height: 1.8;
+    overflow-wrap: break-word;
+  }
+
+  .footer-bottom {
+    font-size: 10px;
+    line-height: 2;
+  }
+}
+
+@media (max-width: 380px) {
+  .attorney-credential-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .attorney-direct-lines {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .attorney-direct-lines > span {
+    grid-column: 1;
+  }
+
+  .attorney-direct-lines a {
+    width: 100%;
+    font-size: 14px;
+  }
+
+  .connection-primary,
+  .connection-whatsapp {
+    padding-inline: 9px;
+  }
+
+  .connection-primary b,
+  .connection-whatsapp b {
+    font-size: 11px;
+    line-height: 1.8;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-contact-dock .dock-pulse {
+    animation: none;
+  }
+}
