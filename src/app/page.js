@@ -36,6 +36,7 @@ export default function Home() {
 
   async function prepareRequest(e) {
     e.preventDefault();
+    const timestamp = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { dateStyle: "full", timeStyle: "short", timeZone: "Asia/Tehran" }).format(new Date());
     const text = [
       "درخواست بررسی اولیه",
       "زمان تهیه درخواست (به وقت ایران): " + timestamp,
@@ -44,7 +45,6 @@ export default function Home() {
       "شرح کوتاه: " + (details || "در انتظار توضیحات"),
     ].join("\n");
     const phone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "989169165902").replace(/\D/g, "");
-    const timestamp = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { dateStyle: "full", timeStyle: "short", timeZone: "Asia/Tehran" }).format(new Date());
     if (phone) {
       window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(text), "_blank", "noopener,noreferrer");
       return;
