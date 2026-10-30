@@ -244,28 +244,21 @@ export default function Home() {
 
       <section className="section home-articles-section home-editorial-section" id="articles">
         <div className="container">
-          <div className="section-heading">
-            <div><span className="section-kicker">LEGAL KNOWLEDGE · IRANIAN LAW</span><h2>دانش حقوقی،<br/><em>برای تصمیم‌های آگاهانه.</em></h2></div>
+          <div className="section-heading home-articles-heading">
+            <div><span className="section-kicker">کتابخانه حقوقی</span><h2>دانش حقوقی،<br/><em>برای تصمیم‌های آگاهانه.</em></h2></div>
             <p>راهنماهای کوتاه و کاربردی بر پایه قوانین ایران؛ برای شناخت موضوع، آماده‌سازی مدارک و پرسیدن سؤال‌های درست.</p>
           </div>
-          <div className="home-editorial-layout">
-            {articles.slice(0, 1).map((article) => <Link className="home-editorial-feature" href={"/articles/" + article.slug} key={article.slug}>
-              <div className="home-editorial-feature-art"><span>§</span><small>راهنمای منتخب</small></div>
-              <div className="home-editorial-feature-copy"><div className="home-article-meta"><span>راهنمای منتخب</span><span>{article.readTime} دقیقه مطالعه</span></div><h3>{article.title}</h3><p>{article.excerpt}</p><b>مطالعه راهنمای کامل <span>←</span></b></div>
-            </Link>)}
-            <div className="home-editorial-list home-article-accordion-list">
-              {articles.slice(1).map((article, index) => <details className="home-article-accordion" key={article.slug}>
-                <summary>
-                  <span className="home-article-accordion-number">{String(index + 2).padStart(2, "0")}</span>
-                  <span className="home-article-accordion-title"><strong>{article.title}</strong><small>{article.readTime} دقیقه مطالعه</small></span>
-                  <b aria-hidden="true">+</b>
-                </summary>
-                <div className="home-article-accordion-panel">
-                  <p>{article.excerpt}</p>
-                  <Link href={"/articles/" + article.slug}>مطالعه راهنمای کامل <span>←</span></Link>
-                </div>
-              </details>)}
-            </div>
+          <div className="home-article-accordion-list">
+            {articles.map((article) => <details className="home-article-accordion" key={article.slug}>
+              <summary>
+                <span className="home-article-accordion-title"><strong>{article.title}</strong><small>{article.readTime} مطالعه</small></span>
+                <b aria-hidden="true">+</b>
+              </summary>
+              <div className="home-article-accordion-panel">
+                <p>{article.excerpt}</p>
+                <Link href={"/articles/" + article.slug}>مطالعه مقاله کامل <span>←</span></Link>
+              </div>
+            </details>)}
           </div>
           <div className="home-articles-more"><Link href="/articles">ورود به کتابخانه راهنماهای حقوقی <span>←</span></Link></div>
         </div>
