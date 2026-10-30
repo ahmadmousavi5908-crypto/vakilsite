@@ -164,6 +164,22 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="connection-section" aria-labelledby="connection-title">
+        <div className="container connection-card">
+          <div className="connection-copy">
+            <span className="section-kicker">LET'S TALK</span>
+            <h2 id="connection-title">برای شروع، لازم نیست همه‌چیز را بدانید.</h2>
+            <p>کافی است مسئله‌تان را کوتاه مطرح کنید. مسیر مناسب ارتباط و بررسی اولیه، متناسب با شرایط شما مشخص می‌شود.</p>
+            <div className="connection-assurance"><span>✓</span> بدون نیاز به اصطلاحات پیچیده حقوقی</div>
+          </div>
+          <div className="connection-actions">
+            <a className="connection-primary" href="#contact"><span className="connection-icon">✉</span><span><b>ثبت درخواست بررسی اولیه</b><small>فرم کوتاه و ساده، حدود یک دقیقه</small></span><strong>←</strong></a>
+            <a className="connection-whatsapp" href="#contact"><span className="whatsapp-mark">◉</span><span><b>شروع ارتباط و دریافت راهنمایی</b><small>ابتدا موضوع را ثبت کنید تا مسیر ارتباط مشخص شود</small></span><strong>←</strong></a>
+            <p className="connection-note">نشانی شبکه‌های اجتماعی پس از ثبت لینک‌های واقعی در تنظیمات سایت نمایش داده می‌شود.</p>
+          </div>
+        </div>
+      </section>
+
       <section className="contact-section" id="contact">
         <div className="container contact-layout">
           <div className="contact-copy"><span className="section-kicker">START HERE</span><h2>مسئله‌تان را<br/><em>از همین‌جا</em> مطرح کنید.</h2><p>چند مورد کوتاه را تکمیل کنید تا متن درخواست اولیه آماده شود. لطفاً در این مرحله اطلاعات محرمانه، کد ملی، شماره پرونده یا تصویر اسناد را وارد نکنید.</p><div className="contact-assurance"><span>✓</span> ثبت درخواست اولیه به معنی قبول وکالت یا تضمین نتیجه پرونده نیست.</div></div>
