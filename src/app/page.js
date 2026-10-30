@@ -6,6 +6,7 @@ import { articles } from "../data/articles";
 import OfficeLocationPublic from "../components/OfficeLocationPublic";
 import JsonLd from "../components/JsonLd";
 import SocialLinksPublic from "../components/SocialLinksPublic";
+import SocialTopBar from "../components/SocialTopBar";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -83,6 +84,7 @@ export default function Home() {
         <div className="container topline-inner">
           <span>پاسخ‌گویی به درخواست‌های حقوقی از سراسر ایران با مرکزیت اهواز، خوزستان</span>
           <span className="topline-note"><i /> مسیر روشن، تصمیم آگاهانه</span>
+          <SocialTopBar />
         </div>
       </div>
 
