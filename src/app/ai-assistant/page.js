@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 const tools = [
   ["§", "راهنمای اولیه حقوقی", "پرسش‌های عمومی درباره قوانین ایران، مفاهیم حقوقی و مسیرهای معمول پیگیری؛ همراه با ارجاع به بررسی وکیل در موضوعات پرونده‌ای."],
@@ -22,12 +23,12 @@ export default function AiAssistantPage() {
     else window.prompt("متن درخواست را کپی کنید:", message);
   }
   return <main className="feature-page" dir="rtl">
-    <header className="feature-nav"><a href="/">← بازگشت به صفحه اصلی</a><span>مرکز خدمات هوشمند</span></header>
+    <header className="feature-nav"><Link href="/">← بازگشت به صفحه اصلی</Link><span>مرکز خدمات هوشمند</span></header>
     <section className="feature-hero ai-hero"><div className="feature-container">
       <span className="section-kicker">AI-POWERED LEGAL WORKSPACE</span>
       <h1>هوش مصنوعی، در خدمت <em>آگاهی و دقت حقوقی</em></h1>
       <p>یک فضای هوشمند برای شناخت اولیه مسائل حقوقی، آماده‌سازی پیش‌نویس‌ها و کمک به مدیریت حرفه‌ای وب‌سایت؛ با نظارت و بازبینی انسانی در تصمیم‌های مهم.</p>
-      <div className="feature-hero-actions"><a href="#ai-tools" className="feature-primary">آشنایی با قابلیت‌ها ↓</a><a href="#ai-request" className="feature-secondary">ثبت پرسش اولیه</a></div>
+      <div className="feature-hero-actions"><a href="#ai-tools" className="feature-primary">آشنایی با قابلیت‌ها ↓</Link><a href="#ai-request" className="feature-secondary">ثبت پرسش اولیه</Link></div>
     </div></section>
     <section className="feature-container feature-section" id="ai-tools">
       <div className="feature-heading"><span className="section-kicker">SMART WORKFLOW</span><h2>چه کارهایی را پوشش می‌دهد؟</h2><p>قابلیت‌ها به‌صورت مرحله‌ای فعال می‌شوند تا امنیت اطلاعات و کیفیت پاسخ قربانی عجله نشود.</p></div>
@@ -36,6 +37,6 @@ export default function AiAssistantPage() {
     <section className="ai-workflow"><div className="feature-container"><div className="feature-heading"><span className="section-kicker">HOW IT WORKS</span><h2>از پرسش تا پاسخ قابل اتکا</h2></div><div className="ai-steps"><div><b>۱</b><h3>تعریف مسئله</h3><p>موضوع و هدف خود را بدون درج اطلاعات محرمانه مشخص کنید.</p></div><div><b>۲</b><h3>تحلیل و منبع‌یابی</h3><p>سامانه در نسخه نهایی باید پاسخ را به قوانین و منابع معتبر ایران متصل کند.</p></div><div><b>۳</b><h3>بازبینی انسانی</h3><p>موضوعات اختصاصی و حساس پیش از هر اقدام، توسط وکیل بررسی می‌شوند.</p></div></div></div></section>
     <section className="feature-container feature-section" id="ai-request"><div className="ai-request-layout"><div><span className="section-kicker">ASK A QUESTION</span><h2>پرسش اولیه خود را ثبت کنید.</h2><p>این فرم فعلاً درخواست را برای ارتباط با دفتر آماده می‌کند و پاسخ خودکار هوش مصنوعی نیست. اتصال مدل هوش مصنوعی و پایگاه دانش حقوقی پس از راه‌اندازی امن سرور انجام خواهد شد.</p><div className="feature-warning">اطلاعات هویتی، شماره پرونده، نشانی، رمزها یا تصویر اسناد محرمانه را در این فرم وارد نکنید.</div></div>
     <form className="feature-form" onSubmit={prepare}><label>نوع درخواست</label><select value={kind} onChange={e=>setKind(e.target.value)}><option>پرسش عمومی حقوقی</option><option>آماده‌سازی پیش‌نویس</option><option>راهنمایی درباره خدمات سایت</option><option>پیشنهاد یا گزارش مشکل سایت</option></select><label>پرسش یا توضیح کوتاه</label><textarea required rows="5" maxLength="1200" value={question} onChange={e=>setQuestion(e.target.value)} placeholder="موضوع را بدون ذکر اطلاعات محرمانه توضیح دهید..." /><button className="feature-primary" type="submit">آماده‌سازی درخواست ←</button></form></div></section>
-    <footer className="feature-footer"><a href="/">صفحه اصلی</a><span>اطلاعات عمومی هوش مصنوعی جایگزین مشاوره اختصاصی و بررسی وکیل نیست.</span></footer>
+    <footer className="feature-footer"><Link href="/">صفحه اصلی</Link><span>اطلاعات عمومی هوش مصنوعی جایگزین مشاوره اختصاصی و بررسی وکیل نیست.</span></footer>
   </main>;
 }
