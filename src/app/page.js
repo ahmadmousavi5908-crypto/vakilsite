@@ -75,6 +75,8 @@ export default function Home() {
             <a href="#cities">مناطق تحت پوشش</a>
             <a href="#process">روند همکاری</a>
             <a href="/articles">مقالات حقوقی</a>
+            <a href="/ai-assistant">دستیار هوشمند</a>
+            <a href="/lawyer-cooperation">همکاری وکلا</a>
             <a href="#faq">پرسش‌های متداول</a>
           </nav>
           <a className="nav-cta" href="#contact">درخواست مشاوره <span>←</span></a>
@@ -192,6 +194,19 @@ export default function Home() {
             </a>)}
           </div>
           <div className="home-articles-more"><a href="/articles">مشاهده همه مقالات و راهنماها ←</a></div>
+        </div>
+      </section>
+
+      <section className="feature-entry-section">
+        <div className="container">
+          <div className="section-heading">
+            <div><span className="section-kicker">SMART LEGAL SERVICES</span><h2>خدماتی فراتر از<br/><em>یک وب‌سایت حقوقی معمولی</em></h2></div>
+            <p>از راهنمایی هوشمند و ابزارهای مدیریت محتوا تا همکاری حرفه‌ای میان وکلا؛ مسیرهای تخصصی را از اینجا آغاز کنید.</p>
+          </div>
+          <div className="feature-entry-grid">
+            <a className="feature-entry-card ai-entry" href="/ai-assistant"><span className="feature-entry-mark">✦</span><span className="section-kicker">AI LEGAL ASSISTANT</span><h3>دستیار هوشمند حقوقی و سایت</h3><p>راهنمای اولیه حقوقی، کمک به پیش‌نویس اسناد، خلاصه‌سازی امن، تولید مقاله و پشتیبانی از مدیریت وب‌سایت.</p><b>ورود به مرکز هوشمند <span>←</span></b></a>
+            <a className="feature-entry-card lawyer-entry" href="/lawyer-cooperation"><span className="feature-entry-mark">§</span><span className="section-kicker">LAWYER NETWORK</span><h3>درگاه همکاری وکلا</h3><p>ارتباط وکلای سراسر کشور برای ارجاع و بررسی پرونده، همکاری محلی در خوزستان و تبادل نظر تخصصی.</p><b>ثبت درخواست همکاری <span>←</span></b></a>
+          </div>
         </div>
       </section>
 
