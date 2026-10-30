@@ -195,7 +195,7 @@ export default function Home() {
           <div className="city-intro">
             <span className="section-kicker">KHOUZESTAN & IRAN</span>
             <h2>فاصله، مانع<br/><em>ثبت درخواست</em> نیست.</h2>
-            <p>دفتر و پایگاه فعالیت مجموعه در اهواز، استان خوزستان قرار دارد؛ با این حال، متقاضیان از سراسر ایران می‌توانند درخواست اولیه خود را ثبت کنند. امکان پذیرش و شیوه ارائه خدمت پس از بررسی موضوع و شرایط پرونده مشخص می‌شود. امکان پذیرش هر پرونده به موضوع، مرجع رسیدگی و شرایط آن بستگی دارد.</p>
+            <p>دفتر و پایگاه فعالیت مجموعه در اهواز، استان خوزستان قرار دارد؛ با این حال، متقاضیان از سراسر ایران می‌توانند درخواست اولیه خود را ثبت کنند. امکان پذیرش و شیوه ارائه خدمت پس از بررسی موضوع، مرجع رسیدگی و شرایط پرونده مشخص می‌شود.</p>
             <a href="#contact" className="city-cta">درخواست از شهر خودتان <span>←</span></a>
           </div>
           <div className="city-panel">
@@ -281,7 +281,7 @@ export default function Home() {
 
       <footer className="footer">
         <div className="container footer-main">
-          <a className="brand footer-brand" href="#"><span className="brand-mark"><span>و</span></span><span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز · خوزستان · سراسر ایران</small></span></a>
+          <a className="brand footer-brand" href="#"><span className="brand-mark"><span>و</span></span><span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>دفتر اهواز، خوزستان · خدمات در سراسر ایران</small></span></a>
           <p>آگاهی حقوقی، نخستین قدم برای انتخاب درست است.</p>
           <a href="#contact" className="footer-link">ثبت درخواست <span>←</span></a>
         </div>
