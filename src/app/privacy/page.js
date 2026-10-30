@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export const metadata = {
   title: "حریم خصوصی و حفاظت از اطلاعات",
   description: "سیاست حریم خصوصی وب‌سایت خدمات حقوقی؛ نحوه دریافت، استفاده و حفاظت از اطلاعات درخواست‌های اولیه.",
@@ -5,7 +7,7 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return <main className="feature-page" dir="rtl">
-    <header className="feature-nav"><a href="/">← بازگشت به صفحه اصلی</a><span>حریم خصوصی</span></header>
+    <header className="feature-nav"><Link href="/">← بازگشت به صفحه اصلی</Link><span>حریم خصوصی</span></header>
     <section className="feature-hero"><div className="feature-container">
       <span className="section-kicker">PRIVACY & DATA PROTECTION</span>
       <h1>حریم خصوصی، <em>بخشی از اعتماد حرفه‌ای است.</em></h1>
@@ -20,8 +22,8 @@ export default function PrivacyPage() {
       <article><h2>۶. دسترسی، اصلاح یا حذف اطلاعات</h2><p>برای درخواست اصلاح یا حذف اطلاعاتی که از طریق این وب‌سایت ارسال کرده‌اید، از همان راه ارتباطی رسمی دفتر که در سایت اعلام می‌شود استفاده کنید. اجرای درخواست با رعایت تعهدات قانونی و حرفه‌ای و ضرورت نگهداری سوابق مرتبط بررسی خواهد شد.</p></article>
       <article><h2>۷. تغییرات این سیاست</h2><p>با توسعه امکانات سایت، از جمله فرم‌های ذخیره‌شونده، پنل مدیریت یا ابزارهای هوش مصنوعی، این صفحه متناسب با شیوه واقعی پردازش اطلاعات به‌روزرسانی می‌شود. نسخه جاری باید پیش از فعال‌سازی هر قابلیت جدید با عملکرد واقعی آن تطبیق داده شود.</p></article>
       <div className="feature-warning">این متن چارچوب اطلاع‌رسانی حریم خصوصی وب‌سایت است و جایگزین بررسی حقوقی نهایی، تنظیم قراردادهای لازم با ارائه‌دهندگان زیرساخت یا تدوین رویه داخلی حفاظت از داده‌ها نیست.</div>
-      <p><a className="feature-primary" href="/">بازگشت به صفحه اصلی</a></p>
+      <p><Link className="feature-primary" href="/">بازگشت به صفحه اصلی</Link></p>
     </section>
-    <footer className="feature-footer"><a href="/">صفحه اصلی</a><span>حفاظت از اطلاعات، بخشی از مسئولیت حرفه‌ای است.</span></footer>
+    <footer className="feature-footer"><Link href="/">صفحه اصلی</Link><span>حفاظت از اطلاعات، بخشی از مسئولیت حرفه‌ای است.</span></footer>
   </main>;
 }
