@@ -60,11 +60,11 @@ export default async function ArticleDetailPage({ params }) {
       </header>
       <section className="article-detail-hero">
         <div className="container">
-          <div className="article-breadcrumb"><Link href="/">صفحه اصلی</Link><span>←</span><Link href="/articles">مقالات حقوقی</Link><span>←</span><span>{article.category}</span></div>
-          <span className="section-kicker">{article.category} · راهنمای حقوقی</span>
+          <div className="article-breadcrumb"><Link href="/">صفحه اصلی</Link><span>←</span><Link href="/articles">مقالات حقوقی</Link></div>
+          <span className="section-kicker">راهنمای حقوقی · قوانین ایران</span>
           <h1>{article.title}</h1>
           <p>{article.excerpt}</p>
-          <div className="article-meta article-detail-meta"><span>{article.category}</span><span>{article.readTime} مطالعه</span><span>ویژه قوانین ایران</span></div>
+          <div className="article-meta article-detail-meta"><span>{article.readTime} مطالعه</span><span>ویژه قوانین ایران</span></div>
         </div>
       </section>
       <div className="container article-detail-layout">
