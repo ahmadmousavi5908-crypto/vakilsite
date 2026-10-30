@@ -78,6 +78,7 @@ export default function Home() {
             <a href="#cities">مناطق تحت پوشش</a>
             <a href="#process">روند همکاری</a>
             <Link href="/articles">مقالات حقوقی</Link>
+            <Link href="/legal-glossary">واژه‌نامه حقوقی</Link>
             <Link href="/ai-assistant">دستیار هوشمند</Link>
             <Link href="/lawyer-cooperation">همکاری وکلا</Link>
             <a href="#faq">پرسش‌های متداول</a>
@@ -89,6 +90,7 @@ export default function Home() {
               <a href="#cities">مناطق تحت پوشش</a>
               <a href="#process">روند همکاری</a>
               <Link href="/articles">مقالات حقوقی</Link>
+              <Link href="/legal-glossary">واژه‌نامه حقوقی</Link>
               <Link href="/ai-assistant">دستیار هوشمند</Link>
               <Link href="/lawyer-cooperation">همکاری وکلا</Link>
               <a href="#faq">پرسش‌های متداول</a>
