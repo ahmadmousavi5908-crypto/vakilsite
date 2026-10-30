@@ -251,7 +251,7 @@ export default function Home() {
             </Link>)}
             <div className="home-editorial-list">
               {articles.slice(1, 4).map((article, index) => <Link className="home-editorial-row" href={"/articles/" + article.slug} key={article.slug}>
-                <span className="home-editorial-row-number">۰{index + ۲}</span><span className="home-editorial-row-copy"><small>{article.category} · {article.readTime} دقیقه</small><strong>{article.title}</strong><em>{article.excerpt}</em></span><b>←</b>
+                <span className="home-editorial-row-number">۰{index + 2}</span><span className="home-editorial-row-copy"><small>{article.category} · {article.readTime} دقیقه</small><strong>{article.title}</strong><em>{article.excerpt}</em></span><b>←</b>
               </Link>)}
             </div>
           </div>
