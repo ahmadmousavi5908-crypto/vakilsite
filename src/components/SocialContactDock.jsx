@@ -11,7 +11,7 @@ const fallback = [
 const symbols = {
   phone: "☎", whatsapp: "◉", instagram: "◎", bale: "ب", rubika: "ر",
   eitaa: "ا", soroush: "س", telegram: "➤", linkedin: "in",
-  email: "✉", website: "↗", other: "＋",
+  email: "✉", website: "↗", youtube: "▶", aparat: "▶", other: "＋",
 };
 
 export default function SocialContactDock() {
