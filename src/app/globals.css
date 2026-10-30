@@ -2046,3 +2046,40 @@ p, li, label, input, textarea, button{
 @media(max-width:700px){
   .attorney-summary{font-size:13px;line-height:2.25}
 }
+
+
+/* Dedicated legal practice pages */
+.practice-hero{background:var(--navy);color:#fff;padding:54px 0 62px;position:relative;overflow:hidden}
+.practice-hero h1{font-size:clamp(30px,4vw,46px);line-height:1.7;margin:16px 0;color:#fff}
+.practice-hero h1 em{font-style:normal;color:var(--gold-light)}
+.practice-hero p{max-width:760px;color:#d5dde4;font-size:14px;line-height:2.35;margin:0}
+.practice-hero .article-breadcrumb{display:flex;flex-wrap:wrap;gap:10px;color:#c4ccd3;font-size:11px;margin-bottom:28px}
+.practice-list-section{padding-top:54px;padding-bottom:70px}
+.practice-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.practice-card{position:relative;background:#fff;border:1px solid var(--line);padding:24px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.practice-card-number{color:#a88951;font-size:11px;font-weight:800}
+.practice-card h2{font-size:18px;color:var(--navy);line-height:1.8;margin:0}
+.practice-card p{font-size:12px;color:#687786;line-height:2.2;margin:0;flex:1}
+.practice-card-link{display:block;padding-top:12px;border-top:1px solid #eee9df;color:#967746;font-size:11px;font-weight:800}
+.practice-detail-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:34px;padding-top:54px;padding-bottom:70px;align-items:start}
+.practice-detail-main{min-width:0}
+.practice-detail-main h2{font-size:19px;color:var(--navy);margin:28px 0 10px}
+.practice-detail-main h2:first-child{margin-top:0}
+.practice-detail-main p{font-size:13px;line-height:2.4;color:#566575}
+.practice-topic-list,.practice-check-list{padding-right:22px;color:#566575;font-size:13px;line-height:2.5}
+.practice-topic-list li::marker{color:#b18e54}
+.practice-check-list li::marker{color:#45836c}
+.practice-detail-aside{position:sticky;top:105px;background:#f4f1e9;border:1px solid #e7dfd0;padding:23px}
+.practice-detail-aside h2{font-size:21px;line-height:1.9;color:var(--navy);margin:15px 0}
+.practice-detail-aside h2 em{font-style:normal;color:#9b7c49}
+.practice-detail-aside p{font-size:12px;line-height:2.2;color:#657282}
+.practice-detail-aside a{display:block;margin-top:12px;padding:12px;background:var(--navy);color:#fff;text-align:center;font-size:11px}
+.practice-detail-aside a+a{background:transparent;color:var(--navy);border:1px solid #d8c9ab}
+.practice-search-terms{padding:12px;background:#f7f8f9;border-right:3px solid var(--gold)}
+.practice-library-note{padding:0 0 65px}
+.practice-library-note h2{color:var(--navy);font-size:19px}
+.practice-library-note p{color:#667483;font-size:12px;line-height:2.3}
+.practice-library-note div{display:flex;flex-wrap:wrap;gap:18px;margin-top:15px}
+.practice-library-note a{color:#967746;font-size:12px;font-weight:700}
+@media(max-width:850px){.practice-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.practice-detail-layout{grid-template-columns:minmax(0,1fr)}.practice-detail-aside{position:static}}
+@media(max-width:560px){.practice-card-grid{grid-template-columns:minmax(0,1fr)}.practice-hero{padding:38px 0 45px}.practice-hero p{font-size:13px}.practice-list-section{padding-top:30px}}
