@@ -14,7 +14,8 @@ export default function AiAssistantPage() {
   const [kind, setKind] = useState("پرسش عمومی حقوقی");
   function prepare(e) {
     e.preventDefault();
-    const message = ["درخواست استفاده از دستیار هوشمند حقوقی", "نوع درخواست: " + kind, "پرسش: " + question, "لطفاً برای بررسی و راهنمایی اولیه تماس بگیرید."].join("\n");
+    const timestamp = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { dateStyle: "full", timeStyle: "short", timeZone: "Asia/Tehran" }).format(new Date());
+    const message = ["درخواست استفاده از دستیار هوشمند حقوقی", "زمان تهیه درخواست (به وقت ایران): " + timestamp, "نوع درخواست: " + kind, "پرسش: " + question, "لطفاً برای بررسی و راهنمایی اولیه تماس بگیرید."].join("\n");
     const phone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\D/g, "");
     if (phone) window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
     else if (navigator.clipboard?.writeText) navigator.clipboard.writeText(message).then(() => window.alert("متن درخواست کپی شد؛ شماره واتساپ دفتر هنوز تنظیم نشده است.")).catch(() => window.prompt("متن درخواست را کپی کنید:", message));
