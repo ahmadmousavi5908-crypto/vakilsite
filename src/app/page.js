@@ -120,9 +120,25 @@ export default function Home() {
               <span><b>✓</b> توضیح روشن و قابل فهم</span>
               <span><b>✓</b> امکان درخواست از سراسر ایران</span>
             </div>
+          </div>
+          <div className="hero-visual attorney-profile-visual" aria-label="تصویر و معرفی وکیل">
+            <div className="visual-orbit orbit-one" />
+            <div className="visual-orbit orbit-two" />
+            <div className="lawyer-photo-card">
+              <div className="visual-top"><span>ATTORNEY PROFILE · AHVAZ</span><span className="visual-dot" /></div>
+              <div className="lawyer-photo-wrap">
+                <img src="/images/lawyer.jpg" alt="سید احمد موسوی، وکیل پایه یک دادگستری" />
+                <svg className="photo-justice-mark" viewBox="0 0 100 100" aria-hidden="true">
+                  <g fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M50 13v65M35 78h30M41 86h18M50 17L20 31M50 17l30 14M20 31L9 57M20 31l11 26M80 31L69 57M80 31l11 26M9 57q11 10 22 0M69 57q11 10 22 0"/>
+                    <circle cx="50" cy="17" r="5" fill="currentColor" stroke="none"/>
+                  </g>
+                </svg>
+              </div>
+              <div className="visual-bottom"><strong>سید احمد موسوی</strong><span>LEGAL COUNSEL</span></div>
+            </div>
             <div className="attorney-credentials" aria-label="مشخصات حرفه‌ای وکیل">
               <div className="attorney-identity">
-                <span className="attorney-monogram" aria-hidden="true">م</span>
                 <div>
                   <span className="attorney-eyebrow">معرفی وکیل</span>
                   <strong>سید احمد موسوی</strong>
@@ -140,26 +156,6 @@ export default function Home() {
                 <a href="tel:09169165902" dir="ltr">0916 916 5902</a>
                 <a href="tel:09388322230" dir="ltr">0938 832 2230</a>
               </div>
-            </div>
-          </div>
-          <div className="hero-visual" aria-label="تصویر گرافیکی ترازوی عدالت">
-            <div className="visual-orbit orbit-one" />
-            <div className="visual-orbit orbit-two" />
-            <div className="visual-card">
-              <div className="visual-top"><span>JUSTICE · CLARITY · TRUST</span><span className="visual-dot" /></div>
-              <svg viewBox="0 0 420 390" role="img" aria-label="نقش هنری ترازوی عدالت">
-                <defs>
-                  <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stopColor="#e4cf9f"/><stop offset="1" stopColor="#9c7842"/></linearGradient>
-                </defs>
-                <path d="M210 64 V304 M150 304 H270 M174 326 H246 M190 346 H230" stroke="url(#gold)" strokeWidth="7" strokeLinecap="round" fill="none"/>
-                <g className="scale-beam"><path d="M92 120 H328 M210 64 L92 120 M210 64 L328 120" stroke="url(#gold)" strokeWidth="5" fill="none" strokeLinecap="round"/></g>
-                <g className="scale-pan-left"><path d="M92 120 L55 220 Q92 254 129 220 Z" fill="rgba(201,169,112,.16)" stroke="url(#gold)" strokeWidth="4"/></g><g className="scale-pan-right"><path d="M328 120 L291 220 Q328 254 365 220 Z" fill="rgba(201,169,112,.16)" stroke="url(#gold)" strokeWidth="4"/></g>
-                <g className="scale-pan-left"><path d="M55 220 Q92 242 129 220" stroke="url(#gold)" strokeWidth="3" fill="none"/></g><g className="scale-pan-right"><path d="M291 220 Q328 242 365 220" stroke="url(#gold)" strokeWidth="3" fill="none"/></g>
-                <circle cx="210" cy="64" r="13" fill="#d6bd8c"/>
-                <path d="M210 34 V18 M188 40 L177 28 M232 40 L243 28" stroke="#d6bd8c" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M144 370 H276" stroke="rgba(214,189,140,.35)" strokeWidth="2"/>
-              </svg>
-              <div className="visual-bottom"><strong>عدالت، با آگاهی آغاز می‌شود.</strong><span>LEGAL SERVICES</span></div>
             </div>
             <div className="floating-note"><span className="note-icon">§</span><span><b>بررسی دقیق موضوع</b><small>پیش از انتخاب مسیر قانونی</small></span></div>
           </div>
