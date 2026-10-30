@@ -120,6 +120,27 @@ export default function Home() {
               <span><b>✓</b> توضیح روشن و قابل فهم</span>
               <span><b>✓</b> امکان درخواست از سراسر ایران</span>
             </div>
+            <div className="attorney-credentials" aria-label="مشخصات حرفه‌ای وکیل">
+              <div className="attorney-identity">
+                <span className="attorney-monogram" aria-hidden="true">م</span>
+                <div>
+                  <span className="attorney-eyebrow">معرفی وکیل</span>
+                  <strong>سید احمد موسوی</strong>
+                  <span className="attorney-role">وکیل پایه یک دادگستری</span>
+                </div>
+              </div>
+              <div className="attorney-credential-grid">
+                <div><span>شماره پروانه وکالت</span><strong dir="ltr">74516</strong></div>
+                <div><span>عضویت حرفه‌ای</span><strong>مرکز وکلای قوه قضائیه</strong></div>
+                <div><span>تحصیلات</span><strong>کارشناسی ارشد حقوق</strong></div>
+                <div><span>فعالیت علمی</span><strong>نویسنده مقاله و کتاب</strong></div>
+              </div>
+              <div className="attorney-direct-lines">
+                <span>ارتباط مستقیم</span>
+                <a href="tel:09169165902" dir="ltr">0916 916 5902</a>
+                <a href="tel:09388322230" dir="ltr">0938 832 2230</a>
+              </div>
+            </div>
           </div>
           <div className="hero-visual" aria-label="تصویر گرافیکی ترازوی عدالت">
             <div className="visual-orbit orbit-one" />
