@@ -1742,3 +1742,204 @@ h1, h2, h3, h4, p, a, button, label, small, strong, span {
     line-height: 1.6 !important;
   }
 }
+
+
+/* SITE-WIDE RECOVERY: restore the full-bleed arched attorney portrait and reliable contact access.
+   These scoped rules intentionally override the older conflicting mobile patches above. */
+@media (max-width: 700px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 24px !important;
+  }
+
+  .hero-visual.attorney-profile-visual {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 100vw !important;
+    margin-inline: calc(50% - 50vw) !important;
+    padding: 0 0 22px !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+
+  .attorney-profile-visual .lawyer-photo-card,
+  .attorney-profile-visual .attorney-credentials {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    margin-inline: 0 !important;
+  }
+
+  .attorney-profile-visual .lawyer-photo-card {
+    padding: 14px clamp(14px, 4vw, 24px) 12px !important;
+    border-radius: 0 !important;
+    border-inline: 0 !important;
+    overflow: visible !important;
+  }
+
+  .attorney-profile-visual .lawyer-photo-card:before {
+    inset: 7px 7px 4px !important;
+    border-radius: 0 !important;
+  }
+
+  .attorney-profile-visual .lawyer-photo-wrap {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    height: clamp(340px, 112vw, 490px) !important;
+    margin: 12px 0 10px !important;
+    overflow: hidden !important;
+    border: 2px solid #c3a36b !important;
+    border-radius: 50% 50% 10px 10px / 29% 29% 8px 8px !important;
+    isolation: isolate !important;
+    box-sizing: border-box !important;
+  }
+
+  .attorney-profile-visual .lawyer-photo-wrap > img,
+  .attorney-profile-visual .lawyer-photo-wrap > .lawyer-photo-image {
+    display: block !important;
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+    object-position: center 25% !important;
+    transform: none !important;
+  }
+
+  .attorney-profile-visual .photo-justice-mark {
+    position: absolute !important;
+    z-index: 4 !important;
+    right: 13px !important;
+    bottom: 13px !important;
+    display: block !important;
+    width: 66px !important;
+    height: 66px !important;
+    pointer-events: none !important;
+  }
+
+  .attorney-profile-visual .visual-top,
+  .attorney-profile-visual .visual-bottom {
+    position: relative !important;
+    z-index: 2 !important;
+    display: flex !important;
+    width: 100% !important;
+    min-height: 42px !important;
+    align-items: center !important;
+  }
+
+  .attorney-profile-visual .visual-bottom {
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 10px 5px 3px !important;
+  }
+
+  .attorney-profile-visual .attorney-credentials {
+    display: block !important;
+    position: relative !important;
+    padding: 16px clamp(14px, 4vw, 24px) 18px !important;
+    border-radius: 0 0 14px 14px !important;
+    border-inline: 0 !important;
+    background: linear-gradient(155deg, #173550 0%, #10243d 100%) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+  }
+
+  .attorney-profile-visual .attorney-credential-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .attorney-profile-visual .attorney-credential-grid > div {
+    min-width: 0 !important;
+    min-height: 58px !important;
+  }
+
+  .attorney-profile-visual .attorney-direct-lines {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding-top: 12px !important;
+  }
+
+  .attorney-profile-visual .attorney-direct-lines > span {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  .attorney-profile-visual .attorney-direct-lines a {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    padding: 9px 12px !important;
+    border: 1px solid rgba(225, 201, 149, .35) !important;
+    border-radius: 9px !important;
+    color: #e8d4a8 !important;
+    direction: ltr !important;
+    unicode-bidi: isolate !important;
+    white-space: nowrap !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .attorney-profile-visual .floating-note {
+    align-self: center !important;
+    margin: 12px 0 0 !important;
+  }
+}
+
+.floating-contact-dock {
+  position: fixed !important;
+  z-index: 99999 !important;
+  right: max(14px, env(safe-area-inset-right)) !important;
+  bottom: max(14px, env(safe-area-inset-bottom)) !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.floating-contact-dock > summary {
+  display: grid !important;
+  place-items: center !important;
+  width: 60px !important;
+  height: 60px !important;
+  cursor: pointer !important;
+  list-style: none !important;
+}
+
+.floating-contact-dock > summary::-webkit-details-marker {
+  display: none !important;
+}
+
+.floating-contact-dock .dock-panel {
+  z-index: 100000 !important;
+  width: min(360px, calc(100vw - 28px)) !important;
+  max-height: min(68dvh, 540px) !important;
+  overflow: auto !important;
+}
+
+.dock-links a {
+  min-height: 48px !important;
+  text-decoration: none !important;
+}
+
+@media (max-width: 360px) {
+  .attorney-profile-visual .attorney-credential-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
