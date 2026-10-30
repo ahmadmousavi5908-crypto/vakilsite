@@ -90,6 +90,7 @@ export default function Home() {
           </a>
           <nav className="desktop-nav" aria-label="منوی اصلی">
             <Link href="/services">حوزه‌های فعالیت</Link>
+            <Link href="/about">معرفی وکیل</Link>
             <Link href="/locations/khuzestan">مناطق تحت پوشش</Link>
             <a href="#process">روند همکاری</a>
             <Link href="/articles">مقالات حقوقی</Link>
@@ -103,6 +104,7 @@ export default function Home() {
             <summary aria-label="باز کردن فهرست سایت">فهرست</summary>
             <nav aria-label="منوی موبایل">
               <Link href="/services">حوزه‌های فعالیت</Link>
+              <Link href="/about">معرفی وکیل</Link>
               <Link href="/locations/khuzestan">مناطق تحت پوشش</Link>
               <a href="#process">روند همکاری</a>
               <Link href="/articles">مقالات حقوقی</Link>
