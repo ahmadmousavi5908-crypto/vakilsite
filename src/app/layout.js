@@ -1,7 +1,6 @@
 import "./globals.css";
 
 export const metadata = {
-  metadataBase: new URL("https://example.com"),
   title: {
     default: "خدمات حقوقی در اهواز و خوزستان | درخواست مشاوره حقوقی",
     template: "%s | خدمات حقوقی اهواز",
