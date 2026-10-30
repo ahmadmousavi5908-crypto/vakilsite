@@ -41,14 +41,25 @@ export default function Home() {
             "@type": "WebSite",
             "@id": siteUrl + "/#website",
             url: siteUrl,
-            name: "مجموعه خدمات حقوقی اهواز",
+            name: "خدمات حقوقی سید احمد موسوی",
             inLanguage: "fa-IR",
+          },
+          {
+            "@type": "Person",
+            "@id": siteUrl + "/#attorney",
+            name: "سید احمد موسوی",
+            jobTitle: "وکیل پایه یک دادگستری",
+            telephone: ["+989169165902", "+989388322230"],
+            memberOf: { "@type": "Organization", name: "مرکز وکلای قوه قضائیه" },
+            identifier: { "@type": "PropertyValue", name: "شماره پروانه وکالت", value: "74516" },
+            knowsLanguage: "fa",
           },
           {
             "@type": "LegalService",
             "@id": siteUrl + "/#legal-service",
-            name: "مجموعه خدمات حقوقی اهواز",
+            name: "خدمات حقوقی سید احمد موسوی",
             url: siteUrl,
+            provider: { "@id": siteUrl + "/#attorney" },
             telephone: "+989169165902",
             areaServed: [
               { "@type": "AdministrativeArea", name: "استان خوزستان" },
@@ -146,6 +157,9 @@ export default function Home() {
                   <span className="attorney-role">وکیل پایه یک دادگستری</span>
                 </div>
               </div>
+              <p className="attorney-summary">
+                سید احمد موسوی، وکیل پایه یک دادگستری و عضو مرکز وکلای قوه قضائیه، دارای کارشناسی ارشد حقوق و نویسنده مقاله و کتاب است. در این مجموعه، درخواست‌های حقوقی پس از دریافت شرح اولیه، از نظر موضوع، مدارک، مرحله رسیدگی و مرجع صالح بررسی می‌شوند تا مسیرهای قانونی قابل بررسی برای متقاضی روشن شود. محل فعالیت دفتر در اهواز است و امکان ثبت درخواست اولیه از سراسر ایران فراهم شده است؛ پذیرش هر پرونده پس از بررسی جداگانه انجام می‌شود.
+              </p>
               <div className="attorney-credential-grid">
                 <div><span>شماره پروانه وکالت</span><strong dir="ltr">74516</strong></div>
                 <div><span>عضویت حرفه‌ای</span><strong>مرکز وکلای قوه قضائیه</strong></div>
@@ -227,7 +241,7 @@ export default function Home() {
             <p>راهنماهای کوتاه و کاربردی بر پایه قوانین ایران؛ برای شناخت بهتر موضوع، آماده‌سازی مدارک و پرسیدن سؤال‌های درست.</p>
           </div>
           <div className="home-article-grid">
-            {articles.slice(0, 3).map((article, index) => <Link className="home-article-card" href={"/articles/" + article.slug} key={article.slug}>
+            {articles.map((article, index) => <Link className="home-article-card" href={"/articles/" + article.slug} key={article.slug}>
               <div className="home-article-symbol">{["§","⚖","▤"][index]}</div>
               <div className="home-article-meta"><span>{article.category}</span><span>{article.readTime} مطالعه</span></div>
               <h3>{article.title}</h3><p>{article.excerpt}</p><b>مطالعه راهنما <span>←</span></b>
