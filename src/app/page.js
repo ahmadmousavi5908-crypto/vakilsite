@@ -59,8 +59,9 @@ export default function Home() {
     : null;
 
   return (
-    <main dir="rtl">
+    <main id="main-content" dir="rtl">
       {structuredSite && <JsonLd data={structuredSite} />}
+      <a className="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
       <div className="topline">
         <div className="container topline-inner">
           <span>پاسخ‌گویی به درخواست‌های حقوقی از خوزستان و سراسر ایران</span>
@@ -180,7 +181,7 @@ export default function Home() {
             <a href="#contact" className="city-cta">درخواست از شهر خودتان <span>←</span></a>
           </div>
           <div className="city-panel">
-            <div className="city-panel-head"><div><span className="section-kicker">KHOUZESTAN PROVINCE</span><h3>شهرهای استان خوزستان</h3></div><span className="city-count">۳۰ نام منطقه</span></div>
+            <div className="city-panel-head"><div><span className="section-kicker">KHOUZESTAN PROVINCE</span><h3>شهرهای استان خوزستان</h3></div><span className="city-count">شهرها و مناطق استان</span></div>
             <div className="city-list">{cities.map((c, i) => <span className={i === 0 ? "city-chip city-featured" : "city-chip"} key={c}>{c}{i === 0 && <b>مرکز</b>}</span>)}</div>
             <div className="city-foot"><span className="city-pin">⌖</span><span>همچنین امکان ثبت درخواست اولیه از سایر شهرهای ایران وجود دارد.</span></div>
           </div>
@@ -220,11 +221,11 @@ export default function Home() {
         <div className="container">
           <div className="section-heading">
             <div><span className="section-kicker">SMART LEGAL SERVICES</span><h2>خدماتی فراتر از<br/><em>یک وب‌سایت حقوقی معمولی</em></h2></div>
-            <p>از راهنمایی هوشمند و ابزارهای مدیریت محتوا تا همکاری حرفه‌ای میان وکلا؛ مسیرهای تخصصی را از اینجا آغاز کنید.</p>
+            <p>درگاه‌های تکمیلی برای ثبت درخواست و هماهنگی همکاری؛ قابلیت‌های خودکار فقط پس از راه‌اندازی و آزمون واقعی فعال خواهند شد.</p>
           </div>
           <div className="feature-entry-grid">
-            <Link className="feature-entry-card ai-entry" href="/ai-assistant"><span className="feature-entry-mark">✦</span><span className="section-kicker">AI LEGAL ASSISTANT</span><h3>دستیار هوشمند حقوقی و سایت</h3><p>راهنمای اولیه حقوقی، کمک به پیش‌نویس اسناد، خلاصه‌سازی امن، تولید مقاله و پشتیبانی از مدیریت وب‌سایت.</p><b>ورود به مرکز هوشمند <span>←</span></b></Link>
-            <Link className="feature-entry-card lawyer-entry" href="/lawyer-cooperation"><span className="feature-entry-mark">§</span><span className="section-kicker">LAWYER NETWORK</span><h3>درگاه همکاری وکلا</h3><p>ارتباط وکلای سراسر کشور برای ارجاع و بررسی پرونده، همکاری محلی در خوزستان و تبادل نظر تخصصی.</p><b>ثبت درخواست همکاری <span>←</span></b></Link>
+            <Link className="feature-entry-card ai-entry" href="/ai-assistant"><span className="feature-entry-mark">✦</span><span className="section-kicker">AI LEGAL ASSISTANT</span><h3>درگاه درخواست راهنمایی هوشمند</h3><p>این نسخه فعلاً پرسش شما را برای ارسال به دفتر آماده می‌کند و پاسخ خودکار هوش مصنوعی یا سامانه بارگذاری امن اسناد نیست.</p><b>ورود به مرکز هوشمند <span>←</span></b></Link>
+            <Link className="feature-entry-card lawyer-entry" href="/lawyer-cooperation"><span className="feature-entry-mark">§</span><span className="section-kicker">LAWYER NETWORK</span><h3>درخواست همکاری حرفه‌ای وکلا</h3><p>فرم اولیه برای هماهنگی و بررسی امکان همکاری است؛ ثبت درخواست به معنی ایجاد شبکه ارجاع یا پذیرش قطعی پرونده نیست.</p><b>ثبت درخواست همکاری <span>←</span></b></Link>
           </div>
         </div>
       </section>
