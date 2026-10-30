@@ -90,7 +90,7 @@ export default function Home() {
           </a>
           <nav className="desktop-nav" aria-label="منوی اصلی">
             <Link href="/services">حوزه‌های فعالیت</Link>
-            <a href="#cities">مناطق تحت پوشش</a>
+            <Link href="/locations/khuzestan">مناطق تحت پوشش</Link>
             <a href="#process">روند همکاری</a>
             <Link href="/articles">مقالات حقوقی</Link>
             <Link href="/legal-glossary">واژه‌نامه حقوقی</Link>
