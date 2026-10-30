@@ -207,7 +207,7 @@ export default function Home() {
               <div className="home-article-symbol">{["§","⚖","▤"][index]}</div>
               <div className="home-article-meta"><span>{article.category}</span><span>{article.readTime} مطالعه</span></div>
               <h3>{article.title}</h3><p>{article.excerpt}</p><b>مطالعه راهنما <span>←</span></b>
-            </a>)}
+            </Link>)}
           </div>
           <div className="home-articles-more"><Link href="/articles">مشاهده همه مقالات و راهنماها ←</Link></div>
         </div>
