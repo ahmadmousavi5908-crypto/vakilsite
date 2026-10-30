@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ServiceFinder from "../components/ServiceFinder";
 
 const services = [
   { n: "۰۱", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -135,6 +136,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ServiceFinder onChoose={(selection) => setTopic(selection)} />
 
       <section className="city-section" id="cities">
         <div className="container city-layout">
