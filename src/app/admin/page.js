@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { requireAdmin } from "../../lib/supabase/admin";
 import { saveOfficeLocation, signOut } from "./actions";
 import OfficeLocationForm from "../../components/admin/OfficeLocationForm";
@@ -8,10 +9,7 @@ export const metadata = { title: "پنل مدیریت" };
 export default async function AdminDashboard({ searchParams }) {
   const params = await searchParams;
   const { supabase, user, isAdmin } = await requireAdmin();
-  if (!isAdmin) {
-    const { redirect } = await import("next/navigation");
-    redirect("/admin/login?error=unauthorized");
-  }
+  if (!isAdmin) redirect("/admin/login?error=unauthorized");
 
   const { data } = await supabase
     .from("site_settings")
