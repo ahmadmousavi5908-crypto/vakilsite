@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "../../lib/supabase/admin";
-import { saveOfficeLocation, signOut } from "./actions";
+import { saveOfficeLocation, saveSocialLinks, signOut } from "./actions";
 import OfficeLocationForm from "../../components/admin/OfficeLocationForm";
+import SocialLinksManager from "../../components/admin/SocialLinksManager";
 
 export const metadata = { title: "پنل مدیریت" };
 
@@ -20,10 +21,16 @@ export default async function AdminDashboard({ searchParams }) {
     .maybeSingle();
 
   const location = data || {};
+  const { data: socialData, error: socialError } = await supabase
+    .from("social_links")
+    .select("id,platform,label,url,link_type,is_active,sort_order")
+    .order("sort_order", { ascending: true });
+  const socialLinks = socialData || [];
   const errors = {
     coordinates: "مختصات GPS باید هر دو با هم و در محدوده معتبر وارد شوند.",
     map: "لینک نقشه باید با https شروع شود.",
     save: "ذخیره اطلاعات انجام نشد. اتصال پایگاه داده و مجوز مدیر را بررسی کنید.",
+    social: "ذخیره راه‌های ارتباطی انجام نشد. اجرای مهاجرت‌های پایگاه داده و مجوز مدیر را بررسی کنید.",
   };
 
   return (
@@ -36,7 +43,7 @@ export default async function AdminDashboard({ searchParams }) {
         <nav className="admin-nav" aria-label="منوی مدیریت">
           <a className="active" href="#overview">نمای کلی</a>
           <a href="#office-settings">موقعیت و اطلاعات دفتر</a>
-          <a href="#office-settings">اطلاعات تماس</a>
+          <a href="#social-settings">راه‌های ارتباط و شبکه‌ها</a>
         </nav>
         <div className="admin-sidebar-foot">
           <span>دسترسی مدیر</span>
@@ -55,6 +62,7 @@ export default async function AdminDashboard({ searchParams }) {
           </section>
 
           {params?.saved && <div className="admin-alert success" role="status">اطلاعات دفتر با موفقیت ذخیره شد.</div>}
+          {params?.soc_saved && <div className="admin-alert success" role="status">راه‌های ارتباطی با موفقیت ذخیره شدند.</div>}
           {params?.error && <div className="admin-alert error" role="alert">{errors[params.error] || "خطایی رخ داد."}</div>}
 
           <section className="admin-stats">
@@ -69,6 +77,18 @@ export default async function AdminDashboard({ searchParams }) {
               <span className="admin-panel-icon">⌖</span>
             </div>
             <OfficeLocationForm initialData={location} action={saveOfficeLocation} />
+          </section>
+
+          <section className="admin-panel social-admin-panel" id="social-settings">
+            <div className="admin-panel-heading">
+              <div><span className="admin-eyebrow">CONTACT & SOCIAL CHANNELS</span><h2>راه‌های ارتباط و شبکه‌های اجتماعی</h2><p>راه‌های تماس و صفحه‌های عمومی را جداگانه مدیریت کنید.</p></div>
+              <span className="admin-panel-icon">◎</span>
+            </div>
+            {socialError ? (
+              <div className="admin-alert error" role="alert">جدول شبکه‌های اجتماعی آماده نیست. ابتدا فایل‌های مهاجرت Supabase را به‌ترتیب اجرا کنید.</div>
+            ) : (
+              <SocialLinksManager initialLinks={socialLinks} action={saveSocialLinks} />
+            )}
           </section>
 
           <section className="admin-help">
