@@ -72,30 +72,30 @@ export default function Home() {
           <a className="brand" href="#" aria-label="صفحه اصلی">
             <span className="brand-mark"><span>و</span></span>
             <span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز · خوزستان · سراسر ایران</small></span>
-          </Link>
+          </a>
           <nav className="desktop-nav" aria-label="منوی اصلی">
-            <a href="#services">حوزه‌های فعالیت</Link>
-            <a href="#cities">مناطق تحت پوشش</Link>
-            <a href="#process">روند همکاری</Link>
+            <a href="#services">حوزه‌های فعالیت</a>
+            <a href="#cities">مناطق تحت پوشش</a>
+            <a href="#process">روند همکاری</a>
             <Link href="/articles">مقالات حقوقی</Link>
             <Link href="/ai-assistant">دستیار هوشمند</Link>
             <Link href="/lawyer-cooperation">همکاری وکلا</Link>
-            <a href="#faq">پرسش‌های متداول</Link>
+            <a href="#faq">پرسش‌های متداول</a>
           </nav>
           <details className="mobile-menu">
             <summary aria-label="باز کردن فهرست سایت">فهرست</summary>
             <nav aria-label="منوی موبایل">
-              <a href="#services">حوزه‌های فعالیت</Link>
-              <a href="#cities">مناطق تحت پوشش</Link>
-              <a href="#process">روند همکاری</Link>
+              <a href="#services">حوزه‌های فعالیت</a>
+              <a href="#cities">مناطق تحت پوشش</a>
+              <a href="#process">روند همکاری</a>
               <Link href="/articles">مقالات حقوقی</Link>
               <Link href="/ai-assistant">دستیار هوشمند</Link>
               <Link href="/lawyer-cooperation">همکاری وکلا</Link>
-              <a href="#faq">پرسش‌های متداول</Link>
-              <a href="#contact">درخواست مشاوره</Link>
+              <a href="#faq">پرسش‌های متداول</a>
+              <a href="#contact">درخواست مشاوره</a>
             </nav>
           </details>
-          <a className="nav-cta" href="#contact">درخواست مشاوره <span>←</span></Link>
+          <a className="nav-cta" href="#contact">درخواست مشاوره <span>←</span></a>
         </div>
       </header>
 
@@ -107,8 +107,8 @@ export default function Home() {
             <h1>وقتی با یک مسئله حقوقی روبه‌رو می‌شوید،<em> مسیر درست</em> اهمیت دارد.</h1>
             <p className="hero-lead">موضوع حقوقی خود را ساده و روشن مطرح کنید. درخواست شما بررسی می‌شود تا با شناخت بهتر شرایط، مسیرهای قانونی و قدم بعدی را آگاهانه انتخاب کنید.</p>
             <div className="hero-actions">
-              <a className="btn btn-gold" href="#contact">ثبت درخواست بررسی <span>←</span></Link>
-              <a className="text-link" href="#services">آشنایی با خدمات <span>↓</span></Link>
+              <a className="btn btn-gold" href="#contact">ثبت درخواست بررسی <span>←</span></a>
+              <a className="text-link" href="#services">آشنایی با خدمات <span>↓</span></a>
             </div>
             <div className="hero-points">
               <span><b>✓</b> مسیر ارتباط ساده</span>
@@ -174,7 +174,7 @@ export default function Home() {
             <span className="section-kicker">KHOUZESTAN & IRAN</span>
             <h2>فاصله، مانع<br/><em>ثبت درخواست</em> نیست.</h2>
             <p>تمرکز جغرافیایی مجموعه در اهواز است؛ با این حال، درخواست‌های اولیه از شهرهای مختلف خوزستان و سایر استان‌ها قابل ثبت و بررسی است. امکان پذیرش هر پرونده به موضوع، مرجع رسیدگی و شرایط آن بستگی دارد.</p>
-            <a href="#contact" className="city-cta">درخواست از شهر خودتان <span>←</span></Link>
+            <a href="#contact" className="city-cta">درخواست از شهر خودتان <span>←</span></a>
           </div>
           <div className="city-panel">
             <div className="city-panel-head"><div><span className="section-kicker">KHOUZESTAN PROVINCE</span><h3>شهرهای استان خوزستان</h3></div><span className="city-count">۳۰ نام منطقه</span></div>
@@ -235,8 +235,8 @@ export default function Home() {
             <div className="connection-assurance"><span>✓</span> بدون نیاز به اصطلاحات پیچیده حقوقی</div>
           </div>
           <div className="connection-actions">
-            <a className="connection-primary" href="#contact"><span className="connection-icon">✉</span><span><b>ثبت درخواست بررسی اولیه</b><small>فرم کوتاه و ساده، حدود یک دقیقه</small></span><strong>←</strong></Link>
-            <a className="connection-whatsapp" href="#contact"><span className="whatsapp-mark">◉</span><span><b>شروع ارتباط و دریافت راهنمایی</b><small>ابتدا موضوع را ثبت کنید تا مسیر ارتباط مشخص شود</small></span><strong>←</strong></Link>
+            <a className="connection-primary" href="#contact"><span className="connection-icon">✉</span><span><b>ثبت درخواست بررسی اولیه</b><small>فرم کوتاه و ساده، حدود یک دقیقه</small></span><strong>←</strong></a>
+            <a className="connection-whatsapp" href="#contact"><span className="whatsapp-mark">◉</span><span><b>شروع ارتباط و دریافت راهنمایی</b><small>ابتدا موضوع را ثبت کنید تا مسیر ارتباط مشخص شود</small></span><strong>←</strong></a>
             <p className="connection-note">تماس کاری: <a href="tel:09169165902" dir="ltr">0916 916 5902</a> · واتساپ: <a href="https://wa.me/989169165902" target="_blank" rel="noreferrer">ارسال پیام</a></p>
             {process.env.NEXT_PUBLIC_CONTACT_EMAIL && <p className="connection-note">ایمیل: <a href={"mailto:" + process.env.NEXT_PUBLIC_CONTACT_EMAIL}>{process.env.NEXT_PUBLIC_CONTACT_EMAIL}</a></p>}
             <p className="connection-note">شبکه‌های اجتماعی پس از ثبت نشانی واقعی در تنظیمات نمایش داده می‌شوند.</p>
@@ -275,11 +275,11 @@ export default function Home() {
 
       <footer className="footer">
         <div className="container footer-main">
-          <a className="brand footer-brand" href="#"><span className="brand-mark"><span>و</span></span><span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز · خوزستان · سراسر ایران</small></span></Link>
+          <a className="brand footer-brand" href="#"><span className="brand-mark"><span>و</span></span><span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز · خوزستان · سراسر ایران</small></span></a>
           <p>آگاهی حقوقی، نخستین قدم برای انتخاب درست است.</p>
-          <a href="#contact" className="footer-link">ثبت درخواست <span>←</span></Link>
+          <a href="#contact" className="footer-link">ثبت درخواست <span>←</span></a>
         </div>
-        <div className="container footer-bottom"><span>© تمامی حقوق این وب‌سایت محفوظ است.</span><span>اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span><Link href="/privacy">حریم خصوصی</a><Link href="/articles">مقالات</a><Link href="/lawyer-cooperation">همکاری وکلا</a></div>
+        <div className="container footer-bottom"><span>© تمامی حقوق این وب‌سایت محفوظ است.</span><span>اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span><Link href="/privacy">حریم خصوصی</Link><Link href="/articles">مقالات</Link><Link href="/lawyer-cooperation">همکاری وکلا</Link></div>
       </footer>
     </main>
   );
