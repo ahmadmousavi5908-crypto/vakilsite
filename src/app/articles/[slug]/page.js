@@ -54,7 +54,7 @@ export default async function ArticleDetailPage({ params }) {
       {structuredArticle && <JsonLd data={structuredArticle} />}
       <header className="article-header">
         <div className="container article-header-inner">
-          <Link href="/" className="article-brand">خدمات حقوقی <span>اهواز · خوزستان</span></Link>
+          <Link href="/" className="article-brand">خدمات حقوقی <span>دفتر اهواز · خدمات سراسر ایران</span></Link>
           <Link href="/#contact" className="article-header-cta">درخواست بررسی اولیه ←</Link>
         </div>
       </header>
