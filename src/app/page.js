@@ -81,6 +81,19 @@ export default function Home() {
             <a href="/lawyer-cooperation">همکاری وکلا</a>
             <a href="#faq">پرسش‌های متداول</a>
           </nav>
+          <details className="mobile-menu">
+            <summary aria-label="باز کردن فهرست سایت">فهرست</summary>
+            <nav aria-label="منوی موبایل">
+              <a href="#services">حوزه‌های فعالیت</a>
+              <a href="#cities">مناطق تحت پوشش</a>
+              <a href="#process">روند همکاری</a>
+              <a href="/articles">مقالات حقوقی</a>
+              <a href="/ai-assistant">دستیار هوشمند</a>
+              <a href="/lawyer-cooperation">همکاری وکلا</a>
+              <a href="#faq">پرسش‌های متداول</a>
+              <a href="#contact">درخواست مشاوره</a>
+            </nav>
+          </details>
           <a className="nav-cta" href="#contact">درخواست مشاوره <span>←</span></a>
         </div>
       </header>
