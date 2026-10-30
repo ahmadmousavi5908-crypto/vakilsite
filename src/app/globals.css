@@ -2087,3 +2087,9 @@ p, li, label, input, textarea, button{
 .practice-city-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:20px 0 42px}
 .practice-city-list span{display:block;padding:12px 10px;background:#fff;border:1px solid var(--line);color:#34475b;text-align:center;font-size:12px;border-radius:4px}
 @media(max-width:650px){.practice-city-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.site-contact-section{margin-top:13px}
+.site-contact-section>strong{display:block;margin-bottom:7px;color:#9b7d4b;font-size:12px}
+.site-contact-empty{margin:0;padding:10px;border:1px dashed #d8d0c1;border-radius:9px;color:#778392;font-size:11px;line-height:1.9}
+.site-contact-youtube{background:#fbecec!important;color:#c4302b!important}
+.site-contact-aparat{background:#fff2e7!important;color:#ed6c1d!important}
