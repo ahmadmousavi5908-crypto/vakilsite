@@ -373,3 +373,102 @@ button,input,select,textarea{font:inherit}
 .privacy-content p{color:var(--muted);font-size:14px;line-height:2.2;margin:0}
 .privacy-content .feature-warning{margin:30px 0}
 .privacy-content .feature-primary{display:inline-flex;margin-top:12px}
+
+
+/* Accessibility and responsive navigation hardening */
+:focus-visible {
+  outline: 3px solid #c6a96f;
+  outline-offset: 3px;
+}
+html {
+  overflow-x: clip;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+.mobile-menu {
+  display: none;
+  position: relative;
+  color: var(--navy);
+}
+.mobile-menu summary {
+  list-style: none;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  padding: 8px 11px;
+  min-width: 64px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+.mobile-menu summary::-webkit-details-marker {
+  display: none;
+}
+.mobile-menu summary::after {
+  content: "⌄";
+  margin-right: 7px;
+  color: var(--gold);
+}
+.mobile-menu[open] summary::after {
+  content: "⌃";
+}
+.mobile-menu nav {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 50;
+  display: grid;
+  gap: 0;
+  width: min(280px, calc(100vw - 34px));
+  padding: 7px 14px;
+  background: #fffefa;
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 35px rgba(13, 32, 52, .16);
+}
+.mobile-menu nav a {
+  padding: 11px 4px;
+  border-bottom: 1px solid #eee9df;
+  font-size: 12px;
+  color: var(--navy);
+}
+.mobile-menu nav a:last-child {
+  border-bottom: 0;
+  color: #927648;
+  font-weight: 700;
+}
+@media (max-width: 900px) {
+  .desktop-nav {
+    display: none;
+  }
+  .mobile-menu {
+    display: block;
+    margin-right: auto;
+  }
+  .nav-wrap {
+    gap: 12px;
+  }
+  .brand {
+    min-width: 0;
+  }
+}
+@media (max-width: 420px) {
+  .nav-cta {
+    padding: 8px 9px;
+    font-size: 9px;
+  }
+  .mobile-menu summary {
+    min-width: 54px;
+    padding: 8px 7px;
+    font-size: 10px;
+  }
+}
