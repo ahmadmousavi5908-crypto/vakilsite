@@ -2017,3 +2017,32 @@ h1, h2, h3, h4, p, a, button, label, small, strong, span {
 @media(max-width:360px){
   .attorney-profile-visual .attorney-credential-grid{grid-template-columns:minmax(0,1fr)!important}
 }
+
+
+/* Readability refinements for Persian content and attorney biography */
+body{
+  font-family: Tahoma, "Noto Naskh Arabic UI", "Noto Sans Arabic", "Segoe UI", sans-serif;
+  word-spacing: .025em;
+  letter-spacing: 0;
+}
+p, li, label, input, textarea, button{
+  letter-spacing: normal;
+}
+.attorney-summary{
+  margin: 14px 0 16px;
+  color: #e1e8ed;
+  font-size: 12px;
+  line-height: 2.35;
+  text-align: right;
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+  word-spacing: .04em;
+}
+.attorney-profile-visual .attorney-summary{
+  display:block;
+  width:100%;
+  max-width:100%;
+}
+@media(max-width:700px){
+  .attorney-summary{font-size:13px;line-height:2.25}
+}
