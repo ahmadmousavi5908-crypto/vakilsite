@@ -8,12 +8,12 @@ import JsonLd from "../components/JsonLd";
 import SocialLinksPublic from "../components/SocialLinksPublic";
 
 const services = [
-  { n: "۰۱", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
-  { n: "۰۲", title: "دعاوی ملکی و ثبتی", desc: "اختلافات مالکیت، الزام به تنظیم سند، تخلیه، سرقفلی و امور ثبتی.", tag: "املاک" },
-  { n: "۰۳", title: "دعاوی کیفری", desc: "بررسی اتهام، دفاع کیفری، شکواییه و پیگیری حقوق اشخاص در پرونده.", tag: "کیفری" },
-  { n: "۰۴", title: "قراردادها و تعهدات", desc: "تنظیم و بررسی قرارداد، مطالبه وجه، خسارت و اختلافات قراردادی.", tag: "قرارداد" },
-  { n: "۰۵", title: "مطالبات و امور حقوقی", desc: "مطالبه طلب، چک، سفته، اجرای تعهدات و پیگیری دعاوی حقوقی.", tag: "مطالبات" },
-  { n: "۰۶", title: "مشاوره و بررسی پرونده", desc: "بررسی اولیه موضوع، مدارک و مسیرهای قانونی پیش از اقدام.", tag: "مشاوره" },
+  { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
+  { n: "۰۲", slug: "property-law", title: "دعاوی ملکی و ثبتی", desc: "اختلافات مالکیت، الزام به تنظیم سند، تخلیه، سرقفلی و امور ثبتی.", tag: "املاک" },
+  { n: "۰۳", slug: "criminal-law", title: "دعاوی کیفری", desc: "بررسی اتهام، دفاع کیفری، شکواییه و پیگیری حقوق اشخاص در پرونده.", tag: "کیفری" },
+  { n: "۰۴", slug: "contracts-and-obligations", title: "قراردادها و تعهدات", desc: "تنظیم و بررسی قرارداد، مطالبه وجه، خسارت و اختلافات قراردادی.", tag: "قرارداد" },
+  { n: "۰۵", slug: "claims-and-enforcement", title: "مطالبات و اجرای احکام", desc: "مطالبه طلب، چک، سفته، اجرای تعهدات و پیگیری دعاوی حقوقی.", tag: "مطالبات" },
+  { n: "۰۶", slug: "legal-consultation", title: "مشاوره و بررسی پرونده", desc: "بررسی اولیه موضوع، مدارک و مسیرهای قانونی پیش از اقدام.", tag: "مشاوره" },
 ];
 
 const cities = [
@@ -89,7 +89,7 @@ export default function Home() {
             <span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز، خوزستان · پذیرش درخواست از سراسر ایران</small></span>
           </a>
           <nav className="desktop-nav" aria-label="منوی اصلی">
-            <a href="#services">حوزه‌های فعالیت</a>
+            <Link href="/services">حوزه‌های فعالیت</Link>
             <a href="#cities">مناطق تحت پوشش</a>
             <a href="#process">روند همکاری</a>
             <Link href="/articles">مقالات حقوقی</Link>
@@ -101,7 +101,7 @@ export default function Home() {
           <details className="mobile-menu">
             <summary aria-label="باز کردن فهرست سایت">فهرست</summary>
             <nav aria-label="منوی موبایل">
-              <a href="#services">حوزه‌های فعالیت</a>
+              <Link href="/services">حوزه‌های فعالیت</Link>
               <a href="#cities">مناطق تحت پوشش</a>
               <a href="#process">روند همکاری</a>
               <Link href="/articles">مقالات حقوقی</Link>
@@ -194,11 +194,11 @@ export default function Home() {
             <p>از میان موضوعات زیر، نزدیک‌ترین گزینه به مسئله خود را پیدا کنید. هر موضوع می‌تواند شرایط و مسیر قانونی متفاوتی داشته باشد و نیازمند بررسی جداگانه است.</p>
           </div>
           <div className="service-grid">
-            {services.map((s) => <a className="service-card" href="#contact" key={s.n} >
+            {services.map((s) => <Link className="service-card" href={"/services/" + s.slug} key={s.n} >
               <div className="service-card-top"><span>{s.n}</span><span className="service-arrow">↙</span></div>
               <div className="service-symbol">{s.tag === "خانواده" ? "⌂" : s.tag === "املاک" ? "▧" : s.tag === "کیفری" ? "§" : s.tag === "قرارداد" ? "▤" : s.tag === "مطالبات" ? "◈" : "✳"}</div>
-              <h3>{s.title}</h3><p>{s.desc}</p><span className="card-more">ثبت درخواست در این زمینه <b>←</b></span>
-            </a>)}
+              <h3>{s.title}</h3><p>{s.desc}</p><span className="card-more">مشاهده جزئیات این حوزه <b>←</b></span>
+            </Link>)}
           </div>
         </div>
       </section>
