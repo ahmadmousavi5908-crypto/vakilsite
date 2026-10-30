@@ -22,7 +22,7 @@ export default function LegalGlossaryPage() {
     name: "فرهنگ اصطلاحات حقوقی و قضایی ایران",
     description: "واژه‌نامه آموزشی اصطلاحات حقوقی و قضایی مورد استفاده در نظام حقوقی ایران.",
     inLanguage: "fa-IR",
-    hasDefinedTerm: legalGlossary.slice(0, 20).map((item) => ({
+    hasDefinedTerm: legalGlossary.map((item) => ({
       "@type": "DefinedTerm",
       name: item.term,
       description: item.definition
