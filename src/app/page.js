@@ -38,11 +38,13 @@ export default function Home() {
     e.preventDefault();
     const text = [
       "درخواست بررسی اولیه",
+      "زمان تهیه درخواست (به وقت ایران): " + timestamp,
       "موضوع: " + topic,
       "شهر: " + (city || "اعلام نشده"),
       "شرح کوتاه: " + (details || "در انتظار توضیحات"),
     ].join("\n");
-    const phone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\\D/g, "");
+    const phone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "989169165902").replace(/\D/g, "");
+    const timestamp = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { dateStyle: "full", timeStyle: "short", timeZone: "Asia/Tehran" }).format(new Date());
     if (phone) {
       window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(text), "_blank", "noopener,noreferrer");
       return;
@@ -221,7 +223,9 @@ export default function Home() {
           <div className="connection-actions">
             <a className="connection-primary" href="#contact"><span className="connection-icon">✉</span><span><b>ثبت درخواست بررسی اولیه</b><small>فرم کوتاه و ساده، حدود یک دقیقه</small></span><strong>←</strong></a>
             <a className="connection-whatsapp" href="#contact"><span className="whatsapp-mark">◉</span><span><b>شروع ارتباط و دریافت راهنمایی</b><small>ابتدا موضوع را ثبت کنید تا مسیر ارتباط مشخص شود</small></span><strong>←</strong></a>
-            <p className="connection-note">نشانی شبکه‌های اجتماعی پس از ثبت لینک‌های واقعی در تنظیمات سایت نمایش داده می‌شود.</p>
+            <p className="connection-note">تماس کاری: <a href="tel:09169165902" dir="ltr">0916 916 5902</a> · واتساپ: <a href="https://wa.me/989169165902" target="_blank" rel="noreferrer">ارسال پیام</a></p>
+            {process.env.NEXT_PUBLIC_CONTACT_EMAIL && <p className="connection-note">ایمیل: <a href={"mailto:" + process.env.NEXT_PUBLIC_CONTACT_EMAIL}>{process.env.NEXT_PUBLIC_CONTACT_EMAIL}</a></p>}
+            <p className="connection-note">شبکه‌های اجتماعی پس از ثبت نشانی واقعی در تنظیمات نمایش داده می‌شوند.</p>
           </div>
         </div>
       </section>
@@ -261,7 +265,7 @@ export default function Home() {
           <p>آگاهی حقوقی، نخستین قدم برای انتخاب درست است.</p>
           <a href="#contact" className="footer-link">ثبت درخواست <span>←</span></a>
         </div>
-        <div className="container footer-bottom"><span>© تمامی حقوق این وب‌سایت محفوظ است.</span><span>اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span></div>
+        <div className="container footer-bottom"><span>© تمامی حقوق این وب‌سایت محفوظ است.</span><span>اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span><a href="/privacy">حریم خصوصی</a><a href="/articles">مقالات</a><a href="/lawyer-cooperation">همکاری وکلا</a></div>
       </footer>
     </main>
   );
