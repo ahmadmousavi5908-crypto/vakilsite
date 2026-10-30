@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ServiceFinder from "../components/ServiceFinder";
+import { articles } from "../data/articles";
 
 const services = [
   { n: "۰۱", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -33,7 +34,7 @@ export default function Home() {
   const [city, setCity] = useState("");
   const [details, setDetails] = useState("");
 
-  function prepareRequest(e) {
+  async function prepareRequest(e) {
     e.preventDefault();
     const text = [
       "درخواست بررسی اولیه",
@@ -41,8 +42,17 @@ export default function Home() {
       "شهر: " + (city || "اعلام نشده"),
       "شرح کوتاه: " + (details || "در انتظار توضیحات"),
     ].join("\n");
-    const url = "https://wa.me/?text=" + encodeURIComponent(text);
-    window.open(url, "_blank", "noopener,noreferrer");
+    const phone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "").replace(/\\D/g, "");
+    if (phone) {
+      window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(text), "_blank", "noopener,noreferrer");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      window.alert("متن درخواست کپی شد. شماره واتساپ دفتر هنوز در تنظیمات سایت ثبت نشده است؛ پس از ثبت شماره، ارسال مستقیم فعال می‌شود.");
+    } catch {
+      window.prompt("شماره واتساپ دفتر هنوز تنظیم نشده است. متن درخواست را کپی کنید:", text);
+    }
   }
 
   return (
@@ -64,6 +74,7 @@ export default function Home() {
             <a href="#services">حوزه‌های فعالیت</a>
             <a href="#cities">مناطق تحت پوشش</a>
             <a href="#process">روند همکاری</a>
+            <a href="/articles">مقالات حقوقی</a>
             <a href="#faq">پرسش‌های متداول</a>
           </nav>
           <a className="nav-cta" href="#contact">درخواست مشاوره <span>←</span></a>
@@ -164,6 +175,23 @@ export default function Home() {
             <div className="process-step"><span className="step-no">۳</span><div className="step-line" /><h3>درخواست را ارسال کنید</h3><p>اطلاعات اولیه برای بررسی و هماهنگی ارسال می‌شود.</p></div>
             <div className="process-step"><span className="step-no">۴</span><div className="step-line" /><h3>قدم بعدی را بشناسید</h3><p>پس از بررسی امکان ارائه خدمت و مسیر مناسب توضیح داده می‌شود.</p></div>
           </div>
+        </div>
+      </section>
+
+      <section className="section home-articles-section" id="articles">
+        <div className="container">
+          <div className="section-heading">
+            <div><span className="section-kicker">LEGAL KNOWLEDGE · IRANIAN LAW</span><h2>پیش از تصمیم،<br/><em>آگاهانه‌تر بدانید.</em></h2></div>
+            <p>راهنماهای کوتاه و کاربردی بر پایه قوانین ایران؛ برای شناخت بهتر موضوع، آماده‌سازی مدارک و پرسیدن سؤال‌های درست.</p>
+          </div>
+          <div className="home-article-grid">
+            {articles.slice(0, 3).map((article, index) => <a className="home-article-card" href={"/articles/" + article.slug} key={article.slug}>
+              <div className="home-article-symbol">{["§","⚖","▤"][index]}</div>
+              <div className="home-article-meta"><span>{article.category}</span><span>{article.readTime} مطالعه</span></div>
+              <h3>{article.title}</h3><p>{article.excerpt}</p><b>مطالعه راهنما <span>←</span></b>
+            </a>)}
+          </div>
+          <div className="home-articles-more"><a href="/articles">مشاهده همه مقالات و راهنماها ←</a></div>
         </div>
       </section>
 
