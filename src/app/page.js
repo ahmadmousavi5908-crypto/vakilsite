@@ -243,8 +243,8 @@ export default function Home() {
             <p>راهنماهای کوتاه و کاربردی بر پایه قوانین ایران؛ برای شناخت بهتر موضوع، آماده‌سازی مدارک و پرسیدن سؤال‌های درست.</p>
           </div>
           <div className="home-article-grid">
-            {articles.map((article, index) => <Link className="home-article-card" href={"/articles/" + article.slug} key={article.slug}>
-              <div className="home-article-symbol">{["§","⚖","▤"][index]}</div>
+            {articles.slice(0, 6).map((article, index) => <Link className="home-article-card" href={"/articles/" + article.slug} key={article.slug}>
+              <div className="home-article-symbol">{["§","⚖","▤","⌂","◈","♡"][index % 6]}</div>
               <div className="home-article-meta"><span>{article.category}</span><span>{article.readTime} مطالعه</span></div>
               <h3>{article.title}</h3><p>{article.excerpt}</p><b>مطالعه راهنما <span>←</span></b>
             </Link>)}
