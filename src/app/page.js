@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import ServiceFinder from "../components/ServiceFinder";
 import RequestForm from "../components/RequestForm";
 import { articles } from "../data/articles";
@@ -127,7 +128,7 @@ export default function Home() {
             <div className="lawyer-photo-card">
               <div className="visual-top"><span>ATTORNEY PROFILE · AHVAZ</span><span className="visual-dot" /></div>
               <div className="lawyer-photo-wrap">
-                <img src="/images/lawyer.jpg" alt="سید احمد موسوی، وکیل پایه یک دادگستری" />
+                <Image src="/images/lawyer.jpg" alt="سید احمد موسوی، وکیل پایه یک دادگستری" fill priority sizes="100vw" quality={82} style={{ objectFit: "cover", objectPosition: "center 25%" }} />
                 <svg className="photo-justice-mark" viewBox="0 0 100 100" aria-hidden="true">
                   <g fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M50 13v65M35 78h30M41 86h18M50 17L20 31M50 17l30 14M20 31L9 57M20 31l11 26M80 31L69 57M80 31l11 26M9 57q11 10 22 0M69 57q11 10 22 0"/>
