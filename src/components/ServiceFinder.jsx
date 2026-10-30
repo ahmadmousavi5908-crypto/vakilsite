@@ -59,7 +59,7 @@ const subjects = {
   "سایر موضوعات": ["امور اداری و استخدامی", "بیمه و تأمین اجتماعی", "مالکیت فکری", "سایر موارد"],
 };
 
-export default function ServiceFinder({ onChoose }) {
+export default function ServiceFinder() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const current = steps[step];
@@ -72,11 +72,18 @@ export default function ServiceFinder({ onChoose }) {
     const next = { ...answers, [current.id]: value };
     setAnswers(next);
     if (step < steps.length - 1) setStep(step + 1);
-    else onChoose([next.service, next.area, next.subject, next.stage].filter(Boolean).join(" | "));
+    else emitSelection(next);
+  }
+
+  function emitSelection(selection) {
+    const detail = typeof selection === "string"
+      ? selection
+      : [selection.service, selection.area, selection.subject, selection.stage].filter(Boolean).join(" | ");
+    window.dispatchEvent(new CustomEvent("vakilsite:service-selected", { detail }));
   }
 
   function finish() {
-    onChoose([answers.service, answers.area, answers.subject, answers.stage].filter(Boolean).join(" | "));
+    emitSelection(answers);
     document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
   }
 
