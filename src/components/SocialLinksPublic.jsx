@@ -6,6 +6,7 @@ const fallbackContacts = [
   { platform: "phone", label: "تماس اول", url: "tel:09169165902", link_type: "contact" },
   { platform: "phone", label: "تماس دوم", url: "tel:09388322230", link_type: "contact" },
   { platform: "whatsapp", label: "واتساپ", url: "https://wa.me/989169165902", link_type: "contact" },
+  { platform: "email", label: "Vakil.ahmadmousavi2731@gmail.com", url: "mailto:Vakil.ahmadmousavi2731@gmail.com", link_type: "contact" },
 ];
 
 const marks = {
