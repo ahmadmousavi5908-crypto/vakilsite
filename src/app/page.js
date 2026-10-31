@@ -105,7 +105,7 @@ export default function Home() {
             <a href="#faq">پرسش‌های متداول</a>
           </nav>
           <details className="mobile-menu">
-            <summary aria-label="باز کردن فهرست سایت">فهرست</summary>
+            <summary aria-label="باز کردن فهرست سایت"><span className="menu-visually-hidden">فهرست سایت</span><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i></summary>
             <nav aria-label="منوی موبایل">
               <Link href="/services">حوزه‌های فعالیت</Link>
               <Link href="/about">معرفی وکیل</Link>
