@@ -3204,3 +3204,467 @@ body{
   white-space: nowrap !important;
   border: 0 !important;
 }
+
+
+/* Persian-first design system: consistent font shaping, spacing and accessible controls */
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn[wght].woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  --navy: #172b42;
+  --navy2: #29445d;
+  --gold: #b99a62;
+  --gold-light: #e2c995;
+  --cream: #f4f1e9;
+  --paper: #fffefa;
+  --ink: #26384a;
+  --muted: #687789;
+  --line: #e6e0d5;
+  --teal: #557d79;
+}
+
+html {
+  font-family: "Vazirmatn", Tahoma, "Segoe UI", sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  scroll-padding-top: 100px;
+}
+
+body {
+  font-family: "Vazirmatn", Tahoma, "Segoe UI", sans-serif !important;
+  font-size: 16px;
+  line-height: 1.9;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
+  font-kerning: normal;
+}
+
+:lang(fa),
+:lang(fa) * {
+  font-family: "Vazirmatn", Tahoma, "Segoe UI", sans-serif;
+  letter-spacing: 0 !important;
+  word-spacing: normal !important;
+  hyphens: none;
+}
+
+:lang(fa) p,
+:lang(fa) li,
+:lang(fa) dd,
+:lang(fa) dt {
+  line-height: 1.95;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+:lang(fa) h1,
+:lang(fa) h2,
+:lang(fa) h3,
+:lang(fa) h4 {
+  line-height: 1.55;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+:lang(fa) button,
+:lang(fa) input,
+:lang(fa) select,
+:lang(fa) textarea,
+:lang(fa) a {
+  font-family: "Vazirmatn", Tahoma, "Segoe UI", sans-serif;
+  letter-spacing: 0 !important;
+}
+
+button,
+[role="button"],
+a.btn,
+.article-header-cta,
+.about-cta a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(185, 154, 98, .7);
+  outline-offset: 3px;
+}
+
+.article-header-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 9px 16px;
+  border-radius: 9px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  transition: background .2s ease, transform .2s ease;
+}
+
+.article-header-cta:hover {
+  background: var(--navy2);
+  transform: translateY(-1px);
+}
+
+.article-header-inner {
+  gap: 16px;
+}
+
+.article-brand {
+  line-height: 1.7;
+}
+
+.article-brand span {
+  margin-top: 2px;
+  line-height: 1.7;
+}
+
+/* Attorney profile page */
+.about-hero {
+  background:
+    radial-gradient(circle at 12% 20%, rgba(185,154,98,.13), transparent 30%),
+    linear-gradient(125deg, #172b42 0%, #203e58 100%);
+}
+
+.about-hero h1 {
+  max-width: 850px;
+  font-size: clamp(30px, 4.4vw, 48px);
+  font-weight: 800;
+}
+
+.about-hero h1 em {
+  color: var(--gold-light);
+  font-style: normal;
+}
+
+.about-profile-section {
+  padding-top: 54px;
+  padding-bottom: 28px;
+}
+
+.about-profile-card {
+  display: grid;
+  grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 54px);
+  padding: clamp(18px, 3vw, 34px);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 16px 44px rgba(23, 43, 66, .07);
+}
+
+.about-attorney-photo {
+  width: 100%;
+  max-width: 360px;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid #d9c69f;
+  border-radius: 14px;
+  background: #f5f1e8;
+}
+
+.about-attorney-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  object-position: center 22%;
+  border-radius: 8px;
+}
+
+.about-photo-caption {
+  display: grid;
+  gap: 3px;
+  padding: 14px 8px 5px;
+  text-align: center;
+}
+
+.about-photo-caption strong {
+  color: var(--navy);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.about-photo-caption span {
+  color: #9a7b49;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.about-photo-caption small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.about-attorney-content {
+  min-width: 0;
+}
+
+.about-attorney-content .section-kicker {
+  color: #987a49;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.about-attorney-content h2 {
+  margin: 9px 0 10px;
+  color: var(--navy);
+  font-size: clamp(23px, 3vw, 31px);
+  font-weight: 800;
+}
+
+.about-profile-intro {
+  max-width: 680px;
+  margin: 0;
+  color: #596a7a;
+  font-size: 15px;
+  line-height: 2.15;
+}
+
+.about-credentials {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 25px 0 0;
+}
+
+.about-credentials > div {
+  min-width: 0;
+  padding: 13px 15px;
+  border: 1px solid #e9e3d8;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #fffefa, #f8f6f0);
+}
+
+.about-credentials dt {
+  margin-bottom: 5px;
+  color: #917447;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.about-credentials dd {
+  margin: 0;
+  color: #1c344c;
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.about-approach-section {
+  padding-top: 34px;
+  padding-bottom: 76px;
+}
+
+.about-section-heading {
+  max-width: 780px;
+  margin-bottom: 25px;
+}
+
+.about-section-heading .section-kicker {
+  color: #987a49;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.about-section-heading h2 {
+  margin: 9px 0 10px;
+  color: var(--navy);
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+}
+
+.about-section-heading p {
+  margin: 0;
+  color: #657484;
+  font-size: 14px;
+  line-height: 2.15;
+}
+
+.about-approach-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.about-approach-grid article {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(23,43,66,.035);
+}
+
+.about-approach-number {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: #f2ecdf;
+  color: #967747;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.about-approach-grid h3 {
+  margin: 13px 0 7px;
+  color: var(--navy);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.about-approach-grid p {
+  margin: 0;
+  color: #6b7885;
+  font-size: 13px;
+  line-height: 2;
+}
+
+.about-service-note {
+  margin-top: 20px;
+  padding: 19px 22px;
+  border: 1px solid #e5ddcd;
+  border-right: 4px solid var(--gold);
+  border-radius: 12px;
+  background: #f7f4ed;
+}
+
+.about-service-note strong {
+  color: var(--navy);
+  font-size: 15px;
+}
+
+.about-service-note p {
+  margin: 6px 0 0;
+  color: #627181;
+  font-size: 13px;
+  line-height: 2.1;
+}
+
+.about-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.about-cta a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 10px 18px;
+  border: 1px solid #d8c9ab;
+  border-radius: 10px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.about-cta a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(23,43,66,.12);
+}
+
+.about-cta a + a {
+  background: #f5f1e8;
+  color: var(--navy);
+}
+
+@media (max-width: 760px) {
+  .about-profile-section {
+    padding-top: 28px;
+  }
+  .about-profile-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+    padding: 16px;
+  }
+  .about-attorney-photo {
+    width: min(100%, 420px);
+    margin-inline: auto;
+  }
+  .about-attorney-content h2 {
+    font-size: 25px;
+  }
+  .about-profile-intro {
+    font-size: 14px;
+  }
+  .about-credentials {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+  .about-credentials > div {
+    padding: 11px;
+  }
+  .about-credentials dd {
+    font-size: 13px;
+  }
+  .about-approach-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 390px) {
+  .about-credentials {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .article-header-inner {
+    height: auto;
+    min-height: 72px;
+    padding-block: 10px;
+  }
+  .article-brand {
+    font-size: 13px;
+  }
+  .article-header-cta {
+    padding-inline: 10px;
+    font-size: 11px;
+  }
+}
+
+/* Mobile menu: prevent text tracking, preserve card rhythm and avoid clipped glyphs */
+@media (max-width: 900px) {
+  #site-mobile-menu-panel,
+  #site-mobile-menu-panel * {
+    font-family: "Vazirmatn", Tahoma, "Segoe UI", sans-serif !important;
+    letter-spacing: 0 !important;
+    word-spacing: normal !important;
+  }
+  #site-mobile-menu-panel a {
+    min-height: 48px !important;
+    margin-block: 4px !important;
+    padding: 9px 10px !important;
+    border: 1px solid #eee7db !important;
+    border-radius: 10px !important;
+    background: #fff !important;
+    font-size: 14px !important;
+    line-height: 1.85 !important;
+  }
+  #site-mobile-menu-panel a:active {
+    background: #f7f3ea !important;
+  }
+  #site-mobile-menu-panel h2 {
+    font-size: 12px !important;
+    line-height: 1.9 !important;
+  }
+}
