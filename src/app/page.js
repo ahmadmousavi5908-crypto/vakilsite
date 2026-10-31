@@ -291,13 +291,13 @@ export default function Home() {
 
       <footer className="footer">
         <div className="container footer-main">
-          <a className="brand footer-brand" href="/">
+          <Link className="brand footer-brand" href="/">
             <span className="brand-mark"><span>و</span></span>
             <span className="brand-copy">
               <strong>مجموعه خدمات حقوقی</strong>
               <small>اهواز، خوزستان · خدمات حقوقی در سراسر ایران</small>
             </span>
-          </a>
+          </Link>
           <a href="#contact" className="footer-link">درخواست مشاوره <span>←</span></a>
         </div>
         <div className="container footer-content">
