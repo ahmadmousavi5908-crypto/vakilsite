@@ -105,19 +105,36 @@ export default function Home() {
             <a href="#faq">پرسش‌های متداول</a>
           </nav>
           <details className="mobile-menu">
-            <summary aria-label="باز کردن فهرست سایت"><span className="menu-visually-hidden">فهرست سایت</span><i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i></summary>
-            <nav aria-label="منوی موبایل">
-              <Link href="/services">حوزه‌های فعالیت</Link>
-              <Link href="/about">معرفی وکیل</Link>
-              <Link href="/locations/khuzestan">مناطق تحت پوشش</Link>
-              <a href="#process">روند همکاری</a>
-              <Link href="/articles">مقالات حقوقی</Link>
-              <Link href="/legal-glossary">واژه‌نامه حقوقی</Link>
-              <Link href="/legal-library">کتابخانه حقوقی</Link>
-              <Link href="/ai-assistant">دستیار هوشمند</Link>
-              <Link href="/lawyer-cooperation">همکاری وکلا</Link>
-              <a href="#faq">پرسش‌های متداول</a>
-              <a href="#contact">درخواست مشاوره</a>
+            <summary aria-label="باز کردن فهرست سایت" aria-controls="mobile-site-navigation">
+              <span className="menu-visually-hidden">فهرست سایت</span>
+              <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+            </summary>
+            <nav id="mobile-site-navigation" aria-label="فهرست اصلی سایت">
+              <div className="mobile-menu-heading">
+                <span className="mobile-menu-kicker">راهنمای دسترسی</span>
+                <strong>چطور می‌توانیم راهنمایی‌تان کنیم؟</strong>
+                <small>بخش موردنظر خود را انتخاب کنید</small>
+              </div>
+              <div className="mobile-menu-group">
+                <span className="mobile-menu-group-title">آشنایی و خدمات حقوقی</span>
+                <Link href="/services"><b>01</b><span>حوزه‌های فعالیت حقوقی</span><i>←</i></Link>
+                <Link href="/about"><b>02</b><span>معرفی وکیل</span><i>←</i></Link>
+                <Link href="/locations/khuzestan"><b>03</b><span>مناطق تحت پوشش</span><i>←</i></Link>
+                <a href="#process"><b>04</b><span>مراحل و روند همکاری</span><i>←</i></a>
+              </div>
+              <div className="mobile-menu-group">
+                <span className="mobile-menu-group-title">دانش و ابزارهای حقوقی</span>
+                <Link href="/articles"><b>05</b><span>مقالات و آموزش حقوقی</span><i>←</i></Link>
+                <Link href="/legal-glossary"><b>06</b><span>واژه‌نامه حقوقی</span><i>←</i></Link>
+                <Link href="/legal-library"><b>07</b><span>کتابخانه حقوقی</span><i>←</i></Link>
+                <Link href="/ai-assistant"><b>08</b><span>دستیار هوشمند حقوقی</span><i>←</i></Link>
+              </div>
+              <div className="mobile-menu-group mobile-menu-secondary">
+                <Link href="/lawyer-cooperation"><b>09</b><span>همکاری با وکلا</span><i>←</i></Link>
+                <a href="#faq"><b>10</b><span>پرسش‌های متداول</span><i>←</i></a>
+              </div>
+              <a className="mobile-menu-cta" href="#contact"><span>برای شروع، درخواست خود را ثبت کنید</span><b>ثبت درخواست بررسی اولیه <i>←</i></b></a>
+              <div className="mobile-menu-foot">خدمات حقوقی سید احمد موسوی · اهواز و سراسر ایران</div>
             </nav>
           </details>
           <a className="nav-cta" href="#contact">درخواست مشاوره <span>←</span></a>
