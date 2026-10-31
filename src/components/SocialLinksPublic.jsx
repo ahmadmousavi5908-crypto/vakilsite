@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 
 const fallbackContacts = [
-  { platform: "phone", label: "تماس اول", url: "tel:09169165902", link_type: "contact" },
-  { platform: "phone", label: "تماس دوم", url: "tel:09388322230", link_type: "contact" },
-  { platform: "whatsapp", label: "واتساپ", url: "https://wa.me/989169165902", link_type: "contact" },
+  { platform: "phone", label: "0916 916 5902", url: "tel:09169165902", link_type: "contact" },
+  { platform: "phone", label: "0938 832 2230", url: "tel:09388322230", link_type: "contact" },
+  { platform: "whatsapp", label: "واتساپ دفتر", url: "https://wa.me/989169165902", link_type: "contact" },
   { platform: "email", label: "ایمیل دفتر", url: "mailto:Vakil.ahmadmousavi2731@gmail.com", link_type: "contact" },
 ];
 
@@ -14,6 +14,16 @@ const marks = {
   eitaa: "ا", soroush: "س", telegram: "➤", linkedin: "in", youtube: "▶",
   aparat: "▶", email: "✉", website: "↗", other: "＋",
 };
+
+function getLinkLabel(item) {
+  if (item.platform === "phone" && typeof item.url === "string") {
+    const digits = item.url.replace(/^tel:/i, "").replace(/\\D/g, "");
+    if (digits.length === 11 && digits.startsWith("0")) {
+      return digits.slice(0, 4) + " " + digits.slice(4, 7) + " " + digits.slice(7);
+    }
+  }
+  return item.label;
+}
 
 function LinkCard({ item, compact = false }) {
   const external = /^https:\/\//i.test(item.url);
@@ -24,7 +34,7 @@ function LinkCard({ item, compact = false }) {
       <span className={"social-link-mark social-mark-" + (item.platform || "other")} aria-hidden="true">
         {marks[item.platform] || marks.other}
       </span>
-      <span className="social-link-label">{item.label}</span>
+      <span className="social-link-label">{compact ? getLinkLabel(item) : item.label}</span>
       <span className="social-link-arrow" aria-hidden="true">↗</span>
     </a>
   );
