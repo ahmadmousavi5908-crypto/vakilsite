@@ -3697,3 +3697,160 @@ textarea:focus-visible {
     line-height: 1.8 !important;
   }
 }
+
+
+/* Shared component finish: consistent surfaces, spacing and touch targets */
+.service-card,
+.practice-card,
+.feature-entry-card,
+.feature-tool-card,
+.editorial-featured,
+.editorial-accordion,
+.article-sidebar-card,
+.article-checklist,
+.article-legal-note,
+.city-panel,
+.request-form,
+.feature-form,
+.connection-card,
+.glossary-reference {
+  border-radius: 14px;
+}
+
+.service-card,
+.practice-card,
+.feature-entry-card,
+.feature-tool-card,
+.editorial-featured,
+.editorial-accordion,
+.article-sidebar-card,
+.city-panel,
+.request-form,
+.feature-form {
+  box-shadow: 0 8px 26px rgba(23, 43, 66, .045);
+}
+
+.service-card,
+.practice-card,
+.feature-entry-card,
+.feature-tool-card,
+.editorial-accordion,
+.article-sidebar-card {
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.service-card:hover,
+.practice-card:hover,
+.feature-entry-card:hover,
+.feature-tool-card:hover,
+.editorial-accordion:hover {
+  border-color: #d4c29e;
+  box-shadow: 0 14px 32px rgba(23, 43, 66, .085);
+}
+
+.practice-card {
+  padding: 26px;
+}
+
+.practice-card h2,
+.practice-detail-main h2 {
+  line-height: 1.75;
+}
+
+.practice-card p,
+.practice-detail-main p,
+.practice-library-note p {
+  font-size: 14px;
+  line-height: 2.05;
+}
+
+.practice-card-link,
+.practice-library-note a,
+.article-read-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  font-size: 13px;
+}
+
+.btn,
+.btn-gold,
+.btn-submit,
+.nav-cta,
+.feature-primary,
+.feature-secondary,
+.connection-primary,
+.connection-whatsapp {
+  min-height: 44px;
+  border-radius: 9px;
+}
+
+.request-form,
+.feature-form {
+  border: 1px solid #e8e1d5;
+  box-shadow: 0 16px 40px rgba(10, 30, 50, .09);
+}
+
+.request-form input,
+.request-form select,
+.request-form textarea,
+.feature-form input,
+.feature-form select,
+.feature-form textarea {
+  min-height: 46px;
+  border-radius: 9px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.request-form textarea,
+.feature-form textarea {
+  min-height: 112px;
+}
+
+.request-form input:focus,
+.request-form select:focus,
+.request-form textarea:focus,
+.feature-form input:focus,
+.feature-form select:focus,
+.feature-form textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(185,154,98,.13);
+}
+
+.faq-item {
+  padding-inline: 10px;
+}
+
+.faq-item button {
+  min-height: 54px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.article-body {
+  font-size: 16px;
+  line-height: 2.05;
+}
+
+.article-body p,
+.article-body li {
+  line-height: 2.05;
+}
+
+.article-body h2 {
+  line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+  .practice-card {
+    padding: 21px;
+  }
+  .request-form {
+    padding: 22px 18px;
+  }
+  .article-header-cta {
+    white-space: nowrap;
+  }
+}
