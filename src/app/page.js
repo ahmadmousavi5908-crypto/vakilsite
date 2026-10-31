@@ -55,6 +55,7 @@ export default function Home() {
             name: "سید احمد موسوی",
             jobTitle: "وکیل پایه یک دادگستری",
             telephone: ["+989169165902", "+989388322230"],
+            email: "Vakil.ahmadmousavi2731@gmail.com",
             memberOf: { "@type": "Organization", name: "مرکز وکلای قوه قضائیه" },
             identifier: { "@type": "PropertyValue", name: "شماره پروانه وکالت", value: "74516" },
             knowsLanguage: "fa",
@@ -66,6 +67,7 @@ export default function Home() {
             url: siteUrl,
             provider: { "@id": siteUrl + "/#attorney" },
             telephone: "+989169165902",
+            email: "Vakil.ahmadmousavi2731@gmail.com",
             areaServed: [
               { "@type": "AdministrativeArea", name: "استان خوزستان" },
               { "@type": "Country", name: "ایران" },
