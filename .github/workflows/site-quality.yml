@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - main
-      - quality/polish-accessibility
+      - redesign/persian-ux-typography
 
 permissions:
   contents: read
@@ -22,8 +22,8 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies and synchronize lockfile
+        run: npm install --no-audit --no-fund
       - name: Run ESLint
         run: npm run lint
       - name: Build production site
