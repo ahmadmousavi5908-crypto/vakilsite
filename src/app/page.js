@@ -162,11 +162,6 @@ export default function Home() {
                 <div><span>تحصیلات</span><strong>کارشناسی ارشد حقوق</strong></div>
                 <div><span>فعالیت علمی</span><strong>نویسنده مقاله و کتاب</strong></div>
               </div>
-              <div className="attorney-direct-lines">
-                <span>ارتباط مستقیم</span>
-                <a href="tel:09169165902" dir="ltr">0916 916 5902</a>
-                <a href="tel:09388322230" dir="ltr">0938 832 2230</a>
-              </div>
             </div>
             <div className="floating-note"><span className="note-icon"><LegalIcon name="scales" size={22} /></span><span><b>بررسی دقیق موضوع</b><small>پیش از انتخاب مسیر قانونی</small></span></div>
           </div>
@@ -276,7 +271,6 @@ export default function Home() {
           <div className="connection-actions">
             <a className="connection-primary" href="#contact"><span className="connection-icon"><LegalIcon name="mail" size={20} /></span><span><b>ثبت درخواست بررسی اولیه</b><small>فرم کوتاه و ساده، حدود یک دقیقه</small></span><strong>←</strong></a>
             <a className="connection-whatsapp" href="#contact"><span className="whatsapp-mark"><LegalIcon name="whatsapp" size={20} /></span><span><b>شروع ارتباط و دریافت راهنمایی</b><small>ابتدا موضوع را ثبت کنید تا مسیر ارتباط مشخص شود</small></span><strong>←</strong></a>
-            <SocialLinksPublic />
           </div>
         </div>
       </section>
@@ -299,10 +293,35 @@ export default function Home() {
         <div className="container footer-main">
           <a className="brand footer-brand" href="#"><span className="brand-mark"><span>و</span></span><span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>دفتر اهواز، خوزستان · خدمات در سراسر ایران</small></span></a>
           <p>آگاهی حقوقی، نخستین قدم برای انتخاب درست است.</p>
-          <a href="#contact" className="footer-link">ثبت درخواست <span>←</span></a>
+          <a href="#contact" className="footer-link">ثبت درخواست بررسی <span>←</span></a>
         </div>
-        <div className="container"><OfficeLocationPublic /></div>
-        <div className="container footer-bottom"><span>© تمامی حقوق این وب‌سایت محفوظ است.</span><span>اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span><Link href="/privacy">حریم خصوصی</Link><Link href="/articles">مقالات</Link><Link href="/lawyer-cooperation">همکاری وکلا</Link></div>
+        <div className="container footer-content">
+          <section className="footer-contact-block" aria-labelledby="footer-contact-title">
+            <span className="footer-kicker">CONTACT & COMMUNICATION</span>
+            <h2 id="footer-contact-title">راه‌های ارتباطی با دفتر</h2>
+            <p>برای تماس تلفنی، ارسال ایمیل یا مشاهده راه‌های ارتباطی، از گزینه‌های زیر استفاده کنید.</p>
+            <SocialLinksPublic />
+          </section>
+          <nav className="footer-navigation" aria-label="پیوندهای مهم">
+            <div><span className="footer-kicker">QUICK ACCESS</span><h2>دسترسی سریع</h2></div>
+            <Link href="/about">معرفی وکیل</Link>
+            <Link href="/services">حوزه‌های فعالیت</Link>
+            <Link href="/articles">مقالات و راهنماهای حقوقی</Link>
+            <Link href="/legal-library">کتابخانه حقوقی</Link>
+            <Link href="/lawyer-cooperation">همکاری حرفه‌ای وکلا</Link>
+            <Link href="/privacy">حریم خصوصی</Link>
+          </nav>
+        </div>
+        <div className="container footer-office"><OfficeLocationPublic /></div>
+        <div className="container footer-bottom">
+          <span>© تمامی حقوق این وب‌سایت محفوظ است.</span>
+          <span className="footer-disclaimer">اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span>
+          <div className="footer-legal-links">
+            <Link href="/privacy">حریم خصوصی</Link>
+            <Link href="/articles">مقالات</Link>
+            <Link href="/lawyer-cooperation">همکاری وکلا</Link>
+          </div>
+        </div>
       </footer>
     </main>
   );
