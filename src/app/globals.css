@@ -3161,7 +3161,7 @@ body{
     text-align: right !important;
     unicode-bidi: isolate !important;
   }
-  #site-mobile-menu-panel a {
+  #site-mobile-menu-panel a:not(.site-mobile-menu-cta) {
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
@@ -3175,19 +3175,19 @@ body{
     text-decoration: none !important;
     font-family: Tahoma, "Vazirmatn", "Segoe UI", sans-serif !important;
   }
-  #site-mobile-menu-panel a > b {
+  #site-mobile-menu-panel a:not(.site-mobile-menu-cta) > b {
     display: grid !important;
     flex: 0 0 28px !important;
     place-items: center !important;
   }
-  #site-mobile-menu-panel a > span {
+  #site-mobile-menu-panel a:not(.site-mobile-menu-cta) > span {
     display: block !important;
     flex: 1 1 auto !important;
     min-width: 0 !important;
     text-align: right !important;
     white-space: normal !important;
   }
-  #site-mobile-menu-panel a > i {
+  #site-mobile-menu-panel a:not(.site-mobile-menu-cta) > i {
     display: block !important;
     flex: 0 0 16px !important;
     font-style: normal !important;
@@ -3650,7 +3650,7 @@ textarea:focus-visible {
     letter-spacing: 0 !important;
     word-spacing: normal !important;
   }
-  #site-mobile-menu-panel a {
+  #site-mobile-menu-panel a:not(.site-mobile-menu-cta) {
     min-height: 48px !important;
     margin-block: 4px !important;
     padding: 9px 10px !important;
@@ -3666,5 +3666,34 @@ textarea:focus-visible {
   #site-mobile-menu-panel h2 {
     font-size: 12px !important;
     line-height: 1.9 !important;
+  }
+}
+
+
+@media (max-width: 900px) {
+  #site-mobile-menu-panel .site-mobile-menu-cta {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 4px !important;
+    min-height: 0 !important;
+    padding: 12px 14px !important;
+    border: 1px solid rgba(177,142,84,.45) !important;
+    border-radius: 11px !important;
+    background: linear-gradient(135deg,#f7f1e5,#eee3cd) !important;
+    text-align: right !important;
+    white-space: normal !important;
+  }
+  #site-mobile-menu-panel .site-mobile-menu-cta > span {
+    display: block !important;
+    min-width: 0 !important;
+    font-size: 11px !important;
+    line-height: 1.8 !important;
+    flex: initial !important;
+  }
+  #site-mobile-menu-panel .site-mobile-menu-cta > strong {
+    display: block !important;
+    font-size: 13px !important;
+    line-height: 1.8 !important;
   }
 }
