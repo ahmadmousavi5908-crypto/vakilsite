@@ -4042,3 +4042,53 @@ input[type="tel"],input[type="email"],input[type="url"] { direction:ltr; text-al
     height: 18px;
   }
 }
+
+
+/* Contrast pass: decorative gold remains, but small text uses readable bronze. */
+.section-kicker,
+.eyebrow {
+  color: #80633d;
+}
+
+.service-card-top,
+.card-more,
+.city-cta,
+.city-count,
+.about-credentials dt,
+.about-attorney-content .section-kicker,
+.about-section-heading .section-kicker {
+  color: #765b37;
+}
+
+.service-card p {
+  font-size: 12px;
+}
+
+.city-intro p,
+.faq-item p,
+.feature-tool-card p,
+.about-approach-grid p {
+  font-size: 13px;
+}
+
+.process-step p {
+  font-size: 11px;
+}
+
+.home-article-card p {
+  font-size: 11px;
+}
+
+@media (max-width: 700px) {
+  .service-card p,
+  .process-step p {
+    font-size: 11px;
+  }
+
+  .city-intro p,
+  .faq-item p,
+  .feature-tool-card p,
+  .about-approach-grid p {
+    font-size: 12px;
+  }
+}
