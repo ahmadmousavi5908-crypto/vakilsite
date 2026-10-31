@@ -3939,3 +3939,62 @@ input[type="tel"],input[type="email"],input[type="url"] { direction:ltr; text-al
  .container { width:calc(100% - 30px); }
  .request-form,.feature-form { padding:19px 15px; }
 }
+
+
+/* Final quality pass: reduce floating-control collisions and visual noise. */
+@media (min-width: 901px) {
+  #site-mobile-menu-root {
+    display: none !important;
+  }
+}
+
+#site-mobile-menu-root > summary::-webkit-details-marker {
+  display: none;
+}
+
+#site-mobile-menu-root > summary::marker {
+  content: "";
+}
+
+#site-mobile-menu-root > summary:focus-visible,
+[role="dialog"] a:focus-visible,
+[role="dialog"] button:focus-visible {
+  outline: 3px solid rgba(185, 154, 98, .82);
+  outline-offset: 3px;
+}
+
+#site-mobile-menu-panel a,
+#site-mobile-menu-panel button,
+[role="dialog"] a,
+[role="dialog"] button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 420px) {
+  #site-mobile-menu-panel {
+    width: min(360px, calc(100vw - 20px)) !important;
+    left: 10px !important;
+  }
+
+  #contact-dock-panel,
+  #attorney-profile-panel {
+    width: min(330px, calc(100vw - 24px)) !important;
+    max-height: min(66dvh, 500px) !important;
+    padding: 14px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
