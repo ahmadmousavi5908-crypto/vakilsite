@@ -6,6 +6,7 @@ import { articles } from "../data/articles";
 import OfficeLocationPublic from "../components/OfficeLocationPublic";
 import JsonLd from "../components/JsonLd";
 import SocialLinksPublic from "../components/SocialLinksPublic";
+import LegalIcon from "../components/LegalIcon";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -54,6 +55,7 @@ export default function Home() {
             name: "سید احمد موسوی",
             jobTitle: "وکیل پایه یک دادگستری",
             telephone: ["+989169165902", "+989388322230"],
+            email: "Vakil.ahmadmousavi2731@gmail.com",
             memberOf: { "@type": "Organization", name: "مرکز وکلای قوه قضائیه" },
             identifier: { "@type": "PropertyValue", name: "شماره پروانه وکالت", value: "74516" },
             knowsLanguage: "fa",
@@ -65,6 +67,7 @@ export default function Home() {
             url: siteUrl,
             provider: { "@id": siteUrl + "/#attorney" },
             telephone: "+989169165902",
+            email: "Vakil.ahmadmousavi2731@gmail.com",
             areaServed: [
               { "@type": "AdministrativeArea", name: "استان خوزستان" },
               { "@type": "Country", name: "ایران" },
@@ -159,13 +162,8 @@ export default function Home() {
                 <div><span>تحصیلات</span><strong>کارشناسی ارشد حقوق</strong></div>
                 <div><span>فعالیت علمی</span><strong>نویسنده مقاله و کتاب</strong></div>
               </div>
-              <div className="attorney-direct-lines">
-                <span>ارتباط مستقیم</span>
-                <a href="tel:09169165902" dir="ltr">0916 916 5902</a>
-                <a href="tel:09388322230" dir="ltr">0938 832 2230</a>
-              </div>
             </div>
-            <div className="floating-note"><span className="note-icon">§</span><span><b>بررسی دقیق موضوع</b><small>پیش از انتخاب مسیر قانونی</small></span></div>
+            <div className="floating-note"><span className="note-icon"><LegalIcon name="scales" size={22} /></span><span><b>بررسی دقیق موضوع</b><small>پیش از انتخاب مسیر قانونی</small></span></div>
           </div>
         </div>
         <div className="hero-bottom-line"><span /> <span>پایگاه فعالیت در اهواز، پاسخ‌گو به درخواست‌ها از سراسر ایران</span></div>
@@ -189,7 +187,7 @@ export default function Home() {
           <div className="service-grid">
             {services.map((s) => <Link className="service-card" href={"/services/" + s.slug} key={s.n} >
               <div className="service-card-top"><span>{s.n}</span><span className="service-arrow">↙</span></div>
-              <div className="service-symbol">{s.tag === "خانواده" ? "⌂" : s.tag === "املاک" ? "▧" : s.tag === "کیفری" ? "§" : s.tag === "قرارداد" ? "▤" : s.tag === "مطالبات" ? "◈" : "✳"}</div>
+              <div className="service-symbol" aria-hidden="true"><LegalIcon name={s.tag === "خانواده" ? "home" : s.tag === "املاک" ? "building" : s.tag === "کیفری" ? "scales" : s.tag === "قرارداد" ? "document" : s.tag === "مطالبات" ? "briefcase" : "sparkles"} size={22} /></div>
               <h3>{s.title}</h3><p>{s.desc}</p><span className="card-more">مشاهده جزئیات این حوزه <b>←</b></span>
             </Link>)}
           </div>
@@ -209,8 +207,8 @@ export default function Home() {
           <div className="city-panel">
             <div className="city-panel-head"><div><span className="section-kicker">KHOUZESTAN PROVINCE</span><h3>شهرهای استان خوزستان</h3></div><span className="city-count">شهرها و مناطق استان</span></div>
             <div className="city-list">{cities.map((c, i) => <span className={i === 0 ? "city-chip city-featured" : "city-chip"} key={c}>{c}{i === 0 && <b>مرکز</b>}</span>)}</div>
-            <div className="city-foot"><span className="city-pin">⌖</span><span>همچنین امکان ثبت درخواست اولیه از سایر شهرهای ایران وجود دارد.</span></div>
-            <a className="city-national-link" href="#contact"><span className="city-national-icon">⌘</span><span><strong>سایر استان‌های ایران</strong><small>اگر شهر یا استان شما در فهرست بالا نیست، درخواست خود را از این بخش ثبت کنید.</small></span><b>←</b></a>
+            <div className="city-foot"><span className="city-pin"><LegalIcon name="pin" size={20} /></span><span>همچنین امکان ثبت درخواست اولیه از سایر شهرهای ایران وجود دارد.</span></div>
+            <a className="city-national-link" href="#contact"><span className="city-national-icon"><LegalIcon name="map" size={21} /></span><span><strong>سایر استان‌های ایران</strong><small>اگر شهر یا استان شما در فهرست بالا نیست، درخواست خود را از این بخش ثبت کنید.</small></span><b>←</b></a>
           </div>
         </div>
       </section>
@@ -256,8 +254,8 @@ export default function Home() {
             <p>درگاه‌های تکمیلی برای ثبت درخواست و هماهنگی همکاری؛ قابلیت‌های خودکار فقط پس از راه‌اندازی و آزمون واقعی فعال خواهند شد.</p>
           </div>
           <div className="feature-entry-grid">
-            <Link className="feature-entry-card ai-entry" href="/ai-assistant"><span className="feature-entry-mark">✦</span><span className="section-kicker">AI LEGAL ASSISTANT</span><h3>درگاه درخواست راهنمایی هوشمند</h3><p>این نسخه فعلاً پرسش شما را برای ارسال به دفتر آماده می‌کند و پاسخ خودکار هوش مصنوعی یا سامانه بارگذاری امن اسناد نیست.</p><b>ورود به مرکز هوشمند <span>←</span></b></Link>
-            <Link className="feature-entry-card lawyer-entry" href="/lawyer-cooperation"><span className="feature-entry-mark">§</span><span className="section-kicker">LAWYER NETWORK</span><h3>درخواست همکاری حرفه‌ای وکلا</h3><p>فرم اولیه برای هماهنگی و بررسی امکان همکاری است؛ ثبت درخواست به معنی ایجاد شبکه ارجاع یا پذیرش قطعی پرونده نیست.</p><b>ثبت درخواست همکاری <span>←</span></b></Link>
+            <Link className="feature-entry-card ai-entry" href="/ai-assistant"><span className="feature-entry-mark"><LegalIcon name="sparkles" size={24} /></span><span className="section-kicker">AI LEGAL ASSISTANT</span><h3>درگاه درخواست راهنمایی هوشمند</h3><p>این نسخه فعلاً پرسش شما را برای ارسال به دفتر آماده می‌کند و پاسخ خودکار هوش مصنوعی یا سامانه بارگذاری امن اسناد نیست.</p><b>ورود به مرکز هوشمند <span>←</span></b></Link>
+            <Link className="feature-entry-card lawyer-entry" href="/lawyer-cooperation"><span className="feature-entry-mark"><LegalIcon name="scales" size={24} /></span><span className="section-kicker">LAWYER NETWORK</span><h3>درخواست همکاری حرفه‌ای وکلا</h3><p>فرم اولیه برای هماهنگی و بررسی امکان همکاری است؛ ثبت درخواست به معنی ایجاد شبکه ارجاع یا پذیرش قطعی پرونده نیست.</p><b>ثبت درخواست همکاری <span>←</span></b></Link>
           </div>
         </div>
       </section>
@@ -271,9 +269,8 @@ export default function Home() {
             <div className="connection-assurance"><span>✓</span> بدون نیاز به اصطلاحات پیچیده حقوقی</div>
           </div>
           <div className="connection-actions">
-            <a className="connection-primary" href="#contact"><span className="connection-icon">✉</span><span><b>ثبت درخواست بررسی اولیه</b><small>فرم کوتاه و ساده، حدود یک دقیقه</small></span><strong>←</strong></a>
-            <a className="connection-whatsapp" href="#contact"><span className="whatsapp-mark">◉</span><span><b>شروع ارتباط و دریافت راهنمایی</b><small>ابتدا موضوع را ثبت کنید تا مسیر ارتباط مشخص شود</small></span><strong>←</strong></a>
-            <SocialLinksPublic />
+            <a className="connection-primary" href="#contact"><span className="connection-icon"><LegalIcon name="mail" size={20} /></span><span><b>ثبت درخواست بررسی اولیه</b><small>فرم کوتاه و ساده، حدود یک دقیقه</small></span><strong>←</strong></a>
+            <a className="connection-whatsapp" href="#contact"><span className="whatsapp-mark"><LegalIcon name="whatsapp" size={20} /></span><span><b>شروع ارتباط و دریافت راهنمایی</b><small>ابتدا موضوع را ثبت کنید تا مسیر ارتباط مشخص شود</small></span><strong>←</strong></a>
           </div>
         </div>
       </section>
@@ -294,12 +291,34 @@ export default function Home() {
 
       <footer className="footer">
         <div className="container footer-main">
-          <a className="brand footer-brand" href="#"><span className="brand-mark"><span>و</span></span><span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>دفتر اهواز، خوزستان · خدمات در سراسر ایران</small></span></a>
-          <p>آگاهی حقوقی، نخستین قدم برای انتخاب درست است.</p>
-          <a href="#contact" className="footer-link">ثبت درخواست <span>←</span></a>
+          <Link className="brand footer-brand" href="/">
+            <span className="brand-mark"><span>و</span></span>
+            <span className="brand-copy">
+              <strong>مجموعه خدمات حقوقی</strong>
+              <small>اهواز، خوزستان · خدمات حقوقی در سراسر ایران</small>
+            </span>
+          </Link>
+          <a href="#contact" className="footer-link">درخواست مشاوره <span>←</span></a>
         </div>
-        <div className="container"><OfficeLocationPublic /></div>
-        <div className="container footer-bottom"><span>© تمامی حقوق این وب‌سایت محفوظ است.</span><span>اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span><Link href="/privacy">حریم خصوصی</Link><Link href="/articles">مقالات</Link><Link href="/lawyer-cooperation">همکاری وکلا</Link></div>
+        <div className="container footer-content">
+          <section className="footer-contact-block" aria-label="راه‌های ارتباطی">
+            <h2>ارتباط با دفتر</h2>
+            <SocialLinksPublic compact />
+            <OfficeLocationPublic />
+          </section>
+          <nav className="footer-navigation" aria-label="پیوندهای اصلی">
+            <h2>دسترسی سریع</h2>
+            <Link href="/about">معرفی وکیل</Link>
+            <Link href="/services">خدمات حقوقی</Link>
+            <Link href="/articles">مقالات حقوقی</Link>
+            <Link href="/legal-library">کتابخانه حقوقی</Link>
+          </nav>
+        </div>
+        <div className="container footer-bottom">
+          <span>© تمامی حقوق این وب‌سایت محفوظ است.</span>
+          <span className="footer-disclaimer">محتوای سایت جایگزین مشاوره اختصاصی پرونده نیست.</span>
+          <Link href="/privacy">حریم خصوصی</Link>
+        </div>
       </footer>
     </main>
   );

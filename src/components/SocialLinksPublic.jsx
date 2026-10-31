@@ -3,44 +3,45 @@
 import { useEffect, useState } from "react";
 
 const fallbackContacts = [
-  { platform: "phone", label: "تماس اول", url: "tel:09169165902", link_type: "contact" },
-  { platform: "phone", label: "تماس دوم", url: "tel:09388322230", link_type: "contact" },
-  { platform: "whatsapp", label: "واتساپ", url: "https://wa.me/989169165902", link_type: "contact" },
+  { platform: "phone", label: "0916 916 5902", url: "tel:09169165902", link_type: "contact" },
+  { platform: "phone", label: "0938 832 2230", url: "tel:09388322230", link_type: "contact" },
+  { platform: "whatsapp", label: "واتساپ دفتر", url: "https://wa.me/989169165902", link_type: "contact" },
+  { platform: "email", label: "ایمیل دفتر", url: "mailto:Vakil.ahmadmousavi2731@gmail.com", link_type: "contact" },
 ];
 
 const marks = {
-  phone: "☎",
-  whatsapp: "◉",
-  instagram: "◎",
-  bale: "ب",
-  rubika: "ر",
-  eitaa: "ا",
-  soroush: "س",
-  telegram: "➤",
-  linkedin: "in",
-  youtube: "▶",
-  aparat: "▶",
-  email: "✉",
-  website: "↗",
-  other: "＋",
+  phone: "☎", whatsapp: "◉", instagram: "◎", bale: "ب", rubika: "ر",
+  eitaa: "ا", soroush: "س", telegram: "➤", linkedin: "in", youtube: "▶",
+  aparat: "▶", email: "✉", website: "↗", other: "＋",
 };
 
-function LinkCard({ item }) {
+function getLinkLabel(item) {
+  if (item.platform === "email") return "ایمیل دفتر";
+  if (item.platform === "phone" && typeof item.url === "string") {
+    const digits = item.url.replace(/^tel:/i, "").replace(/[^0-9]/g, "");
+    if (digits.length === 11 && digits.startsWith("0")) {
+      return digits.slice(0, 4) + " " + digits.slice(4, 7) + " " + digits.slice(7);
+    }
+  }
+  return item.label;
+}
+
+function LinkCard({ item, compact = false }) {
   const external = /^https:\/\//i.test(item.url);
   return (
-    <a className="social-link-card" href={item.url}
+    <a className={"social-link-card" + (compact ? " footer-channel-link" : "")} href={item.url}
       target={external ? "_blank" : undefined}
       rel={external ? "noopener noreferrer" : undefined}>
       <span className={"social-link-mark social-mark-" + (item.platform || "other")} aria-hidden="true">
         {marks[item.platform] || marks.other}
       </span>
-      <span className="social-link-label">{item.label}</span>
+      <span className="social-link-label">{compact ? getLinkLabel(item) : item.label}</span>
       <span className="social-link-arrow" aria-hidden="true">↗</span>
     </a>
   );
 }
 
-export default function SocialLinksPublic() {
+export default function SocialLinksPublic({ compact = false }) {
   const [links, setLinks] = useState(null);
 
   useEffect(() => {
@@ -58,13 +59,28 @@ export default function SocialLinksPublic() {
 
   const contacts = links.filter((item) => item.link_type === "contact");
   const socials = links.filter((item) => item.link_type === "social");
-  // Keep both published office phone numbers visible even if the CMS has only
-  // one contact entry configured. Custom contact links remain untouched.
   const completeContacts = [...contacts];
   for (const fallback of fallbackContacts) {
-    if (!completeContacts.some((item) => item.url === fallback.url)) {
-      completeContacts.push(fallback);
-    }
+    if (!completeContacts.some((item) => item.url === fallback.url)) completeContacts.push(fallback);
+  }
+
+  if (compact) {
+    return (
+      <div className="footer-channel-groups" aria-label="راه‌های ارتباطی و شبکه‌های اجتماعی">
+        <div className="footer-channel-list">
+          {completeContacts.map((item, index) => (
+            <LinkCard key={item.id || item.platform + index} item={item} compact />
+          ))}
+        </div>
+        {socials.length > 0 && (
+          <div className="footer-social-list" aria-label="شبکه‌های اجتماعی">
+            {socials.map((item) => (
+              <LinkCard key={item.id || item.platform + item.url} item={item} compact />
+            ))}
+          </div>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -80,7 +96,6 @@ export default function SocialLinksPublic() {
           ))}
         </div>
       </section>
-
       {socials.length > 0 && (
         <section className="social-hub-group social-follow-group" aria-labelledby="social-follow-title">
           <div className="social-hub-heading">
@@ -88,7 +103,7 @@ export default function SocialLinksPublic() {
             <div><h3 id="social-follow-title">ما را دنبال کنید</h3><p>مطالب و اطلاع‌رسانی‌های حقوقی در شبکه‌های اجتماعی</p></div>
           </div>
           <div className="social-link-grid">
-            {socials.map((item) => <LinkCard key={item.id} item={item} />)}
+            {socials.map((item) => <LinkCard key={item.id || item.platform + item.url} item={item} />)}
           </div>
         </section>
       )}
