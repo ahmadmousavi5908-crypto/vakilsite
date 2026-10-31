@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import LegalIcon from "../../components/LegalIcon";
 
 const initialForm = {
   name: "", bar: "", city: "", phone: "",
@@ -77,17 +78,17 @@ export default function LawyerCooperationPage() {
         </div>
         <div className="feature-tool-grid">
           <article className="feature-tool-card">
-            <span className="feature-tool-icon" aria-hidden="true">⌖</span>
+            <span className="feature-tool-icon" aria-hidden="true"><LegalIcon name="pin" size={22} /></span>
             <h3>همکاری محلی در خوزستان</h3>
             <p>هماهنگی برای اقدامات و پیگیری‌های قابل انجام در اهواز و سایر شهرهای استان، در حدود مقررات و توافق طرفین.</p>
           </article>
           <article className="feature-tool-card">
-            <span className="feature-tool-icon" aria-hidden="true">§</span>
+            <span className="feature-tool-icon" aria-hidden="true"><LegalIcon name="scales" size={22} /></span>
             <h3>بررسی و تبادل نظر تخصصی</h3>
             <p>مطالعه موضوع، بررسی اسناد از مسیر امن و تبادل نظر حرفه‌ای درباره مسائل حقوقی یا کیفری.</p>
           </article>
           <article className="feature-tool-card">
-            <span className="feature-tool-icon" aria-hidden="true">▤</span>
+            <span className="feature-tool-icon" aria-hidden="true"><LegalIcon name="document" size={22} /></span>
             <h3>تنظیم و بازبینی اسناد</h3>
             <p>همکاری در تهیه یا بازبینی پیش‌نویس لوایح، دادخواست‌ها، قراردادها و مکاتبات حقوقی.</p>
           </article>
