@@ -3019,3 +3019,70 @@ body{
 @media (prefers-reduced-motion:reduce) {
   .global-mobile-menu > summary > i { transition:none !important; }
 }
+
+/* Final mobile menu overlay correction: detach the panel from the launcher box */
+@media (max-width: 900px) {
+  .global-mobile-menu[open] > nav {
+    position: fixed !important;
+    top: calc(env(safe-area-inset-top, 0px) + 70px) !important;
+    left: 12px !important;
+    right: auto !important;
+    width: min(360px, calc(100vw - 24px)) !important;
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 86px) !important;
+    z-index: 2147483647 !important;
+    box-sizing: border-box !important;
+    direction: rtl !important;
+    text-align: right !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+  .global-mobile-menu-group {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 4px !important;
+    padding: 10px 0 12px !important;
+    text-align: right !important;
+  }
+  .global-mobile-menu-group h2 {
+    display: block !important;
+    margin: 0 !important;
+    padding: 4px 4px 8px !important;
+    text-align: right !important;
+    line-height: 1.9 !important;
+  }
+  .global-mobile-menu-group a {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    width: 100% !important;
+    min-height: 46px !important;
+    box-sizing: border-box !important;
+    padding: 8px 7px !important;
+    text-align: right !important;
+    line-height: 1.9 !important;
+  }
+  .global-mobile-menu-group a span {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    text-align: right !important;
+    white-space: normal !important;
+  }
+  .global-mobile-menu-group a b {
+    flex: 0 0 28px !important;
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .global-mobile-menu-group a i {
+    flex: 0 0 16px !important;
+    text-align: center !important;
+  }
+  .global-mobile-menu-cta {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: right !important;
+  }
+}
