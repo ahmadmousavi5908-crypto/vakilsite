@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-:root{--navy:#14243b;--navy2:#253b52;--gold:#c5a46d;--gold-light:#e1c995;--cream:#f5f2ec;--paper:#fffefa;--ink:#26364a;--muted:#6d7885;--line:#e7e2d9}
+:root{--navy:#142b43;--navy2:#24465a;--gold:#b9955d;--gold-light:#e5d1a7;--cream:#f5f4ee;--paper:#fcfbf8;--ink:#263746;--muted:#697987;--line:#e5e5dc;--teal:#236f6b;--teal-deep:#185b58;--teal-soft:#eaf3f1;--sage:#dcebe6}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:90px}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:Tahoma,"Vazirmatn","Segoe UI",sans-serif;line-height:1.9}
@@ -4102,4 +4102,104 @@ input[type="tel"],input[type="email"],input[type="url"] { direction:ltr; text-al
 
 .practice-hero .section-kicker {
   color: #d7bd8c;
+}
+
+
+/* Refined international legal identity: calm navy, living teal, warm brass */
+:root {
+  color-scheme: light;
+  --focus-ring: rgba(35, 111, 107, .28);
+}
+body {
+  background: var(--paper);
+  color: var(--ink);
+}
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+}
+.desktop-nav a:hover,
+.text-link:hover,
+.card-more:hover,
+.city-cta:hover,
+.home-articles-more a:hover {
+  color: var(--teal);
+}
+.hero {
+  background: linear-gradient(118deg, #142b43 0%, #1b3b52 62%, #205b59 100%);
+}
+.hero-pattern {
+  opacity: .16;
+}
+.eyebrow span,
+.hero-bottom-line span:first-child {
+  background: var(--gold-light);
+}
+.service-card:hover {
+  border-color: rgba(35, 111, 107, .42);
+  box-shadow: 0 14px 32px rgba(24, 91, 88, .08);
+}
+.service-card:after {
+  background: var(--teal);
+}
+.service-symbol,
+.finder-option-symbol,
+.home-article-symbol {
+  background: var(--teal-soft);
+  color: var(--teal-deep);
+}
+.finder-option:hover,
+.finder-option.selected {
+  border-color: var(--teal);
+  background: #f2f8f6;
+}
+.finder-progress-item.is-current span {
+  background: var(--teal-deep);
+  border-color: var(--teal-deep);
+  color: #fff;
+}
+.finder-finish {
+  background: var(--teal-deep);
+}
+.finder-finish span {
+  color: #d9e9df;
+}
+.step-no {
+  border-color: #b8d2cb;
+  color: var(--teal-deep);
+}
+.process-step:hover .step-no {
+  background: var(--teal-soft);
+  border-color: var(--teal);
+}
+.section-kicker {
+  color: #8c7044;
+}
+.hero .section-kicker,
+.contact-section .section-kicker,
+.article-hero .section-kicker,
+.article-detail-hero .section-kicker {
+  color: var(--gold-light);
+}
+.nav-cta:hover,
+.btn-gold:hover,
+.btn-submit:hover {
+  filter: brightness(1.04);
+  box-shadow: 0 7px 20px rgba(185, 149, 93, .2);
+}
+.connection-card:before {
+  background: linear-gradient(180deg, var(--teal), var(--gold));
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
