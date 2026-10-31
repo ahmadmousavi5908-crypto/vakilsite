@@ -36,7 +36,7 @@ const launcher = {
   left: "max(12px, env(safe-area-inset-left, 0px))",
   width: "50px",
   height: "50px",
-  zIndex: 2147483647,
+  zIndex: 1100,
   direction: "ltr",
 };
 
@@ -56,7 +56,7 @@ const trigger = {
   border: "1px solid rgba(177,142,84,.7)",
   borderRadius: "13px",
   background: "linear-gradient(155deg,#fffefa,#f2ecdf)",
-  boxShadow: "0 5px 18px rgba(12,31,49,.24)",
+  boxShadow: "0 5px 18px rgba(12,31,49,.18)",
 };
 
 const line = {
@@ -85,12 +85,12 @@ const panel = {
   border: "1px solid #dfd3bd",
   borderRadius: "16px",
   background: "#fffefa",
-  boxShadow: "0 22px 58px rgba(8,25,42,.28)",
+  boxShadow: "0 18px 46px rgba(8,25,42,.22)",
   color: "#20384f",
   direction: "rtl",
   textAlign: "right",
   fontFamily: '"Vazirmatn", Tahoma, "Segoe UI", sans-serif',
-  zIndex: 2147483647,
+  zIndex: 1100,
 };
 
 const heading = {
