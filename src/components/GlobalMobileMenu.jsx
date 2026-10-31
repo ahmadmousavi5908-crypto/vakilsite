@@ -21,6 +21,16 @@ const summaryStyle = {
   boxShadow: "0 5px 18px rgba(12,31,49,.24)",
 };
 const lineStyle = { display: "block", width: 21, height: 2, minHeight: 2, margin: 0, borderRadius: 3, background: "#173550" };
+const panelStyle = {
+  position: "fixed", top: "calc(env(safe-area-inset-top, 0px) + 70px)",
+  left: "12px", right: "auto", width: "min(360px, calc(100vw - 24px))",
+  maxHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - 86px)",
+  overflowX: "hidden", overflowY: "auto", overscrollBehavior: "contain",
+  zIndex: 2147483647, boxSizing: "border-box", direction: "rtl",
+  textAlign: "right", background: "#fffefa", border: "1px solid #dfd3bd",
+  borderRadius: 16, padding: "0 15px 14px",
+  boxShadow: "0 22px 58px rgba(8,25,42,.28)", color: "#20384f",
+};
 
 export default function GlobalMobileMenu() {
   return (
@@ -31,7 +41,7 @@ export default function GlobalMobileMenu() {
         <i aria-hidden="true" style={lineStyle} />
         <i aria-hidden="true" style={lineStyle} />
       </summary>
-      <nav aria-label="فهرست اصلی سایت">
+      <nav aria-label="فهرست اصلی سایت" style={panelStyle}>
         <div className="global-mobile-menu-heading">
           <span>راهنمای دسترسی</span>
           <strong>چطور می‌توانیم راهنمایی‌تان کنیم؟</strong>
