@@ -25,11 +25,8 @@ export default function AttorneyProfileDock() {
   }, []);
 
   function toggleOpen() {
-    setOpen((current) => {
-      const next = !current;
-      if (next) window.dispatchEvent(new CustomEvent("vakilsite:dock-open", { detail: "profile" }));
-      return next;
-    });
+    if (!open) window.dispatchEvent(new CustomEvent("vakilsite:dock-open", { detail: "profile" }));
+    setOpen(!open);
   }
 
   return (
@@ -59,7 +56,7 @@ export default function AttorneyProfileDock() {
           <Link href="/about" onClick={() => setOpen(false)} style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 44, borderRadius: 9, background: "#173550", color: "#f4e6c7", textDecoration: "none", fontSize: 12, fontWeight: 700 }}>مشاهده معرفی کامل وکیل ←</Link>
         </section>
       )}
-      <button type="button" aria-label={open ? "بستن معرفی وکیل" : "مشاهده معرفی وکیل"} aria-expanded={open} aria-controls="attorney-profile-panel" onClick={toggleOpen} style={{ display: "flex", alignItems: "center", gap: 9, minHeight: 50, padding: "0 13px", border: "1px solid rgba(255,250,239,.95)", borderRadius: 26, background: "linear-gradient(145deg,#e5d2a5,#b18e54)", color: "#10243d", boxShadow: "0 6px 20px rgba(5,20,35,.22)", cursor: "pointer", fontSize: 12, fontWeight: 800, transition: "transform .18s ease, box-shadow .18s ease" }}>
+      <button type="button" aria-label={open ? "بستن معرفی وکیل" : "مشاهده معرفی وکیل"} aria-expanded={open} aria-controls={open ? "attorney-profile-panel" : undefined} onClick={toggleOpen} style={{ display: "flex", alignItems: "center", gap: 9, minHeight: 50, padding: "0 13px", border: "1px solid rgba(255,250,239,.95)", borderRadius: 26, background: "linear-gradient(145deg,#e5d2a5,#b18e54)", color: "#10243d", boxShadow: "0 6px 20px rgba(5,20,35,.22)", cursor: "pointer", fontSize: 12, fontWeight: 800, transition: "transform .18s ease, box-shadow .18s ease" }}>
         <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="8" r="3.2" />
           <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
