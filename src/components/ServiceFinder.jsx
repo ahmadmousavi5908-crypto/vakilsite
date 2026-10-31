@@ -66,7 +66,7 @@ export default function ServiceFinder() {
   const current = steps[step];
   const options = useMemo(() => {
     if (current.id !== "subject") return current.options;
-    return (subjects[answers.area] || subjects["سایر موضوعات"]).map((item) => [item, "انتخاب این موضوع", "›"]);
+    return (subjects[answers.area] || subjects["سایر موضوعات"]).map((item) => [item, "انتخاب این موضوع", "document"]);
   }, [current.id, current.options, answers.area]);
 
   function choose(value) {
