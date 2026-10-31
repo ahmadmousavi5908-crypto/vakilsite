@@ -4303,8 +4303,9 @@ textarea:focus-visible,
   .footer-bottom{grid-template-columns:1fr;gap:4px;padding:10px 0 12px}
 }
 @media(max-width:420px){
-  .footer-channel-list{grid-template-columns:1fr}
+  .footer-channel-list{grid-template-columns:repeat(2,minmax(0,1fr))}
   .footer .footer-channel-link{min-height:36px}
+  .footer .footer-channel-link .social-link-label{overflow-wrap:anywhere}
   .footer-main{align-items:center}
   .footer-link{font-size:9px;padding:8px 10px}
 }
