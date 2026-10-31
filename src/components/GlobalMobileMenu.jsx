@@ -131,7 +131,6 @@ const itemStyle = {
   minHeight: "46px",
   margin: 0,
   padding: "9px 10px",
-  border: 0,
   border: "1px solid #eee7db",
   borderRadius: "10px",
   background: "#ffffff",
@@ -221,6 +220,7 @@ export default function GlobalMobileMenu() {
 
         <Link
           href="/#contact"
+          className="site-mobile-menu-cta"
           style={{
             boxSizing: "border-box",
             display: "grid",
