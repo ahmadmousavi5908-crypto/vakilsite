@@ -16,8 +16,9 @@ const marks = {
 };
 
 function getLinkLabel(item) {
+  if (item.platform === "email") return "ایمیل دفتر";
   if (item.platform === "phone" && typeof item.url === "string") {
-    const digits = item.url.replace(/^tel:/i, "").replace(/\\D/g, "");
+    const digits = item.url.replace(/^tel:/i, "").replace(/[^0-9]/g, "");
     if (digits.length === 11 && digits.startsWith("0")) {
       return digits.slice(0, 4) + " " + digits.slice(4, 7) + " " + digits.slice(7);
     }
