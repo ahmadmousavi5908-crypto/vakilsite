@@ -6,6 +6,7 @@ import { articles } from "../data/articles";
 import OfficeLocationPublic from "../components/OfficeLocationPublic";
 import JsonLd from "../components/JsonLd";
 import SocialLinksPublic from "../components/SocialLinksPublic";
+import LegalIcon from "../components/LegalIcon";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -165,7 +166,7 @@ export default function Home() {
                 <a href="tel:09388322230" dir="ltr">0938 832 2230</a>
               </div>
             </div>
-            <div className="floating-note"><span className="note-icon">§</span><span><b>بررسی دقیق موضوع</b><small>پیش از انتخاب مسیر قانونی</small></span></div>
+            <div className="floating-note"><span className="note-icon"><LegalIcon name="scales" size={22} /></span><span><b>بررسی دقیق موضوع</b><small>پیش از انتخاب مسیر قانونی</small></span></div>
           </div>
         </div>
         <div className="hero-bottom-line"><span /> <span>پایگاه فعالیت در اهواز، پاسخ‌گو به درخواست‌ها از سراسر ایران</span></div>
@@ -189,7 +190,7 @@ export default function Home() {
           <div className="service-grid">
             {services.map((s) => <Link className="service-card" href={"/services/" + s.slug} key={s.n} >
               <div className="service-card-top"><span>{s.n}</span><span className="service-arrow">↙</span></div>
-              <div className="service-symbol">{s.tag === "خانواده" ? "⌂" : s.tag === "املاک" ? "▧" : s.tag === "کیفری" ? "§" : s.tag === "قرارداد" ? "▤" : s.tag === "مطالبات" ? "◈" : "✳"}</div>
+              <div className="service-symbol" aria-hidden="true"><LegalIcon name={s.tag === "خانواده" ? "home" : s.tag === "املاک" ? "building" : s.tag === "کیفری" ? "scales" : s.tag === "قرارداد" ? "document" : s.tag === "مطالبات" ? "briefcase" : "sparkles"} size={22} /></div>
               <h3>{s.title}</h3><p>{s.desc}</p><span className="card-more">مشاهده جزئیات این حوزه <b>←</b></span>
             </Link>)}
           </div>
@@ -209,8 +210,8 @@ export default function Home() {
           <div className="city-panel">
             <div className="city-panel-head"><div><span className="section-kicker">KHOUZESTAN PROVINCE</span><h3>شهرهای استان خوزستان</h3></div><span className="city-count">شهرها و مناطق استان</span></div>
             <div className="city-list">{cities.map((c, i) => <span className={i === 0 ? "city-chip city-featured" : "city-chip"} key={c}>{c}{i === 0 && <b>مرکز</b>}</span>)}</div>
-            <div className="city-foot"><span className="city-pin">⌖</span><span>همچنین امکان ثبت درخواست اولیه از سایر شهرهای ایران وجود دارد.</span></div>
-            <a className="city-national-link" href="#contact"><span className="city-national-icon">⌘</span><span><strong>سایر استان‌های ایران</strong><small>اگر شهر یا استان شما در فهرست بالا نیست، درخواست خود را از این بخش ثبت کنید.</small></span><b>←</b></a>
+            <div className="city-foot"><span className="city-pin"><LegalIcon name="pin" size={20} /></span><span>همچنین امکان ثبت درخواست اولیه از سایر شهرهای ایران وجود دارد.</span></div>
+            <a className="city-national-link" href="#contact"><span className="city-national-icon"><LegalIcon name="map" size={21} /></span><span><strong>سایر استان‌های ایران</strong><small>اگر شهر یا استان شما در فهرست بالا نیست، درخواست خود را از این بخش ثبت کنید.</small></span><b>←</b></a>
           </div>
         </div>
       </section>
@@ -256,8 +257,8 @@ export default function Home() {
             <p>درگاه‌های تکمیلی برای ثبت درخواست و هماهنگی همکاری؛ قابلیت‌های خودکار فقط پس از راه‌اندازی و آزمون واقعی فعال خواهند شد.</p>
           </div>
           <div className="feature-entry-grid">
-            <Link className="feature-entry-card ai-entry" href="/ai-assistant"><span className="feature-entry-mark">✦</span><span className="section-kicker">AI LEGAL ASSISTANT</span><h3>درگاه درخواست راهنمایی هوشمند</h3><p>این نسخه فعلاً پرسش شما را برای ارسال به دفتر آماده می‌کند و پاسخ خودکار هوش مصنوعی یا سامانه بارگذاری امن اسناد نیست.</p><b>ورود به مرکز هوشمند <span>←</span></b></Link>
-            <Link className="feature-entry-card lawyer-entry" href="/lawyer-cooperation"><span className="feature-entry-mark">§</span><span className="section-kicker">LAWYER NETWORK</span><h3>درخواست همکاری حرفه‌ای وکلا</h3><p>فرم اولیه برای هماهنگی و بررسی امکان همکاری است؛ ثبت درخواست به معنی ایجاد شبکه ارجاع یا پذیرش قطعی پرونده نیست.</p><b>ثبت درخواست همکاری <span>←</span></b></Link>
+            <Link className="feature-entry-card ai-entry" href="/ai-assistant"><span className="feature-entry-mark"><LegalIcon name="sparkles" size={24} /></span><span className="section-kicker">AI LEGAL ASSISTANT</span><h3>درگاه درخواست راهنمایی هوشمند</h3><p>این نسخه فعلاً پرسش شما را برای ارسال به دفتر آماده می‌کند و پاسخ خودکار هوش مصنوعی یا سامانه بارگذاری امن اسناد نیست.</p><b>ورود به مرکز هوشمند <span>←</span></b></Link>
+            <Link className="feature-entry-card lawyer-entry" href="/lawyer-cooperation"><span className="feature-entry-mark"><LegalIcon name="scales" size={24} /></span><span className="section-kicker">LAWYER NETWORK</span><h3>درخواست همکاری حرفه‌ای وکلا</h3><p>فرم اولیه برای هماهنگی و بررسی امکان همکاری است؛ ثبت درخواست به معنی ایجاد شبکه ارجاع یا پذیرش قطعی پرونده نیست.</p><b>ثبت درخواست همکاری <span>←</span></b></Link>
           </div>
         </div>
       </section>
@@ -271,8 +272,8 @@ export default function Home() {
             <div className="connection-assurance"><span>✓</span> بدون نیاز به اصطلاحات پیچیده حقوقی</div>
           </div>
           <div className="connection-actions">
-            <a className="connection-primary" href="#contact"><span className="connection-icon">✉</span><span><b>ثبت درخواست بررسی اولیه</b><small>فرم کوتاه و ساده، حدود یک دقیقه</small></span><strong>←</strong></a>
-            <a className="connection-whatsapp" href="#contact"><span className="whatsapp-mark">◉</span><span><b>شروع ارتباط و دریافت راهنمایی</b><small>ابتدا موضوع را ثبت کنید تا مسیر ارتباط مشخص شود</small></span><strong>←</strong></a>
+            <a className="connection-primary" href="#contact"><span className="connection-icon"><LegalIcon name="mail" size={20} /></span><span><b>ثبت درخواست بررسی اولیه</b><small>فرم کوتاه و ساده، حدود یک دقیقه</small></span><strong>←</strong></a>
+            <a className="connection-whatsapp" href="#contact"><span className="whatsapp-mark"><LegalIcon name="whatsapp" size={20} /></span><span><b>شروع ارتباط و دریافت راهنمایی</b><small>ابتدا موضوع را ثبت کنید تا مسیر ارتباط مشخص شود</small></span><strong>←</strong></a>
             <SocialLinksPublic />
           </div>
         </div>
