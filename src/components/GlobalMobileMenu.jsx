@@ -26,7 +26,7 @@ export default function GlobalMobileMenu() {
   return (
     <details className="global-mobile-menu" style={launcherStyle}>
       <summary aria-label="باز کردن فهرست سایت" title="فهرست سایت" style={summaryStyle}>
-        <span className="global-mobile-menu-sr">فهرست سایت</span>
+        <span className="global-mobile-menu-sr" style={{position:"absolute",width:1,height:1,padding:0,margin:-1,overflow:"hidden",clip:"rect(0,0,0,0)",whiteSpace:"nowrap",border:0}}>فهرست سایت</span>
         <i aria-hidden="true" style={lineStyle} />
         <i aria-hidden="true" style={lineStyle} />
         <i aria-hidden="true" style={lineStyle} />
