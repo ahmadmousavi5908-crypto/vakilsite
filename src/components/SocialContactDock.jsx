@@ -6,6 +6,7 @@ const fallback = [
   { platform: "phone", label: "تماس اول · 0916 916 5902", url: "tel:09169165902", link_type: "contact" },
   { platform: "phone", label: "تماس دوم · 0938 832 2230", url: "tel:09388322230", link_type: "contact" },
   { platform: "whatsapp", label: "واتساپ دفتر", url: "https://wa.me/989169165902", link_type: "contact" },
+  { platform: "email", label: "ایمیل کاری · Vakil.ahmadmousavi2731@gmail.com", url: "mailto:Vakil.ahmadmousavi2731@gmail.com", link_type: "contact" },
 ];
 
 const initials = {
