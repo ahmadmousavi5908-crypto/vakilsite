@@ -291,36 +291,33 @@ export default function Home() {
 
       <footer className="footer">
         <div className="container footer-main">
-          <a className="brand footer-brand" href="#"><span className="brand-mark"><span>و</span></span><span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>دفتر اهواز، خوزستان · خدمات در سراسر ایران</small></span></a>
-          <p>آگاهی حقوقی، نخستین قدم برای انتخاب درست است.</p>
-          <a href="#contact" className="footer-link">ثبت درخواست بررسی <span>←</span></a>
+          <a className="brand footer-brand" href="/">
+            <span className="brand-mark"><span>و</span></span>
+            <span className="brand-copy">
+              <strong>مجموعه خدمات حقوقی</strong>
+              <small>اهواز، خوزستان · خدمات حقوقی در سراسر ایران</small>
+            </span>
+          </a>
+          <a href="#contact" className="footer-link">درخواست مشاوره <span>←</span></a>
         </div>
         <div className="container footer-content">
-          <section className="footer-contact-block" aria-labelledby="footer-contact-title">
-            <span className="footer-kicker">CONTACT & COMMUNICATION</span>
-            <h2 id="footer-contact-title">راه‌های ارتباطی با دفتر</h2>
-            <p>برای تماس تلفنی، ارسال ایمیل یا مشاهده راه‌های ارتباطی، از گزینه‌های زیر استفاده کنید.</p>
-            <SocialLinksPublic />
+          <section className="footer-contact-block" aria-label="راه‌های ارتباطی">
+            <h2>ارتباط با دفتر</h2>
+            <SocialLinksPublic compact />
+            <OfficeLocationPublic />
           </section>
-          <nav className="footer-navigation" aria-label="پیوندهای مهم">
-            <div><span className="footer-kicker">QUICK ACCESS</span><h2>دسترسی سریع</h2></div>
+          <nav className="footer-navigation" aria-label="پیوندهای اصلی">
+            <h2>دسترسی سریع</h2>
             <Link href="/about">معرفی وکیل</Link>
-            <Link href="/services">حوزه‌های فعالیت</Link>
-            <Link href="/articles">مقالات و راهنماهای حقوقی</Link>
+            <Link href="/services">خدمات حقوقی</Link>
+            <Link href="/articles">مقالات حقوقی</Link>
             <Link href="/legal-library">کتابخانه حقوقی</Link>
-            <Link href="/lawyer-cooperation">همکاری حرفه‌ای وکلا</Link>
-            <Link href="/privacy">حریم خصوصی</Link>
           </nav>
         </div>
-        <div className="container footer-office"><OfficeLocationPublic /></div>
         <div className="container footer-bottom">
           <span>© تمامی حقوق این وب‌سایت محفوظ است.</span>
-          <span className="footer-disclaimer">اطلاعات این وب‌سایت جایگزین بررسی اختصاصی پرونده و مشاوره حقوقی نیست.</span>
-          <div className="footer-legal-links">
-            <Link href="/privacy">حریم خصوصی</Link>
-            <Link href="/articles">مقالات</Link>
-            <Link href="/lawyer-cooperation">همکاری وکلا</Link>
-          </div>
+          <span className="footer-disclaimer">محتوای سایت جایگزین مشاوره اختصاصی پرونده نیست.</span>
+          <Link href="/privacy">حریم خصوصی</Link>
         </div>
       </footer>
     </main>
