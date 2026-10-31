@@ -3998,3 +3998,47 @@ input[type="tel"],input[type="email"],input[type="url"] { direction:ltr; text-al
     transition-duration: .01ms !important;
   }
 }
+
+
+/* SVG icon alignment: avoid font-dependent glyph collisions across devices. */
+.service-symbol svg,
+.note-icon svg,
+.city-pin svg,
+.city-national-icon svg,
+.feature-entry-mark svg,
+.connection-icon svg,
+.whatsapp-mark svg,
+.feature-tool-icon svg,
+.finder-option-symbol svg,
+.finder-summary-icon svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.finder-option-number {
+  color: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.finder-option-symbol,
+.finder-summary-icon,
+.feature-tool-icon,
+.service-symbol,
+.note-icon,
+.feature-entry-mark,
+.city-pin,
+.city-national-icon,
+.connection-icon,
+.whatsapp-mark {
+  line-height: 1;
+}
+
+@media (max-width: 760px) {
+  .finder-option-symbol svg {
+    width: 18px;
+    height: 18px;
+  }
+}
