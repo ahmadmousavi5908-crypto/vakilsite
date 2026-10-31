@@ -141,11 +141,8 @@ export default function SocialContactDock() {
   }, []);
 
   function toggleOpen() {
-    setOpen((current) => {
-      const next = !current;
-      if (next) window.dispatchEvent(new CustomEvent("vakilsite:dock-open", { detail: "contact" }));
-      return next;
-    });
+    if (!open) window.dispatchEvent(new CustomEvent("vakilsite:dock-open", { detail: "contact" }));
+    setOpen(!open);
   }
 
   const items = [...links];
@@ -199,7 +196,7 @@ export default function SocialContactDock() {
         type="button"
         aria-label={open ? "بستن راه‌های ارتباطی" : "نمایش راه‌های ارتباطی"}
         aria-expanded={open}
-        aria-controls="contact-dock-panel"
+        aria-controls={open ? "contact-dock-panel" : undefined}
         onClick={toggleOpen}
         style={toggleStyle}
       >
