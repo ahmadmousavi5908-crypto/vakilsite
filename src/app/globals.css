@@ -4092,3 +4092,8 @@ input[type="tel"],input[type="email"],input[type="url"] { direction:ltr; text-al
     font-size: 12px;
   }
 }
+
+
+.practice-hero .section-kicker {
+  color: #d7bd8c;
+}
