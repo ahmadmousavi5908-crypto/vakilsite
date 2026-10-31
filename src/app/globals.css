@@ -3854,3 +3854,88 @@ textarea:focus-visible {
     white-space: nowrap;
   }
 }
+
+/* Refined visual system: calm, editorial and Persian-first */
+:root {
+  --navy:#172b43; --navy2:#29465f; --gold:#b99a65; --gold-light:#e4d0a7;
+  --cream:#f5f2eb; --paper:#fffefa; --ink:#26384a; --muted:#6c7886;
+  --line:#e8e2d8; --teal:#607f7a; --surface-soft:#f8f6f1;
+  --shadow-soft:0 12px 34px rgba(23,43,66,.055);
+  --shadow-card:0 18px 44px rgba(23,43,66,.075);
+}
+html { scroll-padding-top:104px; }
+body { color:var(--ink); background:var(--paper); font-size:16px; line-height:2; letter-spacing:0; word-spacing:0; font-kerning:normal; }
+:lang(fa), :lang(fa) * { letter-spacing:0!important; word-spacing:0!important; hyphens:none; font-feature-settings:"kern" 1,"liga" 1; }
+:lang(fa) p,:lang(fa) li,:lang(fa) dd,:lang(fa) dt { line-height:2.05; overflow-wrap:break-word; word-break:normal; }
+:lang(fa) h1,:lang(fa) h2,:lang(fa) h3,:lang(fa) h4 { line-height:1.6; text-wrap:pretty; }
+:lang(fa) input,:lang(fa) textarea,:lang(fa) select,:lang(fa) button { letter-spacing:0!important; }
+input[type="tel"],input[type="email"],input[type="url"] { direction:ltr; text-align:left; unicode-bidi:plaintext; }
+.site-header,.article-header,.feature-nav { background:rgba(255,254,250,.97); border-bottom-color:rgba(23,43,66,.09); }
+.nav-cta,.about-cta a,.article-contact-band a { background:var(--navy); color:#fffefa; }
+.btn-gold,.btn-submit,.feature-primary { background:var(--gold); color:#172b43; border-radius:10px; }
+.btn-gold:hover,.btn-submit:hover,.feature-primary:hover { background:#c7aa76; }
+.hero,.contact-section,.feature-hero { background-color:var(--navy); background-image:linear-gradient(125deg,#14283e 0%,#203d57 58%,#29485f 100%); }
+.hero h1,.feature-hero h1 { text-wrap:balance; }
+.hero-lead,.feature-hero p { max-width:64ch; }
+.section,.feature-section { scroll-margin-top:100px; }
+.section-heading h2,.center-heading h2,.city-intro h2,.contact-copy h2,.faq-layout h2,.feature-heading h2 { letter-spacing:0!important; text-wrap:balance; }
+.service-card,.practice-card,.feature-tool-card,.feature-entry-card,.article-card,.article-sidebar-card,.about-profile-card,.about-approach-grid article,.city-panel,.request-form,.feature-form,.glossary-reference { border-color:var(--line); border-radius:15px; box-shadow:var(--shadow-soft); }
+.service-card,.practice-card,.feature-tool-card,.feature-entry-card,.article-card,.about-approach-grid article { background:#fffefa; }
+.service-card:hover,.practice-card:hover,.feature-tool-card:hover,.feature-entry-card:hover,.article-card:hover { border-color:#d4c19b; box-shadow:var(--shadow-card); }
+.service-card h3,.practice-card h2,.feature-tool-card h3,.feature-entry-card h3,.about-approach-grid h3 { color:var(--navy); }
+.service-card p,.practice-card p,.feature-tool-card p,.feature-entry-card p,.about-approach-grid p { color:#687787; }
+.section-kicker,.eyebrow { color:#a48653; }
+.hero .eyebrow,.feature-hero .section-kicker { color:#dfc99b; }
+.article-hero,.practice-hero,.glossary-hero { background:linear-gradient(125deg,#172d45,#29465f); }
+.article-hero h1,.practice-hero h1,.glossary-hero h1 { text-wrap:balance; }
+.article-body { max-width:78ch; color:#35475a; font-size:16px; line-height:2.15; }
+.article-body p { margin-block:0 1.25em; }
+.article-body h2,.article-body h3 { color:var(--navy); }
+.article-intro,.article-checklist,.article-legal-note { border-radius:14px; }
+.article-header-cta,.nav-cta,.btn,.feature-primary,.feature-secondary { min-height:46px; border-radius:9px; }
+.article-breadcrumb { line-height:1.9; }
+.article-footer,.feature-footer,.footer { background:#102338; }
+.request-form,.feature-form { padding:clamp(20px,3vw,32px); background:#fffefa; border:1px solid #e5dfd3; box-shadow:0 16px 42px rgba(18,39,59,.075); }
+.request-form label,.feature-form label { display:block; margin:16px 0 7px; color:#405368; font-size:13px; font-weight:700; line-height:1.8; }
+.request-form input,.request-form select,.request-form textarea,.feature-form input,.feature-form select,.feature-form textarea { display:block; width:100%; min-width:0; min-height:48px; padding:11px 13px; border:1px solid #dcdedc; border-radius:9px; background:#fff; color:#25394d; font:inherit; font-size:14px; line-height:1.9; text-align:right; transition:border-color .18s ease,box-shadow .18s ease,background .18s ease; }
+.request-form textarea,.feature-form textarea { min-height:122px; resize:vertical; }
+.request-form input::placeholder,.request-form textarea::placeholder,.feature-form input::placeholder,.feature-form textarea::placeholder { color:#9aa3ac; opacity:1; }
+.request-form input:focus,.request-form select:focus,.request-form textarea:focus,.feature-form input:focus,.feature-form select:focus,.feature-form textarea:focus { outline:none; border-color:var(--gold); background:#fffefa; box-shadow:0 0 0 3px rgba(185,154,101,.16); }
+.feature-form-grid { gap:13px 18px; }
+.feature-form-grid>div { min-width:0; }
+.cooperation-form>.feature-warning { border-radius:10px; }
+.feature-warning { border-right-color:var(--gold); border-radius:10px; font-size:12px; line-height:2; }
+.form-heading { color:var(--navy); }
+.form-hint { font-size:11px; line-height:1.9; }
+.about-profile-card { gap:clamp(24px,4vw,52px); padding:clamp(18px,3vw,34px); }
+.about-attorney-photo { border-radius:16px; background:var(--surface-soft); }
+.about-credentials { gap:11px; }
+.about-credentials>div { padding:14px 15px; border-color:#e8e2d8; border-radius:11px; background:linear-gradient(145deg,#fffefa,#f8f6f1); }
+.about-credentials dt { font-size:12px; }
+.about-credentials dd { font-size:14px; line-height:1.9; }
+.about-approach-grid article { padding:24px; }
+@media(max-width:900px) {
+ #site-mobile-menu-panel { width:min(390px,calc(100vw - 24px))!important; border:1px solid #e5dccb!important; border-radius:17px!important; background:#fffefa!important; box-shadow:0 24px 64px rgba(10,29,47,.24)!important; }
+ #site-mobile-menu-panel a:not(.site-mobile-menu-cta) { min-height:49px!important; border-color:#eee8dd!important; border-radius:11px!important; background:#fff!important; font-size:14px!important; line-height:1.9!important; }
+ #site-mobile-menu-panel a:not(.site-mobile-menu-cta):hover { border-color:#d8c7a6!important; background:#faf7f0!important; }
+ #site-mobile-menu-panel a:focus-visible { outline:2px solid var(--gold)!important; outline-offset:2px!important; }
+}
+@media(max-width:700px) {
+ body { font-size:15px; }
+ .section { padding-block:62px; }
+ .hero h1 { font-size:clamp(29px,7vw,36px); }
+ .section-heading h2,.city-intro h2,.contact-copy h2 { text-wrap:balance; }
+ .service-grid { gap:12px; }
+ .feature-tool-grid,.feature-form-grid { grid-template-columns:minmax(0,1fr); }
+ .feature-form { padding:22px 18px; }
+ .about-profile-card { padding:15px; }
+ .about-credentials { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ .feature-hero { padding-block:58px; }
+ .feature-hero h1 { font-size:clamp(28px,7vw,36px); }
+ .feature-hero p { font-size:13px; }
+}
+@media(max-width:390px) {
+ .about-credentials { grid-template-columns:minmax(0,1fr); }
+ .container { width:calc(100% - 30px); }
+ .request-form,.feature-form { padding:19px 15px; }
+}
