@@ -3943,8 +3943,14 @@ input[type="tel"],input[type="email"],input[type="url"] { direction:ltr; text-al
 
 /* Final quality pass: reduce floating-control collisions and visual noise. */
 @media (min-width: 901px) {
+  /* Keep site-wide navigation available on inner desktop pages too. */
   #site-mobile-menu-root {
-    display: none !important;
+    top: 94px !important;
+    left: 16px !important;
+  }
+
+  #site-mobile-menu-panel {
+    top: 154px !important;
   }
 }
 
