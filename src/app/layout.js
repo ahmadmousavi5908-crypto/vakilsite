@@ -1,5 +1,6 @@
 import "./globals.css";
 import SocialContactDock from "../components/SocialContactDock";
+import AttorneyProfileDock from "../components/AttorneyProfileDock";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
@@ -57,7 +58,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="fa" dir="rtl">
-      <body>{children}<SocialContactDock /></body>
+      <body>{children}<AttorneyProfileDock /><SocialContactDock /></body>
     </html>
   );
 }
