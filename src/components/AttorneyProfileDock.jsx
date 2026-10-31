@@ -13,21 +13,32 @@ export default function AttorneyProfileDock() {
       if (rootRef.current && !rootRef.current.contains(event.target)) setOpen(false);
     };
     const onKey = (event) => { if (event.key === "Escape") setOpen(false); };
+    const onOtherDock = (event) => { if (event.detail !== "profile") setOpen(false); };
     document.addEventListener("pointerdown", onPointer);
     document.addEventListener("keydown", onKey);
+    window.addEventListener("vakilsite:dock-open", onOtherDock);
     return () => {
       document.removeEventListener("pointerdown", onPointer);
       document.removeEventListener("keydown", onKey);
+      window.removeEventListener("vakilsite:dock-open", onOtherDock);
     };
   }, []);
 
+  function toggleOpen() {
+    setOpen((current) => {
+      const next = !current;
+      if (next) window.dispatchEvent(new CustomEvent("vakilsite:dock-open", { detail: "profile" }));
+      return next;
+    });
+  }
+
   return (
-    <div ref={rootRef} dir="rtl" style={{ position: "fixed", left: "max(12px, env(safe-area-inset-left))", bottom: "max(84px, calc(env(safe-area-inset-bottom) + 82px))", zIndex: 2147483000, fontFamily: "inherit" }}>
+    <div ref={rootRef} dir="rtl" style={{ position: "fixed", left: "max(12px, env(safe-area-inset-left))", bottom: "max(78px, calc(env(safe-area-inset-bottom) + 76px))", zIndex: 1050, fontFamily: "inherit" }}>
       {open && (
-        <section role="dialog" aria-label="معرفی وکیل" style={{ position: "absolute", left: 0, bottom: 70, width: "min(350px, calc(100vw - 28px))", maxHeight: "min(72vh, 570px)", overflowY: "auto", padding: 17, border: "1px solid #d8c8a5", borderRadius: 17, background: "#fffefa", color: "#18334b", boxShadow: "0 18px 55px rgba(5,20,35,.28)" }}>
+        <section id="attorney-profile-panel" role="dialog" aria-label="معرفی وکیل" style={{ position: "absolute", left: 0, bottom: 66, width: "min(350px, calc(100vw - 28px))", maxHeight: "min(72vh, 570px)", overflowY: "auto", padding: 17, border: "1px solid #e2d8c7", borderRadius: 16, background: "#fffefa", color: "#18334b", boxShadow: "0 16px 42px rgba(5,20,35,.22)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 13, paddingBottom: 13, borderBottom: "1px solid #e9e1d3" }}>
-            <Image src="/images/lawyer.jpg" alt="سید احمد موسوی، وکیل پایه یک دادگستری" width={76} height={88} style={{ width: 76, height: 88, objectFit: "cover", objectPosition: "center 25%", borderRadius: 11, border: "1px solid #dfd0b2" }} />
-            <div style={{ display: "grid", gap: 5 }}>
+            <Image src="/images/lawyer.jpg" alt="سید احمد موسوی، وکیل پایه یک دادگستری" width={76} height={88} sizes="76px" quality={82} style={{ width: 76, height: 88, objectFit: "cover", objectPosition: "center 25%", borderRadius: 11, border: "1px solid #dfd0b2" }} />
+            <div style={{ display: "grid", gap: 5, minWidth: 0 }}>
               <strong style={{ fontSize: 16 }}>سید احمد موسوی</strong>
               <span style={{ fontSize: 12, color: "#8d7145" }}>وکیل پایه یک دادگستری</span>
               <span style={{ fontSize: 11, color: "#687789" }}>عضو مرکز وکلای قوه قضائیه</span>
@@ -45,11 +56,15 @@ export default function AttorneyProfileDock() {
             ))}
           </div>
           <p style={{ margin: "12px 0", fontSize: 10, lineHeight: 2, color: "#7b8792" }}>ثبت درخواست اولیه از سراسر ایران امکان‌پذیر است؛ پذیرش هر پرونده پس از بررسی جداگانه انجام می‌شود.</p>
-          <Link href="/about" onClick={() => setOpen(false)} style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 43, borderRadius: 9, background: "#173550", color: "#f4e6c7", textDecoration: "none", fontSize: 12, fontWeight: 700 }}>مشاهده معرفی کامل وکیل ←</Link>
+          <Link href="/about" onClick={() => setOpen(false)} style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 44, borderRadius: 9, background: "#173550", color: "#f4e6c7", textDecoration: "none", fontSize: 12, fontWeight: 700 }}>مشاهده معرفی کامل وکیل ←</Link>
         </section>
       )}
-      <button type="button" aria-label={open ? "بستن معرفی وکیل" : "مشاهده معرفی وکیل"} aria-expanded={open} onClick={() => setOpen(v => !v)} style={{ display: "flex", alignItems: "center", gap: 8, minHeight: 54, padding: "0 14px", border: "2px solid #f8f4e9", borderRadius: 28, background: "linear-gradient(145deg,#e5d2a5,#b18e54)", color: "#10243d", boxShadow: "0 8px 26px rgba(5,20,35,.3)", cursor: "pointer", fontSize: 12, fontWeight: 800 }}>
-        <span aria-hidden="true" style={{ fontSize: 21 }}>§</span><span>{open ? "بستن معرفی" : "درباره وکیل"}</span>
+      <button type="button" aria-label={open ? "بستن معرفی وکیل" : "مشاهده معرفی وکیل"} aria-expanded={open} aria-controls="attorney-profile-panel" onClick={toggleOpen} style={{ display: "flex", alignItems: "center", gap: 9, minHeight: 50, padding: "0 13px", border: "1px solid rgba(255,250,239,.95)", borderRadius: 26, background: "linear-gradient(145deg,#e5d2a5,#b18e54)", color: "#10243d", boxShadow: "0 6px 20px rgba(5,20,35,.22)", cursor: "pointer", fontSize: 12, fontWeight: 800, transition: "transform .18s ease, box-shadow .18s ease" }}>
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="8" r="3.2" />
+          <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
+        </svg>
+        <span>{open ? "بستن معرفی" : "درباره وکیل"}</span>
       </button>
     </div>
   );
