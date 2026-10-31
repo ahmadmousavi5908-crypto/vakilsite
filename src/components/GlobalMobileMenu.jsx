@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 const groups = [
@@ -209,7 +211,14 @@ export default function GlobalMobileMenu() {
           <section style={groupStyle} key={group.title}>
             <h2 style={groupTitle}>{group.title}</h2>
             {group.items.map(([href, label], index) => (
-              <Link href={href} key={href} style={itemStyle}>
+              <Link
+                href={href}
+                key={href}
+                style={itemStyle}
+                onClick={(event) => {
+                  event.currentTarget.closest("#site-mobile-menu-root")?.removeAttribute("open");
+                }}
+              >
                 <b style={numberStyle}>{String(index + 1).padStart(2, "0")}</b>
                 <span style={labelStyle}>{label}</span>
                 <i aria-hidden="true" style={arrowStyle}>←</i>
@@ -220,6 +229,9 @@ export default function GlobalMobileMenu() {
 
         <Link
           href="/#contact"
+          onClick={(event) => {
+            event.currentTarget.closest("#site-mobile-menu-root")?.removeAttribute("open");
+          }}
           className="site-mobile-menu-cta"
           style={{
             boxSizing: "border-box",
