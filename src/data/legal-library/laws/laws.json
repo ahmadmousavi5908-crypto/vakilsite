@@ -1,0 +1,169 @@
+{
+  "schema_version": "1.0.0",
+  "records": [
+    {
+      "id": "law_civil_code",
+      "title": "قانون مدنی",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "enactment_date": "1307-02-18",
+      "status": "needs_consolidation_review",
+      "review_status": "secondary_source_only",
+      "source_url": "https://adlio.ir/law/قانون-مدنی-مصوب-1307-02-18/",
+      "notes": "مواد اسناد ۱۲۸۴ تا ۱۲۹۳ در نسخه آغازین شناسایی شده‌اند؛ کل قانون تنقیح نشده است."
+    },
+    {
+      "id": "law_commercial_code",
+      "title": "قانون تجارت",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "enactment_date": "1311-02-13",
+      "status": "needs_consolidation_review",
+      "review_status": "secondary_source_only",
+      "source_url": "https://adlio.ir/law/قانون-تجارت-مصوب-1311-02-13/",
+      "notes": "مواد ۳۰۷ تا ۳۰۹ درباره فته‌طلب و مواد ۳۱۰ به بعد درباره چک بررسی اولیه شده‌اند؛ متن رسمی و مقررات خاص بعدی باید پیش از نظر حقوقی تطبیق شوند."
+    },
+    {
+      "id": "law_compulsory_real_estate_registration",
+      "title": "قانون الزام به ثبت رسمی معاملات اموال غیرمنقول",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "enactment_date": "1401-09-06",
+      "status": "needs_consolidation_review",
+      "review_status": "secondary_source_only",
+      "source_url": "https://law-ir.ir/law/cat/2036/",
+      "notes": "متن و گزارش‌های اجرای مرحله‌ای سامانه ماده ۱۰ بررسی شده‌اند؛ وضعیت هر ملک باید با تاریخ صدور سند حدنگار و دامنه اعلام رسمی سامانه سنجیده شود. متن تنقیحی و بخشنامه راه‌اندازی باید از روزنامه رسمی/قوه قضاییه مستقلاً نگهداری شود."
+    },
+    {
+      "id": "law_registration_law",
+      "title": "قانون ثبت اسناد و املاک",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "متن تنقیحی و اصلاحات باید از منبع رسمی بررسی شود."
+    },
+    {
+      "id": "law_cheque",
+      "title": "قانون صدور چک و اصلاحات آن",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "secondary_source_only",
+      "source_url": "https://law-ir.ir/law/cat/1692/",
+      "notes": "متن تجمیعی در منبع ثانویه، اصلاحات ۱۳۹۷ و اصلاحیه ۱۴۰۰/۰۱/۲۹ را نشان می‌دهد. پیش از اعلام مواعد یا آثار کیفری باید مواد مربوط و آیین‌نامه‌های جاری با روزنامه رسمی و منابع بانک مرکزی تطبیق شوند."
+    },
+    {
+      "id": "law_partition",
+      "title": "قانون افراز و فروش املاک مشاع",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "صلاحیت اداره ثبت و دادگاه و استثناها نیازمند بررسی متن رسمی است."
+    },
+    {
+      "id": "law_cadastre",
+      "title": "قانون جامع حدنگار (کاداستر) کشور",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "آیین‌نامه‌ها و جزئیات فنی در نسخه نخست تنقیح نشده‌اند."
+    },
+    {
+      "id": "law_notary_law",
+      "title": "قانون دفاتر اسناد رسمی و کانون سردفتران و دفتریاران",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "اصلاحات و مقررات اجرایی باید بررسی شود."
+    },
+    {
+      "id": "law_determine_property_status",
+      "title": "قانون تعیین تکلیف وضعیت ثبتی اراضی و ساختمان‌های فاقد سند رسمی",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "شمول قانون و شرایط هیأت باید با متن و اصلاحات رسمی تطبیق داده شود."
+    },
+    {
+      "id": "law_civil_procedure",
+      "title": "قانون آیین دادرسی دادگاه‌های عمومی و انقلاب در امور مدنی",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "شماره مواد، مواعد و اصلاحات در این نسخه کامل نشده‌اند."
+    },
+    {
+      "id": "law_criminal_procedure",
+      "title": "قانون آیین دادرسی کیفری",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "اصلاحات، مواعد و صلاحیت‌ها نیازمند بررسی متن رسمی روزآمد هستند."
+    },
+    {
+      "id": "law_penal_code",
+      "title": "قانون مجازات اسلامی",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "enactment_date": "1392-02-01",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "کتاب‌ها، مواد و اصلاحات باید تفکیک و با قوانین خاص تطبیق داده شوند."
+    },
+    {
+      "id": "law_computer_crimes",
+      "title": "قانون جرایم رایانه‌ای",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "با اصلاحات و قوانین کیفری مرتبط باید تطبیق داده شود."
+    },
+    {
+      "id": "law_aggravated_fraud",
+      "title": "قانون تشدید مجازات مرتکبین ارتشاء و اختلاس و کلاهبرداری",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "نسخه روزآمد و نسبت آن با قوانین بعدی باید بررسی شود."
+    },
+    {
+      "id": "law_criminal_policy",
+      "title": "قوانین و اسناد سیاست جنایی و پیشگیری از جرم",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "رکورد چتری است و در نسخه تکمیلی به اسناد مستقل تفکیک می‌شود."
+    },
+    {
+      "id": "law_execution",
+      "title": "قانون اجرای احکام مدنی",
+      "jurisdiction": "IR",
+      "law_type": "statute_or_code",
+      "status": "needs_consolidation_review",
+      "review_status": "needs_legal_review",
+      "source_url": "https://law-ir.ir/",
+      "notes": "تاریخ، وضعیت اعتبار و مواد باید با متن رسمی و اصلاحات بررسی شود."
+    }
+  ]
+}
