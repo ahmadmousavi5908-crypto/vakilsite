@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0.0",
+  "relations": [
+    {
+      "from": "term_official_document",
+      "to": "art_civil_code_1287",
+      "type": "explained_by"
+    },
+    {
+      "from": "term_ordinary_document",
+      "to": "art_civil_code_1289",
+      "type": "explained_by"
+    },
+    {
+      "from": "term_promissory_note",
+      "to": "art_commercial_code_307",
+      "type": "defined_by"
+    },
+    {
+      "from": "term_promissory_note",
+      "to": "art_commercial_code_308",
+      "type": "requirements_in"
+    },
+    {
+      "from": "term_promissory_note",
+      "to": "art_commercial_code_309",
+      "type": "rules_extended_by"
+    },
+    {
+      "from": "term_cheque",
+      "to": "art_commercial_code_310",
+      "type": "defined_in_legacy_code"
+    },
+    {
+      "from": "term_unofficial_transaction",
+      "to": "art_compulsory_registration_01",
+      "type": "regulated_by"
+    },
+    {
+      "from": "term_cheque",
+      "to": "art_cheque_law_21_mokarrar",
+      "type": "registered_and_transferred_under"
+    },
+    {
+      "from": "term_unofficial_transaction",
+      "to": "art_compulsory_registration_10",
+      "type": "claim_registration_framework"
+    },
+    {
+      "from": "term_official_document",
+      "to": "art_registration_law_70",
+      "type": "legal_effects_in"
+    },
+    {
+      "from": "term_ordinary_document",
+      "to": "art_registration_law_48",
+      "type": "registration_requirement_effect"
+    },
+    {
+      "from": "term_unregistered_property",
+      "to": "art_registration_law_88",
+      "type": "limited_registration_framework"
+    },
+    {
+      "from": "term_cadastre",
+      "to": "art_registration_law_156",
+      "type": "mapped_under"
+    },
+    {
+      "from": "term_partition",
+      "to": "art_registration_law_154",
+      "type": "procedure_related_to"
+    },
+    {
+      "from": "term_boundary_dispute",
+      "to": "art_registration_law_156",
+      "type": "evidence_reference"
+    }
+  ]
+}
