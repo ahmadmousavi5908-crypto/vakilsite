@@ -1,0 +1,872 @@
+{
+  "schema_version": "1.0.0",
+  "language": "fa-IR",
+  "records": [
+    {
+      "id": "term_official_registration",
+      "canonical": "ثبت رسمی معامله",
+      "search_title": "ثبت رسمی معاملات اموال غیرمنقول",
+      "category": "REG",
+      "definition": "ثبت عمل حقوقی در سامانه ثبت الکترونیک اسناد یا تنظیم سند رسمی، حسب مورد و مطابق قانون حاکم.",
+      "aliases": [
+        "ثبت رسمی ملک",
+        "ثبت معامله در دفترخانه"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_compulsory_real_estate_registration"
+      ],
+      "article_refs": [
+        "art_compulsory_registration_01"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_official_document",
+      "canonical": "سند رسمی",
+      "search_title": "سند رسمی چیست",
+      "category": "REG",
+      "definition": "سندی که مطابق ماده ۱۲۸۷ قانون مدنی نزد مأمور رسمی، در حدود صلاحیت و با رعایت مقررات قانونی تنظیم شده باشد.",
+      "aliases": [
+        "سند تنظیمی دفترخانه"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_code"
+      ],
+      "article_refs": [
+        "art_civil_code_1287",
+        "art_registration_law_70",
+        "art_registration_law_71"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_ordinary_document",
+      "canonical": "سند عادی",
+      "search_title": "سند غیررسمی",
+      "category": "REG",
+      "definition": "سندی که واجد شرایط قانونی سند رسمی موضوع ماده ۱۲۸۷ نباشد؛ آثار آن تابع مقررات مربوط است.",
+      "aliases": [
+        "قولنامه",
+        "مبایعه‌نامه عادی"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_code"
+      ],
+      "article_refs": [
+        "art_civil_code_1289",
+        "art_registration_law_46",
+        "art_registration_law_47",
+        "art_registration_law_48",
+        "art_registration_law_88"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_title_deed",
+      "canonical": "سند مالکیت",
+      "search_title": "سند مالکیت ملک",
+      "category": "REG",
+      "definition": "سند صادرشده از مرجع ثبتی برای انعکاس وضعیت مالکیت ثبت‌شده؛ با سند رسمی معامله یا نقشه حدنگار یکسان نیست.",
+      "aliases": [
+        "سند تک‌برگ"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_registration_law"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_cadastre",
+      "canonical": "حدنگار",
+      "search_title": "کاداستر",
+      "category": "REG",
+      "definition": "نظام تعیین و ثبت حدود و موقعیت مکانی املاک بر پایه اطلاعات فنی و ثبتی.",
+      "aliases": [
+        "نقشه کاداستر",
+        "نقشه حدنگاری"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_cadastre"
+      ],
+      "article_refs": [
+        "art_registration_law_156"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_parcel_number",
+      "canonical": "پلاک ثبتی",
+      "search_title": "شماره پلاک ثبتی",
+      "category": "REG",
+      "definition": "شناسه ثبتی ملک یا قطعه؛ پلاک اصلی و فرعی باید از سوابق رسمی استخراج شود.",
+      "aliases": [
+        "پلاک اصلی و فرعی"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_registration_law"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_official_registry",
+      "canonical": "دفتر املاک",
+      "search_title": "دفتر املاک اداره ثبت",
+      "category": "REG",
+      "definition": "دفتر یا سامانه رسمی ثبت مالکیت‌ها و حقوق عینی املاک طبق مقررات ثبتی.",
+      "aliases": [
+        "دفتر املاک ثبت"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_registration_law"
+      ],
+      "article_refs": [
+        "art_registration_law_46",
+        "art_registration_law_72"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_notary_office",
+      "canonical": "دفتر اسناد رسمی",
+      "search_title": "دفترخانه اسناد رسمی",
+      "category": "REG",
+      "definition": "واحد رسمی تنظیم و ثبت اسناد در حدود صلاحیت و مقررات قانونی.",
+      "aliases": [
+        "دفترخانه"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_notary_law"
+      ],
+      "article_refs": [
+        "art_registration_law_47",
+        "art_registration_law_88"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_mortgage",
+      "canonical": "رهن",
+      "search_title": "عقد رهن ملک",
+      "category": "REG",
+      "definition": "عقدی که به موجب آن مدیون مالی را برای وثیقه به داین می‌دهد؛ آثار آن با توجه به قانون مدنی و مقررات ثبتی بررسی می‌شود.",
+      "aliases": [
+        "وثیقه ملکی"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_partition",
+      "canonical": "افراز",
+      "search_title": "افراز ملک مشاع",
+      "category": "REG",
+      "definition": "جداکردن سهم شریک از مال مشترک با رعایت صلاحیت مرجع و مقررات مربوط.",
+      "aliases": [
+        "درخواست افراز"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_partition"
+      ],
+      "article_refs": [
+        "art_registration_law_154",
+        "art_registration_law_156"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_unregistered_property",
+      "canonical": "ملک فاقد سند رسمی",
+      "search_title": "ملک بدون سند",
+      "category": "REG",
+      "definition": "عنوانی توصیفی برای ملکی که وضعیت سند رسمی مالکیت آن روشن یا تکمیل نشده است؛ مسیر قانونی به سابقه ثبتی و قوانین خاص بستگی دارد.",
+      "aliases": [
+        "ملک قولنامه‌ای",
+        "زمین قولنامه‌ای"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_determine_property_status"
+      ],
+      "article_refs": [
+        "art_registration_law_88"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_unofficial_transaction",
+      "canonical": "معامله غیررسمی ملک",
+      "search_title": "معامله قولنامه‌ای ملک",
+      "category": "REG",
+      "definition": "معامله‌ای که با سند عادی یا خارج از تشریفات ثبت رسمی انجام شده است؛ آثار آن به نوع عمل حقوقی، تاریخ وقوع، وضعیت ملک و مقررات لازم‌الاجرا در زمان مربوط وابسته است.",
+      "aliases": [
+        "معامله با قولنامه"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_compulsory_real_estate_registration"
+      ],
+      "article_refs": [
+        "art_compulsory_registration_01",
+        "art_compulsory_registration_10"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_article10_system",
+      "canonical": "سامانه ساماندهی اسناد غیررسمی",
+      "search_title": "سامانه ماده ۱۰ قانون الزام",
+      "category": "REG",
+      "definition": "سامانه پیش‌بینی‌شده در ماده ۱۰ قانون الزام؛ وضعیت راه‌اندازی و مهلت‌ها باید از اعلام رسمی روزآمد احراز شود.",
+      "aliases": [
+        "سامانه ثبت ادعاهای ملکی"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_compulsory_real_estate_registration"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_utm_map",
+      "canonical": "نقشه یو تی ام",
+      "search_title": "نقشه UTM",
+      "category": "REG",
+      "definition": "نقشه مختصات UTM؛ به‌تنهایی جایگزین سند مالکیت یا تصمیم مرجع ثبتی نیست.",
+      "aliases": [
+        "نقشه مختصات UTM"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_cadastre"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_boundary_dispute",
+      "canonical": "اختلاف حدود ملک",
+      "search_title": "تداخل پلاک ثبتی",
+      "category": "REG",
+      "definition": "اختلاف درباره مرز، مساحت یا تداخل محدوده املاک که ممکن است نیازمند بررسی سوابق ثبتی و کارشناسی نقشه‌برداری باشد.",
+      "aliases": [
+        "تجاوز به حدود ملک"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_registration_law"
+      ],
+      "article_refs": [
+        "art_registration_law_156"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_cheque",
+      "canonical": "چک",
+      "search_title": "چک چیست",
+      "category": "CHK",
+      "definition": "نوشته‌ای که مطابق قانون صدور چک و مقررات مرتبط برای برداشت یا انتقال وجه از حساب صادر می‌شود.",
+      "aliases": [
+        "چک بانکی",
+        "چک عادی"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_commercial_code",
+        "law_cheque"
+      ],
+      "article_refs": [
+        "art_commercial_code_310",
+        "art_cheque_law_21_mokarrar"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_registered_cheque",
+      "canonical": "چک صیادی",
+      "search_title": "چک صیاد",
+      "category": "CHK",
+      "definition": "چکی که صدور، دریافت یا انتقال آن تابع الزامات سامانه صیاد و مقررات جاری قانون صدور چک است.",
+      "aliases": [
+        "چک بنفش",
+        "ثبت چک در صیاد"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_cheque"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_cheque_registration",
+      "canonical": "ثبت چک در سامانه صیاد",
+      "search_title": "ثبت چک صیادی",
+      "category": "CHK",
+      "definition": "ثبت اطلاعات چک و ذی‌نفع در سامانه صیاد طبق الزامات قانونی؛ آثار عدم ثبت باید با توجه به تاریخ صدور و مقررات حاکم بررسی شود.",
+      "aliases": [
+        "ثبت صدور چک",
+        "ثبت انتقال چک"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_cheque"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_cheque_bounce",
+      "canonical": "گواهی عدم پرداخت چک",
+      "search_title": "برگشت زدن چک",
+      "category": "CHK",
+      "definition": "گواهی بانک درباره عدم پرداخت تمام یا بخشی از وجه چک با درج علت قانونی عدم پرداخت.",
+      "aliases": [
+        "گواهی برگشت چک",
+        "چک برگشتی"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_cheque"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_cheque_execution",
+      "canonical": "اجرائیه مستقیم چک",
+      "search_title": "اجرائیه چک",
+      "category": "CHK",
+      "definition": "درخواست اجرائیه نسبت به چک در شرایط مقرر قانونی؛ استفاده از این مسیر به شرایط و استثناهای قانونی وابسته است.",
+      "aliases": [
+        "صدور اجرائیه برای چک"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_cheque"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_promissory_note",
+      "canonical": "سفته",
+      "search_title": "فته‌طلب",
+      "category": "CHK",
+      "definition": "سندی تجاری که امضاکننده به موجب آن پرداخت مبلغی را در موعد معین یا عندالمطالبه تعهد می‌کند.",
+      "aliases": [
+        "سفته چیست",
+        "سفته ضمانت"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_commercial_code"
+      ],
+      "article_refs": [
+        "art_commercial_code_307",
+        "art_commercial_code_308",
+        "art_commercial_code_309"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_promissory_note_form",
+      "canonical": "شرایط شکلی سفته",
+      "search_title": "مندرجات سفته",
+      "category": "CHK",
+      "definition": "مندرجات ماده ۳۰۸ قانون تجارت از جمله امضا یا مهر، تاریخ، مبلغ با تمام حروف، گیرنده وجه و تاریخ پرداخت.",
+      "aliases": [
+        "شرایط قانونی سفته"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_commercial_code"
+      ],
+      "article_refs": [
+        "art_commercial_code_308"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_promissory_note_protest",
+      "canonical": "واخواست سفته",
+      "search_title": "واخواست عدم پرداخت سفته",
+      "category": "CHK",
+      "definition": "اعتراض رسمی به عدم پرداخت سند تجاری با رعایت تشریفات و مهلت‌های قانونی؛ آثار عدم واخواست باید موردی بررسی شود.",
+      "aliases": [
+        "واخواست سفته در مهلت"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_commercial_code"
+      ],
+      "article_refs": [
+        "art_commercial_code_309"
+      ],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_security_promissory_note",
+      "canonical": "سفته ضمانتی",
+      "search_title": "سفته بابت حسن انجام کار",
+      "category": "CHK",
+      "definition": "سفته‌ای که برای تضمین انجام تعهد یا جبران خسارت احتمالی تسلیم می‌شود؛ وصف ضمانتی باید با قرارداد و قرائن اثبات شود.",
+      "aliases": [
+        "سفته حسن انجام کار"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_commercial_code",
+        "law_civil_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_contract",
+      "canonical": "قرارداد",
+      "search_title": "عقد و قرارداد",
+      "category": "CIV",
+      "definition": "توافق حقوقی که آثار آن با توجه به نوع عقد، قصد طرفین و شرایط صحت معامله بررسی می‌شود.",
+      "aliases": [
+        "قرارداد خصوصی"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_sale",
+      "canonical": "بیع",
+      "search_title": "عقد بیع",
+      "category": "CIV",
+      "definition": "تملیک عین به عوض معلوم در چارچوب مقررات قانون مدنی.",
+      "aliases": [
+        "خرید و فروش"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_lease",
+      "canonical": "اجاره",
+      "search_title": "عقد اجاره",
+      "category": "CIV",
+      "definition": "قراردادی که به موجب آن مستأجر مالک منافع عین مستأجره می‌شود.",
+      "aliases": [
+        "اجاره‌نامه"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_invalid_contract",
+      "canonical": "بطلان معامله",
+      "search_title": "معامله باطل",
+      "category": "CIV",
+      "definition": "بی‌اعتباری عقد از زمان تشکیل به علت فقدان شرط اساسی یا سبب قانونی؛ باید از عدم نفوذ و فسخ تفکیک شود.",
+      "aliases": [
+        "ابطال قرارداد"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_voidable_contract",
+      "canonical": "عدم نفوذ معامله",
+      "search_title": "معامله غیرنافذ",
+      "category": "CIV",
+      "definition": "وضعیتی که اثر حقوقی معامله تا تحقق اجازه یا رد شخص ذی‌حق متوقف است.",
+      "aliases": [
+        "تنفیذ معامله"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_claim",
+      "canonical": "خواسته دعوا",
+      "search_title": "تعیین خواسته",
+      "category": "CPR",
+      "definition": "نتیجه یا حقی که خواهان از دادگاه درخواست می‌کند و باید مطابق قواعد تعیین و تقویم خواسته مشخص شود.",
+      "aliases": [
+        "خواسته در دادخواست"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_procedure"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_statement_of_claim",
+      "canonical": "دادخواست",
+      "search_title": "تنظیم دادخواست",
+      "category": "CPR",
+      "definition": "درخواست رسمی آغاز رسیدگی حقوقی که باید شرایط مقرر در قانون آیین دادرسی مدنی را داشته باشد.",
+      "aliases": [
+        "ثبت دادخواست"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_procedure"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_jurisdiction",
+      "canonical": "صلاحیت دادگاه",
+      "search_title": "صلاحیت ذاتی و محلی",
+      "category": "CPR",
+      "definition": "اختیار قانونی مرجع قضایی برای رسیدگی از حیث ذاتی، محلی و سایر جهات قانونی.",
+      "aliases": [
+        "ایراد عدم صلاحیت"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_procedure",
+        "law_criminal_procedure"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_security_for_claim",
+      "canonical": "تأمین خواسته",
+      "search_title": "قرار تأمین خواسته",
+      "category": "CPR",
+      "definition": "قرار قضایی برای حفظ امکان اجرای حکم نسبت به خواسته در شرایط مقرر قانونی.",
+      "aliases": [
+        "توقیف اموال پیش از حکم"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_procedure"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_interim_order",
+      "canonical": "دستور موقت",
+      "search_title": "درخواست دستور موقت",
+      "category": "CPR",
+      "definition": "دستور فوری و موقت دادگاه برای حفظ وضعیت یا جلوگیری از زیان با شرایط مقرر قانونی.",
+      "aliases": [
+        "دستور موقت دادگاه"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_procedure"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_preservation_of_evidence",
+      "canonical": "تأمین دلیل",
+      "search_title": "درخواست تأمین دلیل",
+      "category": "CPR",
+      "definition": "ثبت و حفظ دلایل و اماراتی که احتمال می‌رود استفاده از آن‌ها در آینده دشوار یا ناممکن شود.",
+      "aliases": [
+        "تأمین دلیل فوری"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_civil_procedure"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_criminal_intent",
+      "canonical": "سوءنیت",
+      "search_title": "عنصر روانی جرم",
+      "category": "CRG",
+      "definition": "عنصر روانی لازم برای تحقق جرم که نوع و شرایط آن تابع تعریف قانونی جرم مربوط است.",
+      "aliases": [
+        "قصد مجرمانه"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_penal_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_criminal_attempt",
+      "canonical": "شروع به جرم",
+      "search_title": "شروع به ارتکاب جرم",
+      "category": "CRG",
+      "definition": "ورود به مرحله اجرای جرم با تحقق شرایط قانونی شروع به جرم و بدون تکمیل جرم به علت خارج از اراده مرتکب.",
+      "aliases": [
+        "شروع جرم"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_penal_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_accomplice",
+      "canonical": "معاونت در جرم",
+      "search_title": "معاون جرم",
+      "category": "CRG",
+      "definition": "رفتار تسهیل‌کننده وقوع جرم که با تحقق شرایط قانونی عنوان معاونت می‌یابد.",
+      "aliases": [
+        "معاونت کیفری"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_penal_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_theft",
+      "canonical": "سرقت",
+      "search_title": "جرم سرقت",
+      "category": "CRS",
+      "definition": "ربودن مال متعلق به غیر؛ وصف و مجازات با توجه به شرایط قانونی تعیین می‌شود.",
+      "aliases": [
+        "سرقت حدی",
+        "سرقت تعزیری"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_penal_code"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_fraud",
+      "canonical": "کلاهبرداری",
+      "search_title": "جرم کلاهبرداری",
+      "category": "CRS",
+      "definition": "بردن مال دیگری با توسل به وسایل متقلبانه و تحقق سایر عناصر قانونی؛ صرف عدم ایفای تعهد لزوماً کلاهبرداری نیست.",
+      "aliases": [
+        "تحصیل مال از طریق فریب"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_penal_code",
+        "law_aggravated_fraud"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_computer_crime",
+      "canonical": "جرایم رایانه‌ای",
+      "search_title": "جرم رایانه‌ای",
+      "category": "CRS",
+      "definition": "جرایمی که با استفاده از سامانه‌های رایانه‌ای یا علیه داده و سامانه مطابق قوانین خاص ارتکاب می‌یابند.",
+      "aliases": [
+        "جرایم سایبری"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_computer_crimes"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_complaint",
+      "canonical": "شکواییه",
+      "search_title": "تنظیم شکواییه",
+      "category": "CPC",
+      "definition": "درخواست اعلام جرم و تعقیب کیفری نزد مرجع صالح با رعایت تشریفات قانونی.",
+      "aliases": [
+        "ثبت شکایت کیفری"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_criminal_procedure"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_preliminary_investigation",
+      "canonical": "تحقیقات مقدماتی",
+      "search_title": "تحقیقات دادسرا",
+      "category": "CPC",
+      "definition": "اقدامات قانونی برای حفظ آثار جرم، جمع‌آوری ادله و شناسایی متهم با رعایت حقوق اشخاص.",
+      "aliases": [
+        "بازپرسی"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_criminal_procedure"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_bail_order",
+      "canonical": "قرار تأمین کیفری",
+      "search_title": "قرار وثیقه",
+      "category": "CPC",
+      "definition": "قرار قانونی برای دسترسی به متهم و تضمین حضور او در مراحل رسیدگی.",
+      "aliases": [
+        "قرار کفالت",
+        "وثیقه کیفری"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_criminal_procedure"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    },
+    {
+      "id": "term_criminology_prevention",
+      "canonical": "پیشگیری از جرم",
+      "search_title": "پیشگیری کیفری و اجتماعی",
+      "category": "CRM",
+      "definition": "سیاست‌ها و اقداماتی برای کاهش فرصت‌ها، عوامل خطر و زمینه‌های بزهکاری.",
+      "aliases": [
+        "پیشگیری اجتماعی از جرم"
+      ],
+      "search_phrases": [],
+      "law_refs": [
+        "law_criminal_policy"
+      ],
+      "article_refs": [],
+      "review_status": "needs_legal_review",
+      "sources": [],
+      "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود."
+    }
+  ]
+}
