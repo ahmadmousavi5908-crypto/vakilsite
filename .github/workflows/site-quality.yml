@@ -24,6 +24,8 @@ jobs:
           cache: npm
       - name: Install dependencies and synchronize lockfile
         run: npm install --no-audit --no-fund
+      - name: Validate legal research dataset
+        run: python3 src/data/legal-library/validation/validate_library.py
       - name: Run ESLint
         run: npm run lint
       - name: Build production site
