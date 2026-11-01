@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/backup/
+/audit-report.json
+/public/images/*~
+/.gitignore.before-safety.bak
+.next-cache-backup/

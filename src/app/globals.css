@@ -4352,4 +4352,214 @@ textarea:focus-visible,
   .legal-explorer-category{align-items:stretch;flex-direction:column;gap:6px}
   .legal-explorer-category select{max-width:none}
   .legal-library-data-warning{padding:15px}
+/* Admin social links upgrade */
+.social-admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.social-admin-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 78px;
+  padding: 12px 8px;
+  border: 1px solid #e6eaf0;
+  border-radius: 12px;
+  background: #fff;
+  text-align: center;
+}
+
+.social-admin-stat strong {
+  color: #142b43;
+  font-size: 23px;
+  line-height: 1.2;
+}
+
+.social-admin-stat span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.social-admin-order {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.social-admin-order button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 32px;
+  padding: 5px 9px;
+  border: 1px solid #dce3eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #142b43;
+  cursor: pointer;
+}
+
+.social-admin-order button:hover:not(:disabled) {
+  border-color: #c6a66b;
+  background: #fbf8f1;
+}
+
+.social-admin-order button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.social-admin-order .social-admin-remove {
+  color: #b42318;
+}
+
+.social-admin-inactive {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: #fff1f0;
+  color: #b42318;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+@media (max-width: 650px) {
+  .social-admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .social-admin-stat {
+    min-height: 68px;
+  }
+
+  .social-admin-order {
+    gap: 4px;
+  }
+
+  .social-admin-order button {
+    min-width: 30px;
+    padding: 4px 7px;
+  }
+}
+
+
+
+/* Contact launcher: vivid green, quick double-nudge, then a calm pause */
+.site-contact-toggle {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: visible !important;
+  background: #16a34a !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.96) !important;
+  box-shadow: 0 7px 22px rgba(22,163,74,.34), 0 3px 10px rgba(5,20,35,.20) !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.site-contact-toggle::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  z-index: 0;
+  border: 2px solid rgba(34,197,94,.62);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: contact-dock-ring 4s ease-out infinite;
+}
+
+.site-contact-toggle > svg {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes contact-dock-nudge {
+  0%, 45%, 100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 7px 22px rgba(22,163,74,.34), 0 3px 10px rgba(5,20,35,.20);
+  }
+  7% {
+    transform: translateY(-6px) scale(1.045);
+    box-shadow: 0 11px 28px rgba(22,163,74,.48), 0 5px 13px rgba(5,20,35,.18);
+  }
+  14% {
+    transform: translateY(0) scale(1);
+  }
+  23% {
+    transform: translateY(-4px) scale(1.025);
+    box-shadow: 0 10px 25px rgba(22,163,74,.42), 0 4px 12px rgba(5,20,35,.18);
+  }
+  30% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes contact-dock-ring {
+  0%, 100% {
+    transform: scale(.88);
+    opacity: 0;
+  }
+  10% {
+    transform: scale(1);
+    opacity: .65;
+  }
+  48% {
+    transform: scale(1.48);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .site-contact-toggle:not([aria-expanded="true"]) {
+    animation: contact-dock-nudge 4s cubic-bezier(.2,.8,.2,1) infinite;
+    will-change: transform;
+  }
+}
+
+.site-contact-toggle[aria-expanded="true"],
+.site-contact-toggle[aria-expanded="true"]::before {
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-contact-toggle,
+  .site-contact-toggle::before {
+    animation: none !important;
+    will-change: auto;
+  }
+}
+
+
+/* Interactive Khuzestan city chips: preserve the original framed design */
+.city-chip {
+  font-family: inherit;
+  line-height: 1.8;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 8px;
+  appearance: none;
+  transition: transform .18s ease, border-color .18s ease,
+    box-shadow .18s ease, background .18s ease;
+}
+.city-chip:hover {
+  transform: translateY(-2px);
+  border-color: #c4a978;
+  background: #fffefa;
+  color: #203d58;
+  box-shadow: 0 5px 14px rgba(23,43,66,.08);
+}
+.city-chip.city-featured:hover {
+  background: #294b68;
+  color: #fff;
+  border-color: #d8c39b;
+}
+.city-chip:active {
+  transform: translateY(0);
 }

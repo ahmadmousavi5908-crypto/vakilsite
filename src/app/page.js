@@ -7,6 +7,7 @@ import OfficeLocationPublic from "../components/OfficeLocationPublic";
 import JsonLd from "../components/JsonLd";
 import SocialLinksPublic from "../components/SocialLinksPublic";
 import LegalIcon from "../components/LegalIcon";
+import CitySelector from "../components/CitySelector";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -206,7 +207,7 @@ export default function Home() {
           </div>
           <div className="city-panel">
             <div className="city-panel-head"><div><span className="section-kicker">KHOUZESTAN PROVINCE</span><h3>شهرهای استان خوزستان</h3></div><span className="city-count">شهرها و مناطق استان</span></div>
-            <div className="city-list">{cities.map((c, i) => <span className={i === 0 ? "city-chip city-featured" : "city-chip"} key={c}>{c}{i === 0 && <b>مرکز</b>}</span>)}</div>
+            <CitySelector cities={cities} />
             <div className="city-foot"><span className="city-pin"><LegalIcon name="pin" size={20} /></span><span>همچنین امکان ثبت درخواست اولیه از سایر شهرهای ایران وجود دارد.</span></div>
             <a className="city-national-link" href="#contact"><span className="city-national-icon"><LegalIcon name="map" size={21} /></span><span><strong>سایر استان‌های ایران</strong><small>اگر شهر یا استان شما در فهرست بالا نیست، درخواست خود را از این بخش ثبت کنید.</small></span><b>←</b></a>
           </div>

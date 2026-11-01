@@ -69,7 +69,7 @@ const launcherStyle = {
   display: "block",
   visibility: "visible",
   opacity: 1,
-  pointerEvents: "none",
+  pointerEvents: "auto",
   isolation: "isolate",
 };
 
@@ -81,8 +81,8 @@ const toggleStyle = {
   padding: 0,
   border: "1px solid rgba(255,250,239,.95)",
   borderRadius: "50%",
-  background: "linear-gradient(145deg,#e5d2a5,#b18e54)",
-  color: "#10243d",
+  background: "#16a34a",
+  color: "#ffffff",
   boxShadow: "0 6px 20px rgba(5,20,35,.25)",
   cursor: "pointer",
   pointerEvents: "auto",
@@ -173,9 +173,9 @@ export default function SocialContactDock() {
   });
 
   return (
-    <div ref={rootRef} dir="rtl" style={launcherStyle}>
+    <div ref={rootRef} className="site-contact-launcher" dir="rtl" style={launcherStyle}>
       {open && (
-        <section id="contact-dock-panel" role="dialog" aria-label="راه‌های ارتباطی" style={panelStyle}>
+        <section id="contact-dock-panel" className="site-contact-panel" role="dialog" aria-label="راه‌های ارتباطی" style={panelStyle}>
           <div style={{ display: "grid", gap: 5, paddingBottom: 12, borderBottom: "1px solid #e9e1d3" }}>
             <strong style={{ fontSize: 16 }}>ارتباط با وکیل</strong>
             <span style={{ color: "#657487", fontSize: 12 }}>راه‌های تماس و شبکه‌های اجتماعی</span>
@@ -193,6 +193,7 @@ export default function SocialContactDock() {
         </section>
       )}
       <button
+        className="site-contact-toggle"
         type="button"
         aria-label={open ? "بستن راه‌های ارتباطی" : "نمایش راه‌های ارتباطی"}
         aria-expanded={open}

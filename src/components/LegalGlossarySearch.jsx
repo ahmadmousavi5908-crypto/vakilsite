@@ -12,7 +12,7 @@ export default function LegalGlossarySearch() {
     const normalized = query.trim().replace(/[يى]/g, "ی").replace(/ك/g, "ک").toLocaleLowerCase("fa");
     return legalGlossary.filter((item) => {
       const categoryMatch = category === "همه موضوعات" || item.category === category;
-      const searchable = [item.term, ...item.aliases, item.category, item.definition].join(" ").replace(/[يى]/g, "ی").replace(/ك/g, "ک").toLocaleLowerCase("fa");
+      const searchable = [item.term, ...item.aliases, ...(item.searchTerms || []), item.category, item.definition].join(" ").replace(/[يى]/g, "ی").replace(/ك/g, "ک").toLocaleLowerCase("fa");
       return categoryMatch && (!normalized || searchable.includes(normalized));
     });
   }, [query, category]);

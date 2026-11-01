@@ -41,7 +41,7 @@ function LinkCard({ item, compact = false }) {
 }
 
 export default function SocialLinksPublic({ compact = false }) {
-  const [links, setLinks] = useState(null);
+  const [links, setLinks] = useState(fallbackContacts);
 
   useEffect(() => {
     let active = true;
@@ -53,8 +53,6 @@ export default function SocialLinksPublic({ compact = false }) {
       .catch(() => { if (active) setLinks([]); });
     return () => { active = false; };
   }, []);
-
-  if (links === null) return null;
 
   const contacts = links.filter((item) => item.link_type === "contact");
   const socials = links.filter((item) => item.link_type === "social");

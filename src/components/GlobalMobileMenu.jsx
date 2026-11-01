@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 const groups = [
   {
@@ -181,8 +182,30 @@ const arrowStyle = {
 };
 
 export default function GlobalMobileMenu() {
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    const closeOnOutside = (event) => {
+      if (rootRef.current && !rootRef.current.contains(event.target)) {
+        rootRef.current.removeAttribute("open");
+      }
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape" && rootRef.current) {
+        rootRef.current.removeAttribute("open");
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
+
   return (
-    <details id="site-mobile-menu-root" style={launcher}>
+    <details ref={rootRef} id="site-mobile-menu-root" style={launcher}>
       <summary
         aria-label="باز کردن فهرست سایت"
         title="فهرست سایت"

@@ -15,7 +15,23 @@ export default function RequestForm({ services }) {
       }
     }
     window.addEventListener("vakilsite:service-selected", handleServiceSelection);
-    return () => window.removeEventListener("vakilsite:service-selected", handleServiceSelection);
+
+    function handleCitySelection(event) {
+      if (typeof event.detail === "string" && event.detail.trim()) {
+        setCity(event.detail.trim());
+        document.getElementById("contact")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }
+
+    window.addEventListener("vakilsite:city-selected", handleCitySelection);
+
+    return () => {
+      window.removeEventListener("vakilsite:service-selected", handleServiceSelection);
+      window.removeEventListener("vakilsite:city-selected", handleCitySelection);
+    };
   }, []);
 
   function prepareRequest(event) {
