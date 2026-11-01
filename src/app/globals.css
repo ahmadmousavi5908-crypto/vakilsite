@@ -4309,3 +4309,47 @@ textarea:focus-visible,
   .footer-main{align-items:center}
   .footer-link{font-size:9px;padding:8px 10px}
 }
+
+
+/* Versioned legal research library */
+.legal-library-hero-links{display:flex;flex-wrap:wrap;gap:18px;margin-top:22px}
+.legal-library-hero-links a{color:#e4d2ad;font-size:12px;font-weight:700}
+.legal-library-main{padding-top:42px;padding-bottom:24px}
+.legal-explorer{min-width:0}
+.legal-explorer-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.legal-explorer-tab{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border:1px solid #e3ded4;background:#f8f7f3;color:#586675;font:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease}
+.legal-explorer-tab span{font-size:10px;color:#8c7957}
+.legal-explorer-tab:hover{border-color:#bda477}
+.legal-explorer-tab.is-active{background:#20384a;border-color:#20384a;color:#fff}
+.legal-explorer-tab.is-active span{color:#e3d1ad}
+.legal-explorer-category{display:flex;align-items:center;gap:12px;margin-top:14px}
+.legal-explorer-category label{font-size:11px;color:#64717d;white-space:nowrap}
+.legal-explorer-category select{max-width:320px;width:100%;border:1px solid #ddd8ce;background:#fffefa;color:var(--ink);padding:10px 12px;font-size:11px;border-radius:2px}
+.legal-explorer-count{margin:12px 0 0;color:#7b8791;font-size:10px}
+.legal-record-related{margin-top:9px;color:#77818a;font-size:10px;line-height:2}
+.legal-record-related b{color:#7b6847}
+.legal-search-title{margin:7px 0 0!important;color:#8d754d!important;font-size:10px!important}
+.legal-record-footer{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:13px;padding-top:11px;border-top:1px solid #eee9df}
+.legal-review-status{display:inline-flex;align-items:center;padding:5px 8px;border:1px solid #e7ddc9;background:#f7f3eb;color:#806c48;font-size:9px;line-height:1.7}
+.legal-review-verified_primary_source{border-color:#cfe1d7;background:#eff7f1;color:#32664a}
+.legal-review-secondary_source_only{border-color:#e7ddc9;background:#f7f3eb;color:#806c48}
+.legal-review-needs_legal_review{border-color:#eadfce;background:#f8f3eb;color:#866a3f}
+.legal-review-draft,.legal-review-unknown{border-color:#e8d4d4;background:#fbf1f1;color:#965858}
+.legal-source-link{color:#8e7245;font-size:10px;font-weight:700}
+.legal-library-data-warning{margin-top:22px;padding:18px 20px;background:#f3f0e8;border-right:3px solid var(--gold)}
+.legal-library-data-warning strong{display:block;color:var(--navy);font-size:12px;margin-bottom:6px}
+.legal-library-data-warning p{margin:0;color:#687582;font-size:10px;line-height:2.25}
+.legal-library-section-heading{margin-bottom:22px}
+.legal-library-section-heading h2{margin:8px 0;color:var(--navy);font-size:22px}
+.legal-library-section-heading p{margin:0;color:#687786;font-size:12px;line-height:2.2}
+.legal-official-resources{padding-top:30px}
+.legal-official-resources .practice-card h3{font-size:16px;color:var(--navy);line-height:1.9;margin:0}
+@media(max-width:560px){
+  .legal-library-hero-links{gap:12px}
+  .legal-library-main{padding-top:25px}
+  .legal-explorer-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .legal-explorer-tab{justify-content:center;padding:10px 6px;font-size:10px;gap:5px}
+  .legal-explorer-category{align-items:stretch;flex-direction:column;gap:6px}
+  .legal-explorer-category select{max-width:none}
+  .legal-library-data-warning{padding:15px}
+}
