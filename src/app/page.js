@@ -67,7 +67,7 @@ export default function Home() {
             url: siteUrl,
             provider: { "@id": siteUrl + "/#attorney" },
             telephone: "+989169165902",
-            email: "Vakil.ahmadmousavi2731@gmail.com",
+            ...(process.env.NEXT_PUBLIC_CONTACT_EMAIL ? { email: process.env.NEXT_PUBLIC_CONTACT_EMAIL } : {}),
             areaServed: [
               { "@type": "AdministrativeArea", name: "استان خوزستان" },
               { "@type": "Country", name: "ایران" },
