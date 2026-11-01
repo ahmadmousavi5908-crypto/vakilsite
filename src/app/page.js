@@ -55,7 +55,7 @@ export default function Home() {
             name: "سید احمد موسوی",
             jobTitle: "وکیل پایه یک دادگستری",
             telephone: ["+989169165902", "+989388322230"],
-            email: "Vakil.ahmadmousavi2731@gmail.com",
+            ...(process.env.NEXT_PUBLIC_CONTACT_EMAIL ? { email: process.env.NEXT_PUBLIC_CONTACT_EMAIL } : {}),
             memberOf: { "@type": "Organization", name: "مرکز وکلای قوه قضائیه" },
             identifier: { "@type": "PropertyValue", name: "شماره پروانه وکالت", value: "74516" },
             knowsLanguage: "fa",
