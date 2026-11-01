@@ -4352,6 +4352,7 @@ textarea:focus-visible,
   .legal-explorer-category{align-items:stretch;flex-direction:column;gap:6px}
   .legal-explorer-category select{max-width:none}
   .legal-library-data-warning{padding:15px}
+}
 /* Admin social links upgrade */
 .social-admin-stats {
   display: grid;
