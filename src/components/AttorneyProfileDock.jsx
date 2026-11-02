@@ -56,13 +56,73 @@ export default function AttorneyProfileDock() {
           <Link href="/about" onClick={() => setOpen(false)} style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 44, borderRadius: 9, background: "#173550", color: "#f4e6c7", textDecoration: "none", fontSize: 12, fontWeight: 700 }}>مشاهده معرفی کامل وکیل ←</Link>
         </section>
       )}
-      <button type="button" aria-label={open ? "بستن معرفی وکیل" : "مشاهده معرفی وکیل"} aria-expanded={open} aria-controls={open ? "attorney-profile-panel" : undefined} onClick={toggleOpen} style={{ display: "flex", alignItems: "center", gap: 9, minHeight: 50, padding: "0 13px", border: "1px solid rgba(255,250,239,.95)", borderRadius: 26, background: "linear-gradient(145deg,#e5d2a5,#b18e54)", color: "#10243d", boxShadow: "0 6px 20px rgba(5,20,35,.22)", cursor: "pointer", fontSize: 12, fontWeight: 800, transition: "transform .18s ease, box-shadow .18s ease" }}>
+      <button className="attorney-profile-cta" type="button" aria-label={open ? "بستن معرفی وکیل" : "دیدن وکیل"} aria-expanded={open} aria-controls={open ? "attorney-profile-panel" : undefined} onClick={toggleOpen}>
         <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="8" r="3.2" />
           <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
         </svg>
-        <span>{open ? "بستن معرفی" : "درباره وکیل"}</span>
+        <span>{open ? "بستن معرفی" : "دیدن وکیل"}</span>
       </button>
+      <style jsx global>{`
+        .attorney-profile-cta {
+          position: relative;
+          isolation: isolate;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 9px;
+          min-height: 50px;
+          padding: 0 16px;
+          border: 2px solid #d5b56e;
+          border-radius: 26px;
+          background: linear-gradient(135deg, #087653 0%, #075b43 100%);
+          color: #fff;
+          box-shadow: 0 6px 20px rgba(5, 20, 35, .28), inset 0 1px 0 rgba(255,255,255,.18);
+          cursor: pointer;
+          font: inherit;
+          font-size: 13px;
+          font-weight: 800;
+          white-space: nowrap;
+          animation: attorney-cta-beat 2.35s ease-in-out infinite;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .attorney-profile-cta::before {
+          content: "";
+          position: absolute;
+          z-index: -1;
+          inset: -5px;
+          border: 2px solid rgba(213, 181, 110, .82);
+          border-radius: inherit;
+          pointer-events: none;
+          animation: attorney-cta-ring 2.35s ease-out infinite;
+        }
+        .attorney-profile-cta:hover {
+          background: linear-gradient(135deg, #0a8960 0%, #087653 100%);
+          box-shadow: 0 8px 25px rgba(5, 20, 35, .34), 0 0 16px rgba(213, 181, 110, .25);
+        }
+        .attorney-profile-cta:focus-visible {
+          outline: 3px solid #f0d99e;
+          outline-offset: 5px;
+        }
+        .attorney-profile-cta:active {
+          transform: scale(.96);
+        }
+        @keyframes attorney-cta-beat {
+          0%, 100% { transform: scale(1); box-shadow: 0 6px 20px rgba(5,20,35,.28), inset 0 1px 0 rgba(255,255,255,.18); }
+          12% { transform: scale(1.075); box-shadow: 0 8px 25px rgba(5,20,35,.34), 0 0 17px rgba(213,181,110,.42); }
+          24% { transform: scale(1); }
+          36% { transform: scale(1.045); box-shadow: 0 7px 22px rgba(5,20,35,.3), 0 0 11px rgba(213,181,110,.3); }
+          48%, 100% { transform: scale(1); }
+        }
+        @keyframes attorney-cta-ring {
+          0% { opacity: .8; transform: scale(1); }
+          65%, 100% { opacity: 0; transform: scale(1.23, 1.38); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .attorney-profile-cta,
+          .attorney-profile-cta::before { animation: none !important; }
+        }
+      `}</style>
     </div>
   );
 }
