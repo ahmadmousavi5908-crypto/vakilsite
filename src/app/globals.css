@@ -1854,7 +1854,7 @@ h1, h2, h3, h4, p, a, button, label, small, strong, span {
   .attorney-profile-visual .attorney-credential-grid {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 10px !important;
+    gap: 7px !important;
   }
 
   .attorney-profile-visual .attorney-credential-grid > div {
@@ -3097,8 +3097,8 @@ body{
     left: max(12px, env(safe-area-inset-left, 0px)) !important;
     right: auto !important;
     bottom: auto !important;
-    width: 100px !important;
-    height: 44px !important;
+    width: 88px !important;
+    height: 40px !important;
     z-index: 1100 !important;
     direction: ltr !important;
     font-family: Tahoma, "Vazirmatn", "Segoe UI", sans-serif !important;
@@ -3106,11 +3106,11 @@ body{
   #site-mobile-menu-root > summary {
     display: flex !important;
     box-sizing: border-box !important;
-    width: 100px !important;
-    min-width: 100px !important;
-    height: 44px !important;
-    min-height: 44px !important;
-    padding: 0 10px !important;
+    width: 88px !important;
+    min-width: 88px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    padding: 0 9px !important;
     margin: 0 !important;
     flex-direction: row !important;
     align-items: center !important;
@@ -3124,13 +3124,13 @@ body{
   #site-mobile-menu-root > summary::after { content: none !important; display: none !important; }
   #site-mobile-menu-root .site-mobile-menu-icon > i {
     display: block !important;
-    width: 19px !important;
+    width: 16px !important;
     height: 2px !important;
     min-height: 2px !important;
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
-    background: #f8f4e9 !important;
+    background: #fff7eb !important;
   }
   #site-mobile-menu-panel {
     position: fixed !important;
