@@ -63,7 +63,15 @@ export function getLegalRecords(type) {
 }
 
 export function getLegalRecord(type, slug) {
-  return getLegalRecords(type).find((record) => record.slug === slug) || null;
+  let decodedSlug = String(slug ?? "");
+
+  try {
+    decodedSlug = decodeURIComponent(decodedSlug);
+  } catch {
+    // Keep the original slug when the URL contains malformed encoding.
+  }
+
+  return getLegalRecords(type).find((record) => record.slug === decodedSlug) || null;
 }
 
 export function getLegalRecordPath(type, record) {
