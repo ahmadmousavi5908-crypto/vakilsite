@@ -4564,3 +4564,62 @@ textarea:focus-visible,
 .city-chip:active {
   transform: translateY(0);
 }
+
+
+/* Stable mobile dock layers: keep floating panels above page content. */
+.site-attorney-profile-launcher {
+  position: fixed !important;
+  z-index: 2147482000 !important;
+  pointer-events: auto !important;
+  isolation: isolate !important;
+}
+.site-attorney-profile-launcher .attorney-profile-cta {
+  position: relative !important;
+  z-index: 1 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+#attorney-profile-panel {
+  position: fixed !important;
+  z-index: 2147482000 !important;
+  left: max(12px, env(safe-area-inset-left)) !important;
+  right: auto !important;
+  bottom: calc(max(78px, env(safe-area-inset-bottom) + 76px) + 62px) !important;
+  max-height: min(66dvh, 500px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  pointer-events: auto !important;
+}
+.site-contact-launcher {
+  z-index: 2147483000 !important;
+  isolation: isolate !important;
+  touch-action: manipulation !important;
+}
+.site-contact-toggle {
+  position: relative !important;
+  z-index: 1 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+.site-contact-toggle::before {
+  pointer-events: none !important;
+}
+.site-contact-panel {
+  position: fixed !important;
+  z-index: 2147483000 !important;
+  right: max(12px, env(safe-area-inset-right)) !important;
+  left: auto !important;
+  bottom: calc(max(12px, env(safe-area-inset-bottom)) + 72px) !important;
+  max-height: min(66dvh, 500px) !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  pointer-events: auto !important;
+}
+@media (max-width: 700px) {
+  #attorney-profile-panel {
+    width: min(350px, calc(100vw - 24px)) !important;
+  }
+  .site-contact-panel {
+    width: min(340px, calc(100vw - 24px)) !important;
+  }
+}
