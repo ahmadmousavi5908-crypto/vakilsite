@@ -25,10 +25,33 @@ const routes = Object.keys(manifest.routes || {})
 const termsData = JSON.parse(await readFile("src/data/legal-library/terms/terms.json", "utf8"));
 const lawsData = JSON.parse(await readFile("src/data/legal-library/laws/laws.json", "utf8"));
 const articlesData = JSON.parse(await readFile("src/data/legal-library/articles/articles.json", "utf8"));
+function createSlug(value) {
+  return String(value ?? "")
+    .normalize("NFKC")
+    .replace(/[يى]/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/\\u200c/g, " ")
+    .toLocaleLowerCase("fa-IR")
+    .trim()
+    .replace(/[^\\p{L}\\p{N}]+/gu, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+const lawById = new Map(lawsData.records.map((record) => [record.id, record]));
 const allRecords = [
-  ...termsData.records.map((record) => ({ ...record })),
-  ...lawsData.records.map((record) => ({ ...record })),
-  ...articlesData.records.map((record) => ({ ...record })),
+  ...termsData.records.map((record) => ({
+    ...record,
+    path: "/legal-library/terms/" + createSlug(record.canonical),
+  })),
+  ...lawsData.records.map((record) => ({
+    ...record,
+    path: "/legal-library/laws/" + createSlug(record.title),
+  })),
+  ...articlesData.records.map((record) => {
+    const law = lawById.get(record.law_id);
+    const slug = createSlug((law?.title || "قانون") + " ماده " + record.article_number + " " + record.title);
+    return { ...record, path: "/legal-library/articles/" + slug };
+  }),
 ];
 const indexable = new Set(
   allRecords
