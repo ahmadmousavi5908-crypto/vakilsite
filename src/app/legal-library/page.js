@@ -52,6 +52,7 @@ export default function LegalLibraryPage() {
           <div className="legal-library-hero-links">
             <Link href="/legal-glossary">فرهنگ عمومی اصطلاحات حقوقی ←</Link>
             <Link href="/articles">راهنماها و مقالات حقوقی ←</Link>
+            <Link href="/legal-library/catalog">فهرست مستقل همه مدخل‌های کتابخانه ←</Link>
           </div>
         </div>
       </section>
