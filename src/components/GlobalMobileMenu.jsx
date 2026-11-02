@@ -33,25 +33,25 @@ const groups = [
 
 const launcher = {
   position: "fixed",
-  top: "max(12px, env(safe-area-inset-top, 0px))",
+  top: "calc(max(160px, 14vh) + env(safe-area-inset-top, 0px))",
   left: "max(12px, env(safe-area-inset-left, 0px))",
-  width: "50px",
-  height: "50px",
+  width: "116px",
+  height: "52px",
   zIndex: 1100,
   direction: "ltr",
 };
 
 const trigger = {
   boxSizing: "border-box",
-  width: "50px",
-  height: "50px",
-  padding: 0,
+  width: "116px",
+  height: "52px",
+  padding: "0 13px",
   margin: 0,
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
   alignItems: "center",
   justifyContent: "center",
-  gap: "5px",
+  gap: "10px",
   listStyle: "none",
   cursor: "pointer",
   border: "1px solid rgba(177,142,84,.7)",
@@ -211,10 +211,13 @@ export default function GlobalMobileMenu() {
         title="فهرست سایت"
         style={trigger}
       >
-        <span className="site-mobile-menu-sr">فهرست سایت</span>
-        <i aria-hidden="true" style={line} />
-        <i aria-hidden="true" style={line} />
-        <i aria-hidden="true" style={line} />
+        <span className="site-mobile-menu-sr">باز کردن فهرست سایت</span>
+        <span className="site-mobile-menu-icon" aria-hidden="true">
+          <i style={line} />
+          <i style={line} />
+          <i style={line} />
+        </span>
+        <span className="site-mobile-menu-label" aria-hidden="true">فهرست</span>
       </summary>
 
       <nav id="site-mobile-menu-panel" aria-label="فهرست اصلی سایت" style={panel} dir="rtl">
