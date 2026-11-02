@@ -1,11 +1,11 @@
 {
   "name": "Iranian Legal Research Library",
-  "version": "1.2.1",
+  "version": "1.3.1",
   "schema_version": "1.0.0",
   "language": "fa-IR",
   "jurisdiction": "IR",
   "release_status": "research_dataset_candidate",
-  "created_at": "2026-11-01",
+  "created_at": "2026-11-02",
   "files": [
     "taxonomy/categories.json",
     "terms/terms.json",
@@ -17,7 +17,7 @@
     "reports/source-review.json"
   ],
   "counts": {
-    "terms": 45,
+    "terms": 132,
     "laws": 16,
     "articles": 22
   },
