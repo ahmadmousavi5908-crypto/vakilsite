@@ -48,7 +48,7 @@ export default function LegalLibraryPage() {
           <div className="article-breadcrumb">
             <Link href="/">صفحه اصلی</Link><span>←</span><span>کتابخانه حقوقی</span>
           </div>
-          <span className="section-kicker">IRANIAN LEGAL RESEARCH · VERSION 1.3.0</span>
+          <span className="section-kicker">IRANIAN LEGAL RESEARCH · VERSION 1.3.1</span>
           <h1>کتابخانه پژوهشی حقوق ایران<br /><em>اصطلاحات، قوانین و خلاصه مواد</em></h1>
           <p>
             جست‌وجوی موضوعی در {termCount.toLocaleString("fa-IR")} اصطلاح حقوقی، {lawCount.toLocaleString("fa-IR")} رکورد قانون و {articleCount.toLocaleString("fa-IR")} خلاصه ماده قانونی.
@@ -97,7 +97,7 @@ export default function LegalLibraryPage() {
       <footer className="article-footer">
         <div className="container">
           <Link href="/">بازگشت به صفحه اصلی</Link>
-          <span>کتابخانه پژوهشی حقوق ایران · نسخه داده ۱.۳.۰</span>
+          <span>کتابخانه پژوهشی حقوق ایران · نسخه داده ۱.۳.۱</span>
         </div>
       </footer>
     </main>
