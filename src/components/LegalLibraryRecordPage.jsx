@@ -4,6 +4,7 @@ import {
   getLegalRecordPath,
   legalReviewLabels,
   getLegalCategoryName,
+  isLegalRecordIndexable,
 } from "../lib/legal-library";
 
 function SafeSourceLink({ url, label }) {
@@ -69,7 +70,7 @@ function getPageSchema(type, record, pageTitle, pagePath) {
 
 export default function LegalLibraryRecordPage({ type, record, pageTitle }) {
   const relations = getLegalRecordRelations(type, record);
-  const isVerified = record.review_status === "verified_primary_source";
+  const isVerified = isLegalRecordIndexable(record);
   const schema = getPageSchema(type, record, pageTitle, record.path);
   const title = type === "terms" ? record.canonical : pageTitle;
 
