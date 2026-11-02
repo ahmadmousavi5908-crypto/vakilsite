@@ -58,7 +58,14 @@ Every term, law, and article summary has its own statically generated route. A r
 
 Current data must pass a legal source review before those pages become indexable. A secondary-source link or a technically valid JSON-LD block is not proof that a legal statement is current or authoritative.
 
+## Legal library dataset 1.3.1
+
+The current dataset contains 132 canonical terms, 16 law records, 22 article summaries, 19 taxonomy groups, and 353 curated Persian search phrases. The previous 64-term glossary remains in place; 7 overlapping canonical entries were merged and 57 unique entries were migrated. Additional draft entries cover labor, tax, insurance, administrative and digital-law topics.
+
+Search phrases improve internal retrieval and query coverage. They are not legal sources, do not make a record indexable, and must not be used to justify legal conclusions. Every new record remains outside the sitemap until it is checked against an exact official primary source and its review status is updated.
+
 ## Local validation
+
 
 Run these commands before deployment:
 
