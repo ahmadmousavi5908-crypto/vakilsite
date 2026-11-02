@@ -26,13 +26,13 @@ export default function AttorneyProfileDock() {
 
   function toggleOpen() {
     if (!open) window.dispatchEvent(new CustomEvent("vakilsite:dock-open", { detail: "profile" }));
-    setOpen(!open);
+    setOpen((current) => !current);
   }
 
   return (
-    <div ref={rootRef} dir="rtl" style={{ position: "fixed", left: "max(12px, env(safe-area-inset-left))", bottom: "max(78px, calc(env(safe-area-inset-bottom) + 76px))", zIndex: 1050, fontFamily: "inherit" }}>
+    <div ref={rootRef} className="site-attorney-profile-launcher" dir="rtl" style={{ position: "fixed", left: "max(12px, env(safe-area-inset-left))", bottom: "max(78px, calc(env(safe-area-inset-bottom) + 76px))", zIndex: 2147482000, pointerEvents: "auto", touchAction: "manipulation", fontFamily: "inherit" }}>
       {open && (
-        <section id="attorney-profile-panel" role="dialog" aria-label="معرفی وکیل" style={{ position: "absolute", left: 0, bottom: 66, width: "min(350px, calc(100vw - 28px))", maxHeight: "min(72vh, 570px)", overflowY: "auto", padding: 17, border: "1px solid #e2d8c7", borderRadius: 16, background: "#fffefa", color: "#18334b", boxShadow: "0 16px 42px rgba(5,20,35,.22)" }}>
+        <section id="attorney-profile-panel" role="dialog" aria-label="معرفی وکیل" style={{ position: "fixed", left: "max(12px, env(safe-area-inset-left))", bottom: "calc(max(78px, env(safe-area-inset-bottom) + 76px) + 62px)", zIndex: 2147482000, width: "min(350px, calc(100vw - 24px))", maxHeight: "min(66dvh, 500px)", overflowY: "auto", padding: 17, border: "1px solid #e2d8c7", borderRadius: 16, background: "#fffefa", color: "#18334b", boxShadow: "0 16px 42px rgba(5,20,35,.22)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 13, paddingBottom: 13, borderBottom: "1px solid #e9e1d3" }}>
             <Image src="/images/lawyer.jpg" alt="سید احمد موسوی، وکیل پایه یک دادگستری" width={76} height={88} sizes="76px" quality={82} style={{ width: 76, height: 88, objectFit: "cover", objectPosition: "center 25%", borderRadius: 11, border: "1px solid #dfd0b2" }} />
             <div style={{ display: "grid", gap: 5, minWidth: 0 }}>
