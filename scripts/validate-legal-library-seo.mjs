@@ -62,7 +62,7 @@ for (const [groupName, records, titleOf] of groups) {
       if (!Array.isArray(phrases) || phrases.length === 0) {
         errors.push(`${groupName}: missing search_phrases for ${record.id}`);
       } else {
-        const normalizedPhrases = phrases.map((phrase) => String(phrase ?? "").normalize("NFKC").replace(/[\\u200c\\s]+/g, " ").trim().toLocaleLowerCase("fa-IR"));
+        const normalizedPhrases = phrases.map((phrase) => String(phrase ?? "").normalize("NFKC").replace(/[\u200c\s]+/g, " ").trim().toLocaleLowerCase("fa-IR"));
         if (normalizedPhrases.some((phrase) => !phrase)) errors.push(`${groupName}: empty search phrase for ${record.id}`);
         if (new Set(normalizedPhrases).size !== normalizedPhrases.length) errors.push(`${groupName}: duplicate search phrase for ${record.id}`);
       }
