@@ -1,6 +1,6 @@
 # Search Discovery Infrastructure
 
-This project uses server-rendered legal-library entries, canonical metadata, structured data, a sitemap, robots rules, webmaster verification, and optional IndexNow notifications.
+This project uses server-rendered legal-library entries, canonical metadata, structured data, a sitemap, explicit crawler policies, webmaster verification, and optional IndexNow notifications.
 
 ## Canonical host
 
@@ -18,11 +18,22 @@ Set `NEXT_PUBLIC_SITE_URL` to the exact public HTTPS origin used by the website.
 
 Verification tokens are optional during local development. They must be the exact values issued by the respective webmaster platform.
 
-## Crawler access
+## Crawler access and AI training preferences
 
-The current `robots.js` allows all user agents to crawl public paths and blocks only `/admin` and `/api`. This includes search crawlers such as OAI-SearchBot, as long as the hosting provider, CDN, firewall, and bot protection do not block them.
+The generated `robots.txt` applies these policies:
 
-Do not confuse search crawlers with model-training crawlers. OAI-SearchBot and GPTBot have separate purposes and independent controls. Check the official crawler documentation before changing those policies.
+| User-agent tokens | Policy |
+| --- | --- |
+| `Googlebot`, `Bingbot` | Allow public pages; block `/admin` and `/api` |
+| `OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot` | Allow public search crawling; block `/admin` and `/api` |
+| `ChatGPT-User`, `Claude-User`, `Perplexity-User` | Allow user-initiated retrieval; block `/admin` and `/api` |
+| `GPTBot`, `ClaudeBot`, `Google-Extended` | Disallow the entire site |
+
+OpenAI documents OAI-SearchBot and GPTBot as independent controls. Anthropic likewise separates Claude-SearchBot and Claude-User from ClaudeBot. Google-Extended is a separate robots token controlling use of Google-crawled content for Gemini-related model training and grounding; blocking it does not block Google Search indexing.
+
+The wildcard rule keeps public pages available to other crawlers unless they have a more specific rule above. This is not a universal registry of every crawler or training system. Review new crawler tokens when providers publish or change their official documentation.
+
+Robots rules are voluntary crawl preferences, not access control. Keep authentication and authorization on private routes. Hosting providers, CDNs, firewalls, and bot protection can still block otherwise permitted crawlers; verify those layers after deployment.
 
 ## IndexNow
 
@@ -43,7 +54,7 @@ The generated key file is ignored by Git. Never commit `.env.local`.
 
 ## Legal-library indexing policy
 
-Every term, law, and article summary has its own statically generated route. A record enters the sitemap and receives an indexable robots directive only when its `review_status` is `verified_primary_source`, `source_verified` is `true`, and its `sources` array contains an HTTPS source with `source_type: "primary"`. The validator rejects a record marked verified without this evidence.
+Every term, law, and article summary has its own statically generated route. A record enters the sitemap and receives an indexable robots directive only when its `review_status` is `verified_primary_source`, `source_verified` is `true`, and its `sources` array contains an HTTPS source with `source_type: "primary"`. The validator rejects a record marked verified without this evidence and reports only records that satisfy the full evidence predicate as indexable.
 
 Current data must pass a legal source review before those pages become indexable. A secondary-source link or a technically valid JSON-LD block is not proof that a legal statement is current or authoritative.
 
@@ -58,6 +69,6 @@ npm run build
 npm run start
 ```
 
-Check the generated HTML for canonical URLs, metadata, robots directives, and JSON-LD. After deployment, use Search Console URL Inspection, Bing URL Inspection, and the Rich Results Test where applicable.
+Check the generated `/robots.txt`, HTML canonical URLs, metadata, robots directives, and JSON-LD. After deployment, use Search Console URL Inspection, Bing URL Inspection, and the Rich Results Test where applicable.
 
 Do not add `llms.txt` or AI-only schema as a ranking shortcut. Keep the public pages useful, source-backed, crawlable, and internally linked.
