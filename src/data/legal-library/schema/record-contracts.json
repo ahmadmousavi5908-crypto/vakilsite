@@ -3,6 +3,18 @@
   "title": "Iranian legal library record contracts",
   "description": "JSON Schema contracts for records in this repository.",
   "$defs": {
+    "source": {
+      "type": "object",
+      "required": ["source_type", "title", "url"],
+      "properties": {
+        "source_type": { "enum": ["primary", "secondary"] },
+        "title": { "type": "string", "minLength": 2 },
+        "url": { "type": "string", "format": "uri" },
+        "publisher": { "type": "string" },
+        "accessed_at": { "type": "string", "format": "date" }
+      },
+      "additionalProperties": true
+    },
     "term": {
       "type": "object",
       "required": [
@@ -61,6 +73,11 @@
             "type": "string",
             "pattern": "^art_[a-z0-9_]+$"
           }
+        },
+        "source_verified": { "type": "boolean" },
+        "sources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/source" }
         },
         "review_status": {
           "enum": [

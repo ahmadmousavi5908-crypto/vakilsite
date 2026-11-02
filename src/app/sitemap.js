@@ -1,5 +1,6 @@
 import { articles } from "../data/articles";
 import { practiceAreas } from "../data/practice-areas";
+import { getIndexableLegalRecords } from "../lib/legal-library";
 
 export default function sitemap() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
@@ -62,6 +63,16 @@ export default function sitemap() {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    {
+      url: base + "/legal-library/catalog",
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    ...getIndexableLegalRecords().map((record) => ({
+      url: base + record.path,
+      changeFrequency: "monthly",
+      priority: 0.55,
+    })),
     ...articles.map((article) => ({
       url: base + "/articles/" + article.slug,
       changeFrequency: "monthly",

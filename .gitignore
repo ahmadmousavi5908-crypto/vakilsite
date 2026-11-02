@@ -42,5 +42,6 @@ next-env.d.ts
 /backup/
 /audit-report.json
 /public/images/*~
+/public/indexnow-key.txt
 /.gitignore.before-safety.bak
 .next-cache-backup/

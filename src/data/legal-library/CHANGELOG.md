@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.1 - 2026-11-02
+- Expanded the canonical glossary from 45 to 132 terms.
+- Preserved 57 unique legacy glossary entries, merged 7 overlapping entries and added 30 cross-topic terms.
+- Expanded taxonomy coverage to 19 categories and 353 curated Persian search phrases.
+- Synchronized the manifest and documentation with the integrated dataset counts.
+- Kept legal review statuses conservative; no record was promoted to primary-source verified by this data migration.
+
 ## 1.2.1 - 2026-11-01
 - Fixed release packaging so MANIFEST.json is included in every downloadable archive.
 - Strengthened validation to require the manifest, verify its file inventory and compare declared record counts with actual data.
