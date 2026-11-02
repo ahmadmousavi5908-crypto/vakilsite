@@ -1,5 +1,10 @@
 import Link from "next/link";
 import LegalLibraryExplorer from "../../components/LegalLibraryExplorer";
+import { getLegalRecords } from "../../lib/legal-library";
+
+const termCount = getLegalRecords("terms").length;
+const lawCount = getLegalRecords("laws").length;
+const articleCount = getLegalRecords("articles").length;
 
 export const metadata = {
   title: "کتابخانه پژوهشی حقوق ایران | قوانین و اصطلاحات حقوقی",
@@ -19,7 +24,9 @@ const officialResources = [
   ["درگاه خدمات الکترونیک قضایی", "ورود به خدمات الکترونیک قضایی و پیوندهای مرتبط", "https://my.adliran.ir/"],
   ["سامانه ثنا", "درگاه احراز هویت برخط ثنا", "https://sana.adliran.ir/"],
   ["روزنامه رسمی", "دسترسی به آگهی‌ها و انتشارات روزنامه رسمی", "https://www.rrk.ir/"],
-  ["قوانین و مقررات", "پایگاه قوانین و مقررات معرفی‌شده در درگاه قوه قضاییه", "https://www.dastour.ir/"],
+  ["سامانه ملی قوانین و مقررات کشور", "دسترسی به قوانین و مقررات و اطلاعات تنقیحی در پایگاه ملی قوانین", "https://dotic.ir/"],
+  ["سازمان امور مالیاتی کشور", "درگاه رسمی اطلاع‌رسانی و دسترسی به مقررات و دستورالعمل‌های مالیاتی", "https://www.intamedia.ir/"],
+  ["سامانه قوانین و مقررات تأمین اجتماعی", "دسترسی به قوانین، بخشنامه‌ها و آرای مرتبط با تأمین اجتماعی", "https://law.tamin.ir/"],
   ["سامانه ملی آرای قضایی", "دسترسی به آرای منتشرشده قضایی", "https://ara.jri.ac.ir/"],
   ["دیوان عدالت اداری", "درگاه دیوان عدالت اداری", "https://divan-edalat.ir/"],
   ["مرکز وکلا و کارشناسان رسمی", "وب‌سایت مرکز وکلا، کارشناسان رسمی و مشاوران خانواده", "https://judiciarybar.ir/"],
@@ -43,15 +50,16 @@ export default function LegalLibraryPage() {
           <div className="article-breadcrumb">
             <Link href="/">صفحه اصلی</Link><span>←</span><span>کتابخانه حقوقی</span>
           </div>
-          <span className="section-kicker">IRANIAN LEGAL RESEARCH · VERSION 1.2.1</span>
+          <span className="section-kicker">IRANIAN LEGAL RESEARCH · VERSION 1.3.1</span>
           <h1>کتابخانه پژوهشی حقوق ایران<br /><em>اصطلاحات، قوانین و خلاصه مواد</em></h1>
           <p>
-            جست‌وجوی موضوعی در ۴۵ اصطلاح حقوقی، ۱۶ رکورد قانون و ۲۲ خلاصه ماده قانونی.
+            جست‌وجوی موضوعی در {termCount.toLocaleString("fa-IR")} اصطلاح حقوقی، {lawCount.toLocaleString("fa-IR")} رکورد قانون و {articleCount.toLocaleString("fa-IR")} خلاصه ماده قانونی.
             وضعیت بررسی هر مدخل مشخص شده است تا محتوای پژوهشی با متن رسمی قانون اشتباه گرفته نشود.
           </p>
           <div className="legal-library-hero-links">
             <Link href="/legal-glossary">فرهنگ عمومی اصطلاحات حقوقی ←</Link>
             <Link href="/articles">راهنماها و مقالات حقوقی ←</Link>
+            <Link href="/legal-library/catalog">فهرست مستقل همه مدخل‌های کتابخانه ←</Link>
           </div>
         </div>
       </section>
@@ -91,7 +99,7 @@ export default function LegalLibraryPage() {
       <footer className="article-footer">
         <div className="container">
           <Link href="/">بازگشت به صفحه اصلی</Link>
-          <span>کتابخانه پژوهشی حقوق ایران · نسخه داده ۱.۲.۱</span>
+          <span>کتابخانه پژوهشی حقوق ایران · نسخه داده ۱.۳.۱</span>
         </div>
       </footer>
     </main>

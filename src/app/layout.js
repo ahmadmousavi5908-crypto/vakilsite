@@ -20,6 +20,18 @@ export const metadata = {
   applicationName: "خدمات حقوقی سید احمد موسوی",
   ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
   alternates: { canonical: "/" },
+  ...(process.env.GOOGLE_SITE_VERIFICATION || process.env.BING_SITE_VERIFICATION
+    ? {
+        verification: {
+          ...(process.env.GOOGLE_SITE_VERIFICATION
+            ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+            : {}),
+          ...(process.env.BING_SITE_VERIFICATION
+            ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } }
+            : {}),
+        },
+      }
+    : {}),
   keywords: [
     "وکیل اهواز",
     "وکیل خوزستان",

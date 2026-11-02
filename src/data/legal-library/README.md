@@ -2,14 +2,15 @@
 
 A versioned, structured Persian-language legal research dataset for Iranian law.
 
-## Version 1.2.1 scope
+## Version 1.3.1 scope
 
 - **Registration and real estate:** priority area, including official and ordinary documents, title deeds, cadastral mapping, parcel identifiers, unregistered property, claim registration and property boundaries.
-- **Cheques and commercial instruments:** included from the first version, including Sayad cheques, registration and transfer, non-payment certificates, promissory notes (سفته), required particulars and protest (واخواست).
+- **Cheques and commercial instruments:** including Sayad cheques, registration and transfer, non-payment certificates, promissory notes (سفته), required particulars and protest (واخواست).
 - Civil law and civil procedure.
 - General and specific criminal law, criminal procedure and criminology.
+- Family, labor, tax, insurance, administrative and digital-law terminology.
 
-Current dataset: 45 terms, 16 law records and 22 article summaries.
+Current dataset: 132 canonical terms, 16 law records, 22 article summaries, 19 taxonomy groups and 353 curated Persian search phrases. The prior glossary was preserved through migration: 57 unique legacy terms were retained, 7 overlapping entries were merged, and 30 additional cross-topic terms were added.
 
 ## Repository layout
 
@@ -62,7 +63,7 @@ A law's enactment date, publication date, effective date, amendments, transition
 
 Primary-source verification must prioritize the Official Gazette, the National Laws and Regulations System, and official judiciary, Registration Organization and Central Bank publications. Secondary repositories and news reports are used for discovery and cross-checking, not as a substitute for the official text.
 
-The source-review report records the limitations and the sources used. No law in this release is certified as fully consolidated against every official amendment and implementing regulation.
+The source-review report records the limitations and the sources used. No law in this release is certified as fully consolidated against every official amendment and implementing regulation. No record becomes indexable merely because it has search phrases or a secondary-source link.
 
 ## Safety and use
 
