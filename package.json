@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
+    "prebuild": "node scripts/prepare-indexnow-key.mjs",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "validate:legal-library-seo": "node scripts/validate-legal-library-seo.mjs"
+    "validate:legal-library-seo": "node scripts/validate-legal-library-seo.mjs",
+    "indexnow:prepare": "node scripts/prepare-indexnow-key.mjs",
+    "indexnow:submit": "node scripts/submit-indexnow.mjs"
   },
   "dependencies": {
     "next": "16.4.3",
