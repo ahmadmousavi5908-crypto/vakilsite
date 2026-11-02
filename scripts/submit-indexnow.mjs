@@ -31,8 +31,8 @@ if (!inputUrls.length) {
 }
 
 const site = new URL(configuredSite);
-if (site.protocol !== "https:") {
-  throw new Error("IndexNow requires the public canonical HTTPS site URL.");
+if (site.protocol !== "https:" || site.pathname !== "/" || site.search || site.hash) {
+  throw new Error("NEXT_PUBLIC_SITE_URL must be the canonical HTTPS origin only, without a path, query, or fragment.");
 }
 
 const urls = [...new Set(inputUrls.map((value) => new URL(value, site.origin).href))];
