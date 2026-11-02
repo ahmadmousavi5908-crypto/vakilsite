@@ -52,6 +52,11 @@ export const legalLibraryCollections = {
 };
 
 export const legalLibraryCategories = taxonomyData.categories || [];
+const categoryByCode = new Map(legalLibraryCategories.map((category) => [category.code, category.name]));
+
+export function getLegalCategoryName(code) {
+  return categoryByCode.get(code) || "حقوق ایران";
+}
 
 export function getLegalRecords(type) {
   return legalLibraryCollections[type] || [];
