@@ -83,6 +83,11 @@ for (const article of articles) {
   if (!lawIds.has(article.law_id)) errors.push(`articles: unknown parent law ${article.law_id} in ${article.id}`);
 }
 
+const usedCategoryCodes = new Set(terms.map((record) => record.category));
+for (const code of categoryCodes) {
+  if (!usedCategoryCodes.has(code)) errors.push(`taxonomy: category ${code} has no term records`);
+}
+
 const allRecords = [...terms, ...laws, ...articles];
 const report = {
   terms: terms.length,
@@ -90,6 +95,8 @@ const report = {
   articles: articles.length,
   total: allRecords.length,
   categories: categoryCodes.size,
+  coveredCategories: usedCategoryCodes.size,
+  uncoveredCategories: [...categoryCodes].filter((code) => !usedCategoryCodes.has(code)),
   curatedSearchPhrases: terms.reduce((sum, record) => sum + (Array.isArray(record.search_phrases) ? record.search_phrases.length : 0), 0),
   indexableByPrimarySourcePolicy: allRecords.filter((record) =>
     record.review_status === "verified_primary_source" && hasVerifiedPrimarySource(record)
