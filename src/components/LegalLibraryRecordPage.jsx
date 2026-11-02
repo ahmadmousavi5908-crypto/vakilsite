@@ -3,6 +3,7 @@ import {
   getLegalRecordRelations,
   getLegalRecordPath,
   legalReviewLabels,
+  getLegalCategoryName,
 } from "../lib/legal-library";
 
 function SafeSourceLink({ url, label }) {
@@ -53,14 +54,16 @@ function getPageSchema(type, record, pageTitle, pagePath) {
     inLanguage: "fa-IR",
     ...(pageUrl ? { url: pageUrl } : {}),
     ...(mainEntity ? { mainEntity } : {}),
-    breadcrumb: {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "صفحه اصلی", item: siteUrl || "/" },
-        { "@type": "ListItem", position: 2, name: "کتابخانه حقوقی", item: siteUrl ? `${siteUrl}/legal-library` : "/legal-library" },
-        { "@type": "ListItem", position: 3, name: pageTitle, ...(pageUrl ? { item: pageUrl } : {}) },
-      ],
-    },
+    ...(siteUrl ? {
+      breadcrumb: {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "صفحه اصلی", item: siteUrl },
+          { "@type": "ListItem", position: 2, name: "کتابخانه حقوقی", item: `${siteUrl}/legal-library` },
+          { "@type": "ListItem", position: 3, name: pageTitle, item: pageUrl },
+        ],
+      },
+    } : {}),
   };
 }
 
@@ -106,7 +109,7 @@ export default function LegalLibraryRecordPage({ type, record, pageTitle }) {
               <h2>تعریف</h2>
               <p>{record.definition}</p>
               {record.aliases?.length > 0 && <div className="legal-record-related"><b>عبارت‌های مرتبط:</b> {record.aliases.join("، ")}</div>}
-              {record.category && <div className="legal-record-related"><b>کد حوزه:</b> {record.category}</div>}
+              {record.category && <div className="legal-record-related"><b>حوزه:</b> {getLegalCategoryName(record.category)}</div>}
             </>
           )}
           {type === "laws" && (
