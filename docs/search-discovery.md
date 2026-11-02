@@ -43,7 +43,7 @@ The generated key file is ignored by Git. Never commit `.env.local`.
 
 ## Legal-library indexing policy
 
-Every term, law, and article summary has its own statically generated route. A record enters the sitemap and receives an indexable robots directive only when its `review_status` is `verified_primary_source`.
+Every term, law, and article summary has its own statically generated route. A record enters the sitemap and receives an indexable robots directive only when its `review_status` is `verified_primary_source`, `source_verified` is `true`, and its `sources` array contains an HTTPS source with `source_type: "primary"`. The validator rejects a record marked verified without this evidence.
 
 Current data must pass a legal source review before those pages become indexable. A secondary-source link or a technically valid JSON-LD block is not proof that a legal statement is current or authoritative.
 
