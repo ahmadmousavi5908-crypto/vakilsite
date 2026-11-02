@@ -30,10 +30,10 @@ function createSlug(value) {
     .normalize("NFKC")
     .replace(/[يى]/g, "ی")
     .replace(/ك/g, "ک")
-    .replace(/\\u200c/g, " ")
+    .replace(/\u200c/g, " ")
     .toLocaleLowerCase("fa-IR")
     .trim()
-    .replace(/[^\\p{L}\\p{N}]+/gu, "-")
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
     .replace(/^-+|-+$/g, "");
 }
 
