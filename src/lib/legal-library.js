@@ -70,10 +70,20 @@ export function getLegalRecordPath(type, record) {
   return record?.path || "#";
 }
 
+export function hasPrimarySourceEvidence(record) {
+  return record?.source_verified === true &&
+    Array.isArray(record.sources) &&
+    record.sources.some((source) =>
+      source?.source_type === "primary" &&
+      typeof source.url === "string" &&
+      /^https:\/\//i.test(source.url)
+    );
+}
+
 export function getIndexableLegalRecords() {
   return Object.values(legalLibraryCollections)
     .flat()
-    .filter((record) => record.review_status === "verified_primary_source");
+    .filter(isLegalRecordIndexable);
 }
 
 export function getLegalRecordRelations(type, record) {
@@ -112,5 +122,5 @@ export function getLegalRecordTitle(type, record) {
 }
 
 export function isLegalRecordIndexable(record) {
-  return record?.review_status === "verified_primary_source";
+  return record?.review_status === "verified_primary_source" && hasPrimarySourceEvidence(record);
 }
