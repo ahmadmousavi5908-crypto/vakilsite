@@ -7,6 +7,7 @@ on:
     branches:
       - main
       - redesign/persian-ux-typography
+      - feat/legal-library-discovery-20261102
 
 permissions:
   contents: read
@@ -26,7 +27,30 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
+      - name: Validate legal library SEO data
+        run: npm run validate:legal-library-seo
       - name: Run ESLint
         run: npm run lint
       - name: Build production site
         run: npm run build
+      - name: Verify legal library HTTP routes
+        run: |
+          ./node_modules/.bin/next start --hostname 127.0.0.1 --port 3000 > /tmp/vakilsite-next.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true; wait "$SERVER_PID" 2>/dev/null || true' EXIT
+
+          READY=0
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3000/robots.txt > /dev/null; then
+              READY=1
+              break
+            fi
+            sleep 2
+          done
+
+          if [ "$READY" -ne 1 ]; then
+            cat /tmp/vakilsite-next.log
+            exit 1
+          fi
+
+          npm run test:legal-library-http
