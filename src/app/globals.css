@@ -3093,7 +3093,7 @@ body{
   #site-mobile-menu-root {
     display: block !important;
     position: fixed !important;
-    top: max(12px, env(safe-area-inset-top, 0px)) !important;
+    top: calc(190px + env(safe-area-inset-top, 0px)) !important;
     left: max(12px, env(safe-area-inset-left, 0px)) !important;
     right: auto !important;
     bottom: auto !important;
@@ -3134,7 +3134,7 @@ body{
   }
   #site-mobile-menu-panel {
     position: fixed !important;
-    top: calc(env(safe-area-inset-top, 0px) + 72px) !important;
+    top: calc(env(safe-area-inset-top, 0px) + 248px) !important;
     left: 12px !important;
     right: auto !important;
     width: min(360px, calc(100vw - 24px)) !important;
