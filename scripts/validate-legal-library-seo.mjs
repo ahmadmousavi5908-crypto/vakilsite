@@ -17,6 +17,16 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
+function hasVerifiedPrimarySource(record) {
+  return record.source_verified === true &&
+    Array.isArray(record.sources) &&
+    record.sources.some((source) =>
+      source?.source_type === "primary" &&
+      typeof source.url === "string" &&
+      /^https:\/\//i.test(source.url)
+    );
+}
+
 const [termsData, lawsData, articlesData] = await Promise.all([
   load("src/data/legal-library/terms/terms.json"),
   load("src/data/legal-library/laws/laws.json"),
@@ -44,11 +54,8 @@ for (const [groupName, records, titleOf] of groups) {
     if (seen.has(slug)) errors.push(`${groupName}: duplicate slug ${slug} (${seen.get(slug)}, ${record.id})`);
     seen.set(slug, record.id);
     if (!allowedStatuses.has(record.review_status)) errors.push(`${groupName}: invalid review_status for ${record.id}`);
-    if (record.review_status === "verified_primary_source") {
-      const hasPrimaryEvidence = record.source_verified === true &&
-        Array.isArray(record.sources) &&
-        record.sources.some((source) => source?.source_type === "primary" && typeof source.url === "string" && /^https:\/\//i.test(source.url));
-      if (!hasPrimaryEvidence) errors.push(`${groupName}: verified record ${record.id} lacks explicit primary-source evidence`);
+    if (record.review_status === "verified_primary_source" && !hasVerifiedPrimarySource(record)) {
+      errors.push(`${groupName}: verified record ${record.id} lacks explicit primary-source evidence`);
     }
   }
 }
@@ -69,7 +76,9 @@ const report = {
   laws: laws.length,
   articles: articles.length,
   total: allRecords.length,
-  indexableByPrimarySourcePolicy: allRecords.filter((record) => record.review_status === "verified_primary_source").length,
+  indexableByPrimarySourcePolicy: allRecords.filter((record) =>
+    record.review_status === "verified_primary_source" && hasVerifiedPrimarySource(record)
+  ).length,
   errors,
 };
 console.log(JSON.stringify(report, null, 2));
