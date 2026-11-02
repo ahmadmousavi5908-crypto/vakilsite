@@ -3115,7 +3115,7 @@ body{
     flex-direction: row !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 10px !important;
+    gap: 7px !important;
     list-style: none !important;
     cursor: pointer !important;
   }
