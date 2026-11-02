@@ -33,7 +33,7 @@ const groups = [
 
 const launcher = {
   position: "fixed",
-  top: "max(4px, env(safe-area-inset-top, 0px))",
+  top: "calc(env(safe-area-inset-top, 0px) + 106px)",
   left: "max(12px, env(safe-area-inset-left, 0px))",
   width: "108px",
   height: "46px",
@@ -56,7 +56,7 @@ const trigger = {
   cursor: "pointer",
   border: "1px solid rgba(229,209,167,.9)",
   borderRadius: "13px",
-  background: "linear-gradient(135deg,#1b3b56 0%,#10283f 100%)",
+  background: "linear-gradient(135deg,#087653 0%,#075b43 100%)",
   boxShadow: "0 5px 17px rgba(8,35,48,.28), inset 0 1px 0 rgba(255,255,255,.13)",
   color: "#fff",
   fontFamily: '"Vazirmatn", Tahoma, "Segoe UI", sans-serif',
@@ -74,11 +74,11 @@ const line = {
 
 const panel = {
   position: "fixed",
-  top: "calc(env(safe-area-inset-top, 0px) + 62px)",
+  top: "calc(env(safe-area-inset-top, 0px) + 164px)",
   left: "12px",
   right: "auto",
   width: "min(380px, calc(100vw - 24px))",
-  maxHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - 78px)",
+  maxHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - 180px)",
   overflowX: "hidden",
   overflowY: "auto",
   overscrollBehavior: "contain",
@@ -304,7 +304,7 @@ export default function GlobalMobileMenu() {
           position: absolute;
           inset: -5px;
           z-index: -1;
-          border: 1px solid rgba(229,209,167,.62);
+          border: 1px solid rgba(213,181,110,.72);
           border-radius: 16px;
           pointer-events: none;
           animation: site-menu-ring 4.6s ease-out infinite;
