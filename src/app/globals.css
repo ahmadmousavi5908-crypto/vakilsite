@@ -1721,7 +1721,7 @@ h1, h2, h3, h4, p, a, button, label, small, strong, span {
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 7px !important;
+    gap: 5px !important;
   }
 
   .attorney-profile-visual .attorney-direct-lines > span {
@@ -3052,7 +3052,7 @@ body{
   }
   .global-mobile-menu-group a {
     display: flex !important;
-    flex-direction: row !important;
+    flex-direction: column !important;
     align-items: center !important;
     justify-content: flex-start !important;
     gap: 10px !important;
@@ -3097,8 +3097,8 @@ body{
     left: max(12px, env(safe-area-inset-left, 0px)) !important;
     right: auto !important;
     bottom: auto !important;
-    width: 88px !important;
-    height: 40px !important;
+    width: 78px !important;
+    height: 78px !important;
     z-index: 1100 !important;
     direction: ltr !important;
     font-family: Tahoma, "Vazirmatn", "Segoe UI", sans-serif !important;
@@ -3106,11 +3106,11 @@ body{
   #site-mobile-menu-root > summary {
     display: flex !important;
     box-sizing: border-box !important;
-    width: 88px !important;
-    min-width: 88px !important;
-    height: 40px !important;
-    min-height: 40px !important;
-    padding: 0 9px !important;
+    width: 78px !important;
+    min-width: 78px !important;
+    height: 78px !important;
+    min-height: 78px !important;
+    padding: 6px 4px !important;
     margin: 0 !important;
     flex-direction: row !important;
     align-items: center !important;
@@ -3124,7 +3124,7 @@ body{
   #site-mobile-menu-root > summary::after { content: none !important; display: none !important; }
   #site-mobile-menu-root .site-mobile-menu-icon > i {
     display: block !important;
-    width: 16px !important;
+    width: 20px !important;
     height: 2px !important;
     min-height: 2px !important;
     margin: 0 !important;
@@ -3134,11 +3134,11 @@ body{
   }
   #site-mobile-menu-panel {
     position: fixed !important;
-    top: calc(env(safe-area-inset-top, 0px) + 164px) !important;
+    top: calc(env(safe-area-inset-top, 0px) + 194px) !important;
     left: 12px !important;
     right: auto !important;
     width: min(380px, calc(100vw - 24px)) !important;
-    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 180px) !important;
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 210px) !important;
     overflow-x: hidden !important;
     overflow-y: auto !important;
     z-index: 1100 !important;
