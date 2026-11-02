@@ -24,7 +24,7 @@ jobs:
           node-version: 24
           cache: npm
       - name: Install dependencies and synchronize lockfile
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
