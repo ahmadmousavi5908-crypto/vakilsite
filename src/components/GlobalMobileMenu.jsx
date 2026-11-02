@@ -33,50 +33,52 @@ const groups = [
 
 const launcher = {
   position: "fixed",
-  top: "max(12px, env(safe-area-inset-top, 0px))",
+  top: "max(4px, env(safe-area-inset-top, 0px))",
   left: "max(12px, env(safe-area-inset-left, 0px))",
-  width: "50px",
-  height: "50px",
+  width: "108px",
+  height: "46px",
   zIndex: 1100,
   direction: "ltr",
 };
 
 const trigger = {
   boxSizing: "border-box",
-  width: "50px",
-  height: "50px",
-  padding: 0,
+  width: "108px",
+  height: "46px",
+  padding: "0 13px",
   margin: 0,
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
   alignItems: "center",
   justifyContent: "center",
-  gap: "5px",
+  gap: "10px",
   listStyle: "none",
   cursor: "pointer",
-  border: "1px solid rgba(177,142,84,.7)",
+  border: "1px solid rgba(229,209,167,.9)",
   borderRadius: "13px",
-  background: "linear-gradient(155deg,#fffefa,#f2ecdf)",
-  boxShadow: "0 5px 18px rgba(12,31,49,.18)",
+  background: "linear-gradient(135deg,#205b59 0%,#173f50 100%)",
+  boxShadow: "0 5px 17px rgba(8,35,48,.28), inset 0 1px 0 rgba(255,255,255,.13)",
+  color: "#fff",
+  fontFamily: '"Vazirmatn", Tahoma, "Segoe UI", sans-serif',
 };
 
 const line = {
   display: "block",
-  width: "21px",
+  width: "19px",
   height: "2px",
   minHeight: "2px",
   margin: 0,
   borderRadius: "3px",
-  background: "#173550",
+  background: "#f8f4e9",
 };
 
 const panel = {
   position: "fixed",
-  top: "calc(env(safe-area-inset-top, 0px) + 72px)",
+  top: "calc(env(safe-area-inset-top, 0px) + 62px)",
   left: "12px",
   right: "auto",
   width: "min(380px, calc(100vw - 24px))",
-  maxHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - 88px)",
+  maxHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - 78px)",
   overflowX: "hidden",
   overflowY: "auto",
   overscrollBehavior: "contain",
@@ -211,10 +213,13 @@ export default function GlobalMobileMenu() {
         title="فهرست سایت"
         style={trigger}
       >
-        <span className="site-mobile-menu-sr">فهرست سایت</span>
-        <i aria-hidden="true" style={line} />
-        <i aria-hidden="true" style={line} />
-        <i aria-hidden="true" style={line} />
+        <span className="site-mobile-menu-sr">فهرست</span>
+        <span className="site-mobile-menu-icon" aria-hidden="true">
+          <i style={line} />
+          <i style={line} />
+          <i style={line} />
+        </span>
+        <strong className="site-mobile-menu-label">فهرست</strong>
       </summary>
 
       <nav id="site-mobile-menu-panel" aria-label="فهرست اصلی سایت" style={panel} dir="rtl">
@@ -286,6 +291,72 @@ export default function GlobalMobileMenu() {
           خدمات حقوقی سید احمد موسوی · اهواز و سراسر ایران
         </footer>
       </nav>
+      <style jsx global>{`
+        #site-mobile-menu-root > summary {
+          position: relative;
+          isolation: isolate;
+          overflow: visible;
+          -webkit-tap-highlight-color: transparent;
+          transition: filter .2s ease, transform .2s ease;
+        }
+        #site-mobile-menu-root > summary::before {
+          content: "";
+          position: absolute;
+          inset: -5px;
+          z-index: -1;
+          border: 1px solid rgba(229,209,167,.62);
+          border-radius: 16px;
+          pointer-events: none;
+          animation: site-menu-ring 4.6s ease-out infinite;
+        }
+        #site-mobile-menu-root > summary::-webkit-details-marker { display: none; }
+        #site-mobile-menu-root > summary::marker { content: ""; }
+        .site-mobile-menu-icon {
+          display: flex;
+          flex: 0 0 19px;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+        }
+        .site-mobile-menu-label {
+          color: #fff;
+          font-size: 13px;
+          font-weight: 800;
+          line-height: 1;
+          white-space: nowrap;
+        }
+        #site-mobile-menu-root:not([open]) > summary {
+          animation: site-menu-nudge 4.6s ease-in-out infinite;
+        }
+        #site-mobile-menu-root[open] > summary,
+        #site-mobile-menu-root[open] > summary::before {
+          animation: none !important;
+        }
+        #site-mobile-menu-root > summary:focus-visible {
+          outline: 3px solid #e5d1a7;
+          outline-offset: 4px;
+        }
+        @keyframes site-menu-nudge {
+          0%, 55%, 100% { transform: translateY(0) scale(1); }
+          6% { transform: translateY(-3px) scale(1.035); }
+          12% { transform: translateY(0) scale(1); }
+          20% { transform: translateY(-2px) scale(1.02); }
+          26% { transform: translateY(0) scale(1); }
+        }
+        @keyframes site-menu-ring {
+          0%, 100% { transform: scale(.94); opacity: 0; }
+          9% { transform: scale(1); opacity: .58; }
+          42% { transform: scale(1.24); opacity: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          #site-mobile-menu-root > summary,
+          #site-mobile-menu-root > summary::before {
+            animation: none !important;
+            transition: none !important;
+          }
+        }
+      `}</style>
     </details>
   );
 }
