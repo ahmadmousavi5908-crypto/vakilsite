@@ -44,6 +44,12 @@ for (const [groupName, records, titleOf] of groups) {
     if (seen.has(slug)) errors.push(`${groupName}: duplicate slug ${slug} (${seen.get(slug)}, ${record.id})`);
     seen.set(slug, record.id);
     if (!allowedStatuses.has(record.review_status)) errors.push(`${groupName}: invalid review_status for ${record.id}`);
+    if (record.review_status === "verified_primary_source") {
+      const hasPrimaryEvidence = record.source_verified === true &&
+        Array.isArray(record.sources) &&
+        record.sources.some((source) => source?.source_type === "primary" && typeof source.url === "string" && /^https:\/\//i.test(source.url));
+      if (!hasPrimaryEvidence) errors.push(`${groupName}: verified record ${record.id} lacks explicit primary-source evidence`);
+    }
   }
 }
 
