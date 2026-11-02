@@ -1,5 +1,10 @@
 import Link from "next/link";
 import LegalLibraryExplorer from "../../components/LegalLibraryExplorer";
+import { getLegalRecords } from "../../lib/legal-library";
+
+const termCount = getLegalRecords("terms").length;
+const lawCount = getLegalRecords("laws").length;
+const articleCount = getLegalRecords("articles").length;
 
 export const metadata = {
   title: "کتابخانه پژوهشی حقوق ایران | قوانین و اصطلاحات حقوقی",
@@ -43,10 +48,10 @@ export default function LegalLibraryPage() {
           <div className="article-breadcrumb">
             <Link href="/">صفحه اصلی</Link><span>←</span><span>کتابخانه حقوقی</span>
           </div>
-          <span className="section-kicker">IRANIAN LEGAL RESEARCH · VERSION 1.2.1</span>
+          <span className="section-kicker">IRANIAN LEGAL RESEARCH · VERSION 1.3.0</span>
           <h1>کتابخانه پژوهشی حقوق ایران<br /><em>اصطلاحات، قوانین و خلاصه مواد</em></h1>
           <p>
-            جست‌وجوی موضوعی در ۴۵ اصطلاح حقوقی، ۱۶ رکورد قانون و ۲۲ خلاصه ماده قانونی.
+            جست‌وجوی موضوعی در {termCount.toLocaleString("fa-IR")} اصطلاح حقوقی، {lawCount.toLocaleString("fa-IR")} رکورد قانون و {articleCount.toLocaleString("fa-IR")} خلاصه ماده قانونی.
             وضعیت بررسی هر مدخل مشخص شده است تا محتوای پژوهشی با متن رسمی قانون اشتباه گرفته نشود.
           </p>
           <div className="legal-library-hero-links">
@@ -92,7 +97,7 @@ export default function LegalLibraryPage() {
       <footer className="article-footer">
         <div className="container">
           <Link href="/">بازگشت به صفحه اصلی</Link>
-          <span>کتابخانه پژوهشی حقوق ایران · نسخه داده ۱.۲.۱</span>
+          <span>کتابخانه پژوهشی حقوق ایران · نسخه داده ۱.۳.۰</span>
         </div>
       </footer>
     </main>
