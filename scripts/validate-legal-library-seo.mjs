@@ -27,14 +27,16 @@ function hasVerifiedPrimarySource(record) {
     );
 }
 
-const [termsData, lawsData, articlesData] = await Promise.all([
+const [termsData, lawsData, articlesData, taxonomyData] = await Promise.all([
   load("src/data/legal-library/terms/terms.json"),
   load("src/data/legal-library/laws/laws.json"),
   load("src/data/legal-library/articles/articles.json"),
+  load("src/data/legal-library/taxonomy/categories.json"),
 ]);
 const terms = termsData.records || [];
 const laws = lawsData.records || [];
 const articles = articlesData.records || [];
+const categoryCodes = new Set((taxonomyData.categories || []).map((category) => category.code));
 const groups = [
   ["terms", terms, (record) => record.canonical],
   ["laws", laws, (record) => record.title],
@@ -54,6 +56,7 @@ for (const [groupName, records, titleOf] of groups) {
     if (seen.has(slug)) errors.push(`${groupName}: duplicate slug ${slug} (${seen.get(slug)}, ${record.id})`);
     seen.set(slug, record.id);
     if (!allowedStatuses.has(record.review_status)) errors.push(`${groupName}: invalid review_status for ${record.id}`);
+    if (groupName === "terms" && !categoryCodes.has(record.category)) errors.push(`${groupName}: unknown category ${record.category} for ${record.id}`);
     if (groupName === "terms") {
       const phrases = record.search_phrases;
       if (!Array.isArray(phrases) || phrases.length === 0) {
@@ -86,6 +89,7 @@ const report = {
   laws: laws.length,
   articles: articles.length,
   total: allRecords.length,
+  categories: categoryCodes.size,
   curatedSearchPhrases: terms.reduce((sum, record) => sum + (Array.isArray(record.search_phrases) ? record.search_phrases.length : 0), 0),
   indexableByPrimarySourcePolicy: allRecords.filter((record) =>
     record.review_status === "verified_primary_source" && hasVerifiedPrimarySource(record)
