@@ -54,6 +54,16 @@ for (const [groupName, records, titleOf] of groups) {
     if (seen.has(slug)) errors.push(`${groupName}: duplicate slug ${slug} (${seen.get(slug)}, ${record.id})`);
     seen.set(slug, record.id);
     if (!allowedStatuses.has(record.review_status)) errors.push(`${groupName}: invalid review_status for ${record.id}`);
+    if (groupName === "terms") {
+      const phrases = record.search_phrases;
+      if (!Array.isArray(phrases) || phrases.length === 0) {
+        errors.push(`${groupName}: missing search_phrases for ${record.id}`);
+      } else {
+        const normalizedPhrases = phrases.map((phrase) => String(phrase ?? "").normalize("NFKC").replace(/[\\u200c\\s]+/g, " ").trim().toLocaleLowerCase("fa-IR"));
+        if (normalizedPhrases.some((phrase) => !phrase)) errors.push(`${groupName}: empty search phrase for ${record.id}`);
+        if (new Set(normalizedPhrases).size !== normalizedPhrases.length) errors.push(`${groupName}: duplicate search phrase for ${record.id}`);
+      }
+    }
     if (record.review_status === "verified_primary_source" && !hasVerifiedPrimarySource(record)) {
       errors.push(`${groupName}: verified record ${record.id} lacks explicit primary-source evidence`);
     }
@@ -76,6 +86,7 @@ const report = {
   laws: laws.length,
   articles: articles.length,
   total: allRecords.length,
+  curatedSearchPhrases: terms.reduce((sum, record) => sum + (Array.isArray(record.search_phrases) ? record.search_phrases.length : 0), 0),
   indexableByPrimarySourcePolicy: allRecords.filter((record) =>
     record.review_status === "verified_primary_source" && hasVerifiedPrimarySource(record)
   ).length,
