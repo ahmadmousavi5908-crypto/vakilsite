@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
+  // Permit the exact loopback/network hosts used to open this Termux dev server.
+  allowedDevOrigins: ["127.0.0.1", "198.18.0.1"],
 
   images: {
     // Keep the existing 82-quality attorney image valid under Next.js 16.

@@ -65,12 +65,13 @@ const launcherStyle = {
   position: "fixed",
   right: "max(12px, env(safe-area-inset-right))",
   bottom: "max(12px, env(safe-area-inset-bottom))",
-  zIndex: 1040,
+  zIndex: 2147483000,
   display: "block",
   visibility: "visible",
   opacity: 1,
   pointerEvents: "auto",
   isolation: "isolate",
+  touchAction: "manipulation",
 };
 
 const toggleStyle = {
@@ -92,9 +93,10 @@ const toggleStyle = {
 };
 
 const panelStyle = {
-  position: "absolute",
-  right: 0,
-  bottom: 66,
+  position: "fixed",
+  right: "max(12px, env(safe-area-inset-right))",
+  bottom: "calc(max(12px, env(safe-area-inset-bottom)) + 72px)",
+  zIndex: 2147483000,
   width: "min(340px, calc(100vw - 24px))",
   maxHeight: "min(68vh, 560px)",
   overflow: "auto",
@@ -142,7 +144,7 @@ export default function SocialContactDock() {
 
   function toggleOpen() {
     if (!open) window.dispatchEvent(new CustomEvent("vakilsite:dock-open", { detail: "contact" }));
-    setOpen(!open);
+    setOpen((current) => !current);
   }
 
   const items = [...links];
