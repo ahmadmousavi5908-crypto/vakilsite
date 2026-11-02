@@ -35,28 +35,28 @@ const launcher = {
   position: "fixed",
   top: "calc(env(safe-area-inset-top, 0px) + 106px)",
   left: "max(12px, env(safe-area-inset-left, 0px))",
-  width: "88px",
-  height: "40px",
+  width: "78px",
+  height: "78px",
   zIndex: 1100,
   direction: "ltr",
 };
 
 const trigger = {
   boxSizing: "border-box",
-  width: "88px",
-  height: "40px",
-  padding: "0 9px",
+  width: "78px",
+  height: "78px",
+  padding: "6px 4px",
   margin: 0,
   display: "flex",
-  flexDirection: "row",
+  flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  gap: "7px",
+  gap: "5px",
   listStyle: "none",
   cursor: "pointer",
   border: "1px solid rgba(229,209,167,.9)",
   borderRadius: "13px",
-  background: "linear-gradient(135deg,#8b6545 0%,#6f4b32 100%)",
+  background: "linear-gradient(135deg, #087653 0%, #075b43 100%)",
   boxShadow: "0 5px 17px rgba(8,35,48,.28), inset 0 1px 0 rgba(255,255,255,.13)",
   color: "#fff",
   fontFamily: '"Vazirmatn", Tahoma, "Segoe UI", sans-serif',
@@ -64,7 +64,7 @@ const trigger = {
 
 const line = {
   display: "block",
-  width: "16px",
+  width: "20px",
   height: "2px",
   minHeight: "2px",
   margin: 0,
@@ -74,7 +74,7 @@ const line = {
 
 const panel = {
   position: "fixed",
-  top: "calc(env(safe-area-inset-top, 0px) + 164px)",
+  top: "calc(env(safe-area-inset-top, 0px) + 194px)",
   left: "12px",
   right: "auto",
   width: "min(380px, calc(100vw - 24px))",
@@ -313,7 +313,7 @@ export default function GlobalMobileMenu() {
         #site-mobile-menu-root > summary::marker { content: ""; }
         .site-mobile-menu-icon {
           display: flex;
-          flex: 0 0 19px;
+          flex: 0 0 auto;
           flex-direction: column;
           align-items: center;
           justify-content: center;
@@ -321,7 +321,7 @@ export default function GlobalMobileMenu() {
         }
         .site-mobile-menu-label {
           color: #fff;
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 800;
           line-height: 1;
           white-space: nowrap;
