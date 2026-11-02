@@ -56,7 +56,7 @@ const trigger = {
   cursor: "pointer",
   border: "1px solid rgba(229,209,167,.9)",
   borderRadius: "13px",
-  background: "linear-gradient(135deg,#205b59 0%,#173f50 100%)",
+  background: "linear-gradient(135deg,#1b3b56 0%,#10283f 100%)",
   boxShadow: "0 5px 17px rgba(8,35,48,.28), inset 0 1px 0 rgba(255,255,255,.13)",
   color: "#fff",
   fontFamily: '"Vazirmatn", Tahoma, "Segoe UI", sans-serif',
@@ -327,7 +327,7 @@ export default function GlobalMobileMenu() {
           white-space: nowrap;
         }
         #site-mobile-menu-root:not([open]) > summary {
-          animation: site-menu-nudge 4.6s ease-in-out infinite;
+          animation: site-menu-heartbeat 4.8s ease-in-out infinite;
         }
         #site-mobile-menu-root[open] > summary,
         #site-mobile-menu-root[open] > summary::before {
@@ -337,17 +337,17 @@ export default function GlobalMobileMenu() {
           outline: 3px solid #e5d1a7;
           outline-offset: 4px;
         }
-        @keyframes site-menu-nudge {
-          0%, 55%, 100% { transform: translateY(0) scale(1); }
-          6% { transform: translateY(-3px) scale(1.035); }
-          12% { transform: translateY(0) scale(1); }
-          20% { transform: translateY(-2px) scale(1.02); }
-          26% { transform: translateY(0) scale(1); }
+        @keyframes site-menu-heartbeat {
+          0%, 58%, 100% { transform: scale(1); }
+          6% { transform: scale(1.025); }
+          12% { transform: scale(1); }
+          19% { transform: scale(1.015); }
+          25% { transform: scale(1); }
         }
         @keyframes site-menu-ring {
-          0%, 100% { transform: scale(.94); opacity: 0; }
-          9% { transform: scale(1); opacity: .58; }
-          42% { transform: scale(1.24); opacity: 0; }
+          0%, 100% { transform: scale(.97); opacity: 0; }
+          9% { transform: scale(1); opacity: .35; }
+          38% { transform: scale(1.12); opacity: 0; }
         }
         @media (prefers-reduced-motion: reduce) {
           #site-mobile-menu-root > summary,
