@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import LegalIcon from "./LegalIcon";
 
 export default function OfficeLocationPublic() {
   const [location, setLocation] = useState(null);
@@ -25,13 +26,13 @@ export default function OfficeLocationPublic() {
 
   return (
     <section className="public-office-location" aria-label="موقعیت دفتر">
-      <div className="public-office-mark">⌖</div>
+      <div className="public-office-mark" aria-hidden="true"><LegalIcon name="pin" size={22} /></div>
       <div className="public-office-copy">
         <strong>{location.office_name || "نشانی دفتر"}</strong>
         <span>{[location.address, location.city, location.province].filter(Boolean).join("، ")}</span>
         {location.phone && <a href={`tel:${location.phone.replace(/[^0-9+]/g, "")}`} dir="ltr">{location.phone}</a>}
       </div>
-      {mapHref && <a className="public-office-map" href={mapHref} target="_blank" rel="noreferrer">نمایش روی نقشه ↗</a>}
+      {mapHref && <a className="public-office-map" href={mapHref} target="_blank" rel="noopener noreferrer">نمایش روی نقشه ↗</a>}
     </section>
   );
 }

@@ -19,14 +19,9 @@ export async function signIn(formData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) redirect("/admin/login?error=credentials");
 
-  const { data: claims } = await supabase.auth.getClaims();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", claims?.claims?.sub || "")
-    .maybeSingle();
+  const { data: isAdmin, error: adminError } = await supabase.rpc("is_site_admin");
 
-  if (profile?.role !== "admin") {
+  if (adminError || isAdmin !== true) {
     await supabase.auth.signOut();
     redirect("/admin/login?error=unauthorized");
   }

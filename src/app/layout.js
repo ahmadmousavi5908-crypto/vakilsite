@@ -58,8 +58,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="fa" dir="rtl">
-      <body>{children}<GlobalMobileMenu /><AttorneyProfileDock /><SocialContactDock /></body>
+    <html lang="fa" dir="rtl" data-scroll-behavior="smooth">
+      <body>
+        {children}
+        <GlobalMobileMenu />
+        <AttorneyProfileDock />
+        <SocialContactDock />
+      </body>
     </html>
   );
 }

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 const groups = [
   {
@@ -34,7 +37,7 @@ const launcher = {
   left: "max(12px, env(safe-area-inset-left, 0px))",
   width: "50px",
   height: "50px",
-  zIndex: 2147483647,
+  zIndex: 1100,
   direction: "ltr",
 };
 
@@ -54,7 +57,7 @@ const trigger = {
   border: "1px solid rgba(177,142,84,.7)",
   borderRadius: "13px",
   background: "linear-gradient(155deg,#fffefa,#f2ecdf)",
-  boxShadow: "0 5px 18px rgba(12,31,49,.24)",
+  boxShadow: "0 5px 18px rgba(12,31,49,.18)",
 };
 
 const line = {
@@ -83,12 +86,12 @@ const panel = {
   border: "1px solid #dfd3bd",
   borderRadius: "16px",
   background: "#fffefa",
-  boxShadow: "0 22px 58px rgba(8,25,42,.28)",
+  boxShadow: "0 18px 46px rgba(8,25,42,.22)",
   color: "#20384f",
   direction: "rtl",
   textAlign: "right",
   fontFamily: '"Vazirmatn", Tahoma, "Segoe UI", sans-serif',
-  zIndex: 2147483647,
+  zIndex: 1100,
 };
 
 const heading = {
@@ -179,8 +182,30 @@ const arrowStyle = {
 };
 
 export default function GlobalMobileMenu() {
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    const closeOnOutside = (event) => {
+      if (rootRef.current && !rootRef.current.contains(event.target)) {
+        rootRef.current.removeAttribute("open");
+      }
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape" && rootRef.current) {
+        rootRef.current.removeAttribute("open");
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutside);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutside);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, []);
+
   return (
-    <details id="site-mobile-menu-root" style={launcher}>
+    <details ref={rootRef} id="site-mobile-menu-root" style={launcher}>
       <summary
         aria-label="باز کردن فهرست سایت"
         title="فهرست سایت"
@@ -209,7 +234,14 @@ export default function GlobalMobileMenu() {
           <section style={groupStyle} key={group.title}>
             <h2 style={groupTitle}>{group.title}</h2>
             {group.items.map(([href, label], index) => (
-              <Link href={href} key={href} style={itemStyle}>
+              <Link
+                href={href}
+                key={href}
+                style={itemStyle}
+                onClick={(event) => {
+                  event.currentTarget.closest("#site-mobile-menu-root")?.removeAttribute("open");
+                }}
+              >
                 <b style={numberStyle}>{String(index + 1).padStart(2, "0")}</b>
                 <span style={labelStyle}>{label}</span>
                 <i aria-hidden="true" style={arrowStyle}>←</i>
@@ -220,6 +252,9 @@ export default function GlobalMobileMenu() {
 
         <Link
           href="/#contact"
+          onClick={(event) => {
+            event.currentTarget.closest("#site-mobile-menu-root")?.removeAttribute("open");
+          }}
           className="site-mobile-menu-cta"
           style={{
             boxSizing: "border-box",

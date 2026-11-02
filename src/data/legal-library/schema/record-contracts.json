@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Iranian legal library record contracts",
+  "description": "JSON Schema contracts for records in this repository.",
+  "$defs": {
+    "term": {
+      "type": "object",
+      "required": [
+        "id",
+        "canonical",
+        "search_title",
+        "category",
+        "definition",
+        "aliases",
+        "law_refs",
+        "article_refs",
+        "review_status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^term_[a-z0-9_]+$"
+        },
+        "canonical": {
+          "type": "string",
+          "minLength": 2
+        },
+        "search_title": {
+          "type": "string",
+          "minLength": 2
+        },
+        "category": {
+          "type": "string"
+        },
+        "definition": {
+          "type": "string",
+          "minLength": 10
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "search_phrases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "law_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^law_[a-z0-9_]+$"
+          }
+        },
+        "article_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^art_[a-z0-9_]+$"
+          }
+        },
+        "review_status": {
+          "enum": [
+            "verified_primary_source",
+            "secondary_source_only",
+            "needs_legal_review",
+            "draft"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "law": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "jurisdiction",
+        "law_type",
+        "status",
+        "review_status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^law_[a-z0-9_]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3
+        },
+        "jurisdiction": {
+          "const": "IR"
+        },
+        "law_type": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "verified_primary_source",
+            "secondary_source_only",
+            "needs_legal_review",
+            "draft"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "article": {
+      "type": "object",
+      "required": [
+        "id",
+        "law_id",
+        "article_number",
+        "title",
+        "summary",
+        "review_status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^art_[a-z0-9_]+$"
+        },
+        "law_id": {
+          "type": "string",
+          "pattern": "^law_[a-z0-9_]+$"
+        },
+        "article_number": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "verified_primary_source",
+            "secondary_source_only",
+            "needs_legal_review",
+            "draft"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

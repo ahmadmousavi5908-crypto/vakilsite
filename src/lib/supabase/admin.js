@@ -13,16 +13,12 @@ export async function requireAdmin() {
     return { supabase, user: null, isAdmin: false, configured: true };
   }
 
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", data.claims.sub)
-    .maybeSingle();
+  const { data: isAdmin, error: adminError } = await supabase.rpc("is_site_admin");
 
   return {
     supabase,
     user: data.claims,
-    isAdmin: !profileError && profile?.role === "admin",
+    isAdmin: !adminError && isAdmin === true,
     configured: true,
   };
 }

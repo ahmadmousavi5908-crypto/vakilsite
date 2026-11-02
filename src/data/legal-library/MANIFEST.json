@@ -1,0 +1,26 @@
+{
+  "name": "Iranian Legal Research Library",
+  "version": "1.2.1",
+  "schema_version": "1.0.0",
+  "language": "fa-IR",
+  "jurisdiction": "IR",
+  "release_status": "research_dataset_candidate",
+  "created_at": "2026-11-01",
+  "files": [
+    "taxonomy/categories.json",
+    "terms/terms.json",
+    "laws/laws.json",
+    "articles/articles.json",
+    "relations/legal-content-links.json",
+    "validation/validate_library.py",
+    "schema/record-contracts.json",
+    "reports/source-review.json"
+  ],
+  "counts": {
+    "terms": 45,
+    "laws": 16,
+    "articles": 22
+  },
+  "review_policy": "All legal records require review unless explicitly verified against primary sources. Not legal advice.",
+  "runtime": "Python 3 standard library only; no npm packages."
+}
