@@ -18,6 +18,9 @@
 7. [تجربه کاربری](./07-ui-ux-specification.md)
 8. [تست و معیار پذیرش](./08-testing-and-acceptance.md)
 9. [نقشه راه و تصمیمات معماری](./09-roadmap-and-decisions.md)
+10. [استقرار و عملیات](./10-deployment-and-operations.md)
+11. [مدل تهدید](./11-threat-model.md)
+12. [برنامه اجرایی MVP](./12-mvp-implementation-plan.md)
 
 ## قواعد تغییر
 
