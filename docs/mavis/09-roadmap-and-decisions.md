@@ -83,13 +83,21 @@ Use Caseها مستقیماً SDK ارائه‌دهنده را فراخوانی 
 
 ## 3. تصمیمات باز
 
-- ADR-008: Hosting/runtime و محدودیت شبکه.
-- ADR-009: Budget، quota و مدل اولیه.
-- ADR-010: retention و متن رضایت.
-- ADR-011: Private role matrix و MFA.
-- ADR-012: منبع/روش rate limit production.
-- ADR-013: ابزارهای حقوقی و منبع رسمی قابل اتصال.
-- ADR-014: روش backup، restore و disaster recovery.
+- ADR-008: Hosting/runtime و محدودیت شبکه؛ باز و مسدودکننده production.
+- ADR-009: Budget، quota و مدل اولیه؛ باز و نیازمند سقف هزینه مورد تأیید مالک.
+- ADR-010: retention و متن رضایت؛ store:false برای Public MVP تصویب شده، اما متن privacy و ارزیابی پردازش همچنان باز است.
+- ADR-011: Private role matrix و MFA؛ باز، پیش از فعال‌سازی دستیار خصوصی.
+- ADR-012: روش rate limit MVP؛ PostgreSQL atomic limiter پشت Port تصویب شده، انتخاب سرویس production نهایی پس از benchmark.
+- ADR-013: ابزارهای حقوقی و منبع رسمی قابل اتصال؛ باز.
+- ADR-014: روش backup، restore و disaster recovery؛ باز و مسدودکننده production.
+
+### ADR-015 — PostgreSQL Rate Limiter for MVP
+**Status:** Accepted for MVP  
+برای پرهیز از افزودن سرویس خارجی در شروع، محدودسازی درخواست با عملیات اتمیک PostgreSQL/Supabase و از طریق RateLimit Port انجام می‌شود. کلید محدودسازی با HMAC تولید می‌شود و IP خام ذخیره نمی‌شود. در صورت فشار یا benchmark نامناسب، Adapter به Redis قابل تعویض است.
+
+### ADR-016 — OpenAI Data Handling Boundary
+**Status:** Accepted for MVP  
+درخواست Public از Responses API به‌صورت foreground و با store:false طراحی می‌شود؛ فایل، تصویر و background mode در MVP فعال نیستند. store:false حذف abuse-monitoring retention را تضمین نمی‌کند. ارسال اطلاعات پرونده و داده محرمانه تا ارزیابی و تصویب جداگانه ممنوع است.
 
 ## 4. قاعده تغییر معماری
 
