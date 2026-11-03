@@ -90,14 +90,19 @@ Use Caseها مستقیماً SDK ارائه‌دهنده را فراخوانی 
 - ADR-012: روش rate limit MVP؛ PostgreSQL atomic limiter پشت Port تصویب شده، انتخاب سرویس production نهایی پس از benchmark.
 - ADR-013: ابزارهای حقوقی و منبع رسمی قابل اتصال؛ باز.
 - ADR-014: روش backup، restore و disaster recovery؛ باز و مسدودکننده production.
+- ADR-017: مجازبودن Provider بر اساس کشورهای دفتر و کاربران هدف؛ مسدودکننده انتخاب Provider و انتشار Public MVP.
 
 ### ADR-015 — PostgreSQL Rate Limiter for MVP
 **Status:** Accepted for MVP  
 برای پرهیز از افزودن سرویس خارجی در شروع، محدودسازی درخواست با عملیات اتمیک PostgreSQL/Supabase و از طریق RateLimit Port انجام می‌شود. کلید محدودسازی با HMAC تولید می‌شود و IP خام ذخیره نمی‌شود. در صورت فشار یا benchmark نامناسب، Adapter به Redis قابل تعویض است.
 
 ### ADR-016 — OpenAI Data Handling Boundary
-**Status:** Accepted for MVP  
+**Status:** Accepted subject to eligibility  
 درخواست Public از Responses API به‌صورت foreground و با store:false طراحی می‌شود؛ فایل، تصویر و background mode در MVP فعال نیستند. store:false حذف abuse-monitoring retention را تضمین نمی‌کند. ارسال اطلاعات پرونده و داده محرمانه تا ارزیابی و تصویب جداگانه ممنوع است.
+
+### ADR-017 — Provider Geographic Eligibility
+**Status:** Open / Release blocker  
+Provider باید برای کشور محل استفاده و کشورهای کاربران هدف مجاز باشد. فهرست رسمی OpenAI API در بررسی 2026-11-04 ایران را شامل نمی‌کند و OpenAI درباره ارائه دسترسی از کشورهای خارج از فهرست هشدار داده است. بنابراین OpenAI برای دستیار عمومی مخاطبان داخل ایران فعال نمی‌شود مگر اینکه وضعیت مجازبودن به‌صورت رسمی تأیید شود. هیچ راهکار دورزدن محدودیت جغرافیایی طراحی یا اجرا نخواهد شد.
 
 ## 4. قاعده تغییر معماری
 
