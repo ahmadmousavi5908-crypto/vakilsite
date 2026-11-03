@@ -40,7 +40,7 @@ export default function PublicIntake() {
   const [confirmed, setConfirmed] = useState(false);
 
   const selectedTopic = topics.find((item) => item.value === topic);
-  const isUrgent = urgency === "مهلت یا جلسه نزدیک دارم" || urgency === "موضوع فوری مانند بازداشت یا خطر فوری وجود دارد";
+  const isUrgent = urgency === "مهلت یا جلسه نزدیک دارم" || urgency === "موضوع فوری مانند بازداشت یا خطر فوری وجود دارد" || urgency === "از مهلت قانونی مطمئن نیستم";
 
   const summary = useMemo(() => [
     "درخواست بررسی اولیه برای دفتر وکالت سید احمد موسوی",
@@ -117,7 +117,7 @@ export default function PublicIntake() {
                 <option>موضوع فوری مانند بازداشت یا خطر فوری وجود دارد</option>
                 <option>از مهلت قانونی مطمئن نیستم</option>
               </select>
-              {isUrgent && <div className={styles.urgent} role="alert">اگر خطر فوری، بازداشت یا مهلت نزدیک وجود دارد، صرفاً منتظر پاسخ این فرم نمانید و مستقیماً با دفتر یا مرجع اضطراری صالح تماس بگیرید.</div>}
+              {isUrgent && <div className={styles.urgent} role="alert">اگر خطر فوری، بازداشت، مهلت نزدیک یا تردید درباره مهلت قانونی وجود دارد، منتظر پاسخ فرم نمانید و مستقیماً با دفتر یا مرجع اضطراری صالح تماس بگیرید. <a href="tel:+989169165902">تماس مستقیم با دفتر: ۰۹۱۶۹۱۶۵۹۰۲</a></div>}
               <div className={styles.actions}>
                 <button type="button" className={styles.secondary} onClick={() => setStep(0)}>بازگشت</button>
                 <button type="button" className={styles.primary} disabled={!stage || !urgency} onClick={next}>ادامه <span aria-hidden="true">←</span></button>
