@@ -25,3 +25,5 @@
 - [سیاست خزنده‌ها و اعتبارسنجی دسترسی موتورهای جست‌وجو](./03-crawler-policy-implementation.md)
 
 - [آمادگی محتوایی، مرجعیت حقوقی و استناد هوش مصنوعی](./04-content-authority-and-ai-citation-readiness.md)
+
+- [راهنمای عملیاتی موتورهای جست‌وجو، خزنده‌ها و پایش AI Visibility](./05-search-engine-operations-and-monitoring.md)
