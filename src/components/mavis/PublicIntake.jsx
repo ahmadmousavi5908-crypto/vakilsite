@@ -3,6 +3,17 @@
 import { useMemo, useState } from "react";
 import styles from "./PublicIntake.module.css";
 
+const configuredPhone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "989169165902").replace(/\\D/g, "");
+const OFFICE_WHATSAPP_NUMBER = configuredPhone.startsWith("00")
+  ? configuredPhone.slice(2)
+  : configuredPhone.startsWith("0")
+    ? `98${configuredPhone.slice(1)}`
+    : configuredPhone;
+const OFFICE_LOCAL_NUMBER = OFFICE_WHATSAPP_NUMBER.startsWith("98")
+  ? `0${OFFICE_WHATSAPP_NUMBER.slice(2)}`
+  : OFFICE_WHATSAPP_NUMBER;
+const OFFICE_DISPLAY_NUMBER = OFFICE_LOCAL_NUMBER.replace(/\\d/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
+
 const topics = [
   { value: "family", label: "خانواده و امور زوجین" },
   { value: "property", label: "ملکی و ثبتی" },
@@ -63,7 +74,7 @@ export default function PublicIntake() {
   }
 
   function openWhatsApp() {
-    const phone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "989169165902").replace(/\D/g, "");
+    const phone = OFFICE_WHATSAPP_NUMBER;
     if (!phone || !confirmed) return;
     const text = isUrgent
       ? "توجه: مراجعه‌کننده اعلام کرده موضوع فوری یا دارای مهلت نزدیک است. لطفاً فوریت را در تماس مستقیم بررسی کنید.\n\n" + summary
@@ -72,7 +83,7 @@ export default function PublicIntake() {
   }
 
   async function copyOfficeNumber() {
-    const officeNumber = "09169165902";
+    const officeNumber = OFFICE_LOCAL_NUMBER;
 
     try {
       if (navigator.clipboard?.writeText) {
@@ -103,7 +114,7 @@ export default function PublicIntake() {
   ].join("\n");
 
   const companionWhatsAppUrl =
-    "https://wa.me/989169165902?text=" + encodeURIComponent(companionMessage);
+    "https://wa.me/" + OFFICE_WHATSAPP_NUMBER + "?text=" + encodeURIComponent(companionMessage);
 
   return (
     <>
@@ -120,7 +131,7 @@ export default function PublicIntake() {
             </p>
             <div className={styles.companionNumber}>
               <span>📱 برای دیدن مطالب، شماره دفتر را ذخیره کنید:</span>
-              <strong dir="ltr">۰۹۱۶۹۱۶۵۹۰۲</strong>
+              <strong dir="ltr">{OFFICE_DISPLAY_NUMBER}</strong>
               <button type="button" className={styles.copyNumber} onClick={copyOfficeNumber}>کپی شماره</button>
               <p className={styles.copyFeedback} role="status" aria-live="polite">{copyStatus}</p>
             </div>
@@ -187,7 +198,7 @@ export default function PublicIntake() {
                 <option>موضوع فوری مانند بازداشت یا خطر فوری وجود دارد</option>
                 <option>از مهلت قانونی مطمئن نیستم</option>
               </select>
-              {isUrgent && <div className={styles.urgent} role="alert">اگر خطر فوری، بازداشت، مهلت نزدیک یا تردید درباره مهلت قانونی وجود دارد، منتظر پاسخ فرم نمانید و مستقیماً با دفتر یا مرجع اضطراری صالح تماس بگیرید. <a href="tel:+989169165902">تماس مستقیم با دفتر: ۰۹۱۶۹۱۶۵۹۰۲</a></div>}
+              {isUrgent && <div className={styles.urgent} role="alert">اگر خطر فوری، بازداشت، مهلت نزدیک یا تردید درباره مهلت قانونی وجود دارد، منتظر پاسخ فرم نمانید و مستقیماً با دفتر یا مرجع اضطراری صالح تماس بگیرید. <a href={"tel:+" + OFFICE_WHATSAPP_NUMBER}>تماس مستقیم با دفتر: {OFFICE_DISPLAY_NUMBER}</a></div>}
               <div className={styles.actions}>
                 <button type="button" className={styles.secondary} onClick={() => setStep(0)}>بازگشت</button>
                 <button type="button" className={styles.primary} disabled={!stage || !urgency} onClick={next}>ادامه <span aria-hidden="true">←</span></button>
