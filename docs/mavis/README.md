@@ -21,6 +21,7 @@
 10. [استقرار و عملیات](./10-deployment-and-operations.md)
 11. [مدل تهدید](./11-threat-model.md)
 12. [برنامه اجرایی MVP](./12-mvp-implementation-plan.md)
+13. [ارزیابی آمادگی Provider و برنامه توسعه قابل اجرا](./15-provider-readiness-and-runtime-plan.md)
 
 ## قواعد تغییر
 
