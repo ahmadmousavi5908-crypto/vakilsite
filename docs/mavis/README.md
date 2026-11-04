@@ -26,7 +26,7 @@
 14. [طراحی توسعه‌پذیر موتور مکالمه](./14-extensible-conversation-engine-design.md)
 15. [پژوهش روان‌شناسی ارتباط و جذب اخلاقی موکل](./research/02-client-psychology-and-ethical-engagement.md)
 16. [پژوهش طراحی Intake و ارتباط اخلاقی](./research/01-client-intake-and-ethical-communication.md)
-17. [طراحی شخصیت و داک شناور MAVIS](./18-character-dock-design.md)
+18. [طراحی شخصیت و داک شناور MAVIS](./18-character-dock-design.md)
 
 ## قواعد تغییر
 
