@@ -39,7 +39,7 @@ export function buildSitemapEntries(entries, siteOrigin) {
       !path.startsWith("/") ||
       path.startsWith("//") ||
       path.includes("\\") ||
-      /[\\u0000-\\u001f\\u007f]/.test(path) ||
+      /[\u0000-\u001f\u007f]/.test(path) || /%(?:00|0[1-9a-f]|1[0-9a-f]|7f|5c)/i.test(path) ||
       path.includes("?") ||
       path.includes("#")
     ) {
