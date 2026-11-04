@@ -112,28 +112,76 @@ if (noindexMissing.length) {
 
 const sitemapResult = await fetchText("/sitemap.xml");
 const sitemapUrls = [...sitemapResult.body.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-const unverifiedInSitemap = sitemapUrls.filter((url) => {
+const expectedPublicPaths = ["/", "/articles", "/services", "/about", "/legal-library", "/ai-assistant"];
+const sitemapOrigins = new Set();
+const sitemapPaths = new Set();
+const invalidSitemapUrls = [];
+for (const value of sitemapUrls) {
   try {
-    const pathname = decodeURIComponent(new URL(url).pathname);
+    const url = new URL(value);
+    sitemapOrigins.add(url.origin);
+    sitemapPaths.add(decodeURIComponent(url.pathname));
+    if (url.protocol !== "https:" || url.search || url.hash || url.username || url.password) {
+      invalidSitemapUrls.push(value);
+    }
+  } catch {
+    invalidSitemapUrls.push(value);
+  }
+}
+const canonicalOrigin = process.env.NEXT_PUBLIC_SITE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SITE_URL).origin
+  : null;
+const wrongSitemapOrigins = canonicalOrigin
+  ? [...sitemapOrigins].filter((origin) => origin !== canonicalOrigin)
+  : [];
+const missingPublicPaths = expectedPublicPaths.filter((path) => !sitemapPaths.has(path));
+const privateSitemapUrls = [...sitemapPaths].filter((path) =>
+  path === "/admin" || path.startsWith("/admin/") ||
+  path === "/api" || path.startsWith("/api/")
+);
+const unverifiedInSitemap = sitemapUrls.filter((value) => {
+  try {
+    const pathname = decodeURIComponent(new URL(value).pathname);
     return detailRoutes.has(pathname) && !indexable.has(pathname);
   } catch {
-    return false;
+    return true;
   }
 });
 console.log("\n===== SITEMAP =====");
 console.log("HTTP:", sitemapResult.response.status);
 console.log("URL COUNT:", sitemapUrls.length);
+console.log("CANONICAL ORIGINS:", [...sitemapOrigins].join(", ") || "NONE");
+console.log("MISSING REQUIRED PUBLIC PATHS:", missingPublicPaths.length);
+console.log("INVALID URLS:", invalidSitemapUrls.length);
+console.log("WRONG ORIGINS:", wrongSitemapOrigins.length);
+console.log("PRIVATE URLS:", privateSitemapUrls.length);
 console.log("UNVERIFIED DETAIL URLS:", unverifiedInSitemap.length);
-for (const url of unverifiedInSitemap) console.log(url);
+for (const value of [...missingPublicPaths, ...invalidSitemapUrls, ...wrongSitemapOrigins, ...privateSitemapUrls, ...unverifiedInSitemap]) {
+  console.log("SITEMAP ISSUE:", value);
+}
 
 const robotsResult = await fetchText("/robots.txt");
+const robotsChecks = {
+  oaiSearchAllowed: /User-Agent:\s*OAI-SearchBot[\s\S]*?Allow:\s*\//i.test(robotsResult.body),
+  claudeSearchAllowed: /User-Agent:\s*Claude-SearchBot[\s\S]*?Allow:\s*\//i.test(robotsResult.body),
+  perplexityAllowed: /User-Agent:\s*PerplexityBot[\s\S]*?Allow:\s*\//i.test(robotsResult.body),
+  gptBotBlocked: /User-Agent:\s*GPTBot[\s\S]*?Disallow:\s*\//i.test(robotsResult.body),
+  claudeBotBlocked: /User-Agent:\s*ClaudeBot[\s\S]*?Disallow:\s*\//i.test(robotsResult.body),
+  googleExtendedBlocked: /User-Agent:\s*Google-Extended[\s\S]*?Disallow:\s*\//i.test(robotsResult.body),
+  adminBlocked: /Disallow:\s*\/admin/i.test(robotsResult.body),
+  apiBlocked: /Disallow:\s*\/api/i.test(robotsResult.body),
+  sitemapMatchesCanonical: canonicalOrigin
+    ? robotsResult.body.includes("Sitemap: " + canonicalOrigin + "/sitemap.xml")
+    : false,
+};
 console.log("\n===== ROBOTS =====");
 console.log("HTTP:", robotsResult.response.status);
-console.log("OAI-SearchBot POLICY PRESENT:", /OAI-SearchBot/i.test(robotsResult.body));
-console.log("GPTBot POLICY PRESENT:", /GPTBot/i.test(robotsResult.body));
+for (const [name, passed] of Object.entries(robotsChecks)) console.log(name + ":", passed ? "PASS" : "FAIL");
 
 if (failed.length || noindexMissing.length || sitemapResult.response.status !== 200 ||
-    unverifiedInSitemap.length || robotsResult.response.status !== 200) {
+    sitemapUrls.length === 0 || missingPublicPaths.length || invalidSitemapUrls.length ||
+    wrongSitemapOrigins.length || privateSitemapUrls.length || unverifiedInSitemap.length ||
+    robotsResult.response.status !== 200 || Object.values(robotsChecks).some((passed) => !passed)) {
   if (failed.length && routes.length) {
     console.log("\nPOSSIBLE STALE SERVER BUILD: the build manifest contains these routes, but the running server does not serve them. Stop the old Next.js server, build the current branch, then start the production server again.");
   }
