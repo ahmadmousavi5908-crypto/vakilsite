@@ -22,7 +22,7 @@ const configuredSite = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 const inputUrls = process.argv.slice(2);
 
 if (!isValidIndexNowKey(key)) {
-  throw new Error("Set an 8 to 128 character hexadecimal INDEXNOW_KEY in .env.local or the deployment environment.");
+  throw new Error("Set an 8 to 128 character alphanumeric INDEXNOW_KEY (hyphens allowed) in .env.local or the deployment environment.");
 }
 if (!configuredSite) {
   throw new Error("Set NEXT_PUBLIC_SITE_URL to the canonical HTTPS site origin.");
