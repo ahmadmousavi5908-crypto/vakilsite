@@ -11,7 +11,7 @@ test("accepts a bounded public message and history", () => {
     history: [{ role: "user", content: "سلام" }],
   });
   assert.equal(parsed.message, "پرسش حقوقی عمومی");
-  assert.equal(parsed.history.length, 2);
+  assert.equal(parsed.history.length, 1);
 });
 
 test("rejects privileged and assistant roles in client-controlled history", () => {
