@@ -28,8 +28,8 @@ export function parsePublicChatInput(value) {
 
   let totalHistoryLength = 0;
   const normalizedHistory = history.map((item) => {
-    if (!isPlainObject(item) || !["user", "assistant"].includes(item.role)) {
-      throw new MavisError("INVALID_REQUEST", "ساختار تاریخچه مکالمه معتبر نیست.", 400);
+    if (!isPlainObject(item) || item.role !== "user") {
+      throw new MavisError("INVALID_REQUEST", "در تاریخچه عمومی فقط پیام‌های کاربر پذیرفته می‌شوند.", 400);
     }
 
     const content = typeof item.content === "string" ? item.content.trim() : "";
