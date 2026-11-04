@@ -6,7 +6,7 @@ import styles from "./MavisDock.module.css";
 
 function MavisPortrait() {
   return (
-    <svg className={styles.portrait} viewBox="0 0 72 72" role="img" aria-label="تصویر نمادین ماویس">
+    <svg className={styles.portrait} viewBox="0 0 72 72" aria-hidden="true">
       <defs>
         <linearGradient id="mavis-bg" x1="8" y1="4" x2="64" y2="68" gradientUnits="userSpaceOnUse">
           <stop stopColor="#294b63" />
@@ -82,7 +82,7 @@ export default function MavisDock() {
       {open && (
         <section id="mavis-dock-panel" className={styles.panel} role="dialog" aria-labelledby="mavis-dock-title">
           <div className={styles.panelHead}>
-            <span className={styles.panelMark}><MavisPortrait /></span>
+            <span className={styles.panelMark} aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 5v21M8 9h16M10 9l-5 9h10L10 9Zm12 0-5 9h10l-5-9Z" stroke="#d9bd82" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/><path d="M10 26h12" stroke="#d9bd82" strokeWidth="2" strokeLinecap="round"/></svg></span>
             <div>
               <strong id="mavis-dock-title">ماویس | دستیار هوشمند موسوی</strong>
               <span><i className={styles.statusDot} /> راهنمای اولیه و ثبت درخواست</span>
