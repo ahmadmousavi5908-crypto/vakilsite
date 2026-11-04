@@ -33,13 +33,12 @@ export async function runPublicChat({
     maxOutputTokens: config.maxOutputTokens,
   });
 
-  if (!result || typeof result.text !== "string" || !result.text.trim()) {
+  if (!result || typeof result.text !== "string" || !result.text.trim() || result.text.trim().length > 8000) {
     throw new MavisError("PROVIDER_ERROR", "پاسخ ارائه‌دهنده معتبر نیست.", 502);
   }
 
   return Object.freeze({
     message: Object.freeze({ role: "assistant", content: result.text.trim() }),
     provider: result.provider || "unknown",
-    usage: result.usage ?? null,
   });
 }
