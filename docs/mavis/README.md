@@ -22,6 +22,7 @@
 11. [مدل تهدید](./11-threat-model.md)
 12. [برنامه اجرایی MVP](./12-mvp-implementation-plan.md)
 13. [ارزیابی آمادگی Provider و برنامه توسعه قابل اجرا](./15-provider-readiness-and-runtime-plan.md)
+14. [نقشه منابع حقوق ایران و سیاست ورود دانش](./16-iran-legal-source-map-and-ingestion-policy.md)
 
 ## قواعد تغییر
 
