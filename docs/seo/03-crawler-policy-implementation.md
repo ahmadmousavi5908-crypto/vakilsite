@@ -29,7 +29,7 @@
 2. اجازه به search crawlerها به معنای تضمین crawl، index، ranking یا citation نیست.
 3. GPTBot، ClaudeBot و Google-Extended را با Search crawlerها یکی نکنید؛ تصمیم آموزش/استفاده از محتوا از تصمیم دیده‌شدن در جست‌وجو جداست.
 4. User-agent به‌تنهایی قابل جعل است. در WAF/CDN، قبل از allow/block بر اساس IP، فهرست رسمی و جاری همان اپراتور و روش تأیید هویت خزنده را بررسی کنید.
-5. OpenAI فهرست IP رسمی هر crawler را منتشر می‌کند؛ Perplexity نیز IP JSON رسمی دارد. Anthropic اعلام کرده فعلاً IP range عمومی منتشر نمی‌کند و توصیه می‌کند برای opt-out به robots.txt تکیه شود؛ پس IP ثابت ساختگی تعریف نکنید.
+5. OpenAI فهرست IP رسمی را در https://openai.com/searchbot.json و Perplexity در https://www.perplexity.ai/perplexitybot.json منتشر می‌کنند؛ این فهرست‌ها ممکن است تغییر کنند. Anthropic اعلام کرده فعلاً IP range عمومی منتشر نمی‌کند و توصیه می‌کند برای opt-out به robots.txt تکیه شود؛ پس IP ثابت ساختگی تعریف نکنید.
 6. robots.txt نباید مسیرهای ضروری رندر، CSS، JS یا تصاویر معنادار را ببندد.
 7. robots، sitemap و canonical باید یک origin واحد HTTPS داشته باشند. دامنه واقعی هنوز توسط مالک تعیین و روی deployment آزمایش نشده است.
 
@@ -66,6 +66,8 @@
 - Bing Webmaster Guidelines: https://www.bing.com/webmasters/help/webmaster-guidelines-30fba23a
 - Bing AI Performance: https://www.bing.com/webmasters/help/ai-performance-9f8e7d6c
 - OpenAI crawler reference: https://developers.openai.com/api/docs/bots
+- OpenAI SearchBot IP ranges: https://openai.com/searchbot.json
+- PerplexityBot IP ranges: https://www.perplexity.ai/perplexitybot.json
 - Anthropic crawler policy: https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler
 - Perplexity crawler policy: https://docs.perplexity.ai/docs/resources/perplexity-crawlers
 - IndexNow protocol: https://www.indexnow.org/documentation
