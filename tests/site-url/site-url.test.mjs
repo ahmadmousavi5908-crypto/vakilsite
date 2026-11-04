@@ -66,7 +66,7 @@ test("rejects localhost, IP addresses, trailing-dot hosts, and explicit ports", 
   ]) {
     assert.throws(
       () => getSiteUrl({ NEXT_PUBLIC_SITE_URL: value }),
-      /must be a public HTTPS origin/,
+      /must be an HTTPS origin/,
     );
   }
 });
