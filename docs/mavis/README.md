@@ -24,6 +24,15 @@
 13. [ارزیابی آمادگی Provider و برنامه توسعه قابل اجرا](./15-provider-readiness-and-runtime-plan.md)
 14. [نقشه منابع حقوق ایران و سیاست ورود دانش](./16-iran-legal-source-map-and-ingestion-policy.md)
 15. [وضعیت اجرای هسته MAVIS و گزارش تحویل](./17-core-foundation-status.md)
+16. [طراحی داک شخصیت MAVIS](./18-character-dock-design.md)
+17. [مبنای امنیت و دروازه‌های انتشار](./19-security-baseline-and-release-gates.md)
+
+## اسناد تکمیلی محصول و اجرا
+
+- [برنامه اجرایی زنده و ایده‌بانک](./13-operating-plan-and-idea-backlog.md)
+- [طراحی توسعه‌پذیر موتور مکالمه](./14-extensible-conversation-engine-design.md)
+- [پژوهش روان‌شناسی ارتباط و جذب اخلاقی موکل](./research/02-client-psychology-and-ethical-engagement.md)
+- [پژوهش طراحی Intake و ارتباط اخلاقی](./research/01-client-intake-and-ethical-communication.md)
 
 ## قواعد تغییر
 
@@ -38,14 +47,6 @@
 ماویس در مخزن موجود Vakilsite توسعه می‌یابد، اما باید از منطق فعلی سایت جدا بماند. صفحات، منوها، تنظیمات تماس، پنل فعلی و به‌ویژه دکمه «معرفی وکیل» خارج از دامنه تغییرات ماویس هستند مگر تغییر مستقلی تصویب شود.
 
 **اصل اجرایی:** ابتدا ماژولار مونولیت امن؛ جداسازی سرویس‌ها فقط وقتی بار، مرز عملیاتی یا نیاز امنیتی آن را توجیه کند.
-
-
-## اسناد تکمیلی محصول و اجرا
-
-13. [برنامه اجرایی زنده و ایده‌بانک](./13-operating-plan-and-idea-backlog.md)
-14. [طراحی توسعه‌پذیر موتور مکالمه](./14-extensible-conversation-engine-design.md)
-15. [پژوهش روان‌شناسی ارتباط و جذب اخلاقی موکل](./research/02-client-psychology-and-ethical-engagement.md)
-16. [پژوهش طراحی Intake و ارتباط اخلاقی](./research/01-client-intake-and-ethical-communication.md)
 
 ## قواعد نگهداری
 
