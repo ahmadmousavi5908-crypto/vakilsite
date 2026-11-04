@@ -5,11 +5,15 @@ export function isValidIndexNowKey(value) {
 export function isPrivateIndexNowPath(pathname) {
   if (typeof pathname !== "string") return true;
 
-  let decoded;
-  try {
-    decoded = decodeURIComponent(pathname);
-  } catch {
-    return true;
+  let decoded = pathname;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const next = decodeURIComponent(decoded);
+      if (next === decoded) break;
+      decoded = next;
+    } catch {
+      return true;
+    }
   }
 
   const normalized = decoded.replace(/\\/g, "/").toLowerCase();
