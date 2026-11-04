@@ -6,15 +6,19 @@ on:
       - main
       - feature/mavis-core-foundation
       - feature/seo-aeo-geo-growth-system
+      - feature/seo-technical-quality
   push:
     branches:
       - main
       - redesign/persian-ux-typography
       - feat/legal-library-discovery-20261102
-      - feature/seo-technical-quality
 
 permissions:
   contents: read
+
+concurrency:
+  group: site-quality-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint-and-build:
@@ -33,6 +37,8 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Test canonical site URL and sitemap invariants
         run: npm run test:site-url
+      - name: Run MAVIS core unit tests
+        run: npm run test:mavis-core
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
