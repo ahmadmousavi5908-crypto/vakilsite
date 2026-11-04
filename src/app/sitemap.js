@@ -2,9 +2,10 @@ import { articles } from "../data/articles";
 import { practiceAreas } from "../data/practice-areas";
 import { getIndexableLegalRecords } from "../lib/legal-library";
 import { getSiteUrl } from "../lib/site-url.mjs";
+import { buildSitemapEntries } from "../lib/sitemap.mjs";
 
 export default function sitemap() {
-  const base = getSiteUrl(process.env, { required: true });
+  const siteUrl = getSiteUrl(process.env, { required: true });
 
   const entries = [
     { path: "/", changeFrequency: "weekly", priority: 1 },
@@ -35,42 +36,5 @@ export default function sitemap() {
     })),
   ];
 
-  const seen = new Set();
-  const sitemapEntries = [];
-
-  for (const entry of entries) {
-    if (
-      typeof entry.path !== "string" ||
-      !entry.path.startsWith("/") ||
-      entry.path.startsWith("//") ||
-      entry.path.includes("?") ||
-      entry.path.includes("#") ||
-      entry.path === "/admin" ||
-      entry.path.startsWith("/admin/") ||
-      entry.path === "/api" ||
-      entry.path.startsWith("/api/")
-    ) {
-      throw new Error(`Invalid or non-public sitemap path: ${entry.path}`);
-    }
-
-    const url = new URL(entry.path, base).href;
-    if (seen.has(url)) continue;
-    seen.add(url);
-
-    sitemapEntries.push({
-      url,
-      changeFrequency: entry.changeFrequency,
-      priority: entry.priority,
-    });
-  }
-
-  if (sitemapEntries.length === 0) {
-    throw new Error("Sitemap generation produced no public URLs.");
-  }
-
-  if (sitemapEntries.length > 50000) {
-    throw new Error("Sitemap exceeds the 50,000 URL limit; split it into multiple sitemaps.");
-  }
-
-  return sitemapEntries;
+  return buildSitemapEntries(entries, siteUrl);
 }
