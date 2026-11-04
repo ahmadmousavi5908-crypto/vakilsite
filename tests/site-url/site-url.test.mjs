@@ -53,3 +53,20 @@ test("rejects malformed URLs", () => {
     /must be a valid absolute URL/,
   );
 });
+
+
+test("rejects localhost, IP addresses, trailing-dot hosts, and explicit ports", () => {
+  for (const value of [
+    "https://localhost",
+    "https://127.0.0.1",
+    "https://192.168.1.10",
+    "https://[::1]",
+    "https://example.ir.",
+    "https://example.ir:8443",
+  ]) {
+    assert.throws(
+      () => getSiteUrl({ NEXT_PUBLIC_SITE_URL: value }),
+      /must be a public HTTPS origin/,
+    );
+  }
+});
