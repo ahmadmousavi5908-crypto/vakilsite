@@ -3,11 +3,11 @@ import { readFile } from "node:fs/promises";
 const baseUrl = (process.env.SITE_TEST_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
 
 function readCanonical(html) {
-  const tags = html.match(/<link\\b[^>]*>/gi) || [];
+  const tags = html.match(/<link\b[^>]*>/gi) || [];
   for (const tag of tags) {
-    const rel = tag.match(/\\brel\\s*=\\s*["']([^"']+)["']/i)?.[1]?.toLowerCase();
+    const rel = tag.match(/\brel\s*=\s*["']([^"']+)["']/i)?.[1]?.toLowerCase();
     if (rel !== "canonical") continue;
-    return tag.match(/\\bhref\\s*=\\s*["']([^"']+)["']/i)?.[1] || null;
+    return tag.match(/\bhref\s*=\s*["']([^"']+)["']/i)?.[1] || null;
   }
   return null;
 }
@@ -120,6 +120,10 @@ if (noindexMissing.length) {
   for (const item of noindexMissing) console.log(item.path);
 }
 
+const canonicalOrigin = process.env.NEXT_PUBLIC_SITE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SITE_URL).origin
+  : null;
+
 const canonicalRoutes = ["/ai-assistant", "/lawyer-cooperation", "/privacy"];
 const canonicalFailures = [];
 for (const path of canonicalRoutes) {
@@ -152,9 +156,6 @@ for (const value of sitemapUrls) {
     invalidSitemapUrls.push(value);
   }
 }
-const canonicalOrigin = process.env.NEXT_PUBLIC_SITE_URL
-  ? new URL(process.env.NEXT_PUBLIC_SITE_URL).origin
-  : null;
 const wrongSitemapOrigins = canonicalOrigin
   ? [...sitemapOrigins].filter((origin) => origin !== canonicalOrigin)
   : [];
@@ -193,6 +194,7 @@ const robotsChecks = {
   claudeBotBlocked: /User-Agent:\s*ClaudeBot[\s\S]*?Disallow:\s*\//i.test(robotsResult.body),
   googleExtendedBlocked: /User-Agent:\s*Google-Extended[\s\S]*?Disallow:\s*\//i.test(robotsResult.body),
   adminBlocked: /Disallow:\s*\/admin/i.test(robotsResult.body),
+  adminLoginAllowed: /Allow:\s*\/admin\/login/i.test(robotsResult.body),
   apiBlocked: /Disallow:\s*\/api/i.test(robotsResult.body),
   sitemapMatchesCanonical: canonicalOrigin
     ? robotsResult.body.includes("Sitemap: " + canonicalOrigin + "/sitemap.xml")
