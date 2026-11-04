@@ -11,7 +11,8 @@
     "validate:legal-library-seo": "node scripts/validate-legal-library-seo.mjs",
     "indexnow:prepare": "node scripts/prepare-indexnow-key.mjs",
     "indexnow:submit": "node scripts/submit-indexnow.mjs",
-    "test:legal-library-http": "node scripts/verify-legal-library-http.mjs"
+    "test:legal-library-http": "node scripts/verify-legal-library-http.mjs",
+    "test:mavis-core": "node --test tests/mavis/*.test.mjs"
   },
   "dependencies": {
     "next": "16.4.3",
