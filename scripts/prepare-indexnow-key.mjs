@@ -1,5 +1,6 @@
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { isValidIndexNowKey } from "./indexnow-validation.mjs";
 
 async function loadLocalEnv() {
   try {
@@ -22,8 +23,8 @@ if (!key) {
   process.exit(0);
 }
 
-if (!/^[A-Za-z0-9-]{8,128}$/.test(key)) {
-  console.error("INDEXNOW_KEY must contain 8 to 128 letters, numbers, or hyphens.");
+if (!isValidIndexNowKey(key)) {
+  console.error("INDEXNOW_KEY must contain 8 to 128 hexadecimal characters.");
   process.exit(1);
 }
 
