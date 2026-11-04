@@ -5,7 +5,7 @@ import { saveOfficeLocation, saveSocialLinks, signOut } from "./actions";
 import OfficeLocationForm from "../../components/admin/OfficeLocationForm";
 import SocialLinksManager from "../../components/admin/SocialLinksManager";
 
-export const metadata = { title: "پنل مدیریت" };
+export const metadata = { title: "پنل مدیریت", robots: { index: false, follow: false } };
 
 export default async function AdminDashboard({ searchParams }) {
   const params = await searchParams;
