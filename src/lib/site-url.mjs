@@ -46,7 +46,7 @@ export function getSiteUrl(
     !isOriginOnly
   ) {
     throw new Error(
-      `${SITE_URL_ENV} must be a public HTTPS origin without credentials, port, path, query, or fragment.`,
+      `${SITE_URL_ENV} must be an HTTPS origin with a public hostname and without credentials, port, path, query, or fragment.`,
     );
   }
 
