@@ -12,12 +12,13 @@ on:
       - main
       - redesign/persian-ux-typography
       - feat/legal-library-discovery-20261102
+      - feature/mavis-seo-integration-validation
 
 permissions:
   contents: read
 
 concurrency:
-  group: site-quality-${{ github.event.pull_request.number || github.ref }}
+  group: site-quality-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
