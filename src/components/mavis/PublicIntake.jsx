@@ -38,6 +38,9 @@ export default function PublicIntake() {
   const [details, setDetails] = useState("");
   const [style, setStyle] = useState("مختصر و مستقیم");
   const [confirmed, setConfirmed] = useState(false);
+  const [companionName, setCompanionName] = useState("");
+  const [companionCity, setCompanionCity] = useState("");
+  const [copyStatus, setCopyStatus] = useState("");
 
   const selectedTopic = topics.find((item) => item.value === topic);
   const isUrgent = urgency === "مهلت یا جلسه نزدیک دارم" || urgency === "موضوع فوری مانند بازداشت یا خطر فوری وجود دارد" || urgency === "از مهلت قانونی مطمئن نیستم";
@@ -68,8 +71,75 @@ export default function PublicIntake() {
     window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(text), "_blank", "noopener,noreferrer");
   }
 
+  async function copyOfficeNumber() {
+    const officeNumber = "09169165902";
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(officeNumber);
+      } else {
+        const field = document.createElement("textarea");
+        field.value = officeNumber;
+        field.setAttribute("readonly", "");
+        field.style.position = "fixed";
+        field.style.opacity = "0";
+        document.body.appendChild(field);
+        field.select();
+        const copied = document.execCommand("copy");
+        document.body.removeChild(field);
+        if (!copied) throw new Error("Clipboard copy failed");
+      }
+      setCopyStatus("شماره دفتر کپی شد؛ می‌توانید آن را در مخاطبین ذخیره کنید.");
+    } catch {
+      setCopyStatus("کپی خودکار انجام نشد؛ شماره ۰۹۱۶۹۱۶۵۹۰۲ را دستی کپی کنید.");
+    }
+  }
+
+  const companionMessage = [
+    "سلام، مایلم از نکته‌های حقوقی و خبرهای وضعیت واتساپ دفتر وکیل موسوی باخبر شوم.",
+    "نام و نام خانوادگی: " + (companionName.trim() || "اعلام نشده"),
+    "شهر: " + (companionCity.trim() || "اعلام نشده"),
+    "کد معرفی: MAVIS-WEB",
+  ].join("\n");
+
+  const companionWhatsAppUrl =
+    "https://wa.me/989169165902?text=" + encodeURIComponent(companionMessage);
+
   return (
-    <section className={styles.section} id="ai-request" aria-labelledby="mavis-intake-title">
+    <>
+      <section className={styles.companion} aria-labelledby="mavis-companion-title">
+        <div className={styles.companionShell}>
+          <div className={styles.companionContent}>
+            <span className={styles.companionKicker}>همراهی با دفتر وکیل موسوی</span>
+            <h2 id="mavis-companion-title">🌿 همراهان وکیل موسوی</h2>
+            <p className={styles.companionSubtitle}>خوشحال می‌شویم با ما همراه باشید.</p>
+            <p className={styles.companionDescription}>
+              دوست دارید از نکته‌های مهم حقوقی و خبرهایی که ممکن است به درد زندگی روزمره‌تان بخورد باخبر شوید؟
+              از موضوعات خانواده، مهریه و طلاق گرفته تا قراردادها و تغییرات مهم قوانین؛
+              مطالب را کوتاه و ساده در وضعیت واتساپ با شما به اشتراک می‌گذاریم.
+            </p>
+            <div className={styles.companionNumber}>
+              <span>📱 برای دیدن مطالب، شماره دفتر را ذخیره کنید:</span>
+              <strong dir="ltr">۰۹۱۶۹۱۶۵۹۰۲</strong>
+              <button type="button" className={styles.copyNumber} onClick={copyOfficeNumber}>کپی شماره</button>
+              <p className={styles.copyFeedback} role="status" aria-live="polite">{copyStatus}</p>
+            </div>
+          </div>
+          <div className={styles.companionForm}>
+            <h3>ارتباط با واتساپ دفتر</h3>
+            <p>نام و شهر اختیاری است؛ شماره شما پس از ارسال پیام در واتساپ مشخص می‌شود.</p>
+            <label htmlFor="mavis-companion-name">نام و نام خانوادگی (اختیاری)</label>
+            <input id="mavis-companion-name" className={styles.companionInput} value={companionName} onChange={(event) => setCompanionName(event.target.value)} maxLength={80} autoComplete="name" placeholder="نام شما" />
+            <label htmlFor="mavis-companion-city">شهر محل سکونت (اختیاری)</label>
+            <input id="mavis-companion-city" className={styles.companionInput} value={companionCity} onChange={(event) => setCompanionCity(event.target.value)} maxLength={60} autoComplete="address-level2" placeholder="مثلاً اهواز" />
+            <a className={styles.whatsappButton} href={companionWhatsAppUrl} target="_blank" rel="noopener noreferrer">
+              <span aria-hidden="true">◉</span> ارسال پیام به واتساپ دفتر
+            </a>
+            <small className={styles.companionNote}>واتساپ با پیام آماده باز می‌شود؛ ارسال پیام با تأیید خود شما انجام خواهد شد.</small>
+          </div>
+        </div>
+      </section>
+      <section className={styles.section} id="ai-request" aria-labelledby="mavis-intake-title">
       <div className={styles.shell}>
         <div className={styles.intro}>
           <span className={styles.kicker}>MAVIS · مسیر ارتباط با دفتر</span>
@@ -155,6 +225,7 @@ export default function PublicIntake() {
           )}
         </div>
       </div>
-    </section>
+      </section>
+    </>
   );
 }
