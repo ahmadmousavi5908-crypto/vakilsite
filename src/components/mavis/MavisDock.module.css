@@ -96,6 +96,8 @@
   background: #17364e;
 }
 
+.panelMark svg { display: block; width: 100%; height: 100%; padding: 9px; }
+
 .panelHead strong {
   display: block;
   color: #18364d;
@@ -103,7 +105,7 @@
   line-height: 1.8;
 }
 
-.panelHead span span {
+.panelHead div > span {
   display: flex;
   align-items: center;
   gap: 6px;
