@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { signIn } from "./actions";
 
+export const metadata = {
+  title: "ورود مدیر | پنل مدیریت خدمات حقوقی",
+  robots: { index: false, follow: false },
+};
+
 const errors = {
   missing: "ایمیل و رمز عبور را وارد کنید.",
   config: "اتصال پایگاه داده تنظیم نشده است.",
