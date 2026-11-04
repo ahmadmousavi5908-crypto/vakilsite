@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import styles from "./PublicIntake.module.css";
 
-const configuredPhone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "989169165902").replace(/\\D/g, "");
+const configuredPhone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "989169165902").replace(/\D/g, "");
 const OFFICE_WHATSAPP_NUMBER = configuredPhone.startsWith("00")
   ? configuredPhone.slice(2)
   : configuredPhone.startsWith("0")
@@ -12,7 +12,7 @@ const OFFICE_WHATSAPP_NUMBER = configuredPhone.startsWith("00")
 const OFFICE_LOCAL_NUMBER = OFFICE_WHATSAPP_NUMBER.startsWith("98")
   ? `0${OFFICE_WHATSAPP_NUMBER.slice(2)}`
   : OFFICE_WHATSAPP_NUMBER;
-const OFFICE_DISPLAY_NUMBER = OFFICE_LOCAL_NUMBER.replace(/\\d/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
+const OFFICE_DISPLAY_NUMBER = OFFICE_LOCAL_NUMBER.replace(/\d/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
 
 const topics = [
   { value: "family", label: "خانواده و امور زوجین" },
