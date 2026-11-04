@@ -5,6 +5,7 @@
 ## اسناد
 
 - [راهبرد جامع SEO / AEO / GEO و جذب موکل](./01-comprehensive-seo-aeo-geo-growth-strategy.md)
+- [سیاست دسترسی خزنده‌های هوش مصنوعی و WAF](./02-ai-crawler-access-policy.md)
 
 ## ترتیب اجرا
 
