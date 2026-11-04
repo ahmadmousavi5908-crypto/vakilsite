@@ -22,6 +22,9 @@
 11. [مدل تهدید](./11-threat-model.md)
 12. [برنامه اجرایی MVP](./12-mvp-implementation-plan.md)
 
+17. [وضعیت اجرای هسته MAVIS](./17-core-foundation-status.md)
+18. [طراحی شخصیت و داک شناور MAVIS](./18-character-dock-design.md)
+
 ## قواعد تغییر
 
 - این اسناد قبل از کدنویسی مبنای طراحی‌اند؛ مواردی که هنوز قطعی نیستند با وضعیت **Open** مشخص می‌شوند.
