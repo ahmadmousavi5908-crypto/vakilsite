@@ -1,5 +1,7 @@
 const SITE_URL_ENV = "NEXT_PUBLIC_SITE_URL";
 
+const INVALID_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
+
 export function getSiteUrl(
   env = process.env,
   { required = false } = {},
@@ -22,6 +24,10 @@ export function getSiteUrl(
     throw new Error(`${SITE_URL_ENV} must be a valid absolute URL.`);
   }
 
+  const hostname = url.hostname.toLowerCase();
+  const isIpAddress =
+    hostname.includes(":") ||
+    /^(?:\d{1,3}\.){3}\d{1,3}$/.test(hostname);
   const isOriginOnly =
     url.pathname === "/" &&
     !url.search &&
@@ -29,9 +35,18 @@ export function getSiteUrl(
     !url.username &&
     !url.password;
 
-  if (url.protocol !== "https:" || !url.hostname || !isOriginOnly) {
+  if (
+    url.protocol !== "https:" ||
+    !hostname ||
+    INVALID_HOSTS.has(hostname) ||
+    isIpAddress ||
+    !hostname.includes(".") ||
+    hostname.endsWith(".") ||
+    url.port ||
+    !isOriginOnly
+  ) {
     throw new Error(
-      `${SITE_URL_ENV} must be an HTTPS origin without credentials, path, query, or fragment.`,
+      `${SITE_URL_ENV} must be a public HTTPS origin without credentials, port, path, query, or fragment.`,
     );
   }
 
