@@ -39,6 +39,8 @@ jobs:
         run: npm run test:site-url
       - name: Run MAVIS core unit tests
         run: npm run test:mavis-core
+      - name: Test IndexNow validation
+        run: npm run test:indexnow
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
