@@ -27,3 +27,6 @@
 - [آمادگی محتوایی، مرجعیت حقوقی و استناد هوش مصنوعی](./04-content-authority-and-ai-citation-readiness.md)
 
 - [راهنمای عملیاتی موتورهای جست‌وجو، خزنده‌ها و پایش AI Visibility](./05-search-engine-operations-and-monitoring.md)
+
+- [نقشه پژوهش کلیدواژه و معماری محتوا](./06-keyword-research-and-content-map.md)
+- [رجیستری منابع حقوقی و استاندارد استناد](./07-iran-legal-source-registry-and-citation-standard.md)
