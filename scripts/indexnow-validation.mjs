@@ -16,7 +16,7 @@ export function isPrivateIndexNowPath(pathname) {
     }
   }
 
-  const normalized = decoded.replace(/\\/g, "/").replace(/\\/+ /g, "/").toLowerCase();
+  const normalized = decoded.replace(/\\/g, "/").replace(/\/+/g, "/").toLowerCase();
   return (
     normalized === "/admin" ||
     normalized.startsWith("/admin/") ||
