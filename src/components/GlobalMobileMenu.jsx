@@ -33,19 +33,19 @@ const groups = [
 
 const launcher = {
   position: "fixed",
-  top: "max(12px, env(safe-area-inset-top, 0px))",
+  top: "calc(106px + env(safe-area-inset-top, 0px))",
   left: "max(12px, env(safe-area-inset-left, 0px))",
-  width: "50px",
-  height: "50px",
+  width: "78px",
+  height: "78px",
   zIndex: 1100,
   direction: "ltr",
 };
 
 const trigger = {
   boxSizing: "border-box",
-  width: "50px",
-  height: "50px",
-  padding: 0,
+  width: "78px",
+  height: "78px",
+  padding: "6px 4px",
   margin: 0,
   display: "flex",
   flexDirection: "column",
@@ -56,7 +56,8 @@ const trigger = {
   cursor: "pointer",
   border: "1px solid rgba(177,142,84,.7)",
   borderRadius: "13px",
-  background: "linear-gradient(155deg,#fffefa,#f2ecdf)",
+  background: "linear-gradient(135deg, #087653 0%, #075b43 100%)",
+  color: "#fff",
   boxShadow: "0 5px 18px rgba(12,31,49,.18)",
 };
 
@@ -72,11 +73,11 @@ const line = {
 
 const panel = {
   position: "fixed",
-  top: "calc(env(safe-area-inset-top, 0px) + 72px)",
+  top: "calc(env(safe-area-inset-top, 0px) + 194px)",
   left: "12px",
   right: "auto",
   width: "min(380px, calc(100vw - 24px))",
-  maxHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - 88px)",
+  maxHeight: "calc(100dvh - env(safe-area-inset-top, 0px) - 206px)",
   overflowX: "hidden",
   overflowY: "auto",
   overscrollBehavior: "contain",
@@ -195,12 +196,17 @@ export default function GlobalMobileMenu() {
         rootRef.current.removeAttribute("open");
       }
     };
+    const closeOnOtherDock = (event) => {
+      if (event.detail !== "menu") rootRef.current?.removeAttribute("open");
+    };
 
     document.addEventListener("pointerdown", closeOnOutside);
     document.addEventListener("keydown", closeOnEscape);
+    window.addEventListener("vakilsite:dock-open", closeOnOtherDock);
     return () => {
       document.removeEventListener("pointerdown", closeOnOutside);
       document.removeEventListener("keydown", closeOnEscape);
+      window.removeEventListener("vakilsite:dock-open", closeOnOtherDock);
     };
   }, []);
 
@@ -210,11 +216,19 @@ export default function GlobalMobileMenu() {
         aria-label="باز کردن فهرست سایت"
         title="فهرست سایت"
         style={trigger}
+        onClick={() => {
+          if (!rootRef.current?.open) {
+            window.dispatchEvent(new CustomEvent("vakilsite:dock-open", { detail: "menu" }));
+          }
+        }}
       >
-        <span className="site-mobile-menu-sr">فهرست سایت</span>
-        <i aria-hidden="true" style={line} />
-        <i aria-hidden="true" style={line} />
-        <i aria-hidden="true" style={line} />
+        <span className="site-mobile-menu-sr">باز کردن فهرست سایت</span>
+        <span className="site-mobile-menu-icon" aria-hidden="true">
+          <i style={line} />
+          <i style={line} />
+          <i style={line} />
+        </span>
+        <strong className="site-mobile-menu-label" aria-hidden="true">فهرست</strong>
       </summary>
 
       <nav id="site-mobile-menu-panel" aria-label="فهرست اصلی سایت" style={panel} dir="rtl">
