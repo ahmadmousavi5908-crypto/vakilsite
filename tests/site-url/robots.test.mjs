@@ -12,7 +12,8 @@ test("allows search crawlers while keeping private paths disallowed", () => {
   assert.ok(search);
   assert.ok(restricted);
   assert.deepEqual(search.disallow, ["/admin", "/admin/", "/api", "/api/"]);
-  assert.ok(search.allow.includes("/"));\n  assert.ok(search.allow.includes("/admin/login"));
+  assert.ok(search.allow.includes("/"));
+  assert.ok(search.allow.includes("/admin/login"));
   assert.equal(restricted.disallow, "/");
   assert.ok(search.userAgent.includes("Googlebot"));
   assert.ok(search.userAgent.includes("Bingbot"));
