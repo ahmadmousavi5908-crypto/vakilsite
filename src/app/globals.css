@@ -4575,6 +4575,9 @@ textarea:focus-visible,
     z-index: 1100 !important;
   }
   #site-mobile-menu-root > summary {
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: visible !important;
     width: 78px !important;
     min-width: 78px !important;
     height: 78px !important;
