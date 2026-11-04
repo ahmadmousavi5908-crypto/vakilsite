@@ -1,5 +1,5 @@
 export function isValidIndexNowKey(value) {
-  return typeof value === "string" && /^[A-Fa-f0-9]{8,128}$/.test(value);
+  return typeof value === "string" && /^[A-Za-z0-9-]{8,128}$/.test(value);
 }
 
 export function isPrivateIndexNowPath(pathname) {
