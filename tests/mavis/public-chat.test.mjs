@@ -8,7 +8,7 @@ import { runPublicChat } from "../../src/lib/mavis/public-chat.mjs";
 test("accepts a bounded public message and history", () => {
   const parsed = parsePublicChatInput({
     message: "  پرسش حقوقی عمومی  ",
-    history: [{ role: "assistant", content: "سلام" }, { role: "user", content: "سلام" }],
+    history: [{ role: "user", content: "سلام" }],
   });
   assert.equal(parsed.message, "پرسش حقوقی عمومی");
   assert.equal(parsed.history.length, 2);
