@@ -4591,6 +4591,11 @@ textarea:focus-visible,
     color: #fff !important;
     box-shadow: 0 5px 17px rgba(8, 35, 48, .28), inset 0 1px 0 rgba(255, 255, 255, .13) !important;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform .18s ease, filter .18s ease;
+  }
+  #site-mobile-menu-root > summary:active {
+    transform: scale(.97);
   }
   #site-mobile-menu-root > summary .site-mobile-menu-icon {
     display: flex !important;
