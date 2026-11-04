@@ -30,3 +30,5 @@
 
 - [نقشه پژوهش کلیدواژه و معماری محتوا](./06-keyword-research-and-content-map.md)
 - [رجیستری منابع حقوقی و استاندارد استناد](./07-iran-legal-source-registry-and-citation-standard.md)
+
+- [تحلیل رقبا، فرصت‌های حقوقی روز و نقشه تحریریه](./08-editorial-intelligence-competitor-and-legal-opportunity-briefs.md)
