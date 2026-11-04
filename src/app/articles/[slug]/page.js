@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { articles } from "../../../data/articles";
 import JsonLd from "../../../components/JsonLd";
+import { getSiteUrl } from "../../../lib/site-url.mjs";
 
 export function generateStaticParams() {
   return articles.map((article) => ({ slug: article.slug }));
@@ -11,7 +12,8 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const article = articles.find((item) => item.slug === slug);
   if (!article) return { title: "مطلب پیدا نشد" };
-  const canonicalPath = "/articles/" + article.slug;
+
+  const canonicalPath = `/articles/${article.slug}`;
   return {
     title: article.title,
     description: article.excerpt,
@@ -31,8 +33,10 @@ export default async function ArticleDetailPage({ params }) {
   const article = articles.find((item) => item.slug === slug);
   if (!article) notFound();
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  const articleUrl = siteUrl ? siteUrl + "/articles/" + article.slug : null;
+  const siteUrl = getSiteUrl();
+  const articleUrl = siteUrl
+    ? new URL(`/articles/${article.slug}`, siteUrl).href
+    : null;
   const structuredArticle = articleUrl
     ? {
         "@context": "https://schema.org",
@@ -70,7 +74,7 @@ export default async function ArticleDetailPage({ params }) {
       <div className="container article-detail-layout">
         <article className="article-body">
           <p className="article-intro">{article.intro}</p>
-          {article.sections.map((section, index) => (
+          {article.sections.map((section) => (
             <section className="article-body-section" key={section.heading}>
               <h2>{section.heading}</h2>
               <p>{section.body}</p>
