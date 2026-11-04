@@ -23,17 +23,17 @@
 ### هسته مستقل از Provider
 فایل‌های جدید:
 - `src/lib/mavis/errors.mjs`: خطاهای پایدار و تبدیل خطای امن برای پاسخ عمومی.
-- `src/lib/mavis/contracts.mjs`: اعتبارسنجی پیام و تاریخچه محدود؛ roleهای system/developer از ورودی کلاینت پذیرفته نمی‌شوند.
+- `src/lib/mavis/contracts.mjs`: اعتبارسنجی پیام و تاریخچه محدود؛ تاریخچه ارسالی کلاینت فقط پیام user می‌پذیرد تا جعل پیام assistant ممکن نباشد.
 - `src/lib/mavis/public-policy.mjs`: دستورهای سیاستی عمومی و feature flag خاموش به‌صورت پیش‌فرض.
-- `src/lib/mavis/mock-provider.mjs`: Provider آزمایشی شفاف؛ ادعای پاسخ هوش مصنوعی واقعی نمی‌کند.
+- `src/lib/mavis/mock-provider.mjs`: Provider آزمایشی شفاف؛ ادعای پاسخ هوش مصنوعی واقعی نمی‌کند و متن خام کاربر را در پاسخ بازتاب نمی‌دهد.
 - `src/lib/mavis/public-chat.mjs`: Use Case مستقل از SDK و Provider.
 
 ### تست و CI
-- `tests/mavis/public-chat.test.mjs`: شش تست برای قرارداد، role injection، اندازه تاریخچه، feature flag، mock use case و عدم افشای خطای داخلی.
+- `tests/mavis/public-chat.test.mjs`: تست‌های قرارداد، جعل نقش دستیار، اندازه تاریخچه، feature flag، عدم بازتاب متن خام، سقف خروجی Provider و عدم افشای metadata داخلی.
 - `npm run test:mavis-core`: فرمان تست اضافه شده.
 - `.github/workflows/mavis-core.yml`: workflow تست Node.js اضافه شده.
 
-## 3. شواهد آزمون
+## 3. شواهد آزمون\n\n- GitHub Actions run `41879791188` در 2026-11-04 با Node.js 24 و job `unit` با نتیجه `success` تکمیل شد.\n- این نتیجه جایگزین build/lint و آزمون‌های یکپارچه/رگرسیون نیست.
 
 - کد و تست‌های هسته در یک محیط Node.js موقت با Node v22.16.0 بازسازی و اجرا شدند.
 - نتیجه: 6 passed, 0 failed.
