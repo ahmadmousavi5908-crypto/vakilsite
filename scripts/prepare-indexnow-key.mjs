@@ -24,7 +24,7 @@ if (!key) {
 }
 
 if (!isValidIndexNowKey(key)) {
-  console.error("INDEXNOW_KEY must contain 8 to 128 hexadecimal characters.");
+  console.error("INDEXNOW_KEY must contain 8 to 128 letters, numbers, or hyphens.");
   process.exit(1);
 }
 
