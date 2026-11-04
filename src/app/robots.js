@@ -9,7 +9,7 @@ export default function robots() {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        allow: ["/", "/admin/login"],
         disallow: privatePaths,
       },
       {
