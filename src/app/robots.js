@@ -20,7 +20,7 @@ export default function robots() {
           "Claude-SearchBot",
           "PerplexityBot",
         ],
-        allow: "/",
+        allow: ["/", "/admin/login"],
         disallow: privatePaths,
       },
       {
