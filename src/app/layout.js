@@ -2,6 +2,7 @@ import "./globals.css";
 import SocialContactDock from "../components/SocialContactDock";
 import AttorneyProfileDock from "../components/AttorneyProfileDock";
 import GlobalMobileMenu from "../components/GlobalMobileMenu";
+import MavisDock from "../components/mavis/MavisDock";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
@@ -76,6 +77,7 @@ export default function RootLayout({ children }) {
         <GlobalMobileMenu />
         <AttorneyProfileDock />
         <SocialContactDock />
+        <MavisDock />
       </body>
     </html>
   );
