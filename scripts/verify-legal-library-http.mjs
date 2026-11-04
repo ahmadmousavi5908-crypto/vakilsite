@@ -2,6 +2,16 @@ import { readFile } from "node:fs/promises";
 
 const baseUrl = (process.env.SITE_TEST_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
 
+function readCanonical(html) {
+  const tags = html.match(/<link\\b[^>]*>/gi) || [];
+  for (const tag of tags) {
+    const rel = tag.match(/\\brel\\s*=\\s*["']([^"']+)["']/i)?.[1]?.toLowerCase();
+    if (rel !== "canonical") continue;
+    return tag.match(/\\bhref\\s*=\\s*["']([^"']+)["']/i)?.[1] || null;
+  }
+  return null;
+}
+
 function readMeta(html, key) {
   const tags = html.match(/<meta\b[^>]*>/gi) || [];
   for (const tag of tags) {
@@ -110,6 +120,20 @@ if (noindexMissing.length) {
   for (const item of noindexMissing) console.log(item.path);
 }
 
+const canonicalRoutes = ["/ai-assistant", "/lawyer-cooperation", "/privacy"];
+const canonicalFailures = [];
+for (const path of canonicalRoutes) {
+  const { response, body } = await fetchText(path);
+  const canonical = readCanonical(body);
+  const expected = canonicalOrigin ? new URL(path, canonicalOrigin).href : null;
+  if (!response.ok || !canonical || canonical !== expected) {
+    canonicalFailures.push({ path, status: response.status, canonical, expected });
+  }
+}
+const adminLogin = await fetchText("/admin/login");
+const adminLoginRobots = adminLogin.response.ok ? readMeta(adminLogin.body, "robots") : null;
+const adminLoginNoindex = Boolean(adminLoginRobots && /(^|[,\\s])noindex([,\\s]|$)/.test(adminLoginRobots));
+
 const sitemapResult = await fetchText("/sitemap.xml");
 const sitemapUrls = [...sitemapResult.body.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 const expectedPublicPaths = ["/", "/articles", "/services", "/about", "/legal-library", "/ai-assistant"];
@@ -178,7 +202,7 @@ console.log("\n===== ROBOTS =====");
 console.log("HTTP:", robotsResult.response.status);
 for (const [name, passed] of Object.entries(robotsChecks)) console.log(name + ":", passed ? "PASS" : "FAIL");
 
-if (failed.length || noindexMissing.length || sitemapResult.response.status !== 200 ||
+if (failed.length || noindexMissing.length || canonicalFailures.length || !adminLoginNoindex || sitemapResult.response.status !== 200 ||
     sitemapUrls.length === 0 || missingPublicPaths.length || invalidSitemapUrls.length ||
     wrongSitemapOrigins.length || privateSitemapUrls.length || unverifiedInSitemap.length ||
     robotsResult.response.status !== 200 || Object.values(robotsChecks).some((passed) => !passed)) {
