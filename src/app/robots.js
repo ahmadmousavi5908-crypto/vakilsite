@@ -1,13 +1,15 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+import { getSiteUrl } from "../lib/site-url.mjs";
 
-const privatePaths = ["/admin", "/api"];
+const privatePaths = ["/admin", "/admin/", "/api", "/api/"];
 
 export default function robots() {
+  const siteUrl = getSiteUrl();
+
   return {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        allow: ["/", "/admin/login"],
         disallow: privatePaths,
       },
       {
@@ -17,11 +19,8 @@ export default function robots() {
           "OAI-SearchBot",
           "Claude-SearchBot",
           "PerplexityBot",
-          "ChatGPT-User",
-          "Claude-User",
-          "Perplexity-User",
         ],
-        allow: "/",
+        allow: ["/", "/admin/login"],
         disallow: privatePaths,
       },
       {
@@ -29,6 +28,6 @@ export default function robots() {
         disallow: "/",
       },
     ],
-    ...(siteUrl ? { sitemap: siteUrl + "/sitemap.xml" } : {}),
+    ...(siteUrl ? { sitemap: new URL("/sitemap.xml", siteUrl).href } : {}),
   };
 }

@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { isPrivateIndexNowPath, isValidIndexNowKey } from "./indexnow-validation.mjs";
 
 async function loadLocalEnv() {
   try {
@@ -20,8 +21,8 @@ const key = process.env.INDEXNOW_KEY?.trim();
 const configuredSite = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 const inputUrls = process.argv.slice(2);
 
-if (!key || !/^[A-Za-z0-9-]{8,128}$/.test(key)) {
-  throw new Error("Set a valid INDEXNOW_KEY in .env.local or the deployment environment.");
+if (!isValidIndexNowKey(key)) {
+  throw new Error("Set an 8 to 128 character alphanumeric INDEXNOW_KEY (hyphens allowed) in .env.local or the deployment environment.");
 }
 if (!configuredSite) {
   throw new Error("Set NEXT_PUBLIC_SITE_URL to the canonical HTTPS site origin.");
@@ -42,7 +43,7 @@ for (const value of urls) {
   if (url.username || url.password || url.search || url.hash) {
     throw new Error("Submit clean public page URLs without credentials, query strings, or fragments.");
   }
-  if (url.pathname === "/admin" || url.pathname.startsWith("/admin/") || url.pathname.startsWith("/api/")) {
+  if (isPrivateIndexNowPath(url.pathname)) {
     throw new Error("Private admin and API paths must never be submitted to IndexNow.");
   }
 }

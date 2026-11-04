@@ -79,3 +79,8 @@ npm run start
 Check the generated `/robots.txt`, HTML canonical URLs, metadata, robots directives, and JSON-LD. After deployment, use Search Console URL Inspection, Bing URL Inspection, and the Rich Results Test where applicable.
 
 Do not add `llms.txt` or AI-only schema as a ranking shortcut. Keep the public pages useful, source-backed, crawlable, and internally linked.
+
+
+## Strategic SEO / AEO / GEO plan
+
+The technical discovery checklist is complemented by the [comprehensive SEO, AEO, GEO and client-acquisition strategy](./seo/01-comprehensive-seo-aeo-geo-growth-strategy.md). Follow that document for editorial standards, local visibility, competitor gap analysis, AI-search measurement, conversion tracking and the staged roadmap. Do not interpret crawler access or structured data as a ranking guarantee.

@@ -2,7 +2,11 @@ name: Site quality checks
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
+      - feature/mavis-core-foundation
+      - feature/seo-aeo-geo-growth-system
+      - feature/seo-technical-quality
   push:
     branches:
       - main
@@ -12,9 +16,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: site-quality-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   lint-and-build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: https://vakilsite-ci.example
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -25,6 +35,12 @@ jobs:
           cache: npm
       - name: Install dependencies and synchronize lockfile
         run: npm ci --no-audit --no-fund
+      - name: Test canonical site URL and sitemap invariants
+        run: npm run test:site-url
+      - name: Run MAVIS core unit tests
+        run: npm run test:mavis-core
+      - name: Test IndexNow validation
+        run: npm run test:indexnow
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
