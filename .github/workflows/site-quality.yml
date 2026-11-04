@@ -2,12 +2,16 @@ name: Site quality checks
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
+      - feature/mavis-core-foundation
+      - feature/seo-aeo-geo-growth-system
   push:
     branches:
       - main
       - redesign/persian-ux-typography
       - feat/legal-library-discovery-20261102
+      - feature/seo-technical-quality
 
 permissions:
   contents: read
@@ -15,6 +19,8 @@ permissions:
 jobs:
   lint-and-build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: https://vakilsite-ci.example
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -25,6 +31,8 @@ jobs:
           cache: npm
       - name: Install dependencies and synchronize lockfile
         run: npm ci --no-audit --no-fund
+      - name: Test canonical site URL validation
+        run: npm run test:site-url
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
