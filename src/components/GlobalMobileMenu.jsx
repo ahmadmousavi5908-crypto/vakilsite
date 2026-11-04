@@ -213,7 +213,7 @@ export default function GlobalMobileMenu() {
   return (
     <details ref={rootRef} id="site-mobile-menu-root" style={launcher}>
       <summary
-        aria-label="باز کردن فهرست سایت"
+        aria-label="فهرست اصلی سایت"
         title="فهرست سایت"
         style={trigger}
         onClick={() => {
@@ -222,7 +222,7 @@ export default function GlobalMobileMenu() {
           }
         }}
       >
-        <span className="site-mobile-menu-sr">باز کردن فهرست سایت</span>
+        <span className="site-mobile-menu-sr">فهرست اصلی سایت</span>
         <span className="site-mobile-menu-icon" aria-hidden="true">
           <i style={line} />
           <i style={line} />
