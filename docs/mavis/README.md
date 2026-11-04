@@ -25,6 +25,7 @@
 14. [نقشه منابع حقوق ایران و سیاست ورود دانش](./16-iran-legal-source-map-and-ingestion-policy.md)
 15. [وضعیت اجرای هسته MAVIS و گزارش تحویل](./17-core-foundation-status.md)
 16. [طراحی داک شخصیت MAVIS](./18-character-dock-design.md)
+18. [تطبیق شاخه‌ها و اعتبارسنجی یکپارچه](./20-integration-reconciliation.md)
 17. [مبنای امنیت و دروازه‌های انتشار](./19-security-baseline-and-release-gates.md)
 
 ## اسناد تکمیلی محصول و اجرا
