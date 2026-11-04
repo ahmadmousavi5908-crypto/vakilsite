@@ -13,7 +13,7 @@ test("accepts IndexNow keys with 8 to 128 alphanumeric or hyphen characters", ()
 });
 
 test("identifies private admin and API paths including encoded variants", () => {
-  for (const path of ["/admin", "/admin/users", "/api", "/api/private", "/%61dmin/users", "/%61pi/private"]) {
+  for (const path of ["/admin", "/admin/users", "/api", "/api/private", "/%61dmin/users", "/%61pi/private", "/%2561dmin/users", "/%2561pi/private", "/\\\\admin/users"]) {
     assert.equal(isPrivateIndexNowPath(path), true, path);
   }
   for (const path of ["/", "/articles/example", "/about", "/legal-library"]) {
