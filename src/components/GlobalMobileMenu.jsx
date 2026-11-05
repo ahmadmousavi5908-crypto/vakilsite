@@ -35,34 +35,34 @@ const launcher = {
   position: "fixed",
   top: "max(8px, env(safe-area-inset-top, 0px))",
   left: "max(8px, env(safe-area-inset-left, 0px))",
-  width: "42px",
-  height: "42px",
+  width: "48px",
+  height: "54px",
   zIndex: 1100,
   direction: "ltr",
 };
 
 const trigger = {
   boxSizing: "border-box",
-  width: "42px",
-  height: "42px",
-  padding: 0,
+  width: "48px",
+  height: "54px",
+  padding: "4px 0",
   margin: 0,
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  gap: "4px",
+  gap: "2px",
   listStyle: "none",
   cursor: "pointer",
   border: "1px solid #d6bd7b",
-  borderRadius: "10px",
-  background: "linear-gradient(145deg,#45634d 0%,#304d3c 55%,#243e32 100%)",
+  borderRadius: "9px",
+  background: "linear-gradient(145deg,#203b57 0%,#142b43 58%,#0d2034 100%)",
   boxShadow: "0 4px 13px rgba(12,31,49,.24)",
 };
 
 const line = {
   display: "block",
-  width: "18px",
+  width: "19px",
   height: "2px",
   minHeight: "2px",
   margin: 0,
@@ -72,7 +72,7 @@ const line = {
 
 const panel = {
   position: "fixed",
-  top: "calc(env(safe-area-inset-top, 0px) + 60px)",
+  top: "calc(env(safe-area-inset-top, 0px) + 66px)",
   left: "8px",
   right: "auto",
   width: "min(380px, calc(100vw - 24px))",
@@ -215,6 +215,7 @@ export default function GlobalMobileMenu() {
         <i aria-hidden="true" style={line} />
         <i aria-hidden="true" style={line} />
         <i aria-hidden="true" style={line} />
+        <span className="site-mobile-menu-label" aria-hidden="true">فهرست</span>
       </summary>
 
       <nav id="site-mobile-menu-panel" aria-label="فهرست اصلی سایت" style={panel} dir="rtl">
