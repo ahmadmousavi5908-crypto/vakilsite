@@ -3093,12 +3093,12 @@ body{
   #site-mobile-menu-root {
     display: block !important;
     position: fixed !important;
-    top: max(12px, env(safe-area-inset-top, 0px)) !important;
-    left: max(12px, env(safe-area-inset-left, 0px)) !important;
+    top: max(8px, env(safe-area-inset-top, 0px)) !important;
+    left: max(8px, env(safe-area-inset-left, 0px)) !important;
     right: auto !important;
     bottom: auto !important;
-    width: 50px !important;
-    height: 50px !important;
+    width: 42px !important;
+    height: 42px !important;
     z-index: 2147483647 !important;
     direction: ltr !important;
     font-family: Tahoma, "Vazirmatn", "Segoe UI", sans-serif !important;
@@ -3106,16 +3106,20 @@ body{
   #site-mobile-menu-root > summary {
     display: flex !important;
     box-sizing: border-box !important;
-    width: 50px !important;
-    min-width: 50px !important;
-    height: 50px !important;
-    min-height: 50px !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
     padding: 0 !important;
     margin: 0 !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 5px !important;
+    gap: 4px !important;
+    border: 1px solid #d6bd7b !important;
+    border-radius: 10px !important;
+    background: linear-gradient(145deg, #45634d 0%, #304d3c 55%, #243e32 100%) !important;
+    box-shadow: 0 4px 13px rgba(12, 31, 49, .24) !important;
     list-style: none !important;
     cursor: pointer !important;
   }
@@ -3124,18 +3128,19 @@ body{
   #site-mobile-menu-root > summary::after { content: none !important; display: none !important; }
   #site-mobile-menu-root > summary > i {
     display: block !important;
-    width: 21px !important;
+    width: 18px !important;
     height: 2px !important;
     min-height: 2px !important;
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
-    background: #173550 !important;
+    border-radius: 2px !important;
+    background: #fffaf0 !important;
   }
   #site-mobile-menu-panel {
     position: fixed !important;
-    top: calc(env(safe-area-inset-top, 0px) + 72px) !important;
-    left: 12px !important;
+    top: calc(env(safe-area-inset-top, 0px) + 60px) !important;
+    left: 8px !important;
     right: auto !important;
     width: min(360px, calc(100vw - 24px)) !important;
     max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 88px) !important;
