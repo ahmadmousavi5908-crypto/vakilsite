@@ -8,6 +8,7 @@ import JsonLd from "../components/JsonLd";
 import SocialLinksPublic from "../components/SocialLinksPublic";
 import LegalIcon from "../components/LegalIcon";
 import CitySelector from "../components/CitySelector";
+import MavisAvatarDock from "../components/mavis/MavisAvatarDock";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -81,6 +82,7 @@ export default function Home() {
 
   return (
     <main id="main-content" dir="rtl">
+      <MavisAvatarDock />
       {structuredSite && <JsonLd data={structuredSite} />}
       <a className="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
       <div className="topline">
