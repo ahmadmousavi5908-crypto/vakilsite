@@ -306,3 +306,29 @@
 - بررسی manifest و SHA-256 مستقل
 - مقایسه commit محلی با شاخه‌های remote بدون تغییر working tree
 - تصمیم درباره همگام‌سازی دو شاخه پس از مشاهده `git status` و `git log`
+
+
+## 15. گام بعدی: اتصال دانش و ارتقای بکاپ مادر دو — 2026-11-06
+
+**جزئیات و معیارهای پذیرش:** [برنامه اتصال دانش MAVIS و ارتقای بکاپ مادر دو](./21-knowledge-retrieval-and-mother-two-backup-plan.md)
+
+### Track F — Legal Intelligence / Knowledge Retrieval
+- [x] ساخت فهرست مرکزی دانش در workspace محلی و اعتبارسنجی ۳۲ سند، ۱۱ dataset، ۴ runtime surface و ۴۷ reference
+- [ ] انتقال کنترل‌شده manifest و README دانش به شاخه کاری پس از مقایسه local/remote
+- [ ] ممیزی runtime واقعی MAVIS و مرزهای Public/Private
+- [ ] طراحی retrieval فقط‌خواندنی با استفاده از legal-library موجود؛ بدون ساخت knowledge base موازی
+- [ ] تعریف access filter، freshness، versioning و citation verification
+- [ ] اجرای تست‌های فارسی، منبع منقضی/متعارض، نبود منبع و prompt injection
+- [ ] ارائه طرح نهایی و معیارهای پذیرش برای تأیید مالک، پیش از تغییر runtime
+
+### Track G — Backup / Recovery
+- [x] ثبت الزام حفظ نسخه اصلی Mother Two به‌صورت immutable
+- [x] تعریف شناسه مستقل برای snapshot به‌روزشده: `VAKILSITE-MOTHER-TWO-PLUS-KNOWLEDGE-20261106`
+- [ ] ساخت آرشیو جدید از workspace واقعی Termux، شامل فایل‌های modified و untracked
+- [ ] تولید manifest مسیرها، اندازه‌ها، SHA-256 و Git snapshot
+- [ ] تولید checksum آرشیو و اجرای integrity check
+- [ ] استخراج آزمایشی به پوشه موقت و تطبیق هش فایل‌ها
+- [ ] ثبت راهنمای فارسی بازیابی و مسیر دقیق آرشیو
+- [ ] نگهداری Mother Two اصلی بدون تغییر
+
+**وضعیت:** برنامه و چک‌لیست ثبت شده‌اند. آرشیو جدید محلی تا زمان اجرای موفق و ثبت خروجی Termux، checksum و restore test انجام‌شده محسوب نمی‌شود.
