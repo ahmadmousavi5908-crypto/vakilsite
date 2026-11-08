@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: mavis-knowledge-search-${{ github.ref }}-${{ github.sha }}
+  group: mavis-knowledge-search-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
