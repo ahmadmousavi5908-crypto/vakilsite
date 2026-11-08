@@ -27,6 +27,16 @@ Provide a public, first-party, deterministic legal-information retrieval surface
 
 The bundle also contains a sixteen-entry source registry that distinguishes official publication/legislation portals from secondary databases and research guides. Live availability of those source websites is not implied.
 
+## Separate internal lawyer-research retrieval path
+
+The repository also contains a separate, server-side, admin-only deterministic retrieval slice:
+- `src/lib/mavis/knowledge-registry.js` maps the existing canonical legal-library records.
+- `src/lib/mavis/knowledge-search.mjs` performs Persian lexical ranking.
+- `POST /api/mavis/knowledge-search` requires admin authorization and applies origin, body-size, rate-limit and no-store controls.
+- The route attaches legal evidence and a research dossier with source-status metadata.
+
+This is not part of the offline public app. It is not a public chat endpoint, does not call an LLM, does not create a parallel corpus, and does not establish that a legal source is current or verified. The future Lawyer Copilot integration, central knowledge-manifest reconciliation, retrieval benchmark and primary-source verification remain separate gates.
+
 ## Correct interpretation of offline
 The application must be opened once online so the service worker can cache the static shell and dataset. Thereafter, the `/mavis-offline/` surface and local search can work without connectivity. This does not make the entire Next.js website, database, public intake submission, or external legal sources available offline.
 

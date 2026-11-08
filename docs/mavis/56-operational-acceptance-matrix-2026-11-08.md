@@ -63,6 +63,20 @@
 **Pass:** metrics are deterministic from fixtures; provider failures are typed and visible; no content is generated or published automatically.  
 **Current state:** metrics and Search Console parsing adapter tests exist; live OAuth/provider verification is not enabled.
 
+## Workstream E — Internal legal retrieval and evidence assembly
+
+| Layer | Implemented slice | Remaining gate |
+|---|---|---|
+| Canonical corpus | Existing legal-library data; no parallel corpus | Reconcile local knowledge manifest and expand reviewed source records |
+| Runtime registry | `src/lib/mavis/knowledge-registry.js` | Add source/version/amendment relationships without duplicating records |
+| Ranking | `src/lib/mavis/knowledge-search.mjs`, deterministic Persian lexical search | Golden benchmark and relevance/error analysis |
+| API | Admin-only `POST /api/mavis/knowledge-search`, bounded and rate-limited | Connect to Lawyer Copilot only after contract and authorization review |
+| Evidence | `buildLegalEvidence` and `buildLegalResearchDossier` | Complete primary-document provenance and validity chain |
+| Safety | Draft filtering, source-status labels, no public exposure | Prompt-injection, conflict, obsolete-law and citation-spoofing tests |
+| Model/vector | Not enabled | Consider only if measured lexical baseline fails approved quality targets |
+
+**Current state:** The internal deterministic retrieval slice exists and has tests. It must not be described as a complete legal chat, a verified legal corpus, or a production RAG system. The legal source review queue still has no primary-source/current-validity verified records. The public offline assistant remains a separate static application.
+
 ## Cross-workstream release gate
 
 - [ ] CI green on the exact candidate commit.
