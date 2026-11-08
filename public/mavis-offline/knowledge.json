@@ -4991,6 +4991,13 @@
       "source_url": "https://www.rrk.ir/Laws/PrintLaw.aspx?Code=29068",
       "sources": [
         {
+          "title": "سامانه ملی قوانین و مقررات؛ پیوند رسمی شناسایی‌شده اما دریافت‌نشده",
+          "url": "https://qavanin.ir/Law/TreeText/?IDS=8323921457009018779",
+          "source_id": "src_national_laws",
+          "source_class": "official_legislative_research",
+          "verification_status": "official_url_identified_not_retrieved"
+        },
+        {
           "title": "نسخه چاپی شناسایی‌شده در روزنامه رسمی؛ دریافت و تطبیق نهایی انجام نشده",
           "url": "https://www.rrk.ir/Laws/PrintLaw.aspx?Code=29068",
           "source_id": "src_official_gazette",
@@ -5013,7 +5020,8 @@
         "current_validity_verified": false,
         "effective_date": null,
         "last_primary_source_check": null,
-        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است.",
+        "official_source_link_identified": true
       }
     },
     {
@@ -5030,7 +5038,15 @@
       "review_status": "needs_legal_review",
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
-      "sources": [],
+      "sources": [
+        {
+          "title": "مرکز پژوهش‌های مجلس؛ پیوند رسمی شناسایی‌شده اما دریافت‌نشده",
+          "url": "https://rc.majlis.ir/fa/law/show/92284",
+          "source_id": "src_majlis_research",
+          "source_class": "official_legislative_research",
+          "verification_status": "official_url_identified_not_retrieved"
+        }
+      ],
       "notes": "متن تنقیحی و اصلاحات باید از منبع رسمی بررسی شود.",
       "provenance": {
         "jurisdiction": "IR",
@@ -5039,7 +5055,8 @@
         "current_validity_verified": false,
         "effective_date": null,
         "last_primary_source_check": null,
-        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است.",
+        "official_source_link_identified": true
       }
     },
     {
@@ -5058,6 +5075,13 @@
       "source_url": "https://law-ir.ir/law/cat/1692/",
       "sources": [
         {
+          "title": "مرکز پژوهش‌های مجلس؛ پیوند رسمی شناسایی‌شده اما دریافت‌نشده",
+          "url": "https://rc.majlis.ir/fa/law/show/97463",
+          "source_id": "src_majlis_research",
+          "source_class": "official_legislative_research",
+          "verification_status": "official_url_identified_not_retrieved"
+        },
+        {
           "title": "متن قانون صدور چک در پایگاه ثانویه قانون",
           "url": "https://law-ir.ir/law/cat/1692/",
           "source_id": "src_law_ir",
@@ -5073,7 +5097,8 @@
         "current_validity_verified": false,
         "effective_date": null,
         "last_primary_source_check": null,
-        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است.",
+        "official_source_link_identified": true
       }
     },
     {
@@ -6205,6 +6230,13 @@
       "article_refs": [],
       "sources": [
         {
+          "title": "سامانه ملی قوانین و مقررات؛ پیوند رسمی شناسایی‌شده اما دریافت‌نشده",
+          "url": "https://qavanin.ir/Law/TreeText/?IDS=8323921457009018779",
+          "source_id": "src_national_laws",
+          "source_class": "official_law_portal",
+          "verification_status": "official_url_identified_not_retrieved"
+        },
+        {
           "title": "پیوند چاپ قانون در روزنامه رسمی؛ شناسایی شده اما دریافت و تطبیق نشده",
           "url": "https://www.rrk.ir/Laws/PrintLaw.aspx?Code=29068",
           "source_id": "src_official_gazette",
@@ -6271,6 +6303,13 @@
       ],
       "article_refs": [],
       "sources": [
+        {
+          "title": "سامانه ملی قوانین و مقررات؛ پیوند رسمی شناسایی‌شده اما دریافت‌نشده",
+          "url": "https://qavanin.ir/Law/TreeText/?IDS=8323921457009018779",
+          "source_id": "src_national_laws",
+          "source_class": "official_law_portal",
+          "verification_status": "official_url_identified_not_retrieved"
+        },
         {
           "title": "گزارش خبرگزاری تسنیم، ۱۴۰۵/۰۸/۰۶",
           "url": "https://www.tasnimnews.ir/fa/news/1405/08/06/3734130/",
