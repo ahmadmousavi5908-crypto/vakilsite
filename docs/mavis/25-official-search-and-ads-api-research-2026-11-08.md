@@ -136,3 +136,15 @@
 - https://support.google.com/webmasters/answer/16984139
 - https://developers.google.com/search/docs/fundamentals/ai-optimization-guide
 - https://supabase.com/docs/guides/platform/backups
+
+
+## 11. اصلاح دسترسی Google Ads API بر اساس مستندات جاری 2026-11-08
+- Developer tokenها از 2026-09-09 sunset شده‌اند؛ سطح دسترسی API اکنون به Google Cloud project متصل است.
+- فعال‌سازی Google Ads API در Cloud project، سطح Test می‌دهد؛ مستند جاری برای Test تا 15,000 operation/day روی test accounts را اعلام می‌کند.
+- Explorer access برای production accounts تا 2,880 operation/day؛ Basic تا 15,000 operation/day؛ Standard بدون سقف operation روزانه اعلام شده است. محدودیت‌ها و permissible use باید برای همان project/feature بررسی شوند.
+- OAuth client/service account و Cloud project مالک credential، عامل تعیین‌کننده access level هستند.
+- این تغییر در مستندات قدیمی‌تر ممکن است منعکس نشده باشد؛ onboarding جدید MAVIS باید مستند September 9, 2026 sunset را مرجع قرار دهد.
+- در صورت نیاز فقط گزارش read-only و مجاز در فاز اول؛ هر عملیات تغییر کمپین/بودجه/آگهی همچنان نیازمند preview و approval انسانی است.
+منابع:
+- https://developers.google.com/google-ads/api/docs/api-policy/developer-token
+- https://developers.google.com/google-ads/api/docs/api-policy/access-levels
