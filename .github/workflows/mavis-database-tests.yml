@@ -37,7 +37,7 @@ jobs:
 
       - name: Start isolated local Supabase stack
         run: |
-          if ! supabase start -x imgproxy,logflare,vector,inbucket > /tmp/mavis-supabase-start.log 2>&1; then
+          if ! supabase start -x imgproxy,logflare,vector,mailpit > /tmp/mavis-supabase-start.log 2>&1; then
             awk 'tolower($0) ~ /(key|secret|token|jwt|sb_)/ { print "[REDACTED: sensitive startup output]"; next } { print }' /tmp/mavis-supabase-start.log
             exit 1
           fi
