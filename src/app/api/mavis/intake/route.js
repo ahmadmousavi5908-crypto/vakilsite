@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createServiceClient } from "../../../../lib/supabase/service";
 import { triageLegalIntake } from "../../../../lib/mavis/legal-intake-triage.mjs";
 import { validatePublicIntake } from "../../../../lib/mavis/public-intake-validation.mjs";
+import { getIntakeConsentVersion } from "../../../../lib/mavis/public-intake-copy.mjs";
 import {
   createIntakeRateLimitHash,
   getTrustedClientIp,
@@ -60,7 +61,7 @@ async function readBoundedJson(request) {
 }
 
 export async function POST(request) {
-  if (process.env.MAVIS_INTAKE_ENABLED !== "true") {
+  if (process.env.MAVIS_INTAKE_ENABLED !== "true" || process.env.MAVIS_INTAKE_SCHEMA_READY !== "true") {
     return errorResponse("INTAKE_DISABLED", "ثبت درخواست آنلاین در حال حاضر فعال نیست.", 503);
   }
 
@@ -85,13 +86,13 @@ export async function POST(request) {
   }
 
   const retentionDays = parseIntakeRetentionDays(process.env.MAVIS_INTAKE_RETENTION_DAYS);
-  const consentVersion = process.env.MAVIS_INTAKE_CONSENT_VERSION;
+  const consentVersion = getIntakeConsentVersion(retentionDays);
   const rateLimitSecret = process.env.MAVIS_INTAKE_RATE_LIMIT_SECRET;
   const trustedIp = getTrustedClientIp(request.headers, process.env.MAVIS_TRUST_X_REAL_IP === "true");
   const keyHash = createIntakeRateLimitHash(trustedIp, rateLimitSecret);
 
   if (!retentionDays || typeof consentVersion !== "string" ||
-      consentVersion.trim().length < 1 || consentVersion.length > 40 ||
+      consentVersion.length > 40 ||
       !keyHash) {
     return errorResponse("INTAKE_NOT_CONFIGURED", "تنظیمات امن ثبت درخواست کامل نیست.", 503);
   }
