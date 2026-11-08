@@ -11,7 +11,8 @@
     "laws": 16,
     "articles": 22,
     "faqs": 8,
-    "query_expansions": 350
+    "query_expansions": 350,
+    "source_registry": 9
   },
   "categories": [
     {
@@ -4606,5 +4607,97 @@
     "وضعیت اعتبار و اصلاحات قوانین در همه رکوردها به‌طور کامل از منابع اولیه تنقیح نشده است؛ برچسب بازبینی هر رکورد باید جدی گرفته شود.",
     "برای موضوعات زمان‌دار، مهلت‌ها، دعاوی فوری و پرونده‌های دارای جزئیات، بررسی وکیل و متن رسمی روز ضروری است.",
     "در حالت آفلاین هیچ درخواست یا اطلاعات پرونده‌ای به سرور ارسال نمی‌شود و پرسش‌ها در این صفحه ذخیره نمی‌شوند."
+  ],
+  "source_registry": [
+    {
+      "id": "src_official_gazette",
+      "name": "روزنامه رسمی جمهوری اسلامی ایران",
+      "url": "https://www.rrk.ir/",
+      "class": "primary_publication",
+      "authority": "مرجع رسمی انتشار قوانین و مقررات و اسناد مشمول انتشار رسمی",
+      "use": "کنترل شماره و تاریخ انتشار رسمی، متن منتشرشده و نسخه نهایی سند",
+      "priority": 1,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_national_laws",
+      "name": "سامانه ملی قوانین و مقررات کشور",
+      "url": "https://qavanin.ir/",
+      "class": "official_law_portal",
+      "authority": "پایگاه دولتی قوانین و مقررات کشور",
+      "use": "جست‌وجو و تطبیق متن قوانین، مقررات، اصلاحات و اطلاعات تنقیحی؛ کنترل نهایی با انتشار رسمی",
+      "priority": 1,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_majlis_research",
+      "name": "مرکز پژوهش‌های مجلس شورای اسلامی",
+      "url": "https://rc.majlis.ir/fa/law",
+      "class": "official_legislative_research",
+      "authority": "مرجع رسمی پژوهش و اطلاعات تقنینی مجلس",
+      "use": "سوابق تقنینی، متن‌های پژوهشی و اطلاعات مرتبط با مصوبات؛ جایگزین روزنامه رسمی برای اثبات انتشار نهایی نیست",
+      "priority": 2,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_lawlex",
+      "name": "لالکس",
+      "url": "https://lawlex.ir/",
+      "class": "secondary_legal_database",
+      "authority": "پایگاه خصوصی تجمیع قوانین، آرا و نظریات",
+      "use": "کشف ارتباطات، جست‌وجوی ثانویه و یافتن شناسه منابع برای تطبیق با مراجع رسمی",
+      "priority": 3,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_law_ir",
+      "name": "پایگاه حقوقی قانون",
+      "url": "https://law-ir.ir/",
+      "class": "secondary_legal_database",
+      "authority": "پایگاه ثانویه متون و منابع حقوقی",
+      "use": "کشف متن و ارجاع؛ هرگز تنها مبنای تأیید اعتبار روز قانون نباشد",
+      "priority": 3,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_adlio",
+      "name": "ادلیو",
+      "url": "https://adlio.ir/",
+      "class": "secondary_legal_database",
+      "authority": "پایگاه ثانویه متون حقوقی",
+      "use": "کشف متن و کلیدواژه؛ تطبیق با نسخه رسمی الزامی است",
+      "priority": 3,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_iran_data_portal",
+      "name": "Iran Data Portal – Laws and Regulations",
+      "url": "https://irandataportal.syr.edu/laws-and-regulations/",
+      "class": "secondary_translation_archive",
+      "authority": "مجموعه دانشگاهی اسناد و ترجمه‌های منتخب",
+      "use": "پژوهش تطبیقی و کشف منابع؛ ترجمه‌ها منتخب و لزوماً روزآمد نیستند",
+      "priority": 4,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_loc_iran_guide",
+      "name": "کتابخانه کنگره آمریکا – راهنمای حقوق ایران",
+      "url": "https://wwws.loc.gov/law/help/guide/nations/iran.php",
+      "class": "research_guide",
+      "authority": "راهنمای کتابخانه‌ای منابع حقوقی",
+      "use": "کشف منابع اولیه و مسیرهای پژوهش؛ نه منبع متن لازم‌الاجرا",
+      "priority": 4,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_ecoi_law_guide",
+      "name": "ecoi.net – راهنمای منابع حقوق ایران",
+      "url": "https://www.ecoi.net/en/countries/islamic-republic-of-iran/law-guide/",
+      "class": "research_guide",
+      "authority": "راهنمای پژوهشی ثانویه",
+      "use": "شناسایی درگاه‌ها و منابع برای شروع پژوهش؛ تاریخ و اعتبار هر متن باید مستقل بررسی شود",
+      "priority": 4,
+      "live_access_checked": false
+    }
   ]
 }
