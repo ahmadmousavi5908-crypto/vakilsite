@@ -93,6 +93,31 @@ export async function POST(request) {
     );
   }
 
+  let rateLimitResult;
+  try {
+    rateLimitResult = await access.supabase.rpc("consume_mavis_knowledge_search_limit");
+  } catch {
+    rateLimitResult = { error: true };
+  }
+
+  const rateLimit = parseKnowledgeSearchRateLimit(rateLimitResult);
+  if (rateLimit.status === "unavailable") {
+    return NextResponse.json(
+      { error: { code: "RATE_LIMIT_UNAVAILABLE", message: "کنترل ظرفیت سرویس در دسترس نیست؛ جست‌وجو موقتاً متوقف شد." } },
+      { status: 503, headers: NO_STORE_HEADERS },
+    );
+  }
+
+  if (rateLimit.status === "limited") {
+    return NextResponse.json(
+      { error: { code: "RATE_LIMITED", message: "تعداد درخواست‌های جست‌وجو بیش از حد مجاز است. کمی بعد دوباره تلاش کنید." } },
+      {
+        status: 429,
+        headers: { ...NO_STORE_HEADERS, "Retry-After": String(rateLimit.retryAfterSeconds) },
+      },
+    );
+  }
+
   if (!isJsonContentType(request.headers.get("content-type"))) {
     return NextResponse.json(
       { error: { code: "UNSUPPORTED_MEDIA_TYPE", message: "نوع محتوای درخواست باید JSON باشد." } },
@@ -130,31 +155,6 @@ export async function POST(request) {
     return NextResponse.json(
       { error: { code: "INVALID_LIMIT", message: "تعداد نتایج باید عدد صحیح بین ۱ تا ۲۰ باشد." } },
       { status: 400, headers: NO_STORE_HEADERS },
-    );
-  }
-
-  let rateLimitResult;
-  try {
-    rateLimitResult = await access.supabase.rpc("consume_mavis_knowledge_search_limit");
-  } catch {
-    rateLimitResult = { error: true };
-  }
-
-  const rateLimit = parseKnowledgeSearchRateLimit(rateLimitResult);
-  if (rateLimit.status === "unavailable") {
-    return NextResponse.json(
-      { error: { code: "RATE_LIMIT_UNAVAILABLE", message: "کنترل ظرفیت سرویس در دسترس نیست؛ جست‌وجو موقتاً متوقف شد." } },
-      { status: 503, headers: NO_STORE_HEADERS },
-    );
-  }
-
-  if (rateLimit.status === "limited") {
-    return NextResponse.json(
-      { error: { code: "RATE_LIMITED", message: "تعداد درخواست‌های جست‌وجو بیش از حد مجاز است. کمی بعد دوباره تلاش کنید." } },
-      {
-        status: 429,
-        headers: { ...NO_STORE_HEADERS, "Retry-After": String(rateLimit.retryAfterSeconds) },
-      },
     );
   }
 
