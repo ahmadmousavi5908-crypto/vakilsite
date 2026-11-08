@@ -45,7 +45,7 @@ export function validatePublicIntake(input) {
       opposingParty: opposingParty || null,
       consentPurpose: "initial_intake_review",
       marketingConsent: input.marketingConsent === true,
-      thirdPartyConsent: input.thirdPartyConsent === true,
+      thirdPartyDataNoticeAcknowledged: input.thirdPartyDataNoticeAcknowledged === true,
     },
     warnings: [
       "این اعتبارسنجی به معنی ثبت درخواست یا ایجاد رابطه وکالتی نیست.",
