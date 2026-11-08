@@ -63,13 +63,14 @@ select is(
     30
   ) ->> 'ok')::boolean,
   true,
-  'anonymous visitor can submit through the validated RPC'
+  'server-side service role can submit through the validated RPC'
 );
 
 select is(
   (public.submit_mavis_public_intake(
     '{"contact_name":"کاربر آزمایشی","contact_phone":"+989121234567","contact_email":null,"preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی برای بررسی اولیه موضوع حقوقی و هماهنگی تماس.","privacy_notice_accepted":true,"contact_consent":true,"third_party_consent":false,"marketing_consent":false}'::jsonb,
     repeat('a',64),
+    repeat('f',64),
     '11111111-1111-4111-8111-111111111111'::uuid,
     'test-v1',
     30
