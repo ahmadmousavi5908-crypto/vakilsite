@@ -8,6 +8,7 @@ This is a separate, public, deterministic knowledge-retrieval and answer-composi
 - A scoped service worker caches only this standalone application and its public knowledge bundle.
 - Subsequent searches and preliminary answer composition run locally in the browser. The top retrieved record is presented with its source status, a topic-specific information checklist and an explicit no-match response. No ChatGPT, LLM, external API, server-side search endpoint, or network request is required for search or answer composition.
 - Search text is not persisted and is not transmitted.
+- Primary-document verification and current legal validity are separate states. Even when an exact primary document has been reviewed, the interface does not imply that later amendments or current validity were checked unless a valid primary-source review date and explicit validity flag are present.
 - Only this offline knowledge surface is guaranteed by this service worker. The rest of the website, online intake, WhatsApp, and live legal-source checks are not guaranteed offline.
 
 ## Dataset
