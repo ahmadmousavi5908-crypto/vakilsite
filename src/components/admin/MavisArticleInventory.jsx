@@ -2,6 +2,7 @@
 
 import { Fragment, useMemo, useState } from "react";
 import { safeExternalHttpUrl } from "../../lib/mavis/request-guards.mjs";
+import { normalizeGrowthText } from "../../lib/mavis/growth-audit.mjs";
 import styles from "./MavisArticleInventory.module.css";
 
 export default function MavisArticleInventory({ articles, audit }) {
@@ -14,10 +15,10 @@ export default function MavisArticleInventory({ articles, audit }) {
   const categories = useMemo(() => [...new Set(articles.map((article) => article.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, "fa")), [articles]);
 
   const visible = useMemo(() => {
-    const needle = query.trim().toLocaleLowerCase("fa-IR");
+    const needle = normalizeGrowthText(query);
     const rows = articles.filter((article) => {
       const report = reportBySlug.get(article.slug);
-      const searchable = [article.title, article.slug, article.category, article.excerpt, article.intro, ...(article.sections || []).map((section) => section.heading)].join(" ").toLocaleLowerCase("fa-IR");
+      const searchable = normalizeGrowthText([article.title, article.slug, article.category, article.excerpt, article.intro, article.warning, ...(article.sections || []).map((section) => section.heading), ...(article.sections || []).map((section) => section.body), ...(article.checklist || [])].join(" "));
       if (needle && !searchable.includes(needle)) return false;
       if (category !== "all" && article.category !== category) return false;
       if (issue === "critical" && !(report?.criticalCount > 0)) return false;
