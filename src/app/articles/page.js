@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { articles } from "../../data/articles";
+import { getPublishedArticles } from "../../lib/mavis/articles-repository";
 
 export const metadata = {
   title: "راهنماها و مقالات حقوقی | سید احمد موسوی",
@@ -7,7 +7,10 @@ export const metadata = {
   alternates: { canonical: "/articles" },
 };
 
-export default function ArticlesPage() {
+export const revalidate = 300;
+
+export default async function ArticlesPage() {
+  const articles = await getPublishedArticles();
   const featured = articles[0];
   const remaining = articles.slice(1);
   return (
