@@ -69,7 +69,7 @@ jobs:
         run: node --test tests/mavis/legal-provenance-contract.test.mjs
 
       - name: Test legal evidence provenance and research dossier
-        run: node --test tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
+        run: node --test tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs scripts/mavis/verify-local.mjs
 
       - name: Test intake admin, request, consent copy, rate limits and Search Console adapters
         run: node --test tests/mavis/intake-admin.test.mjs tests/mavis/intake-request.test.mjs tests/mavis/rate-limit.test.mjs tests/mavis/public-intake-copy.test.mjs tests/mavis/search-console-adapter.test.mjs
