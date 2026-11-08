@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import styles from "./MavisIntakeInbox.module.css";
 
 const statusOptions = [
@@ -69,10 +69,6 @@ export default function MavisIntakeInbox() {
     }
   }, [offset, statusFilter]);
 
-  useEffect(() => {
-    loadItems();
-  }, [loadItems]);
-
   async function updateStatus(item, nextStatus) {
     if (!nextStatus || nextStatus === item.status || updatingId) return;
     setUpdatingId(item.id);
@@ -122,6 +118,7 @@ export default function MavisIntakeInbox() {
 
       {error && <p className={styles.error} role="alert">{error}</p>}
       {loading && <p className={styles.status} role="status">در حال دریافت اطلاعات محرمانه...</p>}
+      {!loaded && !loading && <p className={styles.empty}>برای مشاهده درخواست‌های ثبت‌شده، فهرست را بارگذاری کنید.</p>}
       {loaded && !loading && items.length === 0 && <p className={styles.empty}>درخواستی با این فیلتر پیدا نشد.</p>}
 
       {items.length > 0 && (
