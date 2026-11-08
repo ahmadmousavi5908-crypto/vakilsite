@@ -1,6 +1,6 @@
 begin;
 
-select plan(32);
+select plan(45);
 
 select ok(has_schema_privilege('service_role', 'mavis_intake_private', 'USAGE'),
   'server service role can access the private intake schema');
@@ -86,6 +86,55 @@ select ok(has_column('mavis_intake_private', 'submissions', 'initial_review_cons
   'initial review consent timestamp is retained');
 select ok(has_column('mavis_intake_private', 'submissions', 'marketing_consent_at'),
   'marketing consent has an independent timestamp');
+
+
+select ok(has_function_privilege('service_role',
+  'public.consume_mavis_public_intake_rate_limit(text)', 'EXECUTE'),
+  'service role can call the public rate-limit invoker wrapper');
+select ok(not has_function_privilege('anon',
+  'public.consume_mavis_public_intake_rate_limit(text)', 'EXECUTE'),
+  'anonymous users cannot call the public rate-limit wrapper');
+select ok(not has_function_privilege('authenticated',
+  'public.consume_mavis_public_intake_rate_limit(text)', 'EXECUTE'),
+  'authenticated users cannot call the public rate-limit wrapper');
+
+select ok(has_function_privilege('service_role',
+  'public.submit_mavis_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)', 'EXECUTE'),
+  'service role can call the public intake invoker wrapper');
+select ok(not has_function_privilege('anon',
+  'public.submit_mavis_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)', 'EXECUTE'),
+  'anonymous users cannot call the public intake wrapper directly');
+select ok(not has_function_privilege('authenticated',
+  'public.submit_mavis_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)', 'EXECUTE'),
+  'authenticated users cannot call the public intake wrapper');
+
+select ok(has_function_privilege('service_role',
+  'public.purge_mavis_expired_public_intake(timestamp with time zone)', 'EXECUTE'),
+  'service role can call the public retention invoker wrapper');
+select ok(not has_function_privilege('anon',
+  'public.purge_mavis_expired_public_intake(timestamp with time zone)', 'EXECUTE'),
+  'anonymous users cannot call the public retention wrapper');
+select ok(not has_function_privilege('authenticated',
+  'public.purge_mavis_expired_public_intake(timestamp with time zone)', 'EXECUTE'),
+  'authenticated users cannot call the public retention wrapper');
+
+select ok(not (select prosecdef from pg_proc
+  where oid = 'public.consume_mavis_public_intake_rate_limit(text)'::regprocedure),
+  'public rate-limit wrapper uses invoker privileges');
+select ok(not (select prosecdef from pg_proc
+  where oid = 'public.submit_mavis_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)'::regprocedure),
+  'public intake wrapper uses invoker privileges');
+select ok(not (select prosecdef from pg_proc
+  where oid = 'public.purge_mavis_expired_public_intake(timestamp with time zone)'::regprocedure),
+  'public retention wrapper uses invoker privileges');
+
+select ok((select prosecdef from pg_proc
+  where oid = 'mavis_intake_private.submit_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)'::regprocedure),
+  'private intake submit function uses SECURITY DEFINER');
+select ok((select coalesce(proconfig @> array['search_path=""'], false)
+  from pg_proc
+  where oid = 'mavis_intake_private.submit_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)'::regprocedure),
+  'private intake submit function has an empty search_path');
 
 select * from finish();
 rollback;
