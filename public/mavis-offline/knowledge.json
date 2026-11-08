@@ -12,7 +12,7 @@
     "articles": 22,
     "faqs": 8,
     "query_expansions": 350,
-    "source_registry": 21,
+    "source_registry": 16,
     "research_notes": 5
   },
   "categories": [
@@ -6624,56 +6624,6 @@
       "priority": 1,
       "live_access_checked": false,
       "evidence_url": "https://eadil.com/"
-    },
-    {
-      "id": "src_tasnim_news",
-      "name": "خبرگزاری تسنیم",
-      "url": "https://www.tasnimnews.ir/",
-      "class": "secondary_news_reporting",
-      "authority": "خبرگزاری؛ بازتاب اظهارات و اطلاعیه‌های اشخاص و نهادهای رسمی",
-      "use": "کشف خبر و نقل اظهارات مقام‌ها؛ جایگزین بخشنامه، متن قانون یا روزنامه رسمی نیست",
-      "priority": 3,
-      "live_access_checked": false
-    },
-    {
-      "id": "src_ekhtebar",
-      "name": "پایگاه خبری اختبار",
-      "url": "https://www.ekhtebar.ir/",
-      "class": "secondary_legal_news",
-      "authority": "رسانه و پایگاه خبری حقوقی",
-      "use": "کشف اصلاحات و اخبار حقوقی؛ متن نهایی باید با مرجع رسمی تطبیق داده شود",
-      "priority": 3,
-      "live_access_checked": false
-    },
-    {
-      "id": "src_fasl3",
-      "name": "فصل سوم",
-      "url": "https://fasl3.ir/",
-      "class": "secondary_legal_commentary",
-      "authority": "وب‌سایت محتوایی و توضیحی حقوقی",
-      "use": "کشف موضوع و توضیحات تکمیلی؛ منبع رسمی قانون نیست",
-      "priority": 4,
-      "live_access_checked": false
-    },
-    {
-      "id": "src_wipo_lex",
-      "name": "WIPO Lex",
-      "url": "https://www.wipo.int/wipolex/",
-      "class": "international_secondary_legal_archive",
-      "authority": "پایگاه جهانی قوانین و اسناد مالکیت فکری و حقوقی",
-      "use": "آرشیو و ترجمه‌های منتخب برای پژوهش تطبیقی؛ نسخه فارسی رسمی و روزآمد ایران را تضمین نمی‌کند",
-      "priority": 4,
-      "live_access_checked": false
-    },
-    {
-      "id": "src_asbahi_lawyer",
-      "name": "پایگاه حقوقی اسبهی",
-      "url": "https://asbahi-lawyer.ir/",
-      "class": "secondary_legal_commentary",
-      "authority": "وب‌سایت حقوقی و انتشار مطالب/نظریات",
-      "use": "کشف نظریات و تحلیل‌ها؛ نظریه مشورتی منبع تفسیری است نه متن قانون",
-      "priority": 4,
-      "live_access_checked": false
     },
     {
       "id": "src_tasnim_news",
