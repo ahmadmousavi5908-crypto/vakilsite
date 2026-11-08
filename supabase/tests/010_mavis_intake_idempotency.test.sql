@@ -115,27 +115,27 @@ select throws_ok(
   'the same idempotency key cannot be reused for a different request fingerprint'
 );
 
-select is((select id from public.submit_mavis_public_intake_idempotent(
-  jsonb_build_object(
-    'fullName', 'علی رضایی',
-    'phone', '09123456789',
-    'caseType', 'civil',
-    'summary', 'برای بررسی اولیه مطالبه وجه قرارداد و تعهدات قراردادی درخواست راهنمایی دارم.',
-    'urgency', 'soon',
-    'opposingParty', '',
-    'consent', true,
-    'marketingConsent', false,
-    'thirdPartyDataNoticeAcknowledged', false
-  ),
-  'standard_human_review',
-  array[]::text[],
-  false,
-  clock_timestamp() + interval '30 days',
-  'intake-consent-v1',
-  '20000000-0000-4000-8000-000000000002'::uuid,
-  repeat('a', 64)
-)),
-  (select id from mavis_idempotent_first) is distinct from null,
+select ok(
+  (select id from public.submit_mavis_public_intake_idempotent(
+    jsonb_build_object(
+      'fullName', 'علی رضایی',
+      'phone', '09123456789',
+      'caseType', 'civil',
+      'summary', 'برای بررسی اولیه مطالبه وجه قرارداد و تعهدات قراردادی درخواست راهنمایی دارم.',
+      'urgency', 'soon',
+      'opposingParty', '',
+      'consent', true,
+      'marketingConsent', false,
+      'thirdPartyDataNoticeAcknowledged', false
+    ),
+    'standard_human_review',
+    array[]::text[],
+    false,
+    clock_timestamp() + interval '30 days',
+    'intake-consent-v1',
+    '20000000-0000-4000-8000-000000000002'::uuid,
+    repeat('a', 64)
+  )) is distinct from (select id from mavis_idempotent_first),
   'a distinct idempotency key can create a separate intentional submission'
 );
 
