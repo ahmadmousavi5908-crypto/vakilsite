@@ -70,8 +70,8 @@ jobs:
       - name: Test legal evidence provenance and research dossier
         run: node --test tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
 
-      - name: Test intake admin, request, consent copy and Search Console adapters
-        run: node --test tests/mavis/intake-admin.test.mjs tests/mavis/intake-request.test.mjs tests/mavis/public-intake-copy.test.mjs tests/mavis/search-console-adapter.test.mjs
+      - name: Test intake admin, request, consent copy, rate limits and Search Console adapters
+        run: node --test tests/mavis/intake-admin.test.mjs tests/mavis/intake-request.test.mjs tests/mavis/rate-limit.test.mjs tests/mavis/public-intake-copy.test.mjs tests/mavis/search-console-adapter.test.mjs
 
       - name: Lint MAVIS retrieval modules
         run: npm run lint -- src/lib/mavis/knowledge-search.mjs src/lib/mavis/knowledge-registry.js src/lib/mavis/request-guards.mjs src/lib/mavis/rate-limit.mjs src/lib/supabase/admin.js src/app/api/mavis/knowledge-search/route.js src/components/admin/MavisKnowledgeSearch.jsx src/app/admin/mavis/page.js src/app/admin/page.js src/app/admin/login/page.js src/app/admin/login/actions.js tests/mavis/knowledge-search.test.mjs
@@ -90,7 +90,7 @@ jobs:
 
       - name: Lint intake and growth modules
         if: ${{ hashFiles('src/lib/mavis/public-intake-validation.mjs') != '' }}
-        run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/growth-metrics.mjs src/lib/mavis/legal-intake-triage.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs tests/mavis/legal-intake-triage.test.mjs
+        run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/intake-request.mjs src/lib/mavis/intake-admin.mjs src/lib/mavis/growth-metrics.mjs src/lib/mavis/legal-intake-triage.mjs src/app/api/mavis/intake/route.js src/app/api/admin/mavis/intake/route.js src/app/mavis/intake/page.js src/components/public/MavisPublicIntakeForm.jsx src/components/admin/MavisIntakeInbox.jsx tests/mavis/intake-request.test.mjs tests/mavis/intake-admin.test.mjs tests/mavis/rate-limit.test.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs tests/mavis/legal-intake-triage.test.mjs
 
       - name: Lint legal evidence and provenance contract modules
         run: npm run lint -- src/lib/mavis/legal-provenance-contract.mjs tests/mavis/legal-provenance-contract.test.mjs scripts/mavis/validate-offline-bundle.mjs src/lib/mavis/legal-evidence.mjs src/lib/mavis/legal-research-dossier.mjs tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
