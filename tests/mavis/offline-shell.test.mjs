@@ -45,7 +45,7 @@ test("network cache writes extend the service-worker event lifetime", () => {
 
 test("offline readiness is not announced before service-worker activation", () => {
   assert.match(app, /updateCacheStatus\("pending"\)/);
-  assert.match(app, /worker\.state==="activated"\)updateCacheStatus\("ready"\)/);
+  assert.match(app, /worker\.state==="activated"&&registration\.active===worker\)updateCacheStatus\("ready"\)/);
   assert.match(app, /worker\.state==="redundant"\)updateCacheStatus\("failed"\)/);
   assert.match(app, /updateCacheStatus\("unsupported"\)/);
 });
