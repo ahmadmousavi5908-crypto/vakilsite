@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - security/restrict-social-links-grants-20261108
+      - integration/mavis-mvp-candidate-20261108
   pull_request:
     branches:
       - integration/mother-two-research-only-20261106
+      - security/restrict-social-links-grants-20261108
   workflow_dispatch:
 
 permissions:
