@@ -1,6 +1,6 @@
 begin;
 
-select plan(10);
+select plan(11);
 
 select ok(
   not has_schema_privilege('authenticated', 'mavis_private', 'USAGE'),
@@ -33,6 +33,10 @@ select ok(
 select ok(
   not has_function_privilege('anon', 'public.consume_mavis_knowledge_search_limit()', 'EXECUTE'),
   'anonymous users cannot call the rate-limit function'
+);
+select ok(
+  not has_function_privilege('service_role', 'public.consume_mavis_knowledge_search_limit()', 'EXECUTE'),
+  'service role does not receive unnecessary execute permission'
 );
 select ok(
   (select prosecdef from pg_proc where oid = 'public.consume_mavis_knowledge_search_limit()'::regprocedure),
