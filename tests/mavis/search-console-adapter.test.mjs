@@ -66,6 +66,16 @@ test("supports the hourly dimension and validates News Showcase aggregation", ()
   assert.equal(invalidShowcase.reason, "invalid_news_showcase_aggregation");
 });
 
+test("masks sensitive values embedded in page URL query parameters", () => {
+  const result = normalizeSearchAnalyticsResponse({
+    rows: [{ keys: ["قانون مدنی", "https://vakilahmadmousavi.ir/page?phone=09123456789"], clicks: 1, impressions: 2, ctr: 0.5, position: 4 }],
+  }, { ...request, dimensions: ["query", "page"] });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.rows[0].dimensions.page, null);
+  assert.equal(result.rows[0].privacyReviewRequired, true);
+});
+
 test("reports partial recent data and row-limit risk explicitly", () => {
   const result = normalizeSearchAnalyticsResponse({
     rows: [{ keys: ["قانون مدنی", "https://vakilahmadmousavi.ir/"], clicks: 1, impressions: 5, ctr: 0.2, position: 3 }],
