@@ -40,7 +40,7 @@
 | Retention/purge | Only policy-eligible records purged; audit cutoff is bounded by an approved retention policy and cannot be chosen ad hoc |
 
 **Pass:** integration tests prove each failure path, RLS/grants and server authorization agree, no private payload is emitted to logs or public responses, and an approved scheduler runs retention purges with observable last-success/failure state and alerting.  
-**Current state:** Database CI completed successfully on candidate commit `031ca8f2a7be0892a647698a5778967214f5dc46`, including isolated Supabase startup, all migrations and pgTAP security tests. The application workflow also passed all deterministic retrieval, intake, provenance, growth, lint and site-build steps on that commit. A dedicated per-admin intake-inbox rate limiter now uses a separate counter from knowledge search. A follow-up route-parser naming correction is being validated on the newer candidate commit. No scheduled execution or operational monitoring configuration was found in the candidate repository. The purge audit cutoff is still caller-supplied and accepts any past timestamp, so the approved audit-retention horizon must be defined and enforced before scheduling. Local device/staging failure-injection remains pending.
+**Current state:** Database CI and the application workflow both passed on candidate commit `031ca8f2a7be0892a647698a5778967214f5dc46`, including isolated Supabase startup, all migrations, pgTAP security tests, deterministic retrieval, intake, provenance, growth, lint and site build. The admin intake inbox now has an independent per-admin rate-limit counter and dedicated response parser; the parser naming correction and retention-policy guard are on newer commits awaiting their own exact-head CI result. Migration 009 creates an owner-controlled retention policy table but deliberately seeds no policy. Purge now fails closed until an approved policy is recorded and enabled, enforces minimum submission age independently of the per-record expiry timestamp, and rejects audit cutoffs shorter than the approved minimum. No scheduler or operational alerting is enabled. Local device/staging failure-injection remains pending.
 
 **Scheduler candidate (research only):** Supabase Cron (`pg_cron`) can run database functions directly and records job-run history in `cron.job_run_details`; confirm project/version availability and the current feature stage before enabling it. Do not schedule the purge until the audit-retention policy and safe cutoff are approved.
 
@@ -62,7 +62,8 @@
 - [ ] Local Termux npm ci, legal-library validator, MAVIS tests, lint and production build.
 - [ ] Cold-online then true-offline browser/device test.
 - [ ] Staging tests for DB outage, rate limit, unauthorized access and data retention.
-- [ ] Configure and verify a scheduled retention-purge mechanism, including failure alerting and a documented recovery path.
+- [ ] Obtain owner/legal approval for minimum submission and audit retention periods; record the approval reference and enable the private retention policy only after review.
+- [ ] Configure and verify a scheduled retention-purge mechanism only after policy approval, including failure alerting and a documented recovery path.
 - [ ] Legal reviewer has approved each record that claims primary-source verification.
 - [ ] Privacy review confirms no sensitive intake data in browser storage, public bundle, analytics or logs.
 - [ ] Backup/restore and rollback procedure tested against a disposable staging environment.
