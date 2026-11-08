@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 
 const root = new URL("../../public/mavis-offline/", import.meta.url);
 const connectivityRoute = await readFile(new URL("../../src/app/api/mavis/connectivity/route.js", import.meta.url), "utf8");
+const knowledge = JSON.parse(await readFile(new URL("../../public/mavis-offline/knowledge.json", import.meta.url), "utf8"));
 
 const [html, app, worker] = await Promise.all([
   readFile(new URL("index.html", root), "utf8"),
@@ -55,6 +56,24 @@ test("offline answer panel has visible provenance and accessible live-region mar
   assert.match(html, /\.answer-card\{/);
   assert.match(html, /\.answer-source-status/);
   assert.match(html, /\.answer-caution/);
+});
+
+test("offline public bundle contains no client credentials or intake identity fields", () => {
+  const forbiddenKeys = new Set(["fullName", "phone", "email", "password", "otp", "accessToken", "refreshToken", "trackingCode", "idempotencyKey", "caseFile", "clientId"]);
+  const visit = (value) => {
+    if (!value || typeof value !== "object") return;
+    for (const [key, child] of Object.entries(value)) {
+      assert.ok(!forbiddenKeys.has(key), "private client field leaked into offline bundle: " + key);
+      visit(child);
+    }
+  };
+  visit(knowledge);
+});
+
+test("offline service worker is scoped to the public knowledge route and does not cache private APIs", () => {
+  assert.match(worker, /const OFFLINE_INDEX = "\/mavis-offline\/index\.html"/);
+  assert.match(worker, /url\.pathname\.startsWith\(scopePath\)/);
+  assert.doesNotMatch(worker, /\/api\/|\/admin\/|\/client-portal\//);
 });
 
 test("offline page clearly limits the guarantee to the cached route and downloaded data", () => {
