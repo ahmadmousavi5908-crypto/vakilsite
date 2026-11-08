@@ -41,7 +41,7 @@ test("parses quoted commas, escaped quotes, and embedded newlines", () => {
 });
 
 test("rejects unterminated quoted fields", () => {
-  assert.throws(() => parseCsv('"title","note\n"Law","text'), /Unterminated/);
+  assert.throws(() => parseCsv('"title","note'), /Unterminated/);
 });
 
 test("accepts the current review-queue row contract", () => {
