@@ -3,11 +3,25 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const root = new URL("../../public/mavis-offline/", import.meta.url);
+const connectivityRoute = await readFile(new URL("../../src/app/api/mavis/connectivity/route.js", import.meta.url), "utf8");
+
 const [html, app, worker] = await Promise.all([
   readFile(new URL("index.html", root), "utf8"),
   readFile(new URL("app.js", root), "utf8"),
   readFile(new URL("sw.js", root), "utf8"),
 ]);
+
+test("offline connectivity status probes the uncached same-origin server independently of navigator.onLine", () => {
+  assert.match(app, /if\(!navigator\.onLine\)/);
+  assert.match(app, /fetch\("\/api\/mavis\/connectivity"/);
+  assert.match(app, /cache:"no-store"/);
+  assert.match(app, /credentials:"omit"/);
+  assert.match(app, /setTimeout\(\(\)=>controller\.abort\(\),1800\)/);
+  assert.match(app, /جست‌وجوی آفلاین همچنان فعال است/);
+  assert.match(connectivityRoute, /force-dynamic/);
+  assert.match(connectivityRoute, /Cache-Control/);
+  assert.match(connectivityRoute, /no-store, no-cache, must-revalidate/);
+});
 
 test("offline service worker precaches every runtime dependency", () => {
   for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json"]) {
