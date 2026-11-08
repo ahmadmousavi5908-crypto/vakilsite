@@ -38,6 +38,7 @@
 - [نقشه جامع دسترسی دانش MAVIS و بازیابی بکاپ مادر دو](./27-project-knowledge-access-and-mother-two-recovery-plan.md)
 - [نقشه اجرایی یکپارچه، ماتریس اتصال‌ها و معیارهای پذیرش MAVIS](./28-execution-blueprint-and-integration-acceptance.md)
 - [مانیفست دانلود نسخه‌بندی‌شده مستندات برای Termux](./29-termux-docs-download-manifest-2026-11-08.json)
+- [مانیفست به‌روزشده دانلود مستندات برای Termux (نسخه R2)](./30-termux-docs-download-manifest-2026-11-08-r2.json) — مرجع دانلود فعلی
 
 ## اسناد تکمیلی محصول و اجرا
 
