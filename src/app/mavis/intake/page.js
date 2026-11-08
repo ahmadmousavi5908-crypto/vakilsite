@@ -1,3 +1,4 @@
+import Link from "next/link";
 import MavisPublicIntakeForm from "../../../components/public/MavisPublicIntakeForm";
 import styles from "./page.module.css";
 import { parseIntakeRetentionDays } from "../../../lib/mavis/intake-request.mjs";
@@ -26,7 +27,7 @@ export default function MavisIntakePage() {
   return (
     <main className={styles.page} dir="rtl">
       <div className={styles.shell}>
-        <a className={styles.back} href="/">بازگشت به وب‌سایت</a>
+        <Link className={styles.back} href="/">بازگشت به وب‌سایت</Link>
         {enabled ? (
           <MavisPublicIntakeForm retentionDays={retentionDays} />
         ) : (
@@ -34,7 +35,7 @@ export default function MavisIntakePage() {
             <span>گروه وکیل سید احمد موسوی</span>
             <h1 id="mavis-intake-disabled-title">ثبت درخواست بررسی اولیه</h1>
             <p>فرم آنلاین در حال حاضر فعال نیست. برای جلوگیری از ثبت ناقص یا ناامن اطلاعات، تا تکمیل تنظیمات و کنترل‌های لازم امکان ارسال درخواست وجود ندارد.</p>
-            <a href="/">بازگشت به وب‌سایت</a>
+            <Link href="/">بازگشت به وب‌سایت</Link>
           </section>
         )}
       </div>
