@@ -9,6 +9,7 @@ export const metadata = {
 
 export default function MavisIntakePage() {
   const enabled = process.env.MAVIS_INTAKE_ENABLED === "true"
+    && Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL)
     && Boolean(process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)
     && process.env.MAVIS_INTAKE_RATE_LIMIT_SECRET?.length >= 32
     && Boolean(process.env.MAVIS_INTAKE_PRIVACY_NOTICE_VERSION)
