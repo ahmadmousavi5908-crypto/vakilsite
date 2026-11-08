@@ -40,7 +40,7 @@ test("rejects unsafe, incomplete and malformed source metadata", () => {
     review_status: "secondary_source_only",
     sources: [
       { title: "No HTTPS", url: "http://example.org" },
-      { title: "No title", url: "https://example.org" },
+      { url: "https://example.org" },
       { title: "Embedded credentials", url: "https://user:pass@example.org/law", source_type: "secondary" },
       { title: "Valid secondary", url: "https://example.org/law", source_type: "secondary" },
     ],
