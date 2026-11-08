@@ -69,6 +69,13 @@ export async function POST(request) {
     );
   }
 
+  if (access.adminCheckAvailable === false) {
+    return NextResponse.json(
+      { error: { code: "AUTHORIZATION_UNAVAILABLE", message: "بررسی سطح دسترسی در حال حاضر ممکن نیست." } },
+      { status: 503, headers: NO_STORE_HEADERS },
+    );
+  }
+
   if (!access.isAdmin) {
     return NextResponse.json(
       { error: { code: "FORBIDDEN", message: "دسترسی به پژوهش داخلی مجاز نیست." } },
