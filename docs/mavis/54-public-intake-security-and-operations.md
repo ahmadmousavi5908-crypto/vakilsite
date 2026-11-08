@@ -69,4 +69,4 @@ The public legal knowledge bundle may work offline after download. Intake submis
 8. Keep public activation disabled until all gates pass.
 
 ## Known limitation
-The PR workflow now initializes an isolated local Supabase stack, applies migrations 001–006, and runs `supabase test db` alongside JavaScript tests, lint and a production build. This is configured but not yet evidenced by a completed workflow run. No live Supabase project has been inspected or changed; a passing local CI run still does not prove production Exposed-schema, proxy or secret settings.
+The PR workflow now initializes an isolated local Supabase stack, applies migrations 001–006, and runs `supabase test db` alongside JavaScript tests, lint and a production build. GitHub Actions run `42488596311` passed: the clean local Supabase stack applied migrations, all 53 migration-006 pgTAP assertions and the existing migration-005 tests passed, as did 10 Node guard tests, lint and the production build. No live Supabase project has been inspected or changed; a passing local CI run still does not prove production Exposed-schema, proxy or secret settings.
