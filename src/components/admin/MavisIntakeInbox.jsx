@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./MavisIntakeInbox.module.css";
 
 const statusOptions = [
@@ -40,9 +40,11 @@ export default function MavisIntakeInbox() {
   const [updatingId, setUpdatingId] = useState("");
   const [error, setError] = useState("");
   const [loaded, setLoaded] = useState(false);
+  const loadingRef = useRef(false);
 
   const loadItems = useCallback(async () => {
-    if (loading) return;
+    if (loadingRef.current) return;
+    loadingRef.current = true;
     setLoading(true);
     setError("");
     const params = new URLSearchParams({ limit: "50", offset: "0" });
@@ -61,9 +63,10 @@ export default function MavisIntakeInbox() {
       setItems([]);
       setError(requestError instanceof Error ? requestError.message : "خطای ناشناخته.");
     } finally {
+      loadingRef.current = false;
       setLoading(false);
     }
-  }, [loading, statusFilter]);
+  }, [statusFilter]);
 
   useEffect(() => {
     loadItems();
@@ -109,7 +112,7 @@ export default function MavisIntakeInbox() {
 
       <div className={styles.toolbar}>
         <label htmlFor="mavis-intake-status-filter">فیلتر وضعیت</label>
-        <select id="mavis-intake-status-filter" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+        <select id="mavis-intake-status-filter" value={statusFilter} disabled={loading} onChange={(event) => setStatusFilter(event.target.value)}>
           <option value="">همه وضعیت‌ها</option>
           {statusOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select>
