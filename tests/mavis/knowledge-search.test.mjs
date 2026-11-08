@@ -228,3 +228,14 @@ test("accepts only a single valid database rate-limit decision", () => {
   assert.deepEqual(parseKnowledgeSearchRateLimit({ data: [{ allowed: false, retry_after_seconds: 999 }], error: null }), { status: "unavailable" });
   assert.deepEqual(parseKnowledgeSearchRateLimit({ data: [{ allowed: "false", retry_after_seconds: 10 }], error: null }), { status: "unavailable" });
 });
+
+import { safeExternalHttpUrl } from "../../src/lib/mavis/request-guards.mjs";
+
+test("accepts safe HTTP(S) source URLs and rejects credentials or other schemes", () => {
+  assert.equal(safeExternalHttpUrl("https://example.com/source"), "https://example.com/source");
+  assert.equal(safeExternalHttpUrl("http://example.com/source"), "http://example.com/source");
+  assert.equal(safeExternalHttpUrl("javascript:alert(1)"), null);
+  assert.equal(safeExternalHttpUrl("//example.com/source"), null);
+  assert.equal(safeExternalHttpUrl("https://user:secret@example.com/source"), null);
+  assert.equal(safeExternalHttpUrl(null), null);
+});
