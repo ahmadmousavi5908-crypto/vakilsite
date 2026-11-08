@@ -60,7 +60,12 @@ export function parseAdminIntakeListResult(result) {
         typeof item.id !== "string" || !UUID_PATTERN.test(item.id) ||
         typeof item.tracking_code !== "string" || !/^[0-9a-f]{32}$/.test(item.tracking_code) ||
         typeof item.full_name !== "string" || typeof item.phone !== "string" ||
-        typeof item.summary !== "string" || !STATUSES.has(item.status)) {
+        typeof item.summary !== "string" || !STATUSES.has(item.status) ||
+        typeof item.initial_review_consent !== "boolean" ||
+        typeof item.initial_review_consent_at !== "string" ||
+        typeof item.consent_version !== "string" ||
+        typeof item.marketing_consent !== "boolean" ||
+        typeof item.third_party_data_notice_acknowledged !== "boolean") {
       return { status: "unavailable" };
     }
   }
