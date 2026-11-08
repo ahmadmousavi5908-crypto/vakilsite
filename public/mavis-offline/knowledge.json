@@ -6625,7 +6625,8 @@
     {
       "id": "src_loc_iran_guide",
       "name": "کتابخانه کنگره آمریکا – راهنمای حقوق ایران",
-      "url": "https://wwws.loc.gov/law/help/guide/nations/iran.php",
+      "url": "https://guides.loc.gov/law-iran",
+      "legacy_url": "https://wwws.loc.gov/law/help/guide/nations/iran.php",
       "class": "research_guide",
       "authority": "راهنمای کتابخانه‌ای منابع حقوقی",
       "use": "کشف منابع اولیه و مسیرهای پژوهش؛ نه منبع متن لازم‌الاجرا",
