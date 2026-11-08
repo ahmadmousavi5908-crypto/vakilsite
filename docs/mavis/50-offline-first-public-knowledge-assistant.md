@@ -9,6 +9,7 @@ Provide a public, first-party, deterministic legal-information retrieval surface
 - Static application at `/mavis-offline/index.html`.
 - Scoped service worker; caches only the offline application shell and its public knowledge bundle.
 - Local Persian normalization and deterministic ranking.
+- Deterministic offline answer composition from the top retrieved record, with source-status labeling, topic-specific information prompts and a conservative no-match response; no missing legal facts are generated.
 - Reuses canonical legal-library records and review labels.
 - Adds query-only colloquial phrases to improve discovery without changing legal meaning.
 - No server request for search, no LLM, no external API, no persistence of typed queries.
