@@ -225,3 +225,23 @@ A dedicated Draft integration PR was created to test the application stack and d
 This is the first verified same-commit run of the full application workflow and database migration/security workflow. It closes the prior gap between separate green PR checks.
 
 **Still not complete:** Mother Two local reconciliation, local Termux build/regression, staging authorization and end-to-end acceptance, lawyer review of primary-source evidence, external provider activation, and production deployment/rollback approval. No production action has been taken.
+
+
+## 9. Final expanded same-commit verification — 2026-11-08
+
+After the first integrated pass, a coverage audit found four unit-test files that were present in the repository but not explicitly included in the combined workflow. The candidate workflow was expanded to include them:
+
+- `intake-admin.test.mjs`
+- `intake-request.test.mjs`
+- `public-intake-copy.test.mjs`
+- `search-console-adapter.test.mjs`
+
+The expanded workflow passed on the new exact candidate commit:
+
+- **Commit:** `827728e0f86813ba4741d151fb5520e1a220b14e`
+- **Application CI:** run `42497741526` — success, including all four added suites, lint and production build.
+- **Database CI:** run `42497741482` — success, migrations 004–006, 4 pgTAP files, 115 assertions, PASS.
+- Both workflows tested the same exact commit.
+- PR #25 remains Draft, unmerged, and GitHub reports it clean/mergeable.
+
+This closes the remote combined-CI gate for the current candidate. It does not close local Mother Two reconciliation, local device/browser checks, staging, lawyer validation of primary-source legal evidence, provider activation, or production operations.
