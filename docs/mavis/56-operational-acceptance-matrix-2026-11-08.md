@@ -39,8 +39,8 @@
 | Unauthorized admin | No private record or audit data disclosed |
 | Retention/purge | Only policy-eligible records purged; audit trail remains compliant |
 
-**Pass:** integration tests prove each failure path, RLS/grants and server authorization agree, and no private payload is emitted to logs or public responses.  
-**Current state:** DB migrations and pgTAP assertions passed in CI; local device/staging failure-injection remains pending.
+**Pass:** integration tests prove each failure path, RLS/grants and server authorization agree, no private payload is emitted to logs or public responses, and an approved scheduler runs retention purges with observable last-success/failure state and alerting.  
+**Current state:** DB migrations and pgTAP assertions passed in CI; a purge function exists, but no scheduled execution or operational monitoring configuration was found in the candidate repository. Local device/staging failure-injection remains pending.
 
 ## Workstream D — Growth intelligence
 
@@ -60,6 +60,7 @@
 - [ ] Local Termux npm ci, legal-library validator, MAVIS tests, lint and production build.
 - [ ] Cold-online then true-offline browser/device test.
 - [ ] Staging tests for DB outage, rate limit, unauthorized access and data retention.
+- [ ] Configure and verify a scheduled retention-purge mechanism, including failure alerting and a documented recovery path.
 - [ ] Legal reviewer has approved each record that claims primary-source verification.
 - [ ] Privacy review confirms no sensitive intake data in browser storage, public bundle, analytics or logs.
 - [ ] Backup/restore and rollback procedure tested against a disposable staging environment.
