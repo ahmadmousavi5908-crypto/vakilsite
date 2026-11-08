@@ -7,6 +7,7 @@ This is a separate, public, deterministic knowledge-retrieval and answer-composi
 - The user must open `/mavis-offline/index.html` once while online and wait for the knowledge bundle to load.
 - A scoped service worker caches only this standalone application and its public knowledge bundle.
 - Subsequent searches and preliminary answer composition run locally in the browser. The top retrieved record is presented with its source status, a topic-specific information checklist and an explicit no-match response. No ChatGPT, LLM, external API, server-side search endpoint, or network request is required for search or answer composition.
+- Network indication distinguishes the browser's network hint from actual MAVIS-origin reachability using a short-timeout, uncached same-origin health probe. If the server is unavailable, local public search remains available.
 - Search text is not persisted and is not transmitted.
 - Only this offline knowledge surface is guaranteed by this service worker. The rest of the website, online intake, WhatsApp, and live legal-source checks are not guaranteed offline.
 

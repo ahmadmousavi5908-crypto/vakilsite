@@ -3,11 +3,31 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const root = new URL("../../public/mavis-offline/", import.meta.url);
+const connectivityRoute = await readFile(new URL("../../src/app/api/mavis/connectivity/route.js", import.meta.url), "utf8");
+const knowledge = JSON.parse(await readFile(new URL("../../public/mavis-offline/knowledge.json", import.meta.url), "utf8"));
+
 const [html, app, worker] = await Promise.all([
   readFile(new URL("index.html", root), "utf8"),
   readFile(new URL("app.js", root), "utf8"),
   readFile(new URL("sw.js", root), "utf8"),
 ]);
+
+test("offline connectivity status probes the uncached same-origin server independently of navigator.onLine", () => {
+  assert.match(app, /if\(!navigator\.onLine\)/);
+  assert.match(app, /fetch\("\/api\/mavis\/connectivity"/);
+  assert.match(app, /cache:"no-store"/);
+  assert.match(app, /credentials:"omit"/);
+  assert.match(app, /setTimeout\(\(\)=>controller\.abort\(\),1800\)/);
+  assert.match(app, /جست‌وجوی آفلاین همچنان فعال است/);
+  assert.match(connectivityRoute, /force-dynamic/);
+  assert.match(connectivityRoute, /Cache-Control/);
+  assert.match(connectivityRoute, /no-store, no-cache, must-revalidate/);
+});
+
+test("network status changes are announced to assistive technology", () => {
+  assert.match(html, /id="network-status" role="status" aria-live="polite"/);
+  assert.match(html, /id="network-dot" aria-hidden="true"/);
+});
 
 test("offline service worker precaches every runtime dependency", () => {
   for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json"]) {
@@ -18,7 +38,7 @@ test("offline service worker precaches every runtime dependency", () => {
 });
 
 test("offline cache reads stay inside the versioned MAVIS cache", () => {
-  assert.match(worker, /const CACHE_NAME = "mavis-offline-v1\.0\.6-/);
+  assert.match(worker, /const CACHE_NAME = "mavis-offline-v1\.0\.8-/);
   assert.match(worker, /caches\.open\(CACHE_NAME\)[\s\S]*?cache\.match\(request\)/);
   assert.doesNotMatch(worker, /caches\.match\(/);
 });
@@ -31,7 +51,7 @@ test("network cache writes extend the service-worker event lifetime", () => {
 
 test("offline readiness is not announced before service-worker activation", () => {
   assert.match(app, /updateCacheStatus\("pending"\)/);
-  assert.match(app, /worker\.state==="activated"\)updateCacheStatus\("ready"\)/);
+  assert.match(app, /worker\.state==="activated"&&registration\.active===worker\)updateCacheStatus\("ready"\)/);
   assert.match(app, /worker\.state==="redundant"\)updateCacheStatus\("failed"\)/);
   assert.match(app, /updateCacheStatus\("unsupported"\)/);
 });
@@ -41,6 +61,24 @@ test("offline answer panel has visible provenance and accessible live-region mar
   assert.match(html, /\.answer-card\{/);
   assert.match(html, /\.answer-source-status/);
   assert.match(html, /\.answer-caution/);
+});
+
+test("offline public bundle contains no client credentials or intake identity fields", () => {
+  const forbiddenKeys = new Set(["fullName", "phone", "email", "password", "otp", "accessToken", "refreshToken", "trackingCode", "idempotencyKey", "caseFile", "clientId"]);
+  const visit = (value) => {
+    if (!value || typeof value !== "object") return;
+    for (const [key, child] of Object.entries(value)) {
+      assert.ok(!forbiddenKeys.has(key), "private client field leaked into offline bundle: " + key);
+      visit(child);
+    }
+  };
+  visit(knowledge);
+});
+
+test("offline service worker is scoped to the public knowledge route and does not cache private APIs", () => {
+  assert.match(worker, /const OFFLINE_INDEX = "\/mavis-offline\/index\.html"/);
+  assert.match(worker, /url\.pathname\.startsWith\(scopePath\)/);
+  assert.doesNotMatch(worker, /\/api\/|\/admin\/|\/client-portal\//);
 });
 
 test("offline page clearly limits the guarantee to the cached route and downloaded data", () => {

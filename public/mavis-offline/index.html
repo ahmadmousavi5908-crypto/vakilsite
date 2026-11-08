@@ -23,7 +23,7 @@ label{display:block;font-weight:700;margin-bottom:8px}form{display:flex;gap:9px;
 <body>
 <header><div class="wrap"><span class="eyebrow">MAVIS · OFFLINE KNOWLEDGE</span><h1>پاسخ‌گوی آفلاین ماویس</h1><p>جست‌وجوی محلی در واژه‌نامه، قوانین ثبت‌شده، خلاصه مواد و پرسش‌های متداول. این بخش بدون اتصال به ChatGPT یا API هوش مصنوعی کار می‌کند.</p></div></header>
 <main class="wrap">
-<div class="statusbar"><span class="pill"><i class="dot" id="network-dot"></i><span id="network-status">در حال بررسی وضعیت اتصال…</span></span><span id="bundle-status">در حال بارگذاری کتابخانه…</span></div>
+<div class="statusbar"><span class="pill"><i class="dot" id="network-dot" aria-hidden="true"></i><span id="network-status" role="status" aria-live="polite">در حال بررسی وضعیت اتصال…</span></span><span id="bundle-status">در حال بارگذاری کتابخانه…</span></div>
 <section class="panel" aria-labelledby="search-title"><h2 id="search-title" style="font-size:18px;margin:0 0 12px">موضوع یا پرسش خود را بنویسید</h2>
 <form id="search-form"><label for="query" style="position:absolute;right:-9999px">عبارت جست‌وجو</label><input id="query" type="search" maxlength="160" minlength="2" placeholder="مثلاً چک برگشتی، قولنامه، مهریه، فیشینگ یا اعتراض به رأی" autocomplete="off" required><button id="submit" type="submit" disabled>جست‌وجو در کتابخانه</button></form>
 <p class="hint">جست‌وجو روی همین دستگاه انجام می‌شود. پرسش شما ذخیره یا به سرور ارسال نمی‌شود.</p>
