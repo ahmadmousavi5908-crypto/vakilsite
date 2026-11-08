@@ -8,6 +8,7 @@ on:
       - integration/mavis-release-closure-20261109
   pull_request:
     branches:
+      - integration/mavis-mvp-candidate-20261108
       - integration/mother-two-research-only-20261106
       - security/restrict-social-links-grants-20261108
   workflow_dispatch:
