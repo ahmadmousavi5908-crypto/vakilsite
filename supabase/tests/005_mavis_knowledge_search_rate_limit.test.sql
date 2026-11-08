@@ -1,10 +1,18 @@
 begin;
 
-select plan(17);
+select plan(21);
 
 select ok(
   has_schema_privilege('authenticated', 'mavis_private', 'USAGE'),
   'authenticated has only the schema usage required by the invoker wrapper'
+);
+select ok(
+  not has_schema_privilege('anon', 'mavis_private', 'USAGE'),
+  'anonymous role cannot use the private MAVIS schema'
+);
+select ok(
+  not has_schema_privilege('service_role', 'mavis_private', 'USAGE'),
+  'service role cannot use the private MAVIS schema'
 );
 select ok(
   not has_table_privilege('authenticated', 'mavis_private.knowledge_search_rate_limits', 'SELECT'),
@@ -29,6 +37,14 @@ select ok(
 select ok(
   has_function_privilege('authenticated', 'mavis_private.consume_knowledge_search_limit()', 'EXECUTE'),
   'authenticated can invoke the inner function only through its admin check'
+);
+select ok(
+  not has_function_privilege('anon', 'mavis_private.consume_knowledge_search_limit()', 'EXECUTE'),
+  'anonymous role cannot execute the private rate-limit function'
+);
+select ok(
+  not has_function_privilege('service_role', 'mavis_private.consume_knowledge_search_limit()', 'EXECUTE'),
+  'service role cannot execute the private rate-limit function'
 );
 select ok(
   (select prosecdef from pg_proc where oid = 'mavis_private.consume_knowledge_search_limit()'::regprocedure),
