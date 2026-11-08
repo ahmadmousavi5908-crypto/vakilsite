@@ -51,14 +51,14 @@ test("masks Persian-digit phone numbers and national-ID-shaped query values", ()
   assert.equal(nationalId.rows[0].privacyReviewRequired, true);
 });
 
-test("supports the hourly dimension and rejects unsupported response aggregation", () => {
+test("supports the hourly dimension and rejects invalid hour-query context", () => {
   const hourly = normalizeSearchAnalyticsResponse({ rows: [] }, {
     ...request,
     dimensions: ["hour"],
     dataState: "hourly_all",
   });
   const invalidShowcase = normalizeSearchAnalyticsResponse({
-    responseAggregationType: "byNewsShowcasePanel",
+    responseAggregationType: "unknown",
     rows: [],
   }, request);
 
