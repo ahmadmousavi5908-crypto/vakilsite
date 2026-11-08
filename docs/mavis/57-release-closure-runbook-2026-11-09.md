@@ -105,6 +105,20 @@ Supabase Cron may be suitable, but availability and current behavior must be che
 
 Keep Google Search Console, Bing, Trends, and other providers read-only and inactive until each provider's current official OAuth documentation, scopes, redirect URI, token storage, refresh/revocation, quotas, and data-use terms have been reviewed. Use synthetic fixtures for empty, stale, partial, unauthorized, expired-token, quota, and timezone-boundary cases. Never treat an indexing request as proof of indexing or ranking.
 
+
+## 10. Client fields, passwords, and offline behavior
+
+The client intake and identity contract is in `docs/mavis/58-client-intake-and-identity-contract-2026-11-09.md`. The offline state contract is in `docs/mavis/59-offline-detection-and-private-data-boundary-2026-11-09.md`.
+
+- Public intake remains passwordless and must reject unknown credential fields. Do not ask a visitor for a password or OTP.
+- The tracking code and idempotency UUID are references only; neither authenticates a client.
+- Do not activate a client workspace until office approval, identity verification, a configured verified-channel provider, tested MFA/session controls, and matter-level authorization are in place.
+- If a password is enabled, the client chooses it after verified activation; the office never sees it. Apply NIST SP 800-63B-4: 15-character minimum for single-factor passwords, compromised-password blocklist, no composition rules, and no arbitrary periodic rotation.
+- Phone OTP is passwordless but phone-number recycling and SIM-swap risks mean it must not be the only protection for sensitive case access. Require a second factor or stronger approved authenticator.
+- Supabase passkeys are documented as experimental in the current 2026 docs; do not make them the sole production authentication path.
+- Public offline knowledge search may run without network. Private client records, case uploads, messages, login, and account changes remain online-only. An offline page or cached browser session must never bypass server-side authentication or revocation.
+- Offline status now uses an uncached same-origin connectivity probe with a 1.8-second timeout, separate from `navigator.onLine`. A failed probe must not disable local search.
+
 ## 9. Final release gate
 
 Release readiness is **not achieved** until all applicable items below have evidence:
