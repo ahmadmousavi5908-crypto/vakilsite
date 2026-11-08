@@ -28,6 +28,12 @@
 18. [تطبیق شاخه‌ها و اعتبارسنجی یکپارچه](./20-integration-reconciliation.md)
 17. [مبنای امنیت و دروازه‌های انتشار](./19-security-baseline-and-release-gates.md)
 
+## اسناد مرجع و وضعیت پروژه
+
+- [سند مادر پروژه MAVIS و Vakilsite نسخه ۱.۱](./22-master-project-charter-v1.1.md)
+- [گزارش ممیزی اولیه مخزن و شواهد GitHub](./23-initial-repository-audit-2026-11-08.md)
+- [پروتکل تحویل یک‌مرحله‌ای و idempotent برای Termux](./24-termux-single-pass-delivery-protocol.md)
+
 ## اسناد تکمیلی محصول و اجرا
 
 - [برنامه اجرایی زنده و ایده‌بانک](./13-operating-plan-and-idea-backlog.md)
