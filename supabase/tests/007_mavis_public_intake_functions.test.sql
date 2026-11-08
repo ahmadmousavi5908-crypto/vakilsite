@@ -118,14 +118,14 @@ select is((select count(*)::integer from mavis_intake_private.audit_events
   'purge appends a metadata-only system audit marker');
 
 select throws_ok(
-  $select * from public.purge_mavis_expired_public_intake(null::timestamptz)$,
+  $$select * from public.purge_mavis_expired_public_intake(null::timestamptz)$$,
   'P0001',
   'A valid audit retention cutoff is required',
   'purge rejects a null audit-retention cutoff'
 );
 
 select throws_ok(
-  $select * from public.purge_mavis_expired_public_intake(clock_timestamp() + interval '1 day')$,
+  $$select * from public.purge_mavis_expired_public_intake(clock_timestamp() + interval '1 day')$$,
   'P0001',
   'A valid audit retention cutoff is required',
   'purge rejects a future audit-retention cutoff'
