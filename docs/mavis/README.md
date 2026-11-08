@@ -30,11 +30,12 @@
 
 ## اسناد مرجع و وضعیت پروژه
 
-- [سند مادر پروژه MAVIS و Vakilsite نسخه ۱.۱](./22-master-project-charter-v1.1.md)
+- [سند مادر پروژه MAVIS و Vakilsite نسخه ۱.۲](./22-master-project-charter-v1.2.md)
 - [گزارش ممیزی اولیه مخزن و شواهد GitHub](./23-initial-repository-audit-2026-11-08.md)
 - [پروتکل تحویل یک‌مرحله‌ای و idempotent برای Termux](./24-termux-single-pass-delivery-protocol.md)
 - [پژوهش رسمی APIهای جست‌وجو و Google Ads](./25-official-search-and-ads-api-research-2026-11-08.md)
 - [مشخصات UX پنل MAVIS و مدیریت فشرده مقالات](./26-admin-and-article-management-ux-specification.md)
+- [نقشه جامع دسترسی دانش MAVIS و بازیابی بکاپ مادر دو](./27-project-knowledge-access-and-mother-two-recovery-plan.md)
 
 ## اسناد تکمیلی محصول و اجرا
 
