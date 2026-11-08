@@ -498,7 +498,14 @@ returns table (
   requires_deadline_check boolean,
   status text,
   created_at timestamptz,
-  retention_expires_at timestamptz
+  retention_expires_at timestamptz,
+  initial_review_consent boolean,
+  initial_review_consent_at timestamptz,
+  consent_version text,
+  marketing_consent boolean,
+  marketing_consent_at timestamptz,
+  third_party_data_notice_acknowledged boolean,
+  third_party_data_notice_acknowledged_at timestamptz
 )
 language sql
 security invoker
