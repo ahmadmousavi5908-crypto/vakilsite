@@ -25,8 +25,8 @@
 14. [نقشه منابع حقوق ایران و سیاست ورود دانش](./16-iran-legal-source-map-and-ingestion-policy.md)
 15. [وضعیت اجرای هسته MAVIS و گزارش تحویل](./17-core-foundation-status.md)
 16. [طراحی داک شخصیت MAVIS](./18-character-dock-design.md)
-18. [تطبیق شاخه‌ها و اعتبارسنجی یکپارچه](./20-integration-reconciliation.md)
 17. [مبنای امنیت و دروازه‌های انتشار](./19-security-baseline-and-release-gates.md)
+18. [تطبیق شاخه‌ها و اعتبارسنجی یکپارچه](./20-integration-reconciliation.md)
 
 ## اسناد مرجع و وضعیت پروژه
 
@@ -35,21 +35,19 @@
 - [پروتکل تحویل یک‌مرحله‌ای و idempotent برای Termux](./24-termux-single-pass-delivery-protocol.md)
 - [پژوهش رسمی APIهای جست‌وجو و Google Ads](./25-official-search-and-ads-api-research-2026-11-08.md)
 - [مشخصات UX پنل MAVIS و مدیریت فشرده مقالات](./26-admin-and-article-management-ux-specification.md)
-- [تجربه دسکتاپ، اتصال به پنل مدیریت و امتیازنامه UX MAVIS](./31-admin-desktop-experience-and-ux-scorecard.md) — شامل ممیزی شواهد شاخه کاندید؛ نه تأیید Mother Two؛ همراه با الگوهای benchmark نرم‌افزارهای مدیریت وکالت
-- [پروتکل پژوهش حقوقی، اعتبارسنجی استناد و اولویت‌بندی موضوعات](./33-legal-research-quality-and-prioritization-protocol.md)
 - [نقشه جامع دسترسی دانش MAVIS و بازیابی بکاپ مادر دو](./27-project-knowledge-access-and-mother-two-recovery-plan.md)
 - [نقشه اجرایی یکپارچه، ماتریس اتصال‌ها و معیارهای پذیرش MAVIS](./28-execution-blueprint-and-integration-acceptance.md)
-- [مانیفست دانلود نسخه‌بندی‌شده مستندات برای Termux](./29-termux-docs-download-manifest-2026-11-08.json)
-- [مانیفست به‌روزشده دانلود مستندات برای Termux (نسخه R2)](./30-termux-docs-download-manifest-2026-11-08-r2.json) — مرجع دانلود فعلی
-- [مانیفست دانلود مستندات پنل و دسکتاپ MAVIS (نسخه R3)](./32-termux-docs-download-manifest-2026-11-08-r3.json) — مرجع جدیدتر؛ شامل سند ۳۱
-- [مانیفست کامل‌تر مستندات MAVIS برای Termux (نسخه R4)](./34-termux-docs-download-manifest-2026-11-08-r4.json) — شامل پروتکل پژوهش حقوقی و امتیازدهی
-- [مانیفست نهایی فعلی مستندات MAVIS برای Termux (نسخه R5)](./35-termux-docs-download-manifest-2026-11-08-r5.json) — شامل ممیزی پنل موجود و اصلاحات اخیر
-- [مانیفست تازه‌تر بسته مستندات MAVIS برای Termux (نسخه R6)](./36-termux-docs-download-manifest-2026-11-08-r6.json) — شامل benchmark نرم‌افزارهای مدیریت وکالت
-- [امتیازنامه سه بازوی MAVIS و پروتکل سنجش سرعت و کارایی](./37-three-arm-scorecard-and-performance-benchmark.md) — ارزیابی شواهد فعلی، اهداف p95/TTFT، تست بار، کیفیت حقوقی و کنترل هزینه
-- [مانیفست R7 بسته مستندات و امتیازنامه عملکرد سه بازو](./38-termux-docs-download-manifest-2026-11-08-r7.json) — نسخه پین‌شده برای دریافت و تطبیق در Termux
-- [استاندارد دانش زنده، تحویل بدون آرشیو و دسترسی سه بازو](./39-live-knowledge-workspace-and-three-arm-access-standard.md) — تفکیک Backup، Workspace و Registry و معیار استفاده واقعی ماویس
-- [مانیفست R8 بسته فایل‌های مستقل و استاندارد دانش زنده](./40-termux-docs-download-manifest-2026-11-08-r8.json) — دریافت فایل‌به‌فایل بدون نیاز به آرشیو
-- [سیاست تجمیع دانش تاریخی و استفاده از کتابخانه‌های قبلی](./41-historical-knowledge-reconciliation-and-library-reuse.md) — بازیابی امن دانش قدیمی، تطبیق نسخه‌ها و اتصال هر سه بازو به تاریخچه
+- [تجربه دسکتاپ، اتصال به پنل مدیریت و امتیازنامه UX MAVIS](./31-admin-desktop-experience-and-ux-scorecard.md) — طراحی و ممیزی شواهد؛ نه تأیید Mother Two
+- [پروتکل پژوهش حقوقی، اعتبارسنجی استناد و اولویت‌بندی موضوعات](./33-legal-research-quality-and-prioritization-protocol.md)
+- [امتیازنامه سه بازوی MAVIS و پروتکل سنجش سرعت و کارایی](./37-three-arm-scorecard-and-performance-benchmark.md)
+- [استاندارد دانش زنده، تحویل بدون آرشیو و دسترسی سه بازو](./39-live-knowledge-workspace-and-three-arm-access-standard.md)
+- [سیاست تجمیع دانش تاریخی و استفاده از کتابخانه‌های قبلی](./41-historical-knowledge-reconciliation-and-library-reuse.md)
+- [ممیزی آمادگی SEO، AEO، GEO و کشف‌پذیری در سامانه‌های هوش مصنوعی](./43-seo-aeo-geo-ai-discovery-readiness-audit-2026-11-08.md) — یافته‌های مستقیم remote، اولویت‌بندی اصلاحات کم‌هزینه و معیارهای پذیرش
+
+## مانیفست‌های دریافت و تطبیق
+
+- [مانیفست R8 بسته فایل‌های مستقل و استاندارد دانش زنده](./40-termux-docs-download-manifest-2026-11-08-r8.json)
+- [مانیفست R9 بسته مستندات MAVIS برای Termux](./42-termux-docs-download-manifest-2026-11-08-r9.json) — ۱۴ فایل مستندات پین‌شده؛ فاقد runtime و داده واقعی حقوقی
 
 ## اسناد تکمیلی محصول و اجرا
 
