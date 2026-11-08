@@ -5,6 +5,8 @@ import { validatePublicIntake } from "../../../../lib/mavis/public-intake-valida
 import { getIntakeConsentVersion } from "../../../../lib/mavis/public-intake-copy.mjs";
 import {
   createIntakeRateLimitHash,
+  createIntakeIdempotencyFingerprint,
+  isValidIntakeIdempotencyKey,
   getTrustedClientIp,
   hasOnlyAllowedIntakeFields,
   parseIntakeRateLimit,
@@ -85,14 +87,21 @@ export async function POST(request) {
     );
   }
 
+  const idempotencyKey = request.headers.get("idempotency-key");
+  if (!isValidIntakeIdempotencyKey(idempotencyKey)) {
+    return errorResponse("INVALID_IDEMPOTENCY_KEY", "شناسه یکتای درخواست معتبر نیست؛ صفحه را تازه‌سازی کنید.", 400);
+  }
+
   const retentionDays = parseIntakeRetentionDays(process.env.MAVIS_INTAKE_RETENTION_DAYS);
   const consentVersion = getIntakeConsentVersion(retentionDays);
   const rateLimitSecret = process.env.MAVIS_INTAKE_RATE_LIMIT_SECRET;
+  const idempotencySecret = process.env.MAVIS_INTAKE_IDEMPOTENCY_SECRET;
   const trustedIp = getTrustedClientIp(request.headers, process.env.MAVIS_TRUST_X_REAL_IP === "true");
   const keyHash = createIntakeRateLimitHash(trustedIp, rateLimitSecret);
 
   if (!retentionDays || typeof consentVersion !== "string" ||
       consentVersion.length > 40 ||
+      typeof idempotencySecret !== "string" || idempotencySecret.length < 32 ||
       !keyHash) {
     return errorResponse("INTAKE_NOT_CONFIGURED", "تنظیمات امن ثبت درخواست کامل نیست.", 503);
   }
@@ -143,6 +152,17 @@ export async function POST(request) {
     return errorResponse("TRIAGE_FAILED", "شرح درخواست برای اولویت‌بندی اولیه کافی نیست.", 400);
   }
 
+  const requestFingerprint = createIntakeIdempotencyFingerprint(validation.value, idempotencySecret, {
+    reviewPriority: triage.reviewPriority,
+    detectedSignals: triage.detectedSignals,
+    requiresDeadlineCheck: triage.requiresDeadlineCheck,
+    consentVersion: consentVersion.trim(),
+    retentionDays,
+  });
+  if (!requestFingerprint) {
+    return errorResponse("INTAKE_NOT_CONFIGURED", "تنظیمات امن ثبت درخواست کامل نیست.", 503);
+  }
+
   const databasePayload = {
     fullName: validation.value.fullName,
     phone: validation.value.phone,
@@ -157,13 +177,15 @@ export async function POST(request) {
 
   let submissionResult;
   try {
-    submissionResult = await supabase.rpc("submit_mavis_public_intake", {
+    submissionResult = await supabase.rpc("submit_mavis_public_intake_idempotent", {
       p_payload: databasePayload,
       p_review_priority: triage.reviewPriority,
       p_detected_signals: triage.detectedSignals,
       p_requires_deadline_check: triage.requiresDeadlineCheck,
       p_retention_expires_at: new Date(Date.now() + retentionDays * 86400000).toISOString(),
       p_consent_version: consentVersion.trim(),
+      p_idempotency_key: idempotencyKey,
+      p_request_fingerprint: requestFingerprint,
     });
   } catch {
     submissionResult = { error: true };
@@ -172,6 +194,10 @@ export async function POST(request) {
   const receipt = Array.isArray(submissionResult?.data) && submissionResult.data.length === 1
     ? submissionResult.data[0]
     : null;
+
+  if (submissionResult?.error?.code === "22023") {
+    return errorResponse("IDEMPOTENCY_CONFLICT", "این شناسه قبلاً برای اطلاعات متفاوتی استفاده شده است؛ فرم را تازه‌سازی و دوباره ارسال کنید.", 409);
+  }
 
   if (submissionResult?.error || !receipt ||
       typeof receipt.tracking_code !== "string" ||
