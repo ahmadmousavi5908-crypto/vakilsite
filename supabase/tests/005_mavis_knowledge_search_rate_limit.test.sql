@@ -1,10 +1,10 @@
 begin;
 
-select plan(11);
+select plan(13);
 
 select ok(
-  not has_schema_privilege('authenticated', 'mavis_private', 'USAGE'),
-  'authenticated cannot access the private MAVIS schema directly'
+  has_schema_privilege('authenticated', 'mavis_private', 'USAGE'),
+  'authenticated has only the schema usage required by the invoker wrapper'
 );
 select ok(
   not has_table_privilege('authenticated', 'mavis_private.knowledge_search_rate_limits', 'SELECT'),
@@ -27,6 +27,14 @@ select ok(
   'authenticated cannot truncate rate-limit counters'
 );
 select ok(
+  has_function_privilege('authenticated', 'mavis_private.consume_knowledge_search_limit()', 'EXECUTE'),
+  'authenticated can invoke the inner function only through its admin check'
+);
+select ok(
+  (select prosecdef from pg_proc where oid = 'mavis_private.consume_knowledge_search_limit()'::regprocedure),
+  'private rate-limit function uses SECURITY DEFINER'
+);
+select ok(
   has_function_privilege('authenticated', 'public.consume_mavis_knowledge_search_limit()', 'EXECUTE'),
   'authenticated can call the guarded rate-limit function'
 );
@@ -39,14 +47,14 @@ select ok(
   'service role does not receive unnecessary execute permission'
 );
 select ok(
-  (select prosecdef from pg_proc where oid = 'public.consume_mavis_knowledge_search_limit()'::regprocedure),
-  'rate-limit function runs with its controlled definer privileges'
+  not (select prosecdef from pg_proc where oid = 'public.consume_mavis_knowledge_search_limit()'::regprocedure),
+  'public RPC wrapper runs with invoker privileges'
 );
 select ok(
   (select coalesce(proconfig @> array['search_path=""'], false)
    from pg_proc
-   where oid = 'public.consume_mavis_knowledge_search_limit()'::regprocedure),
-  'rate-limit function has an empty search_path'
+   where oid = 'mavis_private.consume_knowledge_search_limit()'::regprocedure),
+  'private rate-limit function has an empty search_path'
 );
 
 select * from finish();
