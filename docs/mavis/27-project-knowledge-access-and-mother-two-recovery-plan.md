@@ -133,3 +133,27 @@ GitHub remote و ChatGPT Library قابل بررسی‌اند؛ filesystem خص�
 
 ## 12. نتیجه
 MAVIS باید همه دانش لازم را از مسیرهای واقعی و قابل ممیزی دریافت کند، نه با کپی بی‌قید فایل‌ها به prompt یا دسترسی عمومی. اصل حاکم: یک registry، یک gateway، سه سطح محرمانگی، retrieval قابل استناد و بکاپ نسخه‌بندی‌شده با restore evidence.
+
+
+## 13. ثبت مشخصات Mother Two به‌روزشده بر اساس اعلام مالک — 2026-11-08
+مالک پروژه اعلام کرده است که نسخه مرجع بکاپ مادر دو به‌روزشده در 2026-11-06 ساخته و نهایی شده است. این اطلاعات به‌عنوان **گزارش مالک** ثبت می‌شود و تا اجرای hash verification در Termux، تأیید مستقل محیطی محسوب نمی‌شود.
+
+- شناسه: `VAKILSITE-MOTHER-TWO-UPDATED-20261106`
+- مسیر Termux: `~/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-full.tar.gz`
+- حجم گزارش‌شده: ۲٫۷ گیگابایت
+- دامنه گزارش‌شده: ۱۱ پروژه، ۲۰ مسیر منبع، ۱۶ نسخه محتوایی یکتا، ۲۱۴٬۸۷۶ ورودی
+- تست gzip و آرشیو: PASS طبق گزارش مالک
+- مقایسه با منابع: PASS، بدون اختلاف طبق گزارش مالک
+- وضعیت نسخه مادر دو اصلی: دست‌نخورده طبق گزارش مالک
+- SHA-256 گزارش‌شده: `0d1d9bdce07432f906ecee711826f285a036affed8477c6110f6d518fcdc49d1`
+
+فایل‌های همراه در همان پوشه:
+- `VAKILSITE-MOTHER-TWO-UPDATED-20261106-211304-manifest.json`
+- `VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-source-compare.log`
+- `VAKILSITE-MOTHER-TWO-UPDATED-20261106-restore-guide.txt`
+- `VAKILSITE-MOTHER-TWO-UPDATED-20261106-final-record.json`
+- `VAKILSITE-MOTHER-TWO-UPDATED-20261106-SHA256SUMS.txt`
+
+آرشیو رمزگذاری نشده و ممکن است داده حساس داشته باشد؛ فقط در محل امن و با دسترسی محدود نگهداری شود. این آرشیو هرگز به GitHub، artifact عمومی یا مخزن اسناد منتقل نمی‌شود.
+
+**قاعده ادامه:** این آرشیو مرجع Mother Two برای تطبیق و بازیابی است. نسخه اصلی و نسخه به‌روزشده immutable هستند. هر snapshot بعدی باید مستقل، با شناسه/manifest/hash/restore test جدید ساخته شود. در بسته Termux، ابتدا وجود فایل و SHA-256 دقیق بررسی می‌شود؛ هر mismatch باعث توقف امن می‌شود. هیچ داده‌ای از آرشیو در پاسخ یا log عمومی چاپ نمی‌شود.
