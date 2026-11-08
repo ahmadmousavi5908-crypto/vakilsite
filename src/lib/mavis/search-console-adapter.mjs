@@ -1,7 +1,7 @@
 const ALLOWED_DIMENSIONS = new Set(["date", "hour", "query", "page", "country", "device", "searchAppearance"]);
 const ALLOWED_TYPES = new Set(["web", "news", "discover", "googleNews", "image", "video"]);
 const ALLOWED_DATA_STATES = new Set(["final", "all", "hourly_all"]);
-const ALLOWED_AGGREGATIONS = new Set(["auto", "byPage", "byProperty", "byNewsShowcasePanel"]);
+const ALLOWED_AGGREGATIONS = new Set(["auto", "byPage", "byProperty"]);
 
 function isDate(value) {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
@@ -29,7 +29,7 @@ function pageContainsSensitiveQuery(value) {
   if (typeof value !== "string") return false;
   try {
     const url = new URL(value);
-    return Boolean(url.search && mayContainPersonalQuery(decodeURIComponent(url.search)));
+    return [...url.searchParams.values()].some(mayContainPersonalQuery);
   } catch {
     return false;
   }
@@ -68,10 +68,6 @@ export function normalizeSearchAnalyticsResponse(response, request) {
   const aggregationType = response.responseAggregationType ?? "auto";
   if (!ALLOWED_AGGREGATIONS.has(aggregationType)) {
     return { ok: false, reason: "unknown_aggregation_type" };
-  }
-  if (aggregationType === "byNewsShowcasePanel" &&
-      (!["discover", "googleNews"].includes(type) || dimensions.includes("page"))) {
-    return { ok: false, reason: "invalid_news_showcase_aggregation" };
   }
 
   const rows = [];
