@@ -239,48 +239,16 @@ begin
   v_marketing_consent := coalesce((p_payload ->> 'marketingConsent')::boolean, false);
   v_third_party_notice := coalesce((p_payload ->> 'thirdPartyDataNoticeAcknowledged')::boolean, false);
 
-  if v_phone ~ '^09[0-9]{9}
-  'Private MAVIS intake data; do not expose through Supabase Data API schemas.';
-comment on table mavis_intake_private.submissions is
-  'Contains personal intake data. Access only through server-side authorization and approved retention policy.';
-comment on table mavis_intake_private.audit_events is
-  'Metadata-only audit trail; never store intake text, phone numbers, names, or credentials here.';
-comment on table mavis_intake_private.rate_limits is
-  'Short-lived HMAC-derived request buckets; raw client IP addresses must never be stored.';
- then
+  if v_phone ~ '^09[0-9]{9}$' then
     v_phone := '+98' || substr(v_phone, 2);
-  elsif v_phone ~ '^00989[0-9]{9}
-  'Private MAVIS intake data; do not expose through Supabase Data API schemas.';
-comment on table mavis_intake_private.submissions is
-  'Contains personal intake data. Access only through server-side authorization and approved retention policy.';
-comment on table mavis_intake_private.audit_events is
-  'Metadata-only audit trail; never store intake text, phone numbers, names, or credentials here.';
-comment on table mavis_intake_private.rate_limits is
-  'Short-lived HMAC-derived request buckets; raw client IP addresses must never be stored.';
- then
+  elsif v_phone ~ '^00989[0-9]{9}$' then
     v_phone := '+' || substr(v_phone, 3);
-  elsif v_phone ~ '^989[0-9]{9}
-  'Private MAVIS intake data; do not expose through Supabase Data API schemas.';
-comment on table mavis_intake_private.submissions is
-  'Contains personal intake data. Access only through server-side authorization and approved retention policy.';
-comment on table mavis_intake_private.audit_events is
-  'Metadata-only audit trail; never store intake text, phone numbers, names, or credentials here.';
-comment on table mavis_intake_private.rate_limits is
-  'Short-lived HMAC-derived request buckets; raw client IP addresses must never be stored.';
- then
+  elsif v_phone ~ '^989[0-9]{9}$' then
     v_phone := '+' || v_phone;
   end if;
 
   if char_length(v_full_name) not between 3 and 100
-    or v_phone !~ '^\+989[0-9]{9}
-  'Private MAVIS intake data; do not expose through Supabase Data API schemas.';
-comment on table mavis_intake_private.submissions is
-  'Contains personal intake data. Access only through server-side authorization and approved retention policy.';
-comment on table mavis_intake_private.audit_events is
-  'Metadata-only audit trail; never store intake text, phone numbers, names, or credentials here.';
-comment on table mavis_intake_private.rate_limits is
-  'Short-lived HMAC-derived request buckets; raw client IP addresses must never be stored.';
-
+    or v_phone !~ '^\+989[0-9]{9}$'
     or v_case_type not in ('civil', 'criminal', 'family', 'property', 'commercial', 'labor', 'administrative', 'other')
     or char_length(v_summary) not between 30 and 6000
     or v_urgency not in ('routine', 'soon', 'urgent')
