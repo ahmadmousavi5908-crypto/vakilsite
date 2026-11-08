@@ -12,6 +12,15 @@ const VALIDITY_STATES = new Set([
   "unknown",
 ]);
 
+const TRUSTED_PRIMARY_HOSTS = new Set(["rrk.ir", "qavanin.ir", "rc.majlis.ir"]);
+
+function isTrustedPrimaryHost(hostname) {
+  const host = hostname.toLowerCase().replace(/\.$/, "");
+  return [...TRUSTED_PRIMARY_HOSTS].some((trusted) =>
+    host === trusted || host.endsWith(`.${trusted}`)
+  );
+}
+
 function safeDate(value) {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
   const parsed = new Date(`${value}T00:00:00.000Z`);
@@ -35,10 +44,13 @@ function normalizeSources(record) {
     }
     if (parsedUrl.protocol !== "https:" || !parsedUrl.hostname || parsedUrl.username || parsedUrl.password) return [];
 
+    const trustedPrimary = source.source_type === "primary" && isTrustedPrimaryHost(parsedUrl.hostname);
+
     return [{
       title: source.title.trim().slice(0, 240),
       url: parsedUrl.toString(),
-      sourceType: source.source_type === "primary" ? "primary" : "secondary",
+      sourceType: trustedPrimary ? "primary" : "secondary",
+      authorityVerified: trustedPrimary,
       publicationDate: safeDate(source.publication_date),
       accessedAt: safeDate(source.accessed_at),
       sourceVersion: typeof source.source_version === "string" ? source.source_version.slice(0, 120) : null,
@@ -49,11 +61,14 @@ function normalizeSources(record) {
 function resolveReviewState(record, sources) {
   if (!record || typeof record !== "object") return "not_found";
   if (record.validity_status === "repealed" || record.status === "outdated") return "outdated";
+  if (record.validity_status === "partially_repealed") return "needs_official_check";
 
   const reviewStatus = REVIEW_STATES.has(record.review_status) ? record.review_status : null;
   const hasVerifiedPrimary = reviewStatus === "verified_primary_source" &&
     record.source_verified === true &&
-    sources.some((source) => source.sourceType === "primary" && source.accessedAt !== null);
+    record.validity_status === "in_force" &&
+    safeDate(record.last_verified_at) !== null &&
+    sources.some((source) => source.authorityVerified && source.accessedAt !== null);
 
   if (hasVerifiedPrimary) return "verified_primary";
   if (reviewStatus === "secondary_source_only") return "secondary_reference";
