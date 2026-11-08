@@ -12,6 +12,8 @@ const SOURCE_CLASSES = new Set([
   "judicial_session",
   "academic_commentary",
   "official_guidance",
+  "legal_term",
+  "educational_summary",
 ]);
 
 const REQUIRED_FIELDS = Object.freeze({
@@ -26,6 +28,8 @@ const REQUIRED_FIELDS = Object.freeze({
   judicial_session: ["issuing_authority", "session_number", "session_date", "exact_citation"],
   academic_commentary: ["author", "publication_title", "publication_date", "exact_citation"],
   official_guidance: ["issuing_authority", "document_number", "publication_date", "exact_citation"],
+  legal_term: ["canonical", "definition"],
+  educational_summary: ["law_id", "article_number", "summary", "exact_citation"],
 });
 
 const LABELS = Object.freeze({
@@ -40,6 +44,8 @@ const LABELS = Object.freeze({
   judicial_session: "نشست‌های قضایی",
   academic_commentary: "منابع علمی و تفسیری",
   official_guidance: "دستورالعمل‌ها و راهنمای رسمی",
+  legal_term: "اصطلاحات حقوقی",
+  educational_summary: "خلاصه‌های آموزشی مواد قانونی",
 });
 
 function hasValue(record, key) {
