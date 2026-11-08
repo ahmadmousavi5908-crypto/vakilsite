@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createIntakeRateKey, isValidIntakeIp, normalizeIntakePhone, validateIntakePayload } from "../../src/lib/mavis/intake-guards.mjs";
+import { createIntakeRateKeys, isValidIntakeIp, normalizeIntakePhone, validateIntakePayload } from "../../src/lib/mavis/intake-guards.mjs";
 
 const valid = {
   idempotency_key: "11111111-1111-4111-8111-111111111111",
@@ -28,17 +28,21 @@ test("accepts valid IPv4 and IPv6 but rejects untrusted text", () => {
   assert.equal(isValidIntakeIp("forged, 192.0.2.1"), false);
 });
 
-test("creates deterministic HMAC keys without exposing the raw phone or IP", () => {
-  const first = createIntakeRateKey("a".repeat(40), "+989121234567", "192.0.2.1");
-  const second = createIntakeRateKey("a".repeat(40), "+98 912 123 4567", "192.0.2.1");
-  assert.equal(first, second);
-  assert.match(first, /^[a-f0-9]{64}$/);
-  assert.notEqual(first, "+989121234567");
+test("creates separate deterministic HMAC keys for IP and contact without exposing raw identifiers", () => {
+  const first = createIntakeRateKeys("a".repeat(40), "+989121234567", "192.0.2.1");
+  const second = createIntakeRateKeys("a".repeat(40), "+98 912 123 4567", "192.0.2.1");
+  assert.equal(first.ipKey, second.ipKey);
+  assert.equal(first.contactKey, second.contactKey);
+  assert.match(first.ipKey, /^[a-f0-9]{64}$/);
+  assert.match(first.contactKey, /^[a-f0-9]{64}$/);
+  assert.notEqual(first.ipKey, first.contactKey);
+  assert.notEqual(first.ipKey, "192.0.2.1");
+  assert.notEqual(first.contactKey, "+989121234567");
 });
 
 test("rejects short HMAC secrets and invalid IP inputs", () => {
-  assert.throws(() => createIntakeRateKey("short", "09121234567", "192.0.2.1"), TypeError);
-  assert.throws(() => createIntakeRateKey("a".repeat(40), "09121234567", "unknown"), TypeError);
+  assert.throws(() => createIntakeRateKeys("short", "09121234567", "192.0.2.1"), TypeError);
+  assert.throws(() => createIntakeRateKeys("a".repeat(40), "09121234567", "unknown"), TypeError);
 });
 
 test("accepts a complete intake request with mandatory and optional consent separation", () => {
