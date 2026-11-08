@@ -152,7 +152,12 @@ export default function MavisIntakeInbox() {
                 <summary>مشاهده شرح اولیه و جزئیات</summary>
                 <p>{item.summary}</p>
                 {item.opposing_party && <p><strong>طرف مقابل اعلام‌شده:</strong> {item.opposing_party}</p>}
-                <small>انقضای نگهداری برنامه‌ریزی‌شده: {formatDate(item.retention_expires_at)}</small>
+                <div className={styles.consentDetails}>
+                  <small>رضایت بررسی اولیه: {item.initial_review_consent ? "ثبت شده" : "ثبت نشده"} · نسخه متن: {item.consent_version}</small>
+                  <small>رضایت بازاریابی: {item.marketing_consent ? "اختیاری و ثبت‌شده" : "داده نشده"}</small>
+                  <small>اعلام آگاهی درباره اطلاعات شخص ثالث: {item.third_party_data_notice_acknowledged ? "ثبت شده" : "ثبت نشده"}</small>
+                  <small>انقضای نگهداری برنامه‌ریزی‌شده: {formatDate(item.retention_expires_at)}</small>
+                </div>
               </details>
 
               <div className={styles.actions}>
