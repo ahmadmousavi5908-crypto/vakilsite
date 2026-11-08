@@ -15,9 +15,9 @@
 
 - `src/lib/mavis/knowledge-registry.js` رکوردهای موجود کتابخانه حقوقی را به رجیستری runtime تبدیل می‌کند؛ منبع داده همان `src/data/legal-library/` و `src/lib/legal-library.js` است، نه یک کپی موازی.
 - `src/lib/mavis/knowledge-search.mjs` جست‌وجوی فارسی قطعی و رتبه‌بندی واژگانی را انجام می‌دهد.
-- `POST /api/mavis/knowledge-search` یک مسیر داخلی و admin-only است؛ احراز مدیر، کنترل Origin، محدودیت اندازه بدنه، rate limit و پاسخ no-store دارد.
+- `src/components/admin/MavisKnowledgeSearch.jsx` رابط جست‌وجوی داخلی را فراهم می‌کند و `POST /api/mavis/knowledge-search` مسیر admin-only آن است؛ API احراز مدیر، کنترل Origin، محدودیت اندازه بدنه، rate limit و پاسخ no-store دارد.
 - مسیر API نتیجه بازیابی را با `buildLegalEvidence` و `buildLegalResearchDossier` همراه می‌کند تا وضعیت منبع، ارجاع و خلأهای شواهد قابل مشاهده بماند.
-- تست‌های `tests/mavis/knowledge-search.test.mjs` مجموعه طلایی جست‌وجو، حذف رکوردهای draft، رفتار بدون نتیجه و مرزهای دسترسی/محدودیت را بررسی می‌کنند.
+- تست‌های `tests/mavis/knowledge-search.test.mjs` مجموعه طلایی جست‌وجو، حذف رکوردهای draft و رفتار بدون نتیجه را بررسی می‌کنند؛ آزمون دیتابیس rate limit نیز در `supabase/tests/005_mavis_knowledge_search_rate_limit.test.sql` وجود دارد. پوشش یکپارچه تمام شاخه‌های احراز هویت و guardهای خود route هنوز باید تقویت شود.
 - دامنه داده runtime فعلی بر رکوردهای ساختاریافته کتابخانه موجود است: ۱۳۲ اصطلاح، ۱۶ رکورد قانون و ۲۲ خلاصه مقاله؛ یادداشت‌های پژوهشی و داده‌های خارج از این سه مجموعه، خودکار وارد این مسیر نشده‌اند.
 
 **تفسیر صحیح:** این یک موتور جست‌وجوی پژوهشی داخلی و deterministic است؛ نه دستیار گفت‌وگومحور کامل، نه RAG مبتنی بر LLM و نه مجوز ارائه پاسخ حقوقی قطعی.
