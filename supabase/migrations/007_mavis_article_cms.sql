@@ -147,7 +147,7 @@ begin
     new.published_at := pg_catalog.now();
     new.approved_at := pg_catalog.now();
     new.approved_by := auth.uid();
-  elsif new.status <> 'published' and old.status = 'published' then
+  elsif new.status in ('draft', 'review') and old.status = 'published' then
     new.published_at := null;
   end if;
 
