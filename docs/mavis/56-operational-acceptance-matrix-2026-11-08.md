@@ -31,6 +31,8 @@
 | Scenario | Expected behavior |
 |---|---|
 | Valid intake request | Server validates allowlisted payload, persists private record, returns tracking reference |
+| Duplicate network retry | Same UUID and same keyed fingerprint return the original receipt without a second row or audit event |
+| Idempotency-key misuse | Same UUID with a different fingerprint returns conflict and creates no second row |
 | Invalid or oversized body | Clear 4xx response; no partial record |
 | Missing/invalid Origin | Request rejected according to route policy |
 | Rate limit reached | Bounded 429 response; no persistence |
@@ -40,7 +42,7 @@
 | Retention/purge | Only policy-eligible records purged; audit cutoff is bounded by an approved retention policy and cannot be chosen ad hoc |
 
 **Pass:** integration tests prove each failure path, RLS/grants and server authorization agree, no private payload is emitted to logs or public responses, and an approved scheduler runs retention purges with observable last-success/failure state and alerting.  
-**Current state:** Both the application workflow and isolated Supabase/pgTAP workflow passed on exact candidate commit `8781f16f5a3907bd5e3588f9097bc185694ec03b` (application run `42505648719`; database run `42505653385`). The admin intake inbox has an independent per-admin rate-limit counter and dedicated response parser. Migration 009 creates an owner-controlled retention policy table but deliberately seeds no policy; purge fails closed until an approved policy is recorded and enabled, enforces minimum submission age independently of each record's expiry timestamp, and rejects audit cutoffs shorter than the approved minimum. A follow-up pgTAP change now exercises authenticated admin/non-admin JWT contexts, the 30-request boundary, and counter separation; its new commit must pass both workflows before its tests are accepted. No scheduler or operational alerting is enabled. Local device/staging failure-injection remains pending.
+**Current state:** Both the application workflow and isolated Supabase/pgTAP workflow passed on exact candidate commit `8781f16f5a3907bd5e3588f9097bc185694ec03b` (application run `42505648719`; database run `42505653385`). The admin intake inbox has an independent per-admin rate-limit counter and dedicated response parser. Migration 010 adds a unique intake idempotency key and server-keyed request fingerprint; retries with matching values return the original receipt, while mismatched reuse is rejected. The legacy non-idempotent service-role RPC is revoked. The client keeps the key only in memory and reuses it for network retries. Migration 009 creates an owner-controlled retention policy table but deliberately seeds no policy; purge fails closed until an approved policy is recorded and enabled, enforces minimum submission age independently of each record's expiry timestamp, and rejects audit cutoffs shorter than the approved minimum. A follow-up pgTAP change now exercises authenticated admin/non-admin JWT contexts, the 30-request boundary, and counter separation; its new commit must pass both workflows before its tests are accepted. No scheduler or operational alerting is enabled. Local device/staging failure-injection remains pending.
 
 **Scheduler candidate (research only):** Supabase Cron (`pg_cron`) can run database functions directly and records job-run history in `cron.job_run_details`; confirm project/version availability and the current feature stage before enabling it. Do not schedule the purge until the audit-retention policy and safe cutoff are approved.
 
@@ -61,7 +63,7 @@
 - [ ] CI green on the exact candidate commit.
 - [ ] Local Termux npm ci, legal-library validator, MAVIS tests, lint and production build.
 - [ ] Cold-online then true-offline browser/device test.
-- [ ] Staging tests for DB outage, rate limit, unauthorized access and data retention.
+- [ ] Staging tests for DB outage, rate limit, unauthorized access, same-key retries, conflicting-key reuse and data retention.
 - [ ] Obtain owner/legal approval for minimum submission and audit retention periods; record the approval reference and enable the private retention policy only after review.
 - [ ] Configure and verify a scheduled retention-purge mechanism only after policy approval, including failure alerting and a documented recovery path.
 - [ ] Legal reviewer has approved each record that claims primary-source verification.
