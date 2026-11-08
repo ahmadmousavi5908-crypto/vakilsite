@@ -7,6 +7,7 @@ on:
       - feature/mavis-offline-first-public-knowledge-20261108
       - integration/mavis-mvp-candidate-20261108
       - integration/mavis-release-gate-20261109
+      - test/mavis-local-backup-restore-20261109
   workflow_dispatch:
   pull_request:
     branches:

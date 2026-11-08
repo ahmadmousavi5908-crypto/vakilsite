@@ -1,15 +1,16 @@
 # MAVIS Release Closure Runbook — 2026-11-09
 
 **Purpose:** Close the remaining acceptance gaps with the smallest safe sequence. This is an operational runbook, not a release approval.
-**Candidate:** PR #31 branch `integration/mavis-release-gate-20261109`. The PR base is `integration/mavis-mvp-candidate-20261108`; it is not the candidate branch to clone. Before local verification, read the current PR head SHA from GitHub and record it.
+**Candidate:** Integration branch `integration/mavis-mvp-candidate-20261108`. PR #31 was merged into this branch; its feature branch is no longer the final verification target. Read the current integration branch head from GitHub immediately before local verification and compare it with the fresh clone.
 **Safety:** The updated Mother Two archive is a protected rollback artifact. Never overwrite, rename, delete, or use it as a working directory. No merge, production migration, OAuth activation, public Intake activation, or deployment is authorized by this document.
 
 ## 1. What is already evidenced
 
-- Application and database CI both passed on the current PR #31 head `09f680360701f2e6dda4380e8f60fd46ad4ce190`.
-- Exact-head application run `42524992697` completed successfully: dependency install, legal-library validation, deterministic/offline tests, intake/growth tests, lint, and Webpack build.
-- Exact-head database run `42524992681` completed successfully: isolated Supabase startup, migrations and pgTAP security tests, and clean shutdown. The earlier 167-assertion count belongs to a prior baseline and is not asserted for this run.
-- Application workflow passed the legal-library validator, deterministic/offline checks, Intake and growth tests, lint, and Webpack build.
+- PR #31 merged into this integration branch as `a55a8495ef7ae4604086c3433bdb85dd7dd66168`. Its exact head `7dfda26fd0514683928c7f624e201fbc6e9b597d` passed application PR CI `42525255911`, database PR CI `42525255892`, application push CI `42525251189`, and database push CI `42525256701`.
+- PR #32 merged the property-registration source audit note as `5f4ebfbe13dc7993f1cea267b435a88376e685ef`. Its exact documentation-only head `167267ea5508333488d356eb6bbe54675fe46c37` passed application CI `42525462721` and database CI `42525462744`.
+- PR #33 merged the precise web-origin connectivity wording as `47d38bdc0ca040743676a5eacac57a3387d55163`. Its exact head `259f2befb6122564f23125726f45ea110bb970a1` passed application CI `42525521429` and database CI `42525521302`.
+- PR #34 merged the client-authentication configuration audit, server-only secret-key template entry, and private client-portal data model as `e627bcf1eca66d520b871a854ed4f4c6b394dbd1`. Its exact head `947ca49aa18e7306d6ae23b99e7b92758f8a7e41` passed application CI `42525724144` and database CI `42525724224`.
+- These are exact PR-head results, not proof that a later integration-branch commit has passed. Every new candidate SHA must pass its own checks.
 - Intake uses bounded JSON parsing, origin/content-type guards, rate limiting, idempotent submissions, and narrow RPC access.
 - The offline legal bundle intentionally does not claim current-law verification.
 
@@ -21,15 +22,18 @@ A green CI result is evidence only for the checks actually executed. It is not p
 
 ```bash
 cd ~/downloads
-git clone --branch integration/mavis-release-gate-20261109 --single-branch https://github.com/ahmadmousavi5908-crypto/vakilsite.git mavis-verification-20261109
+git clone --branch integration/mavis-mvp-candidate-20261108 --single-branch https://github.com/ahmadmousavi5908-crypto/vakilsite.git mavis-verification-20261109
 cd mavis-verification-20261109
-git rev-parse HEAD
+ACTUAL_SHA="$(git rev-parse HEAD)"
+EXPECTED_SHA="$(git ls-remote origin refs/heads/integration/mavis-mvp-candidate-20261108 | awk 'NR == 1 { print $1 }')"
+printf 'Local SHA:   %s\nRemote SHA:  %s\n' "$ACTUAL_SHA" "$EXPECTED_SHA"
+test -n "$EXPECTED_SHA" && test "$ACTUAL_SHA" = "$EXPECTED_SHA"
 git status --short
 npm ci --no-audit --no-fund
 npm run mavis:verify
 ```
 
-**Precondition:** compare the `git rev-parse HEAD` output with the current `head.sha` of PR #31 in GitHub immediately before running. If they differ, stop and obtain fresh exact-head CI for the new SHA; do not test an unreviewed branch tip.
+**Precondition:** the clone command compares the local SHA with the live remote integration-branch SHA. If the comparison fails, stop. Do not run a stale feature branch or a workspace that differs from the current candidate tip.
 
 **Pass evidence:** preserve the complete terminal output, command exit code 0, Node/npm versions, commit SHA, and available device/Android details. If any step fails, stop at the first failure, preserve its full output, and fix the root cause before continuing. Do not report a local pass until this output is reviewed.
 
@@ -57,6 +61,8 @@ Record environment, migration version, test data identifiers, timestamps, observ
 - **Mother Two** protects the approved project source/workspace snapshot. Keep its archive and checksum unchanged.
 - **Database backup** protects live Postgres data and schema. It does not automatically include objects stored through the Supabase Storage API; verify storage objects separately.
 - A backup is not accepted merely because it exists or its checksum matches. A restore into a disposable target is the evidence that it can be recovered.
+- The database CI now includes a **synthetic local dump/restore check**: it creates a disposable probe row, dumps roles/schema/data, restores them into a fresh local Supabase stack, and verifies the row plus key RLS/least-privilege properties. Dump files are temporary and are not uploaded or committed.
+- This CI check is not a remote/staging backup restore, does not include real client data, and does not verify Supabase Storage objects. The disposable staging restore and Storage-object verification remain separate release gates.
 - Never commit database dumps, credentials, private intake data, or backup archives to this public repository.
 
 Supabase's current backup guidance explains plan-dependent backup windows, logical dumps, Storage exclusions, and restore behavior: https://supabase.com/docs/guides/platform/backups
@@ -113,7 +119,7 @@ Keep Google Search Console, Bing, Trends, and other providers read-only and inac
 
 ## 9. Client fields, passwords, and offline behavior
 
-The client intake and identity contract is in `docs/mavis/58-client-intake-and-identity-contract-2026-11-09.md`. The offline state contract is in `docs/mavis/59-offline-detection-and-private-data-boundary-2026-11-09.md`.
+The client intake and identity contract is in `docs/mavis/58-client-intake-and-identity-contract-2026-11-09.md`. The offline state contract is in `docs/mavis/59-offline-detection-and-private-data-boundary-2026-11-09.md`. The post-approval client portal security and data model is in `docs/mavis/60-client-portal-security-and-data-model-2026-11-09.md`; provider constraints are recorded in `docs/mavis/research/03-client-auth-provider-configuration-audit-2026-11-09.md`.
 
 - Public intake remains passwordless and must reject unknown credential fields. Do not ask a visitor for a password or OTP.
 - The tracking code and idempotency UUID are references only; neither authenticates a client.
@@ -134,7 +140,8 @@ Release readiness is **not achieved** until all applicable items below have evid
 - [ ] Retention policy approved and purge/alert/recovery tested, or explicitly deferred with owner sign-off.
 - [ ] Primary-source legal review completed for every record that claims verification.
 - [ ] Privacy review confirms no PII in browser storage, public bundle, analytics, or logs.
-- [ ] Disposable-target backup/restore and rollback drill passed, including Storage objects.
+- [ ] Synthetic local database dump/restore CI passes on the exact candidate SHA.
+- [ ] Disposable staging backup/restore and rollback drill passes, including Storage objects.
 - [ ] Provider integrations individually approved and tested, or explicitly deferred.
 - [ ] Both application and database CI workflows pass on the exact release candidate SHA.
 - [ ] Owner explicitly approves merge, production migration, activation, and deployment as separate decisions.
