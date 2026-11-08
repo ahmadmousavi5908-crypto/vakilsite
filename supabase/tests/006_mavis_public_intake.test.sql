@@ -1,6 +1,6 @@
 begin;
 
-select plan(36);
+select plan(39);
 
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_intake_submissions'::regclass), 'intake submissions have RLS enabled');
 select ok(not has_table_privilege('anon', 'public.mavis_intake_submissions', 'SELECT'), 'anon cannot read private intake submissions');
