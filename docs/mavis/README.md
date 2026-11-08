@@ -35,6 +35,7 @@
 - [پروتکل تحویل یک‌مرحله‌ای و idempotent برای Termux](./24-termux-single-pass-delivery-protocol.md)
 - [پژوهش رسمی APIهای جست‌وجو و Google Ads](./25-official-search-and-ads-api-research-2026-11-08.md)
 - [مشخصات UX پنل MAVIS و مدیریت فشرده مقالات](./26-admin-and-article-management-ux-specification.md)
+- [تجربه دسکتاپ، اتصال به پنل مدیریت و امتیازنامه UX MAVIS](./31-admin-desktop-experience-and-ux-scorecard.md)
 - [نقشه جامع دسترسی دانش MAVIS و بازیابی بکاپ مادر دو](./27-project-knowledge-access-and-mother-two-recovery-plan.md)
 - [نقشه اجرایی یکپارچه، ماتریس اتصال‌ها و معیارهای پذیرش MAVIS](./28-execution-blueprint-and-integration-acceptance.md)
 - [مانیفست دانلود نسخه‌بندی‌شده مستندات برای Termux](./29-termux-docs-download-manifest-2026-11-08.json)
