@@ -44,6 +44,7 @@
 - [سیاست تجمیع دانش تاریخی و استفاده از کتابخانه‌های قبلی](./41-historical-knowledge-reconciliation-and-library-reuse.md)
 - [ممیزی آمادگی SEO، AEO، GEO و کشف‌پذیری در سامانه‌های هوش مصنوعی](./43-seo-aeo-geo-ai-discovery-readiness-audit-2026-11-08.md) — یافته‌های مستقیم remote، اولویت‌بندی اصلاحات کم‌هزینه و معیارهای پذیرش
 - [ممیزی سخت‌گیرانه، امتیازدهی و برنامه بستن شکاف‌های MAVIS](./44-mavis-critical-gap-closure-and-scorecard-2026-11-08.md) — امتیاز تفکیکی، P0/P1/P2، دروازه‌های پذیرش و مرزبندی شواهد طراحی با اجرای واقعی
+- [ممیزی کد شاخه اجرایی MAVIS و برنامه اصلاح](./45-runtime-branch-code-audit-and-remediation-2026-11-08.md) — بررسی هسته، Intake، Admin، CI، محدودیت‌های Provider و یافته‌های P0/P1/P2؛ فقط remote و بدون ادعای تست محلی
 
 ## مانیفست‌های دریافت و تطبیق
 
