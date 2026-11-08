@@ -44,6 +44,7 @@
 - [مانیفست دانلود مستندات پنل و دسکتاپ MAVIS (نسخه R3)](./32-termux-docs-download-manifest-2026-11-08-r3.json) — مرجع جدیدتر؛ شامل سند ۳۱
 - [مانیفست کامل‌تر مستندات MAVIS برای Termux (نسخه R4)](./34-termux-docs-download-manifest-2026-11-08-r4.json) — شامل پروتکل پژوهش حقوقی و امتیازدهی
 - [مانیفست نهایی فعلی مستندات MAVIS برای Termux (نسخه R5)](./35-termux-docs-download-manifest-2026-11-08-r5.json) — شامل ممیزی پنل موجود و اصلاحات اخیر
+- [مانیفست تازه‌تر بسته مستندات MAVIS برای Termux (نسخه R6)](./36-termux-docs-download-manifest-2026-11-08-r6.json) — شامل benchmark نرم‌افزارهای مدیریت وکالت
 
 ## اسناد تکمیلی محصول و اجرا
 
