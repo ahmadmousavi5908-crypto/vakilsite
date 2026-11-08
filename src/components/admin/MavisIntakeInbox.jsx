@@ -36,6 +36,7 @@ function formatDate(value) {
 export default function MavisIntakeInbox() {
   const [items, setItems] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
+  const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const [updatingId, setUpdatingId] = useState("");
   const [error, setError] = useState("");
@@ -47,7 +48,7 @@ export default function MavisIntakeInbox() {
     loadingRef.current = true;
     setLoading(true);
     setError("");
-    const params = new URLSearchParams({ limit: "50", offset: "0" });
+    const params = new URLSearchParams({ limit: "50", offset: String(offset) });
     if (statusFilter) params.set("status", statusFilter);
 
     try {
@@ -66,7 +67,7 @@ export default function MavisIntakeInbox() {
       loadingRef.current = false;
       setLoading(false);
     }
-  }, [statusFilter]);
+  }, [offset, statusFilter]);
 
   useEffect(() => {
     loadItems();
@@ -112,11 +113,11 @@ export default function MavisIntakeInbox() {
 
       <div className={styles.toolbar}>
         <label htmlFor="mavis-intake-status-filter">فیلتر وضعیت</label>
-        <select id="mavis-intake-status-filter" value={statusFilter} disabled={loading} onChange={(event) => setStatusFilter(event.target.value)}>
+        <select id="mavis-intake-status-filter" value={statusFilter} disabled={loading} onChange={(event) => { setStatusFilter(event.target.value); setOffset(0); }}>
           <option value="">همه وضعیت‌ها</option>
           {statusOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select>
-        <span>{items.length.toLocaleString("fa-IR")} درخواست در این صفحه</span>
+        <span>صفحه {Math.floor(offset / 50 + 1).toLocaleString("fa-IR")} · {items.length.toLocaleString("fa-IR")} درخواست</span>
       </div>
 
       {error && <p className={styles.error} role="alert">{error}</p>}
@@ -171,6 +172,13 @@ export default function MavisIntakeInbox() {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {loaded && (
+        <div className={styles.pagination}>
+          <button type="button" disabled={loading || offset === 0} onClick={() => setOffset((current) => Math.max(0, current - 50))}>صفحه قبل</button>
+          <button type="button" disabled={loading || items.length < 50} onClick={() => setOffset((current) => current + 50)}>صفحه بعد</button>
         </div>
       )}
 
