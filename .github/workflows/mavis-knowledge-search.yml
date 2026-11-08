@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/mavis-deterministic-legal-search-20261108
+      - feature/mavis-legal-evidence-contract-20261108
       - feature/mavis-offline-first-public-knowledge-20261108
   workflow_dispatch:
   pull_request:
