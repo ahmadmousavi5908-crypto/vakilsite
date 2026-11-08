@@ -12,7 +12,8 @@
     "articles": 22,
     "faqs": 8,
     "query_expansions": 350,
-    "source_registry": 11
+    "source_registry": 21,
+    "research_notes": 5
   },
   "categories": [
     {
@@ -6168,6 +6169,340 @@
       "summary": "زمان پاسخ‌گویی به حجم درخواست‌ها و کامل بودن اطلاعات اولیه بستگی دارد. اگر مهلت فوری یا جلسه نزدیک دارید، آن را در ابتدای شرح درخواست به‌وضوح بنویسید و برای موضوعات فوری صرفاً به فرم سایت اکتفا نکنید.",
       "review_status": "service_information",
       "sources": []
+    },
+    {
+      "id": "research_note_real_estate_registration_article_1",
+      "record_type": "research_note",
+      "title": "قانون الزام به ثبت رسمی معاملات اموال غیرمنقول، ماده ۱",
+      "search_title": "قانون الزام به ثبت رسمی معاملات اموال غیرمنقول، ماده ۱",
+      "canonical": "قانون الزام به ثبت رسمی معاملات اموال غیرمنقول، ماده ۱",
+      "aliases": [
+        "الزام به ثبت رسمی معامله ملک",
+        "ثبت رسمی معاملات اموال غیرمنقول",
+        "تاریخ اجرای ماده یک قانون الزام",
+        "سند حدنگار و ثبت رسمی",
+        "قانون الزام ماده ۱"
+      ],
+      "search_phrases": [
+        "ماده یک قانون الزام به ثبت رسمی معاملات اموال غیرمنقول",
+        "از چه تاریخی معامله ملک باید رسمی ثبت شود",
+        "تاریخ اجرای الزام ثبت رسمی ملک",
+        "سند حدنگار صادرشده از ۱۴۰۳/۰۴/۰۳"
+      ],
+      "summary": "ماده ۱ اثر اصلی الزام ثبت را یک سال پس از راه‌اندازی رسمی سامانه ماده ۱۰ زمان‌بندی می‌کند؛ تاریخ تصویب قانون به‌تنهایی تاریخ شروع تمام آثار ماده ۱ نیست. در گزارش مورخ ۱۴۰۵/۰۷/۲۱ از اظهارات سخنگوی سازمان ثبت، اسناد حدنگار صادرشده از ۱۴۰۳/۰۴/۰۳ مشمول حکم ماده ۱ معرفی شده‌اند و برای اسناد قدیمی‌تر، تاریخ ۱۴۰۶/۰۳/۰۱ به‌عنوان نقطه زمانی یک‌سال پس از راه‌اندازی مرحله نخست اعلام شده است. این تاریخ باید با متن بخشنامه و روزنامه رسمی تطبیق نهایی شود. نشانی چاپ قانون در روزنامه رسمی از پابرگ نسخه بازنشرشده شناسایی شد: شماره ۲۳۰۶۸، ویژه‌نامه ۱۸۳۳، مورخ ۱۴۰۳/۰۳/۱۷. دسترسی مستقیم به میزبان رسمی در مرور قبلی timeout شد؛ این کشف نشانی، تأیید متن یا تنقیح قانون نیست.",
+      "findings": [
+        "ماده ۱ اثر اصلی الزام ثبت را یک سال پس از راه‌اندازی رسمی سامانه ماده ۱۰ زمان‌بندی می‌کند؛ تاریخ تصویب قانون به‌تنهایی تاریخ شروع تمام آثار ماده ۱ نیست.",
+        "در گزارش مورخ ۱۴۰۵/۰۷/۲۱ از اظهارات سخنگوی سازمان ثبت، اسناد حدنگار صادرشده از ۱۴۰۳/۰۴/۰۳ مشمول حکم ماده ۱ معرفی شده‌اند و برای اسناد قدیمی‌تر، تاریخ ۱۴۰۶/۰۳/۰۱ به‌عنوان نقطه زمانی یک‌سال پس از راه‌اندازی مرحله نخست اعلام شده است. این تاریخ باید با متن بخشنامه و روزنامه رسمی تطبیق نهایی شود.",
+        "نشانی چاپ قانون در روزنامه رسمی از پابرگ نسخه بازنشرشده شناسایی شد: شماره ۲۳۰۶۸، ویژه‌نامه ۱۸۳۳، مورخ ۱۴۰۳/۰۳/۱۷. دسترسی مستقیم به میزبان رسمی در مرور قبلی timeout شد؛ این کشف نشانی، تأیید متن یا تنقیح قانون نیست."
+      ],
+      "notes": "برای هر پرونده باید نوع عمل حقوقی، تاریخ، نوع و تاریخ صدور سند حدنگار، مرحله راه‌اندازی و استثناهای قانونی جداگانه احراز شود. وضعیت این یادداشت تا مشاهده مستقیم متن در روزنامه رسمی و مقابله اصلاحات بعدی، منبع ثانویه باقی می‌ماند.",
+      "review_status": "secondary_source_only",
+      "status": "needs_primary_source_verification",
+      "source_review_date": "2026-11-01",
+      "law_refs": [
+        "law_compulsory_real_estate_registration"
+      ],
+      "article_refs": [],
+      "sources": [
+        {
+          "title": "پیوند چاپ قانون در روزنامه رسمی؛ شناسایی شده اما دریافت و تطبیق نشده",
+          "url": "https://www.rrk.ir/Laws/PrintLaw.aspx?Code=29068",
+          "source_id": "src_official_gazette",
+          "source_class": "primary_publication",
+          "verification_status": "official_url_identified_not_retrieved"
+        },
+        {
+          "title": "نسخه ثانویه برای کشف و تطبیق",
+          "url": "https://law-ir.ir/law/cat/2036/",
+          "source_id": "src_law_ir",
+          "source_class": "secondary_legal_database",
+          "verification_status": "secondary_source_only"
+        },
+        {
+          "title": "گزارش خبری از اظهارات سخنگوی سازمان ثبت",
+          "url": "https://newsmedia.tasnimnews.ir/fa/news/1405/07/21/3721648/",
+          "source_id": "src_tasnim_news",
+          "source_class": "secondary_news_reporting",
+          "verification_status": "secondary_source_only"
+        }
+      ],
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "یادداشت پژوهشی برگرفته از گزارش بازبینی منابع مورخ ۱۴۰۵/۰۸/۱۰ است؛ تمام منابع ثانویه‌اند مگر پیوند رسمی روزنامه رسمی که صرفاً شناسایی و دریافت‌نشده ثبت شده است."
+      }
+    },
+    {
+      "id": "research_note_real_estate_registration_claims",
+      "record_type": "research_note",
+      "title": "قانون الزام به ثبت رسمی معاملات اموال غیرمنقول، ماده ۱۰ و سامانه ثبت ادعا",
+      "search_title": "قانون الزام به ثبت رسمی معاملات اموال غیرمنقول، ماده ۱۰ و سامانه ثبت ادعا",
+      "canonical": "قانون الزام به ثبت رسمی معاملات اموال غیرمنقول، ماده ۱۰ و سامانه ثبت ادعا",
+      "aliases": [
+        "سامانه ثبت ادعا",
+        "ثبت ادعای مالکیت ملک",
+        "مهلت ثبت ادعا برای املاک",
+        "گواهی ثبت ادعا",
+        "سامانه ماده ده قانون الزام",
+        "املاک فاقد سند رسمی"
+      ],
+      "search_phrases": [
+        "سامانه ثبت ادعا ماده ۱۰ قانون الزام",
+        "از چه تاریخی مهلت ثبت ادعا شروع می‌شود",
+        "ثبت ادعای مالکیت املاک فاقد سند",
+        "گواهی ثبت ادعا برای طرح دعوا"
+      ],
+      "summary": "گام نخست راه‌اندازی رسمی سامانه ثبت ادعا از ۱۴۰۵/۰۳/۰۱ برای املاکی اعلام شده که سند حدنگار آن‌ها از ۱۳۹۶/۰۱/۰۱ تا ۱۴۰۵/۰۲/۳۱ صادر شده است. برای اسناد حدنگار صادرشده پس از ۱۴۰۵/۰۳/۰۱، آغاز مهلت با تاریخ صدور سند توصیف شده است. طبق توضیح سخنگوی سازمان ثبت در ۱۴۰۵/۰۸/۰۶، الزام ثبت ادعا و ارائه گواهی برای طرح دعوا به همه املاک تعمیم ندارد؛ برای گروه‌های خارج از مرحله رسمی فعلی، ثبت ادعا اختیاری اعلام شده و مهلت دوساله آن‌ها هنوز آغاز نشده است.",
+      "findings": [
+        "گام نخست راه‌اندازی رسمی سامانه ثبت ادعا از ۱۴۰۵/۰۳/۰۱ برای املاکی اعلام شده که سند حدنگار آن‌ها از ۱۳۹۶/۰۱/۰۱ تا ۱۴۰۵/۰۲/۳۱ صادر شده است.",
+        "برای اسناد حدنگار صادرشده پس از ۱۴۰۵/۰۳/۰۱، آغاز مهلت با تاریخ صدور سند توصیف شده است.",
+        "طبق توضیح سخنگوی سازمان ثبت در ۱۴۰۵/۰۸/۰۶، الزام ثبت ادعا و ارائه گواهی برای طرح دعوا به همه املاک تعمیم ندارد؛ برای گروه‌های خارج از مرحله رسمی فعلی، ثبت ادعا اختیاری اعلام شده و مهلت دوساله آن‌ها هنوز آغاز نشده است."
+      ],
+      "notes": "گزارش‌های خبری نقل اظهارات مقام رسمی‌اند، نه جایگزین بخشنامه منتشرشده در روزنامه رسمی. پیش از محاسبه مهلت در پرونده واقعی، متن بخشنامه و وضعیت سامانه برای همان پلاک و سند بررسی شود.",
+      "review_status": "secondary_source_only",
+      "status": "needs_primary_source_verification",
+      "source_review_date": "2026-11-01",
+      "law_refs": [
+        "law_compulsory_real_estate_registration"
+      ],
+      "article_refs": [],
+      "sources": [
+        {
+          "title": "گزارش خبرگزاری تسنیم، ۱۴۰۵/۰۸/۰۶",
+          "url": "https://www.tasnimnews.ir/fa/news/1405/08/06/3734130/",
+          "source_id": "src_tasnim_news",
+          "source_class": "secondary_news_reporting",
+          "verification_status": "secondary_source_only"
+        },
+        {
+          "title": "گزارش خبرگزاری تسنیم، ۱۴۰۵/۰۳/۰۶",
+          "url": "https://www.tasnimnews.ir/fa/news/1405/03/06/3601786/",
+          "source_id": "src_tasnim_news",
+          "source_class": "secondary_news_reporting",
+          "verification_status": "secondary_source_only"
+        },
+        {
+          "title": "گزارش خبرگزاری تسنیم، ۱۴۰۵/۰۵/۱۶",
+          "url": "https://www.tasnimnews.ir/fa/news/1405/05/16/3665489/",
+          "source_id": "src_tasnim_news",
+          "source_class": "secondary_news_reporting",
+          "verification_status": "secondary_source_only"
+        },
+        {
+          "title": "گزارش تکمیلی فصل سوم",
+          "url": "https://fasl3.ir/بخش-جامعه-5/2629-آغاز-به-کار-سامانه-رسمی-املاک-غیرمنقول-از-اول-خردادماه",
+          "source_id": "src_fasl3",
+          "source_class": "secondary_legal_commentary",
+          "verification_status": "secondary_source_only"
+        }
+      ],
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "یادداشت پژوهشی برگرفته از گزارش بازبینی منابع مورخ ۱۴۰۵/۰۸/۱۰ است؛ تمام منابع ثانویه‌اند مگر پیوند رسمی روزنامه رسمی که صرفاً شناسایی و دریافت‌نشده ثبت شده است."
+      }
+    },
+    {
+      "id": "research_note_cheque_amendments",
+      "record_type": "research_note",
+      "title": "قانون صدور چک، اصلاحات ۱۳۹۷ و ۱۴۰۰",
+      "search_title": "قانون صدور چک، اصلاحات ۱۳۹۷ و ۱۴۰۰",
+      "canonical": "قانون صدور چک، اصلاحات ۱۳۹۷ و ۱۴۰۰",
+      "aliases": [
+        "قانون چک صیادی",
+        "ثبت چک در سامانه صیاد",
+        "چک قدیمی و جدید",
+        "گواهی عدم پرداخت چک",
+        "ماده ۲۱ مکرر قانون چک",
+        "اصلاحیه قانون صدور چک"
+      ],
+      "search_phrases": [
+        "اصلاحات قانون صدور چک ۱۳۹۷ و ۱۴۰۰",
+        "قانون چک صیادی و دسته چک قدیمی",
+        "ثبت صدور و انتقال چک در صیاد",
+        "گواهی عدم پرداخت دارای کد رهگیری"
+      ],
+      "summary": "متن تجمیعی قانون صدور چک، اصلاحات ۱۳۹۷ را منعکس می‌کند؛ اصلاحیه ۱۴۰۰/۰۱/۲۹ تبصره ۱ ماده ۲۱ مکرر را درباره برگه‌های صادرشده از دسته‌چک‌های ارائه‌شده پس از پایان اسفند ۱۳۹۹ اصلاح کرده است. برای چک‌های مشمول ثبت در صیاد، ثبت صدور و انتقال در سامانه و وضعیت دارنده نهایی اهمیت دارد؛ چک‌های دسته‌چک‌های قدیمی تابع حکم انتقالی جداگانه‌اند. ماده ۴ درباره ثبت عدم پرداخت و گواهی دارای کد رهگیری، نقطه کلیدی مطالبه و پیگیری است؛ مواعد و آثار کیفری در این نسخه به صورت قطعی خلاصه نشده‌اند.",
+      "findings": [
+        "متن تجمیعی قانون صدور چک، اصلاحات ۱۳۹۷ را منعکس می‌کند؛ اصلاحیه ۱۴۰۰/۰۱/۲۹ تبصره ۱ ماده ۲۱ مکرر را درباره برگه‌های صادرشده از دسته‌چک‌های ارائه‌شده پس از پایان اسفند ۱۳۹۹ اصلاح کرده است.",
+        "برای چک‌های مشمول ثبت در صیاد، ثبت صدور و انتقال در سامانه و وضعیت دارنده نهایی اهمیت دارد؛ چک‌های دسته‌چک‌های قدیمی تابع حکم انتقالی جداگانه‌اند.",
+        "ماده ۴ درباره ثبت عدم پرداخت و گواهی دارای کد رهگیری، نقطه کلیدی مطالبه و پیگیری است؛ مواعد و آثار کیفری در این نسخه به صورت قطعی خلاصه نشده‌اند."
+      ],
+      "notes": "برای اظهار نظر درباره وصف کیفری، مهلت شکایت، اجرائیه مستقیم، خسارت تأخیر و مسئولیت ظهرنویسان باید متن جاری مواد، شرایط سند و رویه معتبر جداگانه بررسی شود.",
+      "review_status": "secondary_source_only",
+      "status": "needs_primary_source_verification",
+      "source_review_date": "2026-11-01",
+      "law_refs": [
+        "law_cheque"
+      ],
+      "article_refs": [],
+      "sources": [
+        {
+          "title": "متن تجمیعی ثانویه قانون صدور چک",
+          "url": "https://law-ir.ir/law/cat/1692/",
+          "source_id": "src_law_ir",
+          "source_class": "secondary_legal_database",
+          "verification_status": "secondary_source_only"
+        },
+        {
+          "title": "گزارش اصلاح قانون صدور چک در اختبار",
+          "url": "https://www.ekhtebar.ir/قانون-اصلاح-قانون-صدور-چک/",
+          "source_id": "src_ekhtebar",
+          "source_class": "secondary_legal_news",
+          "verification_status": "secondary_source_only"
+        },
+        {
+          "title": "نسخه ثانویه در Lawlex",
+          "url": "https://lawlex.ir/laws/chek/21-mokarrar",
+          "source_id": "src_lawlex",
+          "source_class": "secondary_legal_database",
+          "verification_status": "secondary_source_only"
+        }
+      ],
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "یادداشت پژوهشی برگرفته از گزارش بازبینی منابع مورخ ۱۴۰۵/۰۸/۱۰ است؛ تمام منابع ثانویه‌اند مگر پیوند رسمی روزنامه رسمی که صرفاً شناسایی و دریافت‌نشده ثبت شده است."
+      }
+    },
+    {
+      "id": "research_note_promissory_note",
+      "record_type": "research_note",
+      "title": "سفته و فته‌طلب، مواد ۳۰۷ تا ۳۰۹ قانون تجارت",
+      "search_title": "سفته و فته‌طلب، مواد ۳۰۷ تا ۳۰۹ قانون تجارت",
+      "canonical": "سفته و فته‌طلب، مواد ۳۰۷ تا ۳۰۹ قانون تجارت",
+      "aliases": [
+        "سفته چیست",
+        "فتـه طلب",
+        "واخواست سفته",
+        "مواعد واخواست سفته",
+        "مندرجات الزامی سفته",
+        "مواد ۳۰۷ تا ۳۰۹ قانون تجارت"
+      ],
+      "search_phrases": [
+        "مواد ۳۰۷ ۳۰۸ ۳۰۹ قانون تجارت سفته",
+        "شرایط شکلی سفته و مبلغ با تمام حروف",
+        "واخواست سفته و آثار عدم واخواست"
+      ],
+      "summary": "ماده ۳۰۷ تعریف فته‌طلب را بیان می‌کند. ماده ۳۰۸ علاوه بر امضا یا مهر، تاریخ، مبلغ با تمام حروف، گیرنده وجه و تاریخ پرداخت را از مندرجات مقرر می‌شمارد. ماده ۳۰۹ مقررات ارجاعی برات را به فته‌طلب تسری می‌دهد؛ دامنه اعمال هر قاعده باید با توجه به موضوع و شرایط خاص بررسی شود.",
+      "findings": [
+        "ماده ۳۰۷ تعریف فته‌طلب را بیان می‌کند.",
+        "ماده ۳۰۸ علاوه بر امضا یا مهر، تاریخ، مبلغ با تمام حروف، گیرنده وجه و تاریخ پرداخت را از مندرجات مقرر می‌شمارد.",
+        "ماده ۳۰۹ مقررات ارجاعی برات را به فته‌طلب تسری می‌دهد؛ دامنه اعمال هر قاعده باید با توجه به موضوع و شرایط خاص بررسی شود."
+      ],
+      "notes": "متن در دسترس برای این مرور از پایگاه‌های بازنشر و ثانویه است؛ مواعد واخواست و آثار عدم رعایت آن بدون بررسی مواد ارجاعی و رویه قضایی، حکم قطعی عمومی تلقی نشود.",
+      "review_status": "secondary_source_only",
+      "status": "needs_primary_source_verification",
+      "source_review_date": "2026-11-01",
+      "law_refs": [
+        "law_commercial_code"
+      ],
+      "article_refs": [],
+      "sources": [
+        {
+          "title": "متن قانون تجارت در پایگاه ثانویه ادلیو",
+          "url": "https://adlio.ir/law/قانون-تجارت-مصوب-1311-02-13/",
+          "source_id": "src_adlio",
+          "source_class": "secondary_legal_database",
+          "verification_status": "secondary_source_only"
+        },
+        {
+          "title": "نسخه آرشیوی WIPO Lex",
+          "url": "https://wipolex-res.wipo.int/edocs/lexdocs/laws/fa/ir/ir030fa.pdf",
+          "source_id": "src_wipo_lex",
+          "source_class": "international_secondary_legal_archive",
+          "verification_status": "secondary_source_only"
+        }
+      ],
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "یادداشت پژوهشی برگرفته از گزارش بازبینی منابع مورخ ۱۴۰۵/۰۸/۱۰ است؛ تمام منابع ثانویه‌اند مگر پیوند رسمی روزنامه رسمی که صرفاً شناسایی و دریافت‌نشده ثبت شده است."
+      }
+    },
+    {
+      "id": "research_note_registration_law",
+      "record_type": "research_note",
+      "title": "قانون ثبت اسناد و املاک، مواد ۴۶ تا ۴۸ و ۷۰ تا ۷۲",
+      "search_title": "قانون ثبت اسناد و املاک، مواد ۴۶ تا ۴۸ و ۷۰ تا ۷۲",
+      "canonical": "قانون ثبت اسناد و املاک، مواد ۴۶ تا ۴۸ و ۷۰ تا ۷۲",
+      "aliases": [
+        "قانون ثبت اسناد و املاک",
+        "مواد ۴۶ تا ۴۸ قانون ثبت",
+        "اثر سند رسمی",
+        "مجهول المالک و ثبت معامله",
+        "ماده ۸۸ قانون ثبت",
+        "مواد ۱۵۴ و ۱۵۶ قانون ثبت"
+      ],
+      "search_phrases": [
+        "مواد ۴۶ ۴۷ ۴۸ قانون ثبت اسناد و املاک",
+        "آثار سند رسمی مواد ۷۰ تا ۷۲ قانون ثبت",
+        "نظریه مشورتی ۷/۱۴۰۲/۷۹۲",
+        "ملک جاری و مجهول المالک امکان ثبت معامله"
+      ],
+      "summary": "مواد ۴۶ تا ۴۸ درباره موارد ثبت اجباری و اثر عدم ثبت در موارد مشمول، باید با توجه به شرایط هر ماده و قوانین مؤخر خوانده شوند؛ ماده ۴۷ ثبت را در همه نقاط و برای همه املاک به طور مطلق اجباری نمی‌کند. مواد ۷۰ تا ۷۲ آثار سند رسمی و معاملات ثبت‌شده را در روابط طرفین، قائم‌مقام‌ها و در موارد مقرر اشخاص ثالث تفکیک می‌کنند. نظریه مشورتی شماره ۷/۱۴۰۲/۷۹۲ مورخ ۱۴۰۲/۱۱/۰۳ بقای ماده ۸۸ را تأیید کرده و میان ملک جاری و ملک مجهول‌المالک در امکان ثبت معامله تفکیک قائل شده است. مواد ۱۵۴ و ۱۵۶ به ترتیب به نقشه تفکیکی در افراز و تفکیک شهری و نقش نقشه کاداستر در تشخیص حدود و اختلافات ثبتی مربوط‌اند.",
+      "findings": [
+        "مواد ۴۶ تا ۴۸ درباره موارد ثبت اجباری و اثر عدم ثبت در موارد مشمول، باید با توجه به شرایط هر ماده و قوانین مؤخر خوانده شوند؛ ماده ۴۷ ثبت را در همه نقاط و برای همه املاک به طور مطلق اجباری نمی‌کند.",
+        "مواد ۷۰ تا ۷۲ آثار سند رسمی و معاملات ثبت‌شده را در روابط طرفین، قائم‌مقام‌ها و در موارد مقرر اشخاص ثالث تفکیک می‌کنند.",
+        "نظریه مشورتی شماره ۷/۱۴۰۲/۷۹۲ مورخ ۱۴۰۲/۱۱/۰۳ بقای ماده ۸۸ را تأیید کرده و میان ملک جاری و ملک مجهول‌المالک در امکان ثبت معامله تفکیک قائل شده است.",
+        "مواد ۱۵۴ و ۱۵۶ به ترتیب به نقشه تفکیکی در افراز و تفکیک شهری و نقش نقشه کاداستر در تشخیص حدود و اختلافات ثبتی مربوط‌اند."
+      ],
+      "notes": "متن تنقیحی و اصلاحات تاریخی همه مواد از روزنامه رسمی و سامانه ملی قوانین استخراج و تطبیق نشده است. نظریه مشورتی منبع تفسیری است، نه متن قانون. در هر پرونده باید وضعیت ثبتی ملک، جاری یا مجهول‌المالک بودن و قوانین خاص مؤخر احراز شود.",
+      "review_status": "secondary_source_only",
+      "status": "needs_primary_source_verification",
+      "source_review_date": "2026-11-01",
+      "law_refs": [
+        "law_registration_law"
+      ],
+      "article_refs": [],
+      "sources": [
+        {
+          "title": "متن قانون ثبت در پایگاه ثانویه قانون",
+          "url": "https://law-ir.ir/law/cat/1814/",
+          "source_id": "src_law_ir",
+          "source_class": "secondary_legal_database",
+          "verification_status": "secondary_source_only"
+        },
+        {
+          "title": "متن قانون ثبت در پایگاه ثانویه ادلیو",
+          "url": "https://adlio.ir/law/قانون-ثبت-اسناد-و-املاک-مصوب-1310-12-26/",
+          "source_id": "src_adlio",
+          "source_class": "secondary_legal_database",
+          "verification_status": "secondary_source_only"
+        },
+        {
+          "title": "نظریه مشورتی بازنشرشده در پایگاه حقوقی",
+          "url": "https://asbahi-lawyer.ir/nazariyeh/نظریه-مشورتی-شماره-۷-۱۴۰۲-۷۹۲-مورخ-۱۴۰۲/",
+          "source_id": "src_asbahi_lawyer",
+          "source_class": "secondary_legal_commentary",
+          "verification_status": "secondary_source_only"
+        }
+      ],
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "یادداشت پژوهشی برگرفته از گزارش بازبینی منابع مورخ ۱۴۰۵/۰۸/۱۰ است؛ تمام منابع ثانویه‌اند مگر پیوند رسمی روزنامه رسمی که صرفاً شناسایی و دریافت‌نشده ثبت شده است."
+      }
     }
   ],
   "notices": [
@@ -6289,6 +6624,106 @@
       "priority": 1,
       "live_access_checked": false,
       "evidence_url": "https://eadil.com/"
+    },
+    {
+      "id": "src_tasnim_news",
+      "name": "خبرگزاری تسنیم",
+      "url": "https://www.tasnimnews.ir/",
+      "class": "secondary_news_reporting",
+      "authority": "خبرگزاری؛ بازتاب اظهارات و اطلاعیه‌های اشخاص و نهادهای رسمی",
+      "use": "کشف خبر و نقل اظهارات مقام‌ها؛ جایگزین بخشنامه، متن قانون یا روزنامه رسمی نیست",
+      "priority": 3,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_ekhtebar",
+      "name": "پایگاه خبری اختبار",
+      "url": "https://www.ekhtebar.ir/",
+      "class": "secondary_legal_news",
+      "authority": "رسانه و پایگاه خبری حقوقی",
+      "use": "کشف اصلاحات و اخبار حقوقی؛ متن نهایی باید با مرجع رسمی تطبیق داده شود",
+      "priority": 3,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_fasl3",
+      "name": "فصل سوم",
+      "url": "https://fasl3.ir/",
+      "class": "secondary_legal_commentary",
+      "authority": "وب‌سایت محتوایی و توضیحی حقوقی",
+      "use": "کشف موضوع و توضیحات تکمیلی؛ منبع رسمی قانون نیست",
+      "priority": 4,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_wipo_lex",
+      "name": "WIPO Lex",
+      "url": "https://www.wipo.int/wipolex/",
+      "class": "international_secondary_legal_archive",
+      "authority": "پایگاه جهانی قوانین و اسناد مالکیت فکری و حقوقی",
+      "use": "آرشیو و ترجمه‌های منتخب برای پژوهش تطبیقی؛ نسخه فارسی رسمی و روزآمد ایران را تضمین نمی‌کند",
+      "priority": 4,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_asbahi_lawyer",
+      "name": "پایگاه حقوقی اسبهی",
+      "url": "https://asbahi-lawyer.ir/",
+      "class": "secondary_legal_commentary",
+      "authority": "وب‌سایت حقوقی و انتشار مطالب/نظریات",
+      "use": "کشف نظریات و تحلیل‌ها؛ نظریه مشورتی منبع تفسیری است نه متن قانون",
+      "priority": 4,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_tasnim_news",
+      "name": "خبرگزاری تسنیم",
+      "url": "https://www.tasnimnews.ir/",
+      "class": "secondary_news_reporting",
+      "authority": "خبرگزاری؛ بازتاب اظهارات و اطلاعیه‌های اشخاص و نهادهای رسمی",
+      "use": "کشف خبر و نقل اظهارات مقام‌ها؛ جایگزین بخشنامه، متن قانون یا روزنامه رسمی نیست",
+      "priority": 3,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_ekhtebar",
+      "name": "پایگاه خبری اختبار",
+      "url": "https://www.ekhtebar.ir/",
+      "class": "secondary_legal_news",
+      "authority": "رسانه و پایگاه خبری حقوقی",
+      "use": "کشف اصلاحات و اخبار حقوقی؛ متن نهایی باید با مرجع رسمی تطبیق داده شود",
+      "priority": 3,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_fasl3",
+      "name": "فصل سوم",
+      "url": "https://fasl3.ir/",
+      "class": "secondary_legal_commentary",
+      "authority": "وب‌سایت محتوایی و توضیحی حقوقی",
+      "use": "کشف موضوع و توضیحات تکمیلی؛ منبع رسمی قانون نیست",
+      "priority": 4,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_wipo_lex",
+      "name": "WIPO Lex",
+      "url": "https://www.wipo.int/wipolex/",
+      "class": "international_secondary_legal_archive",
+      "authority": "پایگاه جهانی قوانین و اسناد مالکیت فکری و حقوقی",
+      "use": "آرشیو و ترجمه‌های منتخب برای پژوهش تطبیقی؛ نسخه فارسی رسمی و روزآمد ایران را تضمین نمی‌کند",
+      "priority": 4,
+      "live_access_checked": false
+    },
+    {
+      "id": "src_asbahi_lawyer",
+      "name": "پایگاه حقوقی اسبهی",
+      "url": "https://asbahi-lawyer.ir/",
+      "class": "secondary_legal_commentary",
+      "authority": "وب‌سایت حقوقی و انتشار مطالب/نظریات",
+      "use": "کشف نظریات و تحلیل‌ها؛ نظریه مشورتی منبع تفسیری است نه متن قانون",
+      "priority": 4,
+      "live_access_checked": false
     }
   ],
   "registry_review_date": "2026-11-08",
