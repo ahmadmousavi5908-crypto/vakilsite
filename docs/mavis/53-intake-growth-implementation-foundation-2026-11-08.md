@@ -56,3 +56,10 @@ The server route `POST /api/mavis/intake` is implemented but remains fail-closed
 The route checks same-origin, JSON content type, an 8 KB streamed body cap, strict field allowlist, deterministic validation and triage, persistent database rate limit, then calls the service-role-only RPC. Database failure is returned as failure; no success receipt is emitted unless a tracking code is returned. Raw IP, name, phone and summary are never written to application logs by this route.
 
 The endpoint is not active until all environment settings, migration 006, proxy behavior, approved retention schedule and live local Supabase CI have been verified. No public form or visual change is included in this implementation.
+
+
+## Admin intake inbox
+
+The existing `/admin/mavis` workspace now includes a private intake inbox. It reads through `GET /api/admin/mavis/intake` and changes only the workflow status through `PATCH`. Both routes require the current admin authorization check, the service-side secret client, the persistent admin rate-limit guard, and the database RPC's second admin-role check. The list is bounded to 50 rows per page, supports an allowlisted status filter, and the database records list views and status changes.
+
+The inbox displays contact details and matter summaries only to authorized administrators. It does not calculate legal deadlines, accept files, edit submitted facts, or expose a public tracking lookup. It remains unavailable until Migration 006 is applied and the server-side secret key is configured.
