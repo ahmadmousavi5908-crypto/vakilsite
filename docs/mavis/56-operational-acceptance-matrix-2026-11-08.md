@@ -42,6 +42,8 @@
 **Pass:** integration tests prove each failure path, RLS/grants and server authorization agree, no private payload is emitted to logs or public responses, and an approved scheduler runs retention purges with observable last-success/failure state and alerting.  
 **Current state:** DB migrations and pgTAP assertions passed in CI; a purge function exists, but no scheduled execution or operational monitoring configuration was found in the candidate repository. Its audit cutoff is caller-supplied and accepts any past timestamp, so the approved audit-retention horizon must be defined and enforced before scheduling. Local device/staging failure-injection remains pending.
 
+**Scheduler candidate (research only):** Supabase Cron (`pg_cron`) can run database functions directly and records job-run history in `cron.job_run_details`; confirm project/version availability and the current feature stage before enabling it. Do not schedule the purge until the audit-retention policy and safe cutoff are approved.
+
 ## Workstream D — Growth intelligence
 
 1. Keep provider adapters read-only until official OAuth scopes, redirect URIs, token storage and revocation are approved.
