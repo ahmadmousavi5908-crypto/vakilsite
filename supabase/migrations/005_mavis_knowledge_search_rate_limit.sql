@@ -16,7 +16,7 @@ alter table mavis_private.knowledge_search_rate_limits enable row level security
 revoke all privileges on table mavis_private.knowledge_search_rate_limits
   from public, anon, authenticated, service_role;
 
-create or replace function public.consume_mavis_knowledge_search_limit()
+create or replace function mavis_private.consume_knowledge_search_limit()
 returns table (
   allowed boolean,
   retry_after_seconds integer
@@ -69,6 +69,26 @@ begin
       )
     end;
 end;
+$function$;
+
+revoke all on function mavis_private.consume_knowledge_search_limit()
+  from public, anon, authenticated, service_role;
+grant usage on schema mavis_private to authenticated;
+grant execute on function mavis_private.consume_knowledge_search_limit()
+  to authenticated;
+
+-- Expose only a SECURITY INVOKER wrapper through the public Data API schema.
+create or replace function public.consume_mavis_knowledge_search_limit()
+returns table (
+  allowed boolean,
+  retry_after_seconds integer
+)
+language sql
+security invoker
+set search_path = ''
+as $function$
+  select *
+  from mavis_private.consume_knowledge_search_limit();
 $function$;
 
 revoke all on function public.consume_mavis_knowledge_search_limit()
