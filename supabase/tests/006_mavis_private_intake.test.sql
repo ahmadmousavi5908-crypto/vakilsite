@@ -106,9 +106,9 @@ select ok(not has_function_privilege('authenticated',
   'public.consume_mavis_public_intake_rate_limit(text)', 'EXECUTE'),
   'authenticated users cannot call the public rate-limit wrapper');
 
-select ok(has_function_privilege('service_role',
+select ok(not has_function_privilege('service_role',
   'public.submit_mavis_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)', 'EXECUTE'),
-  'service role can call the public intake invoker wrapper');
+  'service role cannot call the retired non-idempotent intake wrapper');
 select ok(not has_function_privilege('anon',
   'public.submit_mavis_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)', 'EXECUTE'),
   'anonymous users cannot call the public intake wrapper directly');
