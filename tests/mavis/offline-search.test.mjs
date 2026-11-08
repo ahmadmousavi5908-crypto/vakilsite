@@ -63,3 +63,26 @@ test("offline bundle includes ranked primary and secondary legal research source
   assert.ok(primary.some((source) => source.url === "https://qavanin.ir/"));
   assert.ok(knowledge.source_registry.every((source) => source.live_access_checked === false));
 });
+
+test("legal records carry conservative provenance and never imply verified current law", () => {
+  for (const record of knowledge.records.filter((item) => ["term", "law", "article"].includes(item.record_type))) {
+    assert.equal(record.provenance?.exact_primary_document_verified, false, record.id);
+    assert.equal(record.provenance?.current_validity_verified, false, record.id);
+  }
+  assert.equal(knowledge.records.filter((record) => record.review_status === "verified_primary_source").length, 0);
+});
+
+test("official judiciary discovery sources are present without claiming live availability", () => {
+  const gateway = knowledge.source_registry.find((source) => source.id === "src_official_judiciary_gateway");
+  const decisions = knowledge.source_registry.find((source) => source.id === "src_national_judicial_decisions");
+  assert.equal(gateway.url, "https://eadil.com/");
+  assert.equal(decisions.url, "https://ara.jri.ac.ir/");
+  assert.equal(gateway.live_access_checked, false);
+  assert.equal(decisions.live_access_checked, false);
+});
+
+test("record-level citations identify secondary and not-yet-retrieved official links honestly", () => {
+  const compulsory = knowledge.records.find((record) => record.id === "law_compulsory_real_estate_registration");
+  assert.ok(compulsory.sources.some((source) => source.verification_status === "official_url_identified_not_retrieved"));
+  assert.ok(compulsory.sources.some((source) => source.verification_status === "secondary_source_only"));
+});
