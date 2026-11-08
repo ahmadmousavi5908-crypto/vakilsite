@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mapArticleRowToPublicArticle, mapStaticArticleToRow, validateArticleDraft } from "../../src/lib/mavis/article-content.mjs";
+import { mapArticleRowToAdminArticle, mapArticleRowToPublicArticle, mapStaticArticleToRow, validateArticleDraft } from "../../src/lib/mavis/article-content.mjs";
 
 const article = {
   slug: "sample-article",
@@ -48,4 +48,13 @@ test("validates article drafts and rejects unsafe or malformed content", () => {
   assert.equal(validateArticleDraft(payload).ok, true);
   assert.equal(validateArticleDraft({ ...payload, slug: "../bad" }).ok, false);
   assert.equal(validateArticleDraft({ ...payload, content: { ...payload.content, sources: [{ label: "bad", url: "javascript:alert(1)" }] } }).ok, false);
+});
+
+test("maps non-public draft rows for the protected admin inventory only", () => {
+  const row = { ...mapStaticArticleToRow(article), status: "draft", version: 2, updated_at: "2026-11-08T12:00:00.000Z" };
+  assert.equal(mapArticleRowToPublicArticle(row), null);
+  const admin = mapArticleRowToAdminArticle(row);
+  assert.equal(admin.status, "draft");
+  assert.equal(admin.version, 2);
+  assert.equal(admin.slug, article.slug);
 });
