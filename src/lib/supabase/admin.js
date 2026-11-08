@@ -19,6 +19,7 @@ export async function requireAdmin() {
     supabase,
     user: data.claims,
     isAdmin: !adminError && isAdmin === true,
+    adminCheckAvailable: !adminError,
     configured: true,
   };
 }
