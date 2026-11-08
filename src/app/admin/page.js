@@ -58,7 +58,7 @@ export default async function AdminDashboard({ searchParams }) {
         </header>
         <main className="admin-content" id="overview">
           <section className="admin-welcome">
-            <div><span className="admin-eyebrow">OVERVIEW</span><h1>خوش آمدید</h1><p>اطلاعات اصلی دفتر و آنچه بازدیدکنندگان در سایت می‌بینند را از این بخش مدیریت کنید.</p></div>
+            <div><span className="admin-eyebrow">OVERVIEW</span><h1>خوش آمدید</h1><p>اطلاعات اصلی دفتر و آنچه بازدیدکنندگان در سایت می‌بینند را از این بخش مدیریت کنید. <Link href="/admin/mavis">ورود به مرکز دانش MAVIS ←</Link></p></div>
             <div className="admin-status"><i /> حساب مدیر فعال</div>
           </section>
 
