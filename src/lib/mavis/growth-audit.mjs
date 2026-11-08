@@ -72,7 +72,11 @@ export function auditGrowthArticle(article) {
   }
 
   const bodyText = [title, excerpt, article?.intro, ...sections.map((section) => section?.heading), ...sections.map((section) => section?.body)].join(" ");
-  const keywords = tokens(bodyText).sort((a, b) => b.length - a.length).slice(0, 12);
+  const frequency = new Map();
+  for (const token of normalizeGrowthText(bodyText).split(" ")) {
+    if (token.length > 2 && !STOP_WORDS.has(token)) frequency.set(token, (frequency.get(token) || 0) + 1);
+  }
+  const keywords = [...frequency.entries()].sort((a, b) => b[1] - a[1] || b[0].length - a[0].length).map(([token]) => token).slice(0, 12);
   return {
     slug: article?.slug ?? "",
     title: title || "بدون عنوان",
