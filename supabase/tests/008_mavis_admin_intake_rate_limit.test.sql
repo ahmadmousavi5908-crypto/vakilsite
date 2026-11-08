@@ -1,6 +1,6 @@
 begin;
 
-select plan(18);
+select plan(24);
 
 select ok(
   has_schema_privilege('authenticated', 'mavis_private', 'USAGE'),
@@ -80,6 +80,84 @@ select ok(
 select ok(
   not (select prosecdef from pg_proc where oid = 'public.consume_mavis_admin_intake_rate_limit()'::regprocedure),
   'public wrapper runs with invoker privileges'
+);
+
+
+-- Exercise the RPC through real authenticated JWT contexts, not only catalog metadata.
+insert into auth.users (id, aud, role, email, created_at, updated_at)
+values
+  ('10000000-0000-4000-8000-000000000001', 'authenticated', 'authenticated', 'mavis-admin-test@example.invalid', now(), now()),
+  ('10000000-0000-4000-8000-000000000002', 'authenticated', 'authenticated', 'mavis-editor-test@example.invalid', now(), now());
+
+insert into public.profiles (id, role)
+values
+  ('10000000-0000-4000-8000-000000000001', 'admin'),
+  ('10000000-0000-4000-8000-000000000002', 'editor');
+
+set local role authenticated;
+select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000002', true);
+select set_config('request.jwt.claims', '{"sub":"10000000-0000-4000-8000-000000000002","role":"authenticated"}', true);
+
+select is(
+  (select allowed from public.consume_mavis_admin_intake_rate_limit()),
+  false,
+  'a signed-in non-admin cannot consume the admin intake quota'
+);
+select is(
+  (select retry_after_seconds from public.consume_mavis_admin_intake_rate_limit()),
+  60,
+  'a signed-in non-admin receives a bounded denial response'
+);
+
+select set_config('request.jwt.claim.sub', '10000000-0000-4000-8000-000000000001', true);
+select set_config('request.jwt.claims', '{"sub":"10000000-0000-4000-8000-000000000001","role":"authenticated"}', true);
+
+select is(
+  (select allowed from public.consume_mavis_admin_intake_rate_limit()),
+  true,
+  'a signed-in site admin can consume the dedicated intake quota'
+);
+select is(
+  (select count(*)::integer
+   from generate_series(1, 29) as n
+   cross join lateral public.consume_mavis_admin_intake_rate_limit() as decision
+   where decision.allowed),
+  29,
+  'the admin quota allows requests through the thirtieth request in its window'
+);
+select is(
+  (select allowed from public.consume_mavis_admin_intake_rate_limit()),
+  false,
+  'the admin quota blocks the thirty-first request in its window'
+);
+select ok(
+  (select retry_after_seconds between 1 and 60
+   from public.consume_mavis_admin_intake_rate_limit()),
+  'the admin quota returns a bounded retry interval after exhaustion'
+);
+
+reset role;
+
+select is(
+  (select count(*)::integer
+   from mavis_private.admin_intake_rate_limits
+   where user_id = '10000000-0000-4000-8000-000000000001'),
+  1,
+  'only the authorized admin receives a dedicated intake counter'
+);
+select is(
+  (select count(*)::integer
+   from mavis_private.admin_intake_rate_limits
+   where user_id = '10000000-0000-4000-8000-000000000002'),
+  0,
+  'a non-admin cannot create an intake counter'
+);
+select is(
+  (select count(*)::integer
+   from mavis_private.knowledge_search_rate_limits
+   where user_id = '10000000-0000-4000-8000-000000000001'),
+  0,
+  'admin intake quota does not consume the separate knowledge-search counter'
 );
 
 select * from finish();
