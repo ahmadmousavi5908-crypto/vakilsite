@@ -1,6 +1,8 @@
 -- MAVIS public intake: private storage, explicit consent, idempotent submission and persistent rate limiting.
 -- This migration does not enable the public endpoint. Runtime activation requires approved privacy settings and trusted proxy configuration.
 
+create extension if not exists pg_cron;
+
 create schema if not exists mavis_intake_private;
 revoke all on schema mavis_intake_private from public, anon, authenticated, service_role;
 
@@ -315,3 +317,14 @@ end;
 $$;
 revoke all on function public.purge_expired_mavis_intake() from public, anon, authenticated;
 grant execute on function public.purge_expired_mavis_intake() to service_role;
+
+-- Retention cleanup runs daily. The retention period itself is configured server-side
+-- and stored per submission; no record is deleted before its configured due date.
+select cron.schedule(
+  'mavis-intake-retention-purge',
+  '17 2 * * *',
+  'select public.purge_expired_mavis_intake();'
+)
+where not exists (
+  select 1 from cron.job where jobname = 'mavis-intake-retention-purge'
+);
