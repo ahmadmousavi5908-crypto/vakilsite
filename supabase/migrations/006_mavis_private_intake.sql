@@ -298,7 +298,7 @@ comment on table mavis_intake_private.rate_limits is
     raise exception 'Intake validation failed';
   end if;
 
-  insert into mavis_intake_private.submissions (
+  insert into mavis_intake_private.submissions as inserted (
     full_name, phone, case_type, summary, urgency, opposing_party,
     initial_review_consent, initial_review_consent_at, consent_version,
     marketing_consent, marketing_consent_at,
@@ -314,7 +314,7 @@ comment on table mavis_intake_private.rate_limits is
     p_review_priority, p_detected_signals, p_requires_deadline_check,
     p_retention_expires_at
   )
-  returning submissions.id, submissions.tracking_code, submissions.created_at
+  returning inserted.id, inserted.tracking_code, inserted.created_at
   into v_submission_id, v_tracking_code, v_created_at;
 
   insert into mavis_intake_private.audit_events (submission_id, event_code, actor_type)
