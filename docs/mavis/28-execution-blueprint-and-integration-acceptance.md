@@ -319,3 +319,16 @@
 - https://support.google.com/news/publisher-center/answer/6204050
 - https://support.google.com/news/publisher-center/answer/9607104
 - https://developers.google.com/search/docs/crawling-indexing/troubleshoot-crawling-errors
+
+## ۱۵. اجرای مرحله اول با اولویت دارایی‌های داخلی
+مرحله اول باید با آنچه در خود پروژه وجود دارد به بهره‌برداری برسد؛ سرویس خارجی یا اعتبار LLM شرط جست‌وجو و پذیرش نیست.
+
+1. پس از ممیزی Mother Two، همه فایل‌ها و داده‌های موجود با hash، provenance، version و access scope فهرست شوند.
+2. legal-library و registry فعلی به‌عنوان منابع موجود ارزیابی شوند؛ هیچ corpus موازی ساخته نشود.
+3. benchmark جست‌وجوی فعلی قبل از تغییر ثبت شود؛ سپس exact/metadata/full-text فارسی و فیلتر scope پیاده‌سازی/تکمیل شود.
+4. فرم پذیرش جامع و شرطی، validation، رضایت‌های مجزا و ثبت پایدار بدون LLM تکمیل شود؛ Intake فقط گزارشگر پاسخ باشد.
+5. حالت LLM quota=0، DB down، index down، network down و retry/resume جداگانه fault-injection شود.
+6. معیارهای Recall@10، Precision@5، nDCG@10 و p95 در سند ۴۸ هدف پذیرش‌اند، نه نتیجه فعلی؛ corpus و محیط benchmark باید pin شوند.
+7. فقط پس از عبور مرحله اول، اتصال‌های بیرونی مرحله دوم به‌صورت read-only و مستقل طراحی شوند.
+
+مرجع کامل: [معماری مرحله اول، جست‌وجو و پذیرش مستقل](./48-first-party-first-stage-one-search-and-intake-architecture-2026-11-08.md).
