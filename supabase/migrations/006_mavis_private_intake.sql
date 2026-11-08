@@ -61,7 +61,8 @@ create table mavis_intake_private.audit_events (
   submission_id uuid references mavis_intake_private.submissions(id) on delete set null,
   event_code text not null check (event_code in (
     'submission_received', 'human_review_started',
-    'status_changed', 'retention_hold_applied', 'submission_purged'
+    'status_changed', 'retention_hold_applied', 'submission_purged',
+    'submission_list_viewed', 'submission_status_updated'
   )),
   actor_type text not null check (actor_type in ('system', 'admin')),
   actor_user_id uuid references auth.users(id) on delete set null,
@@ -350,6 +351,178 @@ grant execute on function public.submit_mavis_public_intake(
   jsonb, text, text[], boolean, timestamptz, text
 ) to service_role;
 grant execute on function public.purge_mavis_expired_public_intake(timestamptz) to service_role;
+
+
+create or replace function mavis_intake_private.list_public_intake_submissions(
+  p_actor_user_id uuid,
+  p_status text default null,
+  p_limit integer default 50,
+  p_offset integer default 0
+)
+returns table (
+  id uuid,
+  tracking_code text,
+  full_name text,
+  phone text,
+  case_type text,
+  summary text,
+  urgency text,
+  opposing_party text,
+  review_priority text,
+  detected_signals text[],
+  requires_deadline_check boolean,
+  status text,
+  created_at timestamptz,
+  retention_expires_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+begin
+  if p_actor_user_id is null or not exists (
+    select 1 from public.profiles
+    where profiles.id = p_actor_user_id and profiles.role = 'admin'
+  ) then
+    raise exception 'Forbidden';
+  end if;
+
+  if p_limit is null or p_limit not between 1 and 100
+    or p_offset is null or p_offset not between 0 and 10000
+    or (p_status is not null and p_status not in (
+      'pending_human_review', 'in_review', 'closed', 'retention_hold'
+    )) then
+    raise exception 'Invalid intake list query';
+  end if;
+
+  insert into mavis_intake_private.audit_events (
+    event_code, actor_type, actor_user_id
+  )
+  values ('submission_list_viewed', 'admin', p_actor_user_id);
+
+  return query
+  select
+    s.id, s.tracking_code, s.full_name, s.phone, s.case_type,
+    s.summary, s.urgency, s.opposing_party, s.review_priority,
+    s.detected_signals, s.requires_deadline_check, s.status,
+    s.created_at, s.retention_expires_at
+  from mavis_intake_private.submissions as s
+  where p_status is null or s.status = p_status
+  order by s.created_at desc, s.id desc
+  limit p_limit
+  offset p_offset;
+end;
+$function$;
+
+revoke all on function mavis_intake_private.list_public_intake_submissions(uuid, text, integer, integer)
+  from public, anon, authenticated, service_role;
+grant execute on function mavis_intake_private.list_public_intake_submissions(uuid, text, integer, integer)
+  to service_role;
+
+create or replace function mavis_intake_private.update_public_intake_status(
+  p_actor_user_id uuid,
+  p_submission_id uuid,
+  p_status text
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_submission_id uuid;
+begin
+  if p_actor_user_id is null or not exists (
+    select 1 from public.profiles
+    where profiles.id = p_actor_user_id and profiles.role = 'admin'
+  ) then
+    raise exception 'Forbidden';
+  end if;
+
+  if p_submission_id is null or p_status is null or p_status not in (
+    'pending_human_review', 'in_review', 'closed', 'retention_hold'
+  ) then
+    raise exception 'Invalid intake status update';
+  end if;
+
+  update mavis_intake_private.submissions as s
+  set status = p_status, updated_at = clock_timestamp()
+  where s.id = p_submission_id
+  returning s.id into v_submission_id;
+
+  if v_submission_id is null then
+    return false;
+  end if;
+
+  insert into mavis_intake_private.audit_events (
+    submission_id, event_code, actor_type, actor_user_id
+  )
+  values (v_submission_id, 'submission_status_updated', 'admin', p_actor_user_id);
+
+  return true;
+end;
+$function$;
+
+revoke all on function mavis_intake_private.update_public_intake_status(uuid, uuid, text)
+  from public, anon, authenticated, service_role;
+grant execute on function mavis_intake_private.update_public_intake_status(uuid, uuid, text)
+  to service_role;
+
+create or replace function public.list_mavis_public_intake_submissions(
+  p_actor_user_id uuid,
+  p_status text default null,
+  p_limit integer default 50,
+  p_offset integer default 0
+)
+returns table (
+  id uuid,
+  tracking_code text,
+  full_name text,
+  phone text,
+  case_type text,
+  summary text,
+  urgency text,
+  opposing_party text,
+  review_priority text,
+  detected_signals text[],
+  requires_deadline_check boolean,
+  status text,
+  created_at timestamptz,
+  retention_expires_at timestamptz
+)
+language sql
+security invoker
+set search_path = ''
+as $function$
+  select * from mavis_intake_private.list_public_intake_submissions(
+    p_actor_user_id, p_status, p_limit, p_offset
+  );
+$function$;
+
+create or replace function public.update_mavis_public_intake_status(
+  p_actor_user_id uuid,
+  p_submission_id uuid,
+  p_status text
+)
+returns boolean
+language sql
+security invoker
+set search_path = ''
+as $function$
+  select mavis_intake_private.update_public_intake_status(
+    p_actor_user_id, p_submission_id, p_status
+  );
+$function$;
+
+revoke all on function public.list_mavis_public_intake_submissions(uuid, text, integer, integer)
+  from public, anon, authenticated, service_role;
+revoke all on function public.update_mavis_public_intake_status(uuid, uuid, text)
+  from public, anon, authenticated, service_role;
+
+grant execute on function public.list_mavis_public_intake_submissions(uuid, text, integer, integer)
+  to service_role;
+grant execute on function public.update_mavis_public_intake_status(uuid, uuid, text)
+  to service_role;
 
 comment on schema mavis_intake_private is
   'Private MAVIS intake data; do not expose through Supabase Data API schemas.';
