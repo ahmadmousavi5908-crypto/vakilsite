@@ -33,6 +33,11 @@ const steps = [
     args: ["--test", ...testFiles],
   },
   {
+    label: "Validate the legal source review queue against the canonical corpus",
+    command: process.execPath,
+    args: ["scripts/mavis/validate-legal-review-queue.mjs"],
+  },
+  {
     label: "Validate the offline knowledge bundle and provenance",
     command: process.execPath,
     args: ["scripts/mavis/validate-offline-bundle.mjs"],
