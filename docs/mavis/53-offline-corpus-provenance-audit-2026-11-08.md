@@ -1,12 +1,14 @@
 # MAVIS Offline Corpus Provenance Audit — 2026-11-08
 
 ## Audit finding
-The static corpus contains 132 terms, 16 law records, 22 article summaries and 8 service FAQs. Before this audit, every legal record had an empty `sources` array. Most law records had only a generic secondary homepage in `source_url`; the 22 article summaries were explicitly secondary-source-only. The registry listed official portals but did not connect them to individual legal records.
+The static corpus contains 132 terms, 16 law records, 22 article summaries, 8 service FAQs and 5 research notes transferred from the existing source-review report. Before this audit, every legal record had an empty `sources` array. Most law records had only a generic secondary homepage in `source_url`; the 22 article summaries were explicitly secondary-source-only. The registry listed official portals but did not connect them to individual legal records.
 
 A source directory is not the same as a citation attached to the exact law or article.
 
 ## Changes in this delivery
 - Added the Judiciary's official gateway and the National Judicial Decisions portal to the source registry, based on the official eAdl gateway's listing. Live access remains explicitly unverified.
+- Added five research notes with individual source links, colloquial aliases, search phrases, findings and cautions. All remain secondary-source-only; no new legal rule was marked verified.
+- Expanded the source registry to 16 entries, including secondary legal news and commentary sources.
 - Added a versioned provenance policy with mandatory fields for primary-source verification.
 - Added conservative machine-readable provenance to all 170 legal records (terms, laws and article summaries). No record is marked as current or primary-source verified.
 - Added record-level traceable links for four law records where exact discovery URLs already existed in the dataset. Secondary links remain secondary; the Official Gazette URL is labeled identified but not retrieved.
