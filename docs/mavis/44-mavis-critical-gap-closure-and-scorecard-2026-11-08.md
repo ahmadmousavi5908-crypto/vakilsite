@@ -1,0 +1,123 @@
+# ممیزی سخت‌گیرانه، امتیازدهی و برنامه بستن شکاف‌های MAVIS
+نسخه: 1.0 | تاریخ: 2026-11-08
+وضعیت: سند ارزیابی مبتنی بر شواهد remote؛ نه گواه پیاده‌سازی یا تأیید Mother Two
+
+## 1. حکم مدیریتی
+MAVIS از نظر جهت‌گیری محصول و اصول طراحی قوی است، اما هنوز نباید «سامانه آماده بهره‌برداری» تلقی شود. اسناد، مرزهای مأموریت و guardrailها را خوب تعریف کرده‌اند؛ شواهد فعلی برای اتصال runtime، امنیت عملیاتی، بازیابی دانش، کیفیت خروجی و کارایی واقعی کافی نیست.
+
+**امتیازهای معتبر فعلی:**
+- کیفیت طراحی و اسناد: **8.2/10** (ارزیابی مستند قبلی؛ امتیاز طراحی است، نه کیفیت اجرا).
+- آمادگی پیاده‌سازی تأییدشده: **3.5/10** (ارزیابی شواهد قبلی؛ تا زمان ممیزی محلی ممکن است تغییر کند).
+- سرعت، دقت حقوقی، امنیت عملیاتی و ROI واقعی: **اندازه‌گیری‌نشده**.
+- آمادگی انتشار عمومی: **غیرقابل تأیید؛ در حال حاضر No-Go**.
+
+این امتیازها با هم جمع یا میانگین نمی‌شوند. نبود شواهد به معنی شکست قطعی نیست؛ به معنی عبور نکردن از دروازه اثبات است.
+
+## 2. امتیاز تفکیکی بر اساس شواهد
+| حوزه | امتیاز طراحی /10 | اطمینان ارزیابی | مانع اصلی |
+|---|---:|---|---|
+| تعریف محصول و مرزبندی سه بازو | 9.0 | بالا | نیاز به تبدیل به قراردادهای اجرایی قابل تست |
+| تجربه کاربری و طراحی پنل | 8.5 | متوسط | تست واقعی موبایل/دسکتاپ و نمونه عملیاتی |
+| پژوهش حقوقی و کیفیت استناد | 8.5 | متوسط | مجموعه ارزیابی حقوقی و retrieval واقعی اثبات نشده |
+| SEO/AEO/GEO و کشف‌پذیری | 8.0 | متوسط | داده Search Console/Bing و سنجش واقعی حضور AI موجود نیست |
+| معماری و مدیریت دانش | 8.0 | متوسط | تطبیق inventory تاریخی و registry واقعی انجام‌نشده |
+| امنیت و حریم خصوصی | 8.0 | متوسط | RLS/grants، audit، secret scan و تست نفوذ runtime اثبات نشده |
+| کنترل عملیات و تأیید انسانی | 8.5 | متوسط | workflow واقعی approval و kill switch تست نشده |
+| عملیات، پایش و بازیابی | 7.0 | متوسط رو به پایین | runbook اجرایی، restore drill و observability عملیاتی اثبات نشده |
+| اقتصاد محصول و کنترل هزینه | 7.0 | پایین | هزینه هر workflow، سهمیه و سقف واقعی هنوز benchmark نشده |
+| سنجش‌پذیری و معیار پذیرش | 8.5 | متوسط | baseline، dataset آزمون و نتایج قابل تکرار وجود ندارد |
+
+امتیازهای حوزه‌ای، داوری مهندسی بر پایه اسناد remote هستند؛ به معنی اجرای آزمون یا مشاهده runtime نیستند.
+
+## 3. امتیاز آمادگی سه بازو
+بر اساس scorecard قبلی:
+| بازو | آمادگی مستندشده | وضعیت |
+|---|---:|---|
+| Public Intake | 4.5/10 | فرم جامع شرطی، رضایت، حداقل‌گرایی داده و گزارش نهایی باید در runtime اثبات شوند |
+| Lawyer Copilot | 2.5/10 | پرریسک‌ترین بازو؛ retrieval حقوقی، citation enforcement و freshness هنوز اثبات نشده |
+| Growth Intelligence | 4.0/10 | API research موجود؛ اتصال داده و attribution واقعی اثبات نشده |
+| هسته مشترک و عملیات | 3.5/10 | RBAC، audit، usage ledger، queue و observability اجرایی اثبات نشده |
+
+## 4. شکاف‌های بحرانی و اصلاحات الزامی
+
+### P0 — قبل از هر داده واقعی یا انتشار
+1. **تثبیت baseline:** commit، branch، working tree، remote، نسخه Mother Two، manifest و SHA-256 باید در یک گزارش قابل بازتولید ثبت شوند. هیچ branch یا archive جایگزین baseline محلی فرض نشود.
+2. **ماتریس دسترسی اجرایی:** برای هر نقش × بازو × نوع داده × عملیات، allow/deny روشن تعریف شود. کنترل سمت سرور، RLS و SQL grants/revokes هم‌زمان لازم‌اند. شناسه رکورد هرگز مجوز نیست.
+3. **مرز داده سه‌سطحی:** Public، Internal و Confidential/Restricted با policy اجرایی، retention، export و provider eligibility مشخص شوند. داده پرونده و اسناد هویتی تا تصویب مستقل از هر مدل/provider خارج بمانند.
+4. **Citation contract حقوقی:** هر گزاره حقوقی مهم باید به منبع اصلی قابل بازیابی، نوع مرجع، مرجع قضایی/صلاحیت، تاریخ انتشار، بازه اعتبار، اصلاح/نسخ و محل دقیق استناد متصل باشد. نبود منبع، منبع متعارض یا نسخه نامعلوم باید به abstain منجر شود.
+5. **Prompt-injection containment:** متن اسناد، صفحات وب و فایل‌های بازیابی‌شده صرفاً داده غیرقابل‌اعتماد باشند؛ هیچ دستور داخل آن‌ها اختیار ابزار یا تغییر policy ندهد. ابزارها allowlist، schema-bound و مجوزدهی مستقل داشته باشند.
+6. **Audit و هزینه:** هر مشاهده/تغییر/تأیید/انتشار/فراخوانی provider دارای actor، زمان، resource ID، policy decision و نتیجه باشد؛ متن حساس و secret در log ممنوع. سقف هزینه، rate limit و kill switch برای هر بازو/provider لازم است.
+7. **Approval gate:** هیچ انتشار، ارسال، تغییر کمپین، پرداخت یا تغییر داده حساس با تصمیم مدل انجام نشود. preview، تأیید صریح مدیر، ثبت نسخه و امکان rollback اجباری است.
+
+### P1 — قبل از پذیرش هر بازو
+1. **Public Intake:** فرم جامع و شرطی با انتخاب دستی موضوع، حفظ پرسش‌های لازم، رضایت آگاهانه، عدم تحلیل حقوقی، تفکیک پاسخ/نامشخص/مدرک و مسیر ارجاع انسانی.
+2. **Lawyer Copilot:** retrieval فقط‌خواندنی از legal-library و registry موجود؛ فیلتر حوزه، تاریخ اعتبار، نوع مرجع و access class؛ citation verifier؛ آزمون پاسخ در نبود منبع و تعارض منابع.
+3. **Growth Intelligence:** اتصال read-only ابتدا؛ ذخیره زمان و محدوده گزارش، provenance و محدودیت API؛ تفکیک شاخص‌های ترافیک از سرنخ واجدشرایط و تبدیل واقعی.
+4. **Knowledge ingestion:** Discover → Fetch → Verify → Parse → Normalize → Review → Register → Index → Query؛ idempotency، checkpoint، retry محدود، quarantine و lineage.
+5. **UX:** RTL واقعی، keyboard navigation، focus visibility، reduced motion، پیام خطا قابل فهم، عدم اسکرول افقی و آزمون Android/desktop.
+6. **محتوا و SEO:** تاریخ‌های واقعی، نویسنده/بازبین واقعی، canonical یکتا، sitemap با lastmod معتبر، schema منطبق با متن، لینک داخلی زمینه‌ای و دسترسی crawler؛ هیچ markup یا محتوای ساختگی.
+
+### P2 — پس از عبور از P0/P1
+1. داشبورد هزینه و کیفیت به تفکیک بازو، provider، کاربر و workflow.
+2. جدول مقاله 300–400+ ردیفی با stable ID، keyset pagination در صورت نیاز، جست‌وجو و فیلتر؛ virtualization فقط پس از benchmark.
+3. گزارش ماهانه Search Console/Bing، نرخ تبدیل و هزینه هر سرنخ واجدشرایط.
+4. نمونه‌برداری ثبت‌شده از پاسخ/ارجاع سامانه‌های AI؛ بدون ادعای رتبه قطعی یا تضمین citation.
+5. خودکارسازی فقط برای کارهای کم‌خطر و برگشت‌پذیر؛ تمام اقدام‌های بیرونی همچنان approval-gated.
+
+## 5. دو تصمیم معماری که هزینه را پایین نگه می‌دارند
+- **Modular Monolith به‌جای Microservices:** انتخاب فعلی حفظ شود؛ مرزهای دامنه، قرارداد و تست مستقل کافی است. سرویس جدا فقط با نیاز مقیاس/امنیت/استقرار اثبات‌شده.
+- **PostgreSQL FTS قبل از pgvector:** جست‌وجوی دقیق و metadata filter ابتدا؛ vector فقط اگر benchmark روی corpus واقعی بهبود معنادار precision/recall را با هزینه قابل قبول ثابت کند.
+- **کد قطعی قبل از مدل:** فرم، اعتبارسنجی، گزارش قالبی، فیلتر، sort، وضعیت workflow و محاسبه شاخص‌ها با کد عادی؛ مدل فقط جایی که استدلال/استخراج معنایی واقعاً لازم است.
+- **اتصال read-only قبل از write:** ابتدا گزارش و پیشنهاد؛ هر قابلیت نوشتن یا انتشار مرحله مستقل و نیازمند approval.
+- **استفاده مجدد از دارایی موجود:** legal-library، central registry، فرم مقاله و admin فعلی پس از ممیزی؛ پایگاه موازی یا ابزار پولی جدید بدون اثبات نیاز ساخته نشود.
+
+## 6. دروازه‌های پذیرش قابل اندازه‌گیری
+| دروازه | معیار عبور | شاهد الزامی |
+|---|---|---|
+| G0 Baseline | hash و commit و branch و backup manifest تطبیق‌پذیر | گزارش read-only + SHA-256 |
+| G1 Security | تمام تست‌های authorization و RLS مثبت/منفی پاس؛ صفر دسترسی cross-role غیرمجاز | خروجی تست و policy matrix |
+| G2 Legal retrieval | تمام citationهای نمونه به منبع واقعی و بخش درست resolve شوند؛ منبع ناموجود باعث abstain شود | golden dataset و گزارش ارزیابی |
+| G3 Intake | صفر توصیه/تحلیل حقوقی در مسیر پذیرش؛ همه فیلدهای اجباری و consent ثبت شوند | تست سناریو و خروجی نمونه ناشناس |
+| G4 Growth | گزارش با timestamp، منبع، محدوده، محدودیت و read-only بودن مشخص | نمونه گزارش API و audit |
+| G5 Reliability | retry محدود، idempotency، checkpoint، kill switch و restore drill موفق | fault-injection و restore log |
+| G6 Performance | p50/p95/p99، نرخ خطا و هزینه در بار تعریف‌شده ثبت شود | benchmark قابل تکرار با commit/env |
+| G7 UX | RTL، موبایل، دسکتاپ، keyboard و reduced-motion آزمون شوند | چک‌لیست و تصاویر/گزارش آزمون |
+| G8 Release | staging، مالک تأیید کند، rollback عملی و production جداگانه تصویب شود | release record و approval |
+
+اهداف عددی latency در سند scorecard اهداف پیشنهادی‌اند، نه نتایج. قبل از ثبت baseline هیچ SLO تحقق‌یافته اعلام نشود.
+
+## 7. برنامه اصلاح با ترتیب کم‌هزینه
+1. ممیزی read-only Mother Two و Git refs؛ خروجی inventory، تفاوت‌ها، hash و محدودیت‌ها.
+2. تطبیق اسناد موجود و تبدیل نیازمندی‌های P0 به policy matrix و test cases؛ بدون تغییر runtime.
+3. بررسی schema، migrations، Auth، RLS، SQL grants، route handlers و provider boundaries.
+4. پیاده‌سازی و تست هسته امنیت/مجوز/ثبت رخداد در staging، پس از تأیید طرح.
+5. اثبات read-only retrieval روی legal-library فعلی با golden set کوچک و منابع رسمی.
+6. تکمیل Public Intake و Growth هر کدام در شاخه و milestone مستقل.
+7. benchmark، تست بصری، آزمون منفی دسترسی، restore drill و بازبینی مالک.
+8. انتشار مرحله‌ای فقط پس از پذیرش صریح؛ هیچ تغییر در ظاهر عمومی سایت بدون دستور مستقل.
+
+## 8. کارهایی که عمداً انجام نمی‌دهیم
+- ساخت دانشنامه یا registry موازی.
+- انتقال کل بکاپ 2.7GB به GitHub یا استخراج در مسیر production.
+- خرید سرویس/API قبل از بررسی سهمیه رایگان، هزینه، مجوز و ارزش واقعی.
+- افزودن فایل‌های نمایشی مانند llms.txt به امید امتیاز ویژه رتبه‌بندی.
+- تولید انبوه صفحات شهری مشابه، FAQ ساختگی، نظر مشتری یا آمار جعلی.
+- افزودن تاریخ، نویسنده، بازبین، rating، branch یا citation حدسی.
+- فعال‌کردن خودکار GPT/AI روی پرونده‌های محرمانه.
+- merge کردن PR یا تغییر runtime/production بدون تأیید و آزمون.
+
+## 9. وضعیت این ممیزی
+- شواهد: اسناد و فایل‌های remote در شاخه مستندات MAVIS.
+- Mother Two محلی، Termux working tree، production، Supabase live schema و داده Search Console/Bing در این ممیزی قابل مشاهده/تأیید نبوده‌اند.
+- هیچ تست runtime، امنیتی، بصری، سرعت یا بازیابی در این نوبت اجرا نشده است.
+- این سند شکاف‌ها و معیارهای اصلاح را تثبیت می‌کند؛ ثبت آن به معنی رفع عملی شکاف‌های runtime نیست.
+- PR مستندات باید Draft بماند؛ ادغام، استقرار و تغییرات runtime خارج از این اقدام‌اند.
+
+## 10. منابع مهندسی
+- OWASP Top 10 for LLM Applications: https://owasp.org/www-project-top-10-for-large-language-model-applications/
+- OWASP ASVS: https://owasp.org/www-project-application-security-verification-standard/
+- Supabase Row Level Security: https://supabase.com/docs/guides/database/postgres/row-level-security
+- PostgreSQL Full Text Search: https://www.postgresql.org/docs/current/textsearch.html
+- Google Search AI features: https://developers.google.com/search/docs/appearance/ai-features
+- OpenAI crawlers: https://developers.openai.com/api/docs/bots
+- Bing Webmaster Guidelines: https://www.bing.com/webmasters/help/webmaster-guidelines-30fba23a
