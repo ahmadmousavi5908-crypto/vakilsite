@@ -261,3 +261,11 @@ MAVIS از نظر جهت‌گیری محصول و اصول طراحی قوی ا�
 - آزمون CI مربوط به retrieval باید پس از آخرین تغییرات موفق شود.
 - migration و آزمون pgTAP هنوز روی PostgreSQL اجرا نشده‌اند؛ بنابراین اتمیک‌بودن در رقابت واقعی، نقش مالک تابع، رفتار Auth و نتیجه مجوزهای مؤثر دیتابیس هنوز شاهد اجرایی ندارند.
 - عدد ۳۰ در ۶۰ ثانیه، حد اولیه داخلی است و پس از آزمون بار باید بازبینی شود؛ این عدد SLO اندازه‌گیری‌شده نیست.
+
+
+### اصلاح مرز Data API برای RPC محدودکننده
+در بازبینی امنیتی تکمیلی، RPC عمومی از تابع دارای امتیاز جدا شد:
+- تابع اصلی `mavis_private.consume_knowledge_search_limit()` در schema خصوصی و با `SECURITY DEFINER`، `search_path = ''`، بررسی مدیر و مجوز اجرای محدود نگهداری می‌شود.
+- تابع `public.consume_mavis_knowledge_search_limit()` فقط یک wrapper با `SECURITY INVOKER` است و برای استفاده از Data API طراحی شده؛ نام تمام اشیای داخلی schema-qualified است.
+- این جداسازی مطابق راهنمای Supabase درباره محدودکردن توابع SECURITY DEFINER و سطح دسترسی RPC انجام شد.
+- آزمون pgTAP اکنون مرز invoker/definer و مجوزهای schema/function را نیز بررسی می‌کند. هنوز روی PostgreSQL اجرا نشده است.
