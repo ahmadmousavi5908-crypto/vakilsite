@@ -1,15 +1,18 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { articles } from "../../../data/articles";
+import { getPublishedArticles, getPublishedArticleBySlug } from "../../../lib/mavis/articles-repository";
 import JsonLd from "../../../components/JsonLd";
 
-export function generateStaticParams() {
+export const revalidate = 300;
+
+export async function generateStaticParams() {
+  const articles = await getPublishedArticles();
   return articles.map((article) => ({ slug: article.slug }));
 }
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const article = await getPublishedArticleBySlug(slug);
   if (!article) return { title: "مطلب پیدا نشد" };
   const canonicalPath = "/articles/" + article.slug;
   return {
