@@ -1,25 +1,13 @@
-import { createHmac } from "node:crypto";
-import { isIP } from "node:net";
 import { NextResponse } from "next/server";
 import { createClient } from "../../../../lib/supabase/server";
 import { isJsonContentType, matchesRequestOrigin } from "../../../../lib/mavis/request-guards.mjs";
+import { createIntakeRateKey, isValidIntakeIp, normalizeIntakePhone, validateIntakePayload } from "../../../../lib/mavis/intake-guards.mjs";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const NO_STORE = { "Cache-Control": "no-store" };
 const MAX_BODY_BYTES = 8192;
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const ALLOWED_FIELDS = new Set([
-  "idempotency_key", "contact_name", "contact_phone", "contact_email",
-  "preferred_contact_method", "city", "legal_area", "matter_summary",
-  "privacy_notice_accepted", "contact_consent", "third_party_consent", "marketing_consent",
-]);
-
-function respond(code, message, status, extra = {}) {
-  return NextResponse.json({ error: { code, message, ...extra } }, { status, headers: NO_STORE });
-}
-
 async function readBoundedJson(request) {
   const reader = request.body?.getReader();
   if (!reader) throw new Error("Missing body");
@@ -44,29 +32,6 @@ async function readBoundedJson(request) {
     offset += chunk.byteLength;
   }
   return JSON.parse(new TextDecoder().decode(bytes));
-}
-
-function normalizePhone(value) {
-  return String(value ?? "").replace(/[\s()\-]/g, "");
-}
-
-function validatePayload(payload) {
-  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return "بدنه درخواست معتبر نیست.";
-  if (Object.keys(payload).some((key) => !ALLOWED_FIELDS.has(key))) return "فیلد اضافی در درخواست وجود دارد.";
-  if (!UUID_PATTERN.test(payload.idempotency_key || "")) return "شناسه درخواست معتبر نیست.";
-  if (typeof payload.contact_name !== "string" || payload.contact_name.trim().length < 2 || payload.contact_name.trim().length > 100) return "نام باید بین ۲ تا ۱۰۰ نویسه باشد.";
-  if (!/^\+?[0-9]{8,18}$/.test(normalizePhone(payload.contact_phone))) return "شماره تماس معتبر نیست.";
-  if (payload.contact_email && (typeof payload.contact_email !== "string" || payload.contact_email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.contact_email.trim()))) return "نشانی ایمیل معتبر نیست.";
-  if (!["phone", "email"].includes(payload.preferred_contact_method)) return "روش تماس انتخاب‌شده معتبر نیست.";
-  if (payload.preferred_contact_method === "email" && !payload.contact_email) return "برای تماس از طریق ایمیل، ایمیل الزامی است.";
-  if (typeof payload.city !== "string" || payload.city.trim().length < 2 || payload.city.trim().length > 80) return "شهر باید بین ۲ تا ۸۰ نویسه باشد.";
-  if (typeof payload.legal_area !== "string" || payload.legal_area.trim().length < 2 || payload.legal_area.trim().length > 100) return "موضوع حقوقی را مشخص کنید.";
-  if (typeof payload.matter_summary !== "string" || payload.matter_summary.trim().length < 20 || payload.matter_summary.trim().length > 4000) return "شرح کوتاه باید بین ۲۰ تا ۴۰۰۰ نویسه باشد.";
-  if (payload.privacy_notice_accepted !== true || payload.contact_consent !== true) return "تأیید اطلاعیه حریم خصوصی و رضایت تماس الزامی است.";
-  for (const field of ["third_party_consent", "marketing_consent"]) {
-    if (payload[field] !== undefined && typeof payload[field] !== "boolean") return "مقدار رضایت اختیاری معتبر نیست.";
-  }
-  return null;
 }
 
 export async function POST(request) {
@@ -100,16 +65,20 @@ export async function POST(request) {
       : respond("INVALID_JSON", "بدنه درخواست باید JSON معتبر باشد.", 400);
   }
 
-  const validationError = validatePayload(payload);
-  if (validationError) return respond("INVALID_REQUEST", validationError, 400);
+  const validationError = validateIntakePayload(payload);
+  if (validationError) return respond(validationError.code, validationError.message, 400);
 
   const clientIp = request.headers.get("x-real-ip")?.trim() || "";
-  if (!clientIp || !isIP(clientIp)) {
+  if (!clientIp || !isValidIntakeIp(clientIp)) {
     return respond("CLIENT_IP_UNAVAILABLE", "نشانی امن مبدأ درخواست قابل تشخیص نیست.", 503);
   }
 
-  const normalizedPhone = normalizePhone(payload.contact_phone);
-  const rateKey = createHmac("sha256", secret).update(normalizedPhone + "\n" + clientIp).digest("hex");
+  let rateKey;
+  try {
+    rateKey = createIntakeRateKey(secret, normalizeIntakePhone(payload.contact_phone), clientIp);
+  } catch {
+    return respond("RATE_LIMIT_CONFIGURATION", "پیکربندی کنترل درخواست معتبر نیست.", 503);
+  }
   const submission = { ...payload };
   delete submission.idempotency_key;
 
