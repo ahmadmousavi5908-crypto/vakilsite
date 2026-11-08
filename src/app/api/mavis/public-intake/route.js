@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "../../../../lib/supabase/service";
 import { isJsonContentType, matchesRequestOrigin } from "../../../../lib/mavis/request-guards.mjs";
-import { createIntakeRateKey, isValidIntakeIp, normalizeIntakePhone, validateIntakePayload } from "../../../../lib/mavis/intake-guards.mjs";
+import { createIntakeRateKeys, isValidIntakeIp, normalizeIntakePhone, validateIntakePayload } from "../../../../lib/mavis/intake-guards.mjs";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -79,9 +79,9 @@ export async function POST(request) {
     return respond("CLIENT_IP_UNAVAILABLE", "نشانی امن مبدأ درخواست قابل تشخیص نیست.", 503);
   }
 
-  let rateKey;
+  let rateKeys;
   try {
-    rateKey = createIntakeRateKey(secret, normalizeIntakePhone(payload.contact_phone), clientIp);
+    rateKeys = createIntakeRateKeys(secret, normalizeIntakePhone(payload.contact_phone), clientIp);
   } catch {
     return respond("RATE_LIMIT_CONFIGURATION", "پیکربندی کنترل درخواست معتبر نیست.", 503);
   }
@@ -99,7 +99,8 @@ export async function POST(request) {
   try {
     result = await supabase.rpc("submit_mavis_public_intake", {
       p_payload: submission,
-      p_rate_key_hmac: rateKey,
+      p_ip_rate_key_hmac: rateKeys.ipKey,
+      p_contact_rate_key_hmac: rateKeys.contactKey,
       p_idempotency_key: payload.idempotency_key,
       p_privacy_notice_version: noticeVersion,
       p_retention_days: retentionDays,
