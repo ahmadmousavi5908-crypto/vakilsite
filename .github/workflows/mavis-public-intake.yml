@@ -55,7 +55,7 @@ jobs:
       - name: Test intake validation and rate-key guards
         run: npm run test:mavis-intake
       - name: Lint public intake and admin files
-        run: npm run lint -- src/app/api/mavis/public-intake/route.js src/app/mavis-intake/page.js src/app/mavis-intake/privacy/page.js src/app/admin/mavis-intake/page.js src/app/admin/mavis-intake/actions.js src/components/mavis/MavisIntakeForm.jsx src/lib/mavis/intake-guards.mjs src/lib/supabase/service.js tests/mavis/intake-guards.test.mjs
+        run: npm run lint -- src/app/api/mavis/public-intake/route.js src/app/mavis-intake/page.js src/app/mavis-intake/privacy/page.js src/app/admin/mavis-intake/page.js src/app/admin/mavis-intake/actions.js src/components/mavis/MavisIntakeForm.jsx src/lib/mavis/intake-guards.mjs src/lib/mavis/intake-request-guards.mjs src/lib/supabase/service.js tests/mavis/intake-guards.test.mjs
 
       - name: Build site and protected MAVIS routes
         run: npm run build
