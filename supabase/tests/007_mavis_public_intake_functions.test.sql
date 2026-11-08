@@ -1,6 +1,21 @@
 begin;
 
-select plan(27);
+select plan(31);
+
+select ok(
+  (select relrowsecurity from pg_class where oid = 'mavis_intake_private.retention_policy'::regclass),
+  'retention policy table has RLS enabled'
+);
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.retention_policy', 'SELECT'),
+  'service role cannot read or change the owner-approved retention policy'
+);
+select throws_ok(
+  $select * from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '31 days')$,
+  'P0001',
+  'An approved retention policy is required before purge',
+  'purge remains disabled until an approved retention policy is configured'
+);
 
 select is((select allowed from public.consume_mavis_public_intake_rate_limit(repeat('a', 64))), true,
   'first intake request in a window is allowed');
@@ -90,9 +105,9 @@ insert into mavis_intake_private.submissions (
 values (
   'آزمون حذف', '+989123456789', 'civil',
   'رکورد آزمایشی برای کنترل حذف بر اساس مهلت نگهداری.',
-  'routine', true, clock_timestamp() - interval '2 days', 'test-v1',
+  'routine', true, clock_timestamp() - interval '31 days', 'test-v1',
   'standard_human_review', clock_timestamp() - interval '1 day',
-  clock_timestamp() - interval '2 days'
+  clock_timestamp() - interval '31 days'
 );
 create temporary table mavis_expired_receipt on commit drop as
 select id from mavis_intake_private.submissions where full_name = 'آزمون حذف';
@@ -101,8 +116,14 @@ insert into mavis_intake_private.audit_events (submission_id, event_code, actor_
 select id, 'submission_received', 'system', clock_timestamp()
 from mavis_expired_receipt;
 
+insert into mavis_intake_private.retention_policy (
+  singleton, submission_min_retention_days, audit_min_retention_days,
+  approval_reference, approved_at, enabled
+)
+values (true, 30, 30, 'TEST-APPROVAL-ONLY', clock_timestamp(), true);
+
 create temporary table mavis_purge_result on commit drop as
-select * from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '1 day');
+select * from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '31 days');
 
 select is((select submissions_deleted from mavis_purge_result), 1::bigint,
   'purge deletes expired submissions');
@@ -118,7 +139,14 @@ select is((select count(*)::integer from mavis_intake_private.audit_events
   'purge appends a metadata-only system audit marker');
 
 select throws_ok(
-  $$select * from public.purge_mavis_expired_public_intake(null::timestamptz)$$,
+  $select * from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '1 day')$,
+  'P0001',
+  'Audit retention cutoff is shorter than the approved minimum',
+  'purge rejects an audit cutoff that violates the approved minimum retention period'
+);
+
+select throws_ok(
+  $select * from public.purge_mavis_expired_public_intake(null::timestamptz)$,
   'P0001',
   'A valid audit retention cutoff is required',
   'purge rejects a null audit-retention cutoff'
@@ -139,7 +167,7 @@ insert into mavis_intake_private.submissions (
 values (
   'آزمون توقف حذف', '+989123456789', 'civil',
   'رکورد آزمایشی دارای توقف قانونی حذف و نگهداری.',
-  'routine', true, clock_timestamp() - interval '2 days', 'test-v1',
+  'routine', true, clock_timestamp() - interval '31 days', 'test-v1',
   'standard_human_review', 'retention_hold',
   clock_timestamp() - interval '1 day', clock_timestamp() - interval '2 days'
 );
@@ -151,9 +179,9 @@ select ok(exists (select 1 from mavis_intake_private.submissions
   'retention-held submission remains stored');
 
 insert into mavis_intake_private.audit_events (event_code, actor_type, created_at)
-values ('status_changed', 'system', clock_timestamp() - interval '10 days');
+values ('status_changed', 'system', clock_timestamp() - interval '40 days');
 
-select is((select audit_events_deleted from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '5 days')),
+select is((select audit_events_deleted from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '31 days')),
   1::bigint, 'purge removes audit metadata older than the approved cutoff');
 
 
