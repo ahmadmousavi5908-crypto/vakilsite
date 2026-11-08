@@ -52,6 +52,10 @@ jobs:
         if: ${{ hashFiles('tests/mavis/growth-metrics.test.mjs') != '' }}
         run: node --test tests/mavis/growth-metrics.test.mjs
 
+      - name: Test Search Console adapter
+        if: ${{ hashFiles('tests/mavis/search-console-adapter.test.mjs') != '' }}
+        run: node --test tests/mavis/search-console-adapter.test.mjs
+
       - name: Test cautious legal intake triage
         if: ${{ hashFiles('tests/mavis/legal-intake-triage.test.mjs') != '' }}
         run: node --test tests/mavis/legal-intake-triage.test.mjs
@@ -59,6 +63,10 @@ jobs:
       - name: Lint intake and growth modules
         if: ${{ hashFiles('src/lib/mavis/public-intake-validation.mjs') != '' }}
         run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/growth-metrics.mjs src/lib/mavis/legal-intake-triage.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs tests/mavis/legal-intake-triage.test.mjs
+
+      - name: Lint Search Console adapter
+        if: ${{ hashFiles('src/lib/mavis/search-console-adapter.mjs') != '' }}
+        run: npm run lint -- src/lib/mavis/search-console-adapter.mjs tests/mavis/search-console-adapter.test.mjs
 
       - name: Build the site
         run: npm run build
