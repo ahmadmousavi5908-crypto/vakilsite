@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "../../../../../lib/supabase/admin";
 import { createServiceClient } from "../../../../../lib/supabase/service";
-import { parseKnowledgeSearchRateLimit } from "../../../../../lib/mavis/rate-limit.mjs";
+import { parseAdminIntakeRateLimit } from "../../../../../lib/mavis/rate-limit.mjs";
 import {
   isJsonContentType,
   matchesRequestOrigin,
@@ -56,7 +56,7 @@ async function authorizeAdmin(request, requireOrigin) {
 
   let limitResult;
   try {
-    limitResult = await access.supabase.rpc("consume_mavis_knowledge_search_limit");
+    limitResult = await access.supabase.rpc("consume_mavis_admin_intake_rate_limit");
   } catch {
     limitResult = { error: true };
   }
