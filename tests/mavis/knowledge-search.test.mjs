@@ -154,3 +154,26 @@ test("does not expose draft records through the first-stage retrieval fixture", 
   });
   assert.deepEqual(results, []);
 });
+
+
+import {
+  isJsonContentType,
+  matchesRequestOrigin,
+} from "../../src/lib/mavis/request-guards.mjs";
+
+test("accepts JSON media type with optional parameters only", () => {
+  assert.equal(isJsonContentType("application/json"), true);
+  assert.equal(isJsonContentType("Application/JSON; charset=utf-8"), true);
+  assert.equal(isJsonContentType("application/jsonp"), false);
+  assert.equal(isJsonContentType("text/json"), false);
+  assert.equal(isJsonContentType(null), false);
+});
+
+test("requires an exact HTTP(S) same-origin match", () => {
+  assert.equal(matchesRequestOrigin("https://example.com", "https://example.com/api"), true);
+  assert.equal(matchesRequestOrigin("https://example.com:443", "https://example.com/api"), false);
+  assert.equal(matchesRequestOrigin("https://evil.example", "https://example.com/api"), false);
+  assert.equal(matchesRequestOrigin("null", "https://example.com/api"), false);
+  assert.equal(matchesRequestOrigin("https://example.com/path", "https://example.com/api"), false);
+  assert.equal(matchesRequestOrigin(undefined, "https://example.com/api"), false);
+});
