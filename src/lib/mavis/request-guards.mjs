@@ -18,3 +18,23 @@ export function matchesRequestOrigin(origin, requestUrl) {
     return false;
   }
 }
+
+export function safeInternalPath(value) {
+  if (
+    typeof value !== "string" ||
+    !value.startsWith("/") ||
+    value.startsWith("//") ||
+    value.includes("\\") ||
+    /[\u0000-\u001f\u007f]/.test(value)
+  ) {
+    return null;
+  }
+
+  try {
+    const url = new URL(value, "https://mavis.invalid");
+    if (url.origin !== "https://mavis.invalid") return null;
+    return url.pathname + url.search + url.hash;
+  } catch {
+    return null;
+  }
+}
