@@ -1,6 +1,6 @@
 begin;
 
-select plan(14);
+select plan(17);
 
 select ok(
   has_schema_privilege('authenticated', 'mavis_private', 'USAGE'),
@@ -33,6 +33,22 @@ select ok(
 select ok(
   (select prosecdef from pg_proc where oid = 'mavis_private.consume_knowledge_search_limit()'::regprocedure),
   'private rate-limit function uses SECURITY DEFINER'
+);
+select ok(
+  (select relrowsecurity from pg_class where oid = 'mavis_private.knowledge_search_rate_limits'::regclass),
+  'private rate-limit counter table has RLS enabled'
+);
+select ok(
+  position(
+    'public.is_site_admin()' in pg_get_functiondef('mavis_private.consume_knowledge_search_limit()'::regprocedure)
+  ) > 0,
+  'private rate-limit function verifies the site-admin role'
+);
+select ok(
+  position(
+    'least' in lower(pg_get_functiondef('mavis_private.consume_knowledge_search_limit()'::regprocedure))
+  ) > 0,
+  'private rate-limit function bounds the stored counter'
 );
 select ok(
   has_function_privilege('authenticated', 'public.consume_mavis_knowledge_search_limit()', 'EXECUTE'),
