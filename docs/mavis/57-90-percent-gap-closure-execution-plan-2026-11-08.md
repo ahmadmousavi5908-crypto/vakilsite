@@ -153,3 +153,19 @@ A secondary legal-platform source map identifies the official destinations above
 - Official-source directory (discovery only): https://loyadesk.com/laws/official-sources
 
 **Access status:** this research did not retrieve a specific official legal instrument and did not verify live access to RRK, Qavanin, Dotic or Ara document endpoints. No legal record status is changed by this source map.
+
+
+## 8. Fresh official-documentation corrections (reviewed 2026-11-08)
+
+- Supabase currently labels Cron as **Beta**. Availability and permissions must be checked in the actual project before selecting it as an operational dependency. Supabase recommends at most eight concurrent jobs and a maximum ten-minute duration per job. Job execution history is stored in `cron.job_run_details`, and that history is not automatically cleaned when a job is unscheduled. Do not copy the documentation's seven-day cleanup example as MAVIS policy; any history cleanup/archive window requires the same owner-approved retention decision and must preserve required audit evidence.
+- Google Search Console Search Analytics is not a guaranteed complete export: Google documents internal row/data limitations and possible omitted rows. Store pagination/truncation and query semantics; never label results as exhaustive. Search Analytics date boundaries use Pacific Time, and URL Inspection is a distinct quota-limited endpoint that reports the indexed version, not a live-page test.
+- Bing's legacy SOAP/POX retirement date (2026-08-31) has passed. Only current REST endpoints are acceptable. OAuth 2.0 is the recommended access method; API-key revocation disables applications using that user's key, so avoid making a shared user API key an untracked single point of failure.
+- Google Trends API remains an alpha program with limited early access. It is not a required production dependency; use the Trends UI and documented manual research until explicit alpha access is granted.
+
+Sources:
+- Supabase Cron stage and operating limits: https://supabase.com/docs/guides/cron and https://supabase.com/features/supabase-cron
+- Supabase job history behavior: https://supabase.com/docs/guides/cron/quickstart
+- Search Analytics limitations and PT date semantics: https://developers.google.com/webmaster-tools/v1/searchanalytics and https://developers.google.com/webmaster-tools/v1/searchanalytics/query
+- Search Console URL Inspection scope: https://developers.google.com/webmaster-tools/v1/urlInspection.index/inspect
+- Bing API and OAuth: https://learn.microsoft.com/en-us/bingwebmaster/ and https://learn.microsoft.com/en-us/bingwebmaster/getting-access
+- Google Trends alpha: https://developers.google.com/search/apis/trends
