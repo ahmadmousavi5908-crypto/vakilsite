@@ -64,6 +64,10 @@ jobs:
         if: ${{ hashFiles('tests/mavis/intake-request.test.mjs') != '' }}
         run: node --test tests/mavis/intake-request.test.mjs
 
+      - name: Test versioned intake consent copy
+        if: ${{ hashFiles('tests/mavis/public-intake-copy.test.mjs') != '' }}
+        run: node --test tests/mavis/public-intake-copy.test.mjs
+
       - name: Test admin intake API guards
         if: ${{ hashFiles('tests/mavis/intake-admin.test.mjs') != '' }}
         run: node --test tests/mavis/intake-admin.test.mjs
@@ -79,6 +83,10 @@ jobs:
       - name: Lint admin intake API
         if: ${{ hashFiles('src/app/api/admin/mavis/intake/route.js') != '' }}
         run: npm run lint -- src/app/api/admin/mavis/intake/route.js src/lib/mavis/intake-admin.mjs tests/mavis/intake-admin.test.mjs
+
+      - name: Lint public intake page and form
+        if: ${{ hashFiles('src/components/public/MavisPublicIntakeForm.jsx') != '' }}
+        run: npm run lint -- src/app/mavis/intake/page.js src/components/public/MavisPublicIntakeForm.jsx tests/mavis/public-intake-copy.test.mjs
 
       - name: Lint MAVIS admin intake inbox
         if: ${{ hashFiles('src/components/admin/MavisIntakeInbox.jsx') != '' }}
