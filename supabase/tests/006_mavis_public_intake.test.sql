@@ -1,6 +1,6 @@
 begin;
 
-select plan(45);
+select plan(48);
 
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_intake_submissions'::regclass), 'intake submissions have RLS enabled');
 select ok(not has_table_privilege('anon', 'public.mavis_intake_submissions', 'SELECT'), 'anon cannot read private intake submissions');
@@ -37,8 +37,13 @@ select ok(not has_schema_privilege('anon', 'mavis_intake_private', 'USAGE'), 'an
 select ok(not has_schema_privilege('authenticated', 'mavis_intake_private', 'USAGE'), 'authenticated cannot use the private intake schema');
 select ok(not has_schema_privilege('service_role', 'mavis_intake_private', 'USAGE'), 'service role does not receive private schema usage');
 
+select ok((select relrowsecurity from pg_class where oid = 'mavis_intake_private.rate_limits'::regclass), 'private rate-limit table has RLS enabled');
+select ok(not has_table_privilege('service_role', 'mavis_intake_private.rate_limits', 'SELECT'), 'service role cannot directly read rate-limit identifiers');
+
+
 select ok(not has_function_privilege('anon', 'mavis_intake_private.submit_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'anon cannot execute the private intake function');
 select ok(not has_function_privilege('authenticated', 'mavis_intake_private.submit_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'authenticated cannot execute the private intake function');
+select ok(not has_function_privilege('service_role', 'mavis_intake_private.submit_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'service role cannot directly execute the private intake function');
 select ok(not has_function_privilege('anon', 'public.submit_mavis_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'anon cannot bypass the application intake guards through direct RPC');
 select ok(not has_function_privilege('authenticated', 'public.submit_mavis_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'authenticated users cannot bypass the application intake guards through direct RPC');
 select ok(has_function_privilege('service_role', 'public.submit_mavis_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'only the server service role can call the guarded intake RPC');
