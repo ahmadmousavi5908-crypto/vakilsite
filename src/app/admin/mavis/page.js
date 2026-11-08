@@ -11,9 +11,10 @@ export const metadata = {
 };
 
 export default async function MavisAdminPage() {
-  const { user, isAdmin, configured } = await requireAdmin();
+  const { user, isAdmin, configured, adminCheckAvailable } = await requireAdmin();
   if (!configured) redirect("/admin/login?error=config");
   if (!user) redirect("/admin/login");
+  if (adminCheckAvailable === false) redirect("/admin/login?error=authorization");
   if (!isAdmin) redirect("/admin/login?error=unauthorized");
 
   const inventory = getMavisKnowledgeInventory();
