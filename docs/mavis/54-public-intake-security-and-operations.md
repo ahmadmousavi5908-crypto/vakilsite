@@ -60,7 +60,7 @@ The public legal knowledge bundle may work offline after download. Intake submis
 
 ## Required release gates
 1. Apply migrations 004, 005 and 006 in a controlled Supabase database in order.
-2. Run `supabase test db`; all 51 pgTAP assertions for migration 006 and all previous database tests must pass.
+2. Run `supabase test db`; all 53 pgTAP assertions for migration 006 and all previous database tests must pass.
 3. Verify the actual Supabase Exposed schemas do not include `mavis_intake_private`.
 4. Verify the proxy overwrites `x-real-ip`; otherwise leave the feature disabled.
 5. Verify secret key is configured server-side only.
