@@ -12,6 +12,8 @@ export default function MavisIntakePage() {
     && process.env.MAVIS_INTAKE_RATE_LIMIT_SECRET?.length >= 32
     && Boolean(process.env.MAVIS_INTAKE_PRIVACY_NOTICE_VERSION)
     && Number.isInteger(Number(process.env.MAVIS_INTAKE_RETENTION_DAYS))
+    && Number(process.env.MAVIS_INTAKE_RETENTION_DAYS) >= 1
+    && Number(process.env.MAVIS_INTAKE_RETENTION_DAYS) <= 3650
     && process.env.MAVIS_INTAKE_TRUSTED_PROXY_HEADERS === "true";
 
   return (
@@ -23,7 +25,7 @@ export default function MavisIntakePage() {
       </header>
       {enabled ? (
         <>
-          <MavisIntakeForm />
+          <MavisIntakeForm privacyNoticeVersion={process.env.MAVIS_INTAKE_PRIVACY_NOTICE_VERSION} retentionDays={Number(process.env.MAVIS_INTAKE_RETENTION_DAYS)} />
           <p style={{ marginTop: 18, fontSize: 12, color: "#718096", lineHeight: 1.9 }}>اطلاعات فقط پس از تأیید پایگاه داده ثبت‌شده محسوب می‌شود. در صورت قطع ارتباط، شناسه پیگیری صادر نمی‌شود.</p>
         </>
       ) : (
