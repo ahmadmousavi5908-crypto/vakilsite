@@ -36,3 +36,6 @@
 .pagination{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
 .pagination button{border:1px solid #dce2e7;background:#fff;color:#31495d;border-radius:4px;padding:7px 12px;font-size:9px;cursor:pointer}
 .pagination button:disabled{opacity:.4;cursor:not-allowed}
+
+.consentDetails{display:grid;gap:5px;margin-top:9px}
+.consentDetails small{font-size:9px;color:#697681;line-height:1.8}
