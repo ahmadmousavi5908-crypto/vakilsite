@@ -73,3 +73,20 @@
 
 ## 7. محدودیت این گزارش
 این ممیزی از GitHub remote و فایل‌های خوانده‌شده انجام شده است. به فایل‌سیستم Termux، محیط اجرای محلی، داشبورد Supabase و حساب‌های تبلیغاتی/وبمستر دسترسی مستقیم نداشته‌ام. هیچ‌یک از این موارد به‌عنوان بررسی‌شده یا سالم اعلام نمی‌شوند.
+
+
+## 8. تکمیل ممیزی شاخه‌ها و CI — 2026-11-08
+- Tree شاخه feature/mavis-core-foundation شامل `src/lib/mavis/`، `src/components/mavis/PublicIntake.jsx`، تست `tests/mavis/public-chat.test.mjs` و workflow هسته است.
+- Tree شاخه feature/mavis-public-intake شامل فرم PublicIntake و مستندات مرتبط است.
+- Tree شاخه feature/mavis-seo-integration-validation شامل هسته MAVIS، فرم پذیرش، داک MAVIS، مستندات SEO، scripts مربوط به IndexNow، sitemap/site-url و تست‌های مرتبط است.
+- Tree شاخه integration/mother-two-research-only-20261106 شامل مستندات MAVIS/SEO و legal-library است، اما فایل‌های runtime مربوط به `src/lib/mavis/`، `src/components/mavis/` و تست‌های MAVIS در این tree مشاهده نشدند. بنابراین این شاخه مبنای مستندات است، نه مبنای کامل کد اجرایی.
+- مقایسه remote نشان داد `feature/mavis-seo-integration-validation` نسبت به main دارای 139 commit جلوتر و 0 عقب‌تر است؛ این شاخه تغییرات گسترده سایت و MAVIS را دارد. این به معنی تأیید بصری آن با workspace محلی Mother Two نیست.
+- مقایسه `feature/mavis-core-foundation` با `feature/mavis-seo-integration-validation` نشان داد شاخه SEO تعداد 82 commit جلوتر است و اصلاحات SEO، sitemap، dock و UI را اضافه می‌کند.
+- GitHub Actions برای SHA `fd6eb077865b4929955baabe4993d91a1179365d` در 2026-11-04 دو run موفق گزارش کرده است:
+  - Site quality checks: run 41914352116 — success
+  - MAVIS Core Tests: run 41914352083 — success
+- آخرین run مشاهده‌شده برای شاخه `feature/mavis-official-face-home-dock-20261105` روی SHA `daebbc0bd40d71e941f02be75cc7d01a3863a06c`، workflow سایت در 2026-11-05 با success پایان یافته است. این نتیجه فقط به همان SHA و workflow مربوط است.
+- endpoint خواندن branch protection برای main با خطای 403 و عدم دسترسی integration پاسخ داد؛ وضعیت protection در این ممیزی قابل تأیید نیست و نباید disabled یا enabled فرض شود.
+- فایل PublicIntake فعلی در شاخه SEO یک فرم سه‌مرحله‌ای با موضوع، مرحله، فوریت، شهر/شرح، سبک پاسخ، گزارش خلاصه و آماده‌سازی متن WhatsApp دارد. خود رابط تصریح می‌کند که مشاوره اختصاصی یا تحلیل حقوقی صادر نمی‌کند و ارسال به WhatsApp با انتخاب کاربر است. این فرم هنوز معادل فرم جامع شرطی نهایی سند مادر نیست.
+- کد PublicIntake شامل guidance ثابت بر اساس دسته موضوع است؛ این guidance باید از نظر عدم تفسیر پاسخ شخصی و عدم القای توصیه حقوقی قطعی بازبینی شود. توسعه بعدی باید گزارش صرفاً مبتنی بر پاسخ‌های صریح کاربر را تضمین کند.
+- MavisDock فعلی در شاخه SEO از portrait SVG موقت استفاده می‌کند؛ با تصویر مرجع سه‌بعدی مصوب یکسان نیست و باید در مرحله طراحی دارایی بصری بررسی شود، بدون تغییر ظاهر سایت تا زمان پذیرش.
