@@ -20,9 +20,11 @@ Provide a public, first-party, deterministic legal-information retrieval surface
 - 22 article summaries
 - 19 subject categories
 - 8 public service FAQs
+- 5 source-reviewed research notes, all explicitly secondary-source-only
+- 16-entry source registry covering official portals, secondary legal databases, news reports and research archives
 - 350 curated query-only phrases in addition to the existing aliases and search phrases
 
-The bundle also contains a nine-entry source registry that distinguishes official publication/legislation portals from secondary databases and research guides. Live availability of those source websites is not implied.
+The bundle also contains a sixteen-entry source registry that distinguishes official publication/legislation portals from secondary databases and research guides. Live availability of those source websites is not implied.
 
 ## Correct interpretation of offline
 The application must be opened once online so the service worker can cache the static shell and dataset. Thereafter, the `/mavis-offline/` surface and local search can work without connectivity. This does not make the entire Next.js website, database, public intake submission, or external legal sources available offline.
