@@ -2,7 +2,7 @@ const CASE_TYPES = new Set(["civil", "criminal", "family", "property", "commerci
 const URGENCY_LEVELS = new Set(["routine", "soon", "urgent"]);
 const PHONE_PATTERN = /^(?:\+98|0098|0)?9\d{9}$/;
 
-function cleanText(value, max) {
+function normalizeDigits(value) {\n  return value.replace(/[۰-۹٠-٩]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩".indexOf(digit) % 10));\n}\n\nfunction cleanText(value, max) {
   if (typeof value !== "string") return "";
   return value.normalize("NFC").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
 }
