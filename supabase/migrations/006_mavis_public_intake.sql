@@ -86,7 +86,10 @@ create policy "MAVIS admins can read intake audit"
 
 create table if not exists mavis_intake_private.rate_limits (
   rate_type text not null check (rate_type in ('ip', 'contact')),
-  rate_key_hmac text not null check (rate_key_hmac ~ '^[a-f0-9]{64}
+  rate_key_hmac text not null check (rate_key_hmac ~ '^[a-f0-9]{64}$'),
+  window_started_at timestamptz not null,
+  request_count integer not null check (request_count between 1 and 11),
+  primary key (rate_type, rate_key_hmac)
 );
 alter table mavis_intake_private.rate_limits enable row level security;
 revoke all on table mavis_intake_private.rate_limits from public, anon, authenticated, service_role;
@@ -120,7 +123,9 @@ declare
 begin
   if p_idempotency_key is null
     or p_ip_rate_key_hmac is null
-    or p_ip_rate_key_hmac !~ '^[a-f0-9]{64}
+    or p_ip_rate_key_hmac !~ '^[a-f0-9]{64}$'
+    or p_contact_rate_key_hmac is null
+    or p_contact_rate_key_hmac !~ '^[a-f0-9]{64}$'
     or p_privacy_notice_version is null
     or char_length(p_privacy_notice_version) not between 1 and 40
     or p_retention_days is null
@@ -280,7 +285,7 @@ end;
 $$;
 
 revoke all on function public.submit_mavis_public_intake(jsonb, text, text, uuid, text, integer) from public, anon, authenticated, service_role;
-grant execute on function public.submit_mavis_public_intake(jsonb, text, uuid, text, integer) to service_role;
+grant execute on function public.submit_mavis_public_intake(jsonb, text, text, uuid, text, integer) to service_role;
 
 create or replace function mavis_intake_private.audit_status_change()
 returns trigger
