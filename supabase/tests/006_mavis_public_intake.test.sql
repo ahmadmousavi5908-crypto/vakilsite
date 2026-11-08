@@ -1,6 +1,6 @@
 begin;
 
-select plan(48);
+select plan(51);
 
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_intake_submissions'::regclass), 'intake submissions have RLS enabled');
 select ok(not has_table_privilege('anon', 'public.mavis_intake_submissions', 'SELECT'), 'anon cannot read private intake submissions');
@@ -189,6 +189,41 @@ select ok(
   exists (select 1 from cron.job where jobname = 'mavis-intake-retention-purge'),
   'daily retention cleanup job is scheduled'
 );
+
+insert into mavis_intake_private.rate_limits (rate_type, rate_key_hmac, window_started_at, request_count)
+values ('ip', repeat('9',64), now() - interval '2 days', 1);
+
+insert into public.mavis_intake_submissions (
+  idempotency_key, contact_name, contact_phone, preferred_contact_method,
+  city, legal_area, matter_summary, privacy_notice_version,
+  privacy_notice_accepted, contact_consent, retention_due_at
+) values (
+  '44444444-4444-4444-8444-444444444444'::uuid,
+  'کاربر منقضی',
+  '+989121234570',
+  'phone',
+  'اهواز',
+  'املاک',
+  'درخواست آزمایشی منقضی برای آزمون حذف خودکار اطلاعات شخصی.',
+  'test-v1',
+  true,
+  true,
+  now() - interval '1 day'
+);
+
+set local role service_role;
+select ok(public.purge_expired_mavis_intake() >= 1, 'retention function deletes expired intake submissions');
+reset role;
+
+select ok(
+  not exists (select 1 from public.mavis_intake_submissions where idempotency_key = '44444444-4444-4444-8444-444444444444'::uuid),
+  'expired personal intake data is removed'
+);
+select ok(
+  not exists (select 1 from mavis_intake_private.rate_limits where rate_key_hmac = repeat('9',64)),
+  'expired HMAC rate-limit identifiers are removed'
+);
+
 
 select * from finish();
 rollback;
