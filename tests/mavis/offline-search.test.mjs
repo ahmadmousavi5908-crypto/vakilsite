@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import { normalizeOfflineQuery, rankOfflineRecords } from "../../public/mavis-offline/search.mjs";
 
 const records = [
@@ -32,4 +33,25 @@ test("deduplicates repeated record IDs and preserves stable tie order", () => {
   const duplicate = [...records, records[0]];
   const results = rankOfflineRecords("چک برگشتی", duplicate);
   assert.equal(results.filter((record) => record.id === "term_cheque_bounce").length, 1);
+});
+
+const knowledge = JSON.parse(await readFile(new URL("../../public/mavis-offline/knowledge.json", import.meta.url), "utf8"));
+
+test("offline bundle counts match the actual corpus", () => {
+  const counts = Object.fromEntries(["term", "law", "article", "faq"].map((type) => [
+    type === "term" ? "terms" : type === "law" ? "laws" : type === "article" ? "articles" : "faqs",
+    knowledge.records.filter((record) => record.record_type === type).length,
+  ]));
+  assert.deepEqual(counts, {
+    terms: knowledge.counts.terms,
+    laws: knowledge.counts.laws,
+    articles: knowledge.counts.articles,
+    faqs: knowledge.counts.faqs,
+  });
+});
+
+test("real corpus resolves common client wording to the intended record", () => {
+  assert.equal(rankOfflineRecords("چک برگشتی", knowledge.records)[0].id, "term_cheque_bounce");
+  assert.equal(rankOfflineRecords("قولنامه", knowledge.records)[0].id, "term_ordinary_document");
+  assert.equal(rankOfflineRecords("فیشینگ", knowledge.records)[0].id, "term_computer_fraud");
 });
