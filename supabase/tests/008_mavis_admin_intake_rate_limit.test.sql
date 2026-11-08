@@ -1,6 +1,6 @@
 begin;
 
-select plan(16);
+select plan(18);
 
 select ok(
   has_schema_privilege('authenticated', 'mavis_private', 'USAGE'),
@@ -55,6 +55,18 @@ select ok(
     'mavis_private.consume_admin_intake_rate_limit()'::regprocedure
   )) > 0,
   'private admin limiter checks the authenticated admin role'
+);
+select ok(
+  position('least' in lower(pg_get_functiondef(
+    'mavis_private.consume_admin_intake_rate_limit()'::regprocedure
+  ))) > 0,
+  'private admin limiter bounds the stored request counter'
+);
+select ok(
+  position('60 seconds' in lower(pg_get_functiondef(
+    'mavis_private.consume_admin_intake_rate_limit()'::regprocedure
+  ))) > 0,
+  'private admin limiter uses a bounded sixty-second window'
 );
 select ok(
   has_function_privilege('authenticated', 'public.consume_mavis_admin_intake_rate_limit()', 'EXECUTE'),
