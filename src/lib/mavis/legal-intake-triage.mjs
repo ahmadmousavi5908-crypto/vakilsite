@@ -2,7 +2,7 @@ const SIGNALS = [
   { code: "time_sensitive", pattern: /مهلت|ابلاغ|جلسه\s*رسیدگی|وقت\s*دادگاه|واخواهی|تجدیدنظر|فرجام|اعتراض|اجرائیه|مزایده|توقیف/, priority: "urgent" },
   { code: "liberty_or_criminal", pattern: /بازداشت|توقیف\s*شخص|احضاریه\s*کیفری|جلب|حبس|زندان|ضرب\s*و\s*جرح|تهدید\s*جانی/, priority: "urgent" },
   { code: "family_safety", pattern: /خشونت\s*خانگی|تهدید\s*همسر|آزار\s*کودک|حضانت\s*فوری|ممانعت\s*از\s*ملاقات/, priority: "urgent" },
-  { code: "enforcement_or_property", pattern: /تخلیه|خلع\s*ید|رفع\s*تصرف|پلمب|قطع\s*انشعاب|اجرای\s*حکم|مسدودی\s*حساب/, priority: "review" },
+  { code: "enforcement_or_property", pattern: /تخلیه|خلع\s*ید|رفع\s*تصرف|پلمب|قطع\s*انشعاب|اجرائیه|اجرای\s*حکم|مسدودی\s*حساب/, priority: "review" },
 ];
 
 const QUESTIONS = Object.freeze([
