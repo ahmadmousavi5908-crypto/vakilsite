@@ -4,7 +4,9 @@ on:
   push:
     branches:
       - feature/mavis-deterministic-legal-search-20261108
+      - security/restrict-social-links-grants-20261108
       - feature/mavis-intake-growth-foundation-20261108
+      - feature/mavis-legal-evidence-contract-20261108
   workflow_dispatch:
   pull_request:
     branches:
@@ -55,13 +57,49 @@ jobs:
         if: ${{ hashFiles('tests/mavis/growth-metrics.test.mjs') != '' }}
         run: node --test tests/mavis/growth-metrics.test.mjs
 
+      - name: Test Search Console adapter
+        if: ${{ hashFiles('tests/mavis/search-console-adapter.test.mjs') != '' }}
+        run: node --test tests/mavis/search-console-adapter.test.mjs
+
       - name: Test cautious legal intake triage
         if: ${{ hashFiles('tests/mavis/legal-intake-triage.test.mjs') != '' }}
         run: node --test tests/mavis/legal-intake-triage.test.mjs
 
+      - name: Test intake request security guards
+        if: ${{ hashFiles('tests/mavis/intake-request.test.mjs') != '' }}
+        run: node --test tests/mavis/intake-request.test.mjs
+
+      - name: Test versioned intake consent copy
+        if: ${{ hashFiles('tests/mavis/public-intake-copy.test.mjs') != '' }}
+        run: node --test tests/mavis/public-intake-copy.test.mjs
+
+      - name: Test admin intake API guards
+        if: ${{ hashFiles('tests/mavis/intake-admin.test.mjs') != '' }}
+        run: node --test tests/mavis/intake-admin.test.mjs
+
       - name: Lint intake and growth modules
         if: ${{ hashFiles('src/lib/mavis/public-intake-validation.mjs') != '' }}
         run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/growth-metrics.mjs src/lib/mavis/legal-intake-triage.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs tests/mavis/legal-intake-triage.test.mjs
+
+      - name: Lint intake API and server-only Supabase client
+        if: ${{ hashFiles('src/app/api/mavis/intake/route.js') != '' }}
+        run: npm run lint -- src/app/api/mavis/intake/route.js src/lib/mavis/intake-request.mjs src/lib/supabase/service.js tests/mavis/intake-request.test.mjs
+
+      - name: Lint admin intake API
+        if: ${{ hashFiles('src/app/api/admin/mavis/intake/route.js') != '' }}
+        run: npm run lint -- src/app/api/admin/mavis/intake/route.js src/lib/mavis/intake-admin.mjs tests/mavis/intake-admin.test.mjs
+
+      - name: Lint public intake page and form
+        if: ${{ hashFiles('src/components/public/MavisPublicIntakeForm.jsx') != '' }}
+        run: npm run lint -- src/app/mavis/intake/page.js src/components/public/MavisPublicIntakeForm.jsx tests/mavis/public-intake-copy.test.mjs
+
+      - name: Lint MAVIS admin intake inbox
+        if: ${{ hashFiles('src/components/admin/MavisIntakeInbox.jsx') != '' }}
+        run: npm run lint -- src/components/admin/MavisIntakeInbox.jsx src/app/admin/mavis/page.js
+
+      - name: Lint Search Console adapter
+        if: ${{ hashFiles('src/lib/mavis/search-console-adapter.mjs') != '' }}
+        run: npm run lint -- src/lib/mavis/search-console-adapter.mjs tests/mavis/search-console-adapter.test.mjs
 
       - name: Lint legal evidence and dossier modules
         run: npm run lint -- src/lib/mavis/legal-evidence.mjs src/lib/mavis/legal-research-dossier.mjs tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
