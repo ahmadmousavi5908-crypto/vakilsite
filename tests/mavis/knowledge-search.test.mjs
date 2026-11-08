@@ -177,3 +177,14 @@ test("requires an exact HTTP(S) same-origin match", () => {
   assert.equal(matchesRequestOrigin("https://example.com/path", "https://example.com/api"), false);
   assert.equal(matchesRequestOrigin(undefined, "https://example.com/api"), false);
 });
+
+test("allows only safe same-site relative result paths", async () => {
+  const { safeInternalPath } = await import("../../src/lib/mavis/request-guards.mjs");
+  assert.equal(safeInternalPath("/legal-library/terms"), "/legal-library/terms");
+  assert.equal(safeInternalPath("/legal-library?q=deed#results"), "/legal-library?q=deed#results");
+  assert.equal(safeInternalPath("//evil.example/path"), null);
+  assert.equal(safeInternalPath("https://evil.example/path"), null);
+  assert.equal(safeInternalPath("/\\evil.example"), null);
+  assert.equal(safeInternalPath("javascript:alert(1)"), null);
+  assert.equal(safeInternalPath(null), null);
+});
