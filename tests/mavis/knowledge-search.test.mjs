@@ -211,3 +211,20 @@ test("passes the curated legal-library top-1 retrieval smoke set", () => {
     JSON.stringify(outcomes, null, 2),
   );
 });
+
+import { parseKnowledgeSearchRateLimit } from "../../src/lib/mavis/rate-limit.mjs";
+
+test("accepts only a single valid database rate-limit decision", () => {
+  assert.deepEqual(
+    parseKnowledgeSearchRateLimit({ data: [{ allowed: true, retry_after_seconds: 0 }], error: null }),
+    { status: "allowed" },
+  );
+  assert.deepEqual(
+    parseKnowledgeSearchRateLimit({ data: [{ allowed: false, retry_after_seconds: 17 }], error: null }),
+    { status: "limited", retryAfterSeconds: 17 },
+  );
+  assert.deepEqual(parseKnowledgeSearchRateLimit({ data: null, error: new Error("db down") }), { status: "unavailable" });
+  assert.deepEqual(parseKnowledgeSearchRateLimit({ data: [], error: null }), { status: "unavailable" });
+  assert.deepEqual(parseKnowledgeSearchRateLimit({ data: [{ allowed: false, retry_after_seconds: 999 }], error: null }), { status: "unavailable" });
+  assert.deepEqual(parseKnowledgeSearchRateLimit({ data: [{ allowed: "false", retry_after_seconds: 10 }], error: null }), { status: "unavailable" });
+});
