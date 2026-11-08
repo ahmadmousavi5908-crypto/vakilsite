@@ -80,6 +80,10 @@ jobs:
         if: ${{ hashFiles('src/app/api/admin/mavis/intake/route.js') != '' }}
         run: npm run lint -- src/app/api/admin/mavis/intake/route.js src/lib/mavis/intake-admin.mjs tests/mavis/intake-admin.test.mjs
 
+      - name: Lint MAVIS admin intake inbox
+        if: ${{ hashFiles('src/components/admin/MavisIntakeInbox.jsx') != '' }}
+        run: npm run lint -- src/components/admin/MavisIntakeInbox.jsx src/app/admin/mavis/page.js
+
       - name: Lint Search Console adapter
         if: ${{ hashFiles('src/lib/mavis/search-console-adapter.mjs') != '' }}
         run: npm run lint -- src/lib/mavis/search-console-adapter.mjs tests/mavis/search-console-adapter.test.mjs
