@@ -40,6 +40,7 @@
 - [نقشه اجرایی یکپارچه، ماتریس اتصال‌ها و معیارهای پذیرش MAVIS](./28-execution-blueprint-and-integration-acceptance.md)
 - [مانیفست دانلود نسخه‌بندی‌شده مستندات برای Termux](./29-termux-docs-download-manifest-2026-11-08.json)
 - [مانیفست به‌روزشده دانلود مستندات برای Termux (نسخه R2)](./30-termux-docs-download-manifest-2026-11-08-r2.json) — مرجع دانلود فعلی
+- [مانیفست دانلود مستندات پنل و دسکتاپ MAVIS (نسخه R3)](./32-termux-docs-download-manifest-2026-11-08-r3.json) — مرجع جدیدتر؛ شامل سند ۳۱
 
 ## اسناد تکمیلی محصول و اجرا
 
