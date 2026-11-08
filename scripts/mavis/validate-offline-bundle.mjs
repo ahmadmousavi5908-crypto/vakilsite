@@ -24,8 +24,17 @@ for (const record of bundle.records) {
   ids.add(record.id);
 
   if (["term", "law", "article", "research_note"].includes(record.record_type)) {
-    if (!record.provenance || record.provenance.exact_primary_document_verified !== false || record.provenance.current_validity_verified !== false) {
-      fail("Legal record lacks conservative provenance flags: " + record.id);
+    if (!record.provenance) {
+      fail("Legal record lacks provenance metadata: " + record.id);
+    } else if (record.review_status === "verified_primary_source") {
+      if (!isPrimaryVerificationComplete(record)) {
+        fail("Primary verified label lacks complete primary-source evidence: " + record.id);
+      }
+    } else if (
+      record.provenance.exact_primary_document_verified !== false ||
+      record.provenance.current_validity_verified !== false
+    ) {
+      fail("Unreviewed legal record has unsafe verification flags: " + record.id);
     }
   }
 
@@ -34,9 +43,6 @@ for (const record of bundle.records) {
     if (!/^https:\/\//i.test(source.url || "")) fail("Non-HTTPS source URL in " + record.id);
   }
 
-  if (record.review_status === "verified_primary_source" && !isPrimaryVerificationComplete(record)) {
-    fail("Primary verified label lacks complete primary-source evidence: " + record.id);
-  }
 }
 
 for (const source of bundle.source_registry) {
