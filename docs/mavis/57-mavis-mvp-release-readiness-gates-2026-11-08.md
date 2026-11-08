@@ -195,3 +195,33 @@ The following evidence supersedes earlier provisional status notes:
 These green workflows are separate branch-level checks. There is not yet one final integration commit that runs the database migration suite and every application suite against the exact same combined tree. That combined verification remains a required gate before any merge or release.
 
 All PRs #16, #17, #18, #19, #23 and #24 remain Draft and unmerged. No production migration, OAuth connection, deployment, or public Intake activation has occurred. The Mother Two archive and approved public-site appearance remain protected.
+
+
+## 8. Full integration candidate verification — 2026-11-08
+
+A dedicated Draft integration PR was created to test the application stack and database/security migrations against the same exact commit.
+
+- PR #25: https://github.com/ahmadmousavi5908-crypto/vakilsite/pull/25
+- Candidate branch: `integration/mavis-mvp-candidate-20261108`
+- Exact integration commit: `6d7bf677b757e445f6c3be9ab7cea88b240af1e9`
+- GitHub reports the PR as `clean` and mergeable; it remains Draft and unmerged.
+
+**Application workflow:** run `42497516988` — success.
+- Existing legal-library validation
+- Deterministic retrieval
+- Offline syntax, bundle provenance, Persian search, cache/shell and answer tests
+- Legal evidence provenance and dossier tests
+- Intake validation, admin, triage and Growth metrics tests
+- Lint for retrieval, intake/growth and legal evidence
+- Production build
+
+**Database workflow:** run `42497516835` — success.
+- Isolated Supabase startup
+- Migrations 004, 005 and 006
+- Four pgTAP files
+- 115 assertions; result PASS
+- Local stack stopped successfully
+
+This is the first verified same-commit run of the full application workflow and database migration/security workflow. It closes the prior gap between separate green PR checks.
+
+**Still not complete:** Mother Two local reconciliation, local Termux build/regression, staging authorization and end-to-end acceptance, lawyer review of primary-source evidence, external provider activation, and production deployment/rollback approval. No production action has been taken.
