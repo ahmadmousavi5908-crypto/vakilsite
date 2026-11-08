@@ -46,6 +46,29 @@ const validityLabels = {
   unknown: "وضعیت اعتبار نامشخص",
 };
 
+const dossierStatusLabels = {
+  not_found: "در کتابخانه فعلی مدرکی پیدا نشد",
+  blocked_missing_verified_primary_sources: "پاسخ حقوقی مسدود است؛ منبع اولیه تأییدشده کافی نیست",
+  human_legal_review_required: "مدارک موجود؛ بررسی و تأیید وکیل الزامی است",
+};
+
+const dossierSectionLabels = {
+  statute: "قوانین",
+  amendment: "اصلاحیه‌ها",
+  repeal: "نسخ و ابطال",
+  executive_regulation: "آیین‌نامه‌ها",
+  unifying_opinion: "آرای وحدت رویه",
+  published_judgment: "آرای منتشرشده",
+  administrative_court_decision: "آرای دیوان عدالت اداری",
+  advisory_opinion: "نظریات مشورتی",
+  judicial_session: "نشست‌های قضایی",
+  academic_commentary: "منابع علمی",
+  official_guidance: "راهنمای رسمی",
+  legal_term: "اصطلاحات",
+  educational_summary: "خلاصه مواد",
+  unclassified: "دسته‌بندی‌نشده",
+};
+
 
 function recordSources(record) {
   const sources = Array.isArray(record.evidence?.citations) ? record.evidence.citations : [];
@@ -64,6 +87,7 @@ function recordSources(record) {
 export default function MavisKnowledgeSearch() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const [dossier, setDossier] = useState(null);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -76,6 +100,7 @@ export default function MavisKnowledgeSearch() {
 
     setLoading(true);
     setResults([]);
+    setDossier(null);
     setError("");
     setNotice("");
     setSearched(false);
@@ -95,10 +120,12 @@ export default function MavisKnowledgeSearch() {
       }
 
       setResults(Array.isArray(payload?.results) ? payload.results : []);
+      setDossier(payload?.researchDossier?.ok ? payload.researchDossier : null);
       setNotice(payload?.notice || "");
       setSearched(true);
     } catch (requestError) {
       setResults([]);
+      setDossier(null);
       setError(requestError instanceof Error ? requestError.message : "خطای ناشناخته در جست‌وجو.");
     } finally {
       setLoading(false);
@@ -147,6 +174,29 @@ export default function MavisKnowledgeSearch() {
 
       {searched && results.length === 0 && (
         <div className={styles.empty}>نتیجه‌ای در داده‌های فعلی پیدا نشد. نبود نتیجه به معنی نبود قانون یا منبع حقوقی مرتبط نیست.</div>
+      )}
+
+      {dossier && (
+        <section className={styles.dossier} aria-live="polite" aria-label="پوشش پژوهش حقوقی">
+          <div className={styles.dossierHeader}>
+            <strong>پرونده پژوهش و پوشش مستندات</strong>
+            <span>{dossierStatusLabels[dossier.answerReadiness] || "نیازمند بررسی انسانی"}</span>
+          </div>
+          <div className={styles.dossierCounts}>
+            {Object.entries(dossier.sections || {})
+              .filter(([, items]) => Array.isArray(items) && items.length > 0)
+              .map(([key, items]) => (
+                <span key={key}>{dossierSectionLabels[key] || key}: {items.length.toLocaleString("fa-IR")}</span>
+              ))}
+          </div>
+          {Array.isArray(dossier.gaps) && dossier.gaps.length > 0 && (
+            <details className={styles.dossierGaps}>
+              <summary>خلأهای پژوهش ({dossier.gaps.length.toLocaleString("fa-IR")})</summary>
+              <ul>{dossier.gaps.map((gap) => <li key={gap}>{gap}</li>)}</ul>
+            </details>
+          )}
+          <p>این خروجی فقط مدارک موجود و موارد بررسی‌نشده را فهرست می‌کند؛ پاسخ حقوقی یا محاسبه مهلت تولید نشده است.</p>
+        </section>
       )}
 
       {results.length > 0 && (
