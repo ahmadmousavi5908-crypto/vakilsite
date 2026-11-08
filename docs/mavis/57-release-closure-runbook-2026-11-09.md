@@ -9,6 +9,7 @@
 - PR #31 merged into this integration branch as `a55a8495ef7ae4604086c3433bdb85dd7dd66168`. Its exact head `7dfda26fd0514683928c7f624e201fbc6e9b597d` passed application PR CI `42525255911`, database PR CI `42525255892`, application push CI `42525251189`, and database push CI `42525256701`.
 - PR #32 merged the property-registration source audit note as `5f4ebfbe13dc7993f1cea267b435a88376e685ef`. Its exact documentation-only head `167267ea5508333488d356eb6bbe54675fe46c37` passed application CI `42525462721` and database CI `42525462744`.
 - PR #33 merged the precise web-origin connectivity wording as `47d38bdc0ca040743676a5eacac57a3387d55163`. Its exact head `259f2befb6122564f23125726f45ea110bb970a1` passed application CI `42525521429` and database CI `42525521302`.
+- PR #34 merged the client-authentication configuration audit, server-only secret-key template entry, and private client-portal data model as `e627bcf1eca66d520b871a854ed4f4c6b394dbd1`. Its exact head `947ca49aa18e7306d6ae23b99e7b92758f8a7e41` passed application CI `42525724144` and database CI `42525724224`.
 - These are exact PR-head results, not proof that a later integration-branch commit has passed. Every new candidate SHA must pass its own checks.
 - Intake uses bounded JSON parsing, origin/content-type guards, rate limiting, idempotent submissions, and narrow RPC access.
 - The offline legal bundle intentionally does not claim current-law verification.
