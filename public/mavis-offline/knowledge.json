@@ -12,7 +12,7 @@
     "articles": 22,
     "faqs": 8,
     "query_expansions": 350,
-    "source_registry": 9
+    "source_registry": 11
   },
   "categories": [
     {
@@ -267,7 +267,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AB%D8%A8%D8%AA%20%D8%B1%D8%B3%D9%85%DB%8C%20%D9%85%D8%B9%D8%A7%D9%85%D9%84%D9%87"
+      "path": "/legal-library/terms/%D8%AB%D8%A8%D8%AA%20%D8%B1%D8%B3%D9%85%DB%8C%20%D9%85%D8%B9%D8%A7%D9%85%D9%84%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_official_document",
@@ -301,7 +310,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B3%D9%86%D8%AF%20%D8%B1%D8%B3%D9%85%DB%8C"
+      "path": "/legal-library/terms/%D8%B3%D9%86%D8%AF%20%D8%B1%D8%B3%D9%85%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_ordinary_document",
@@ -339,7 +357,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B3%D9%86%D8%AF%20%D8%B9%D8%A7%D8%AF%DB%8C"
+      "path": "/legal-library/terms/%D8%B3%D9%86%D8%AF%20%D8%B9%D8%A7%D8%AF%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_title_deed",
@@ -369,7 +396,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B3%D9%86%D8%AF%20%D9%85%D8%A7%D9%84%DA%A9%DB%8C%D8%AA"
+      "path": "/legal-library/terms/%D8%B3%D9%86%D8%AF%20%D9%85%D8%A7%D9%84%DA%A9%DB%8C%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_cadastre",
@@ -401,7 +437,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AD%D8%AF%D9%86%DA%AF%D8%A7%D8%B1"
+      "path": "/legal-library/terms/%D8%AD%D8%AF%D9%86%DA%AF%D8%A7%D8%B1",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_parcel_number",
@@ -429,7 +474,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D9%BE%D9%84%D8%A7%DA%A9%20%D8%AB%D8%A8%D8%AA%DB%8C"
+      "path": "/legal-library/terms/%D9%BE%D9%84%D8%A7%DA%A9%20%D8%AB%D8%A8%D8%AA%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_official_registry",
@@ -456,7 +510,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AF%D9%81%D8%AA%D8%B1%20%D8%A7%D9%85%D9%84%D8%A7%DA%A9"
+      "path": "/legal-library/terms/%D8%AF%D9%81%D8%AA%D8%B1%20%D8%A7%D9%85%D9%84%D8%A7%DA%A9",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_notary_office",
@@ -487,7 +550,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AF%D9%81%D8%AA%D8%B1%20%D8%A7%D8%B3%D9%86%D8%A7%D8%AF%20%D8%B1%D8%B3%D9%85%DB%8C"
+      "path": "/legal-library/terms/%D8%AF%D9%81%D8%AA%D8%B1%20%D8%A7%D8%B3%D9%86%D8%A7%D8%AF%20%D8%B1%D8%B3%D9%85%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_mortgage",
@@ -511,7 +583,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B1%D9%87%D9%86"
+      "path": "/legal-library/terms/%D8%B1%D9%87%D9%86",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_partition",
@@ -543,7 +624,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%A7%D9%81%D8%B1%D8%A7%D8%B2"
+      "path": "/legal-library/terms/%D8%A7%D9%81%D8%B1%D8%A7%D8%B2",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_unregistered_property",
@@ -576,7 +666,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D9%85%D9%84%DA%A9%20%D9%81%D8%A7%D9%82%D8%AF%20%D8%B3%D9%86%D8%AF%20%D8%B1%D8%B3%D9%85%DB%8C"
+      "path": "/legal-library/terms/%D9%85%D9%84%DA%A9%20%D9%81%D8%A7%D9%82%D8%AF%20%D8%B3%D9%86%D8%AF%20%D8%B1%D8%B3%D9%85%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_unofficial_transaction",
@@ -607,7 +706,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D9%85%D8%B9%D8%A7%D9%85%D9%84%D9%87%20%D8%BA%DB%8C%D8%B1%D8%B1%D8%B3%D9%85%DB%8C%20%D9%85%D9%84%DA%A9"
+      "path": "/legal-library/terms/%D9%85%D8%B9%D8%A7%D9%85%D9%84%D9%87%20%D8%BA%DB%8C%D8%B1%D8%B1%D8%B3%D9%85%DB%8C%20%D9%85%D9%84%DA%A9",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_article10_system",
@@ -636,7 +744,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D9%87%20%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D8%AF%D9%87%DB%8C%20%D8%A7%D8%B3%D9%86%D8%A7%D8%AF%20%D8%BA%DB%8C%D8%B1%D8%B1%D8%B3%D9%85%DB%8C"
+      "path": "/legal-library/terms/%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D9%87%20%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D8%AF%D9%87%DB%8C%20%D8%A7%D8%B3%D9%86%D8%A7%D8%AF%20%D8%BA%DB%8C%D8%B1%D8%B1%D8%B3%D9%85%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_utm_map",
@@ -665,7 +782,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D9%86%D9%82%D8%B4%D9%87%20%DB%8C%D9%88%20%D8%AA%DB%8C%20%D8%A7%D9%85"
+      "path": "/legal-library/terms/%D9%86%D9%82%D8%B4%D9%87%20%DB%8C%D9%88%20%D8%AA%DB%8C%20%D8%A7%D9%85",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_boundary_dispute",
@@ -696,7 +822,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%A7%D8%AE%D8%AA%D9%84%D8%A7%D9%81%20%D8%AD%D8%AF%D9%88%D8%AF%20%D9%85%D9%84%DA%A9"
+      "path": "/legal-library/terms/%D8%A7%D8%AE%D8%AA%D9%84%D8%A7%D9%81%20%D8%AD%D8%AF%D9%88%D8%AF%20%D9%85%D9%84%DA%A9",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_cheque",
@@ -729,7 +864,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%DA%86%DA%A9"
+      "path": "/legal-library/terms/%DA%86%DA%A9",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_registered_cheque",
@@ -758,7 +902,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%DA%86%DA%A9%20%D8%B5%DB%8C%D8%A7%D8%AF%DB%8C"
+      "path": "/legal-library/terms/%DA%86%DA%A9%20%D8%B5%DB%8C%D8%A7%D8%AF%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_cheque_registration",
@@ -787,7 +940,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AB%D8%A8%D8%AA%20%DA%86%DA%A9%20%D8%AF%D8%B1%20%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D9%87%20%D8%B5%DB%8C%D8%A7%D8%AF"
+      "path": "/legal-library/terms/%D8%AB%D8%A8%D8%AA%20%DA%86%DA%A9%20%D8%AF%D8%B1%20%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D9%87%20%D8%B5%DB%8C%D8%A7%D8%AF",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_cheque_bounce",
@@ -818,7 +980,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%DA%AF%D9%88%D8%A7%D9%87%DB%8C%20%D8%B9%D8%AF%D9%85%20%D9%BE%D8%B1%D8%AF%D8%A7%D8%AE%D8%AA%20%DA%86%DA%A9"
+      "path": "/legal-library/terms/%DA%AF%D9%88%D8%A7%D9%87%DB%8C%20%D8%B9%D8%AF%D9%85%20%D9%BE%D8%B1%D8%AF%D8%A7%D8%AE%D8%AA%20%DA%86%DA%A9",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_cheque_execution",
@@ -846,7 +1017,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%B1%D8%A7%D8%A6%DB%8C%D9%87%20%D9%85%D8%B3%D8%AA%D9%82%DB%8C%D9%85%20%DA%86%DA%A9"
+      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%B1%D8%A7%D8%A6%DB%8C%D9%87%20%D9%85%D8%B3%D8%AA%D9%82%DB%8C%D9%85%20%DA%86%DA%A9",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_promissory_note",
@@ -884,7 +1064,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B3%D9%81%D8%AA%D9%87"
+      "path": "/legal-library/terms/%D8%B3%D9%81%D8%AA%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_promissory_note_form",
@@ -910,7 +1099,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B4%D8%B1%D8%A7%DB%8C%D8%B7%20%D8%B4%DA%A9%D9%84%DB%8C%20%D8%B3%D9%81%D8%AA%D9%87"
+      "path": "/legal-library/terms/%D8%B4%D8%B1%D8%A7%DB%8C%D8%B7%20%D8%B4%DA%A9%D9%84%DB%8C%20%D8%B3%D9%81%D8%AA%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_promissory_note_protest",
@@ -939,7 +1137,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D9%88%D8%A7%D8%AE%D9%88%D8%A7%D8%B3%D8%AA%20%D8%B3%D9%81%D8%AA%D9%87"
+      "path": "/legal-library/terms/%D9%88%D8%A7%D8%AE%D9%88%D8%A7%D8%B3%D8%AA%20%D8%B3%D9%81%D8%AA%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_security_promissory_note",
@@ -968,7 +1175,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B3%D9%81%D8%AA%D9%87%20%D8%B6%D9%85%D8%A7%D9%86%D8%AA%DB%8C"
+      "path": "/legal-library/terms/%D8%B3%D9%81%D8%AA%D9%87%20%D8%B6%D9%85%D8%A7%D9%86%D8%AA%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_contract",
@@ -998,7 +1214,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%D8%AF%D8%A7%D8%AF"
+      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%D8%AF%D8%A7%D8%AF",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_sale",
@@ -1026,7 +1251,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%A8%DB%8C%D8%B9"
+      "path": "/legal-library/terms/%D8%A8%DB%8C%D8%B9",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_lease",
@@ -1054,7 +1288,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%A7%D8%B1%D9%87"
+      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%A7%D8%B1%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_invalid_contract",
@@ -1082,7 +1325,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%A8%D8%B7%D9%84%D8%A7%D9%86%20%D9%85%D8%B9%D8%A7%D9%85%D9%84%D9%87"
+      "path": "/legal-library/terms/%D8%A8%D8%B7%D9%84%D8%A7%D9%86%20%D9%85%D8%B9%D8%A7%D9%85%D9%84%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_voidable_contract",
@@ -1109,7 +1361,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B9%D8%AF%D9%85%20%D9%86%D9%81%D9%88%D8%B0%20%D9%85%D8%B9%D8%A7%D9%85%D9%84%D9%87"
+      "path": "/legal-library/terms/%D8%B9%D8%AF%D9%85%20%D9%86%D9%81%D9%88%D8%B0%20%D9%85%D8%B9%D8%A7%D9%85%D9%84%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_claim",
@@ -1137,7 +1398,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AE%D9%88%D8%A7%D8%B3%D8%AA%D9%87%20%D8%AF%D8%B9%D9%88%D8%A7"
+      "path": "/legal-library/terms/%D8%AE%D9%88%D8%A7%D8%B3%D8%AA%D9%87%20%D8%AF%D8%B9%D9%88%D8%A7",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_statement_of_claim",
@@ -1170,7 +1440,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%D8%AE%D9%88%D8%A7%D8%B3%D8%AA"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%D8%AE%D9%88%D8%A7%D8%B3%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_jurisdiction",
@@ -1199,7 +1478,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B5%D9%84%D8%A7%D8%AD%DB%8C%D8%AA%20%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87"
+      "path": "/legal-library/terms/%D8%B5%D9%84%D8%A7%D8%AD%DB%8C%D8%AA%20%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_security_for_claim",
@@ -1231,7 +1519,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AA%D8%A3%D9%85%DB%8C%D9%86%20%D8%AE%D9%88%D8%A7%D8%B3%D8%AA%D9%87"
+      "path": "/legal-library/terms/%D8%AA%D8%A3%D9%85%DB%8C%D9%86%20%D8%AE%D9%88%D8%A7%D8%B3%D8%AA%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_interim_order",
@@ -1263,7 +1560,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AF%D8%B3%D8%AA%D9%88%D8%B1%20%D9%85%D9%88%D9%82%D8%AA"
+      "path": "/legal-library/terms/%D8%AF%D8%B3%D8%AA%D9%88%D8%B1%20%D9%85%D9%88%D9%82%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_preservation_of_evidence",
@@ -1297,7 +1603,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AA%D8%A3%D9%85%DB%8C%D9%86%20%D8%AF%D9%84%DB%8C%D9%84"
+      "path": "/legal-library/terms/%D8%AA%D8%A3%D9%85%DB%8C%D9%86%20%D8%AF%D9%84%DB%8C%D9%84",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_criminal_intent",
@@ -1325,7 +1640,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B3%D9%88%D8%A1%D9%86%DB%8C%D8%AA"
+      "path": "/legal-library/terms/%D8%B3%D9%88%D8%A1%D9%86%DB%8C%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_criminal_attempt",
@@ -1352,7 +1676,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B4%D8%B1%D9%88%D8%B9%20%D8%A8%D9%87%20%D8%AC%D8%B1%D9%85"
+      "path": "/legal-library/terms/%D8%B4%D8%B1%D9%88%D8%B9%20%D8%A8%D9%87%20%D8%AC%D8%B1%D9%85",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_accomplice",
@@ -1379,7 +1712,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D9%85%D8%B9%D8%A7%D9%88%D9%86%D8%AA%20%D8%AF%D8%B1%20%D8%AC%D8%B1%D9%85"
+      "path": "/legal-library/terms/%D9%85%D8%B9%D8%A7%D9%88%D9%86%D8%AA%20%D8%AF%D8%B1%20%D8%AC%D8%B1%D9%85",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_theft",
@@ -1408,7 +1750,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B3%D8%B1%D9%82%D8%AA"
+      "path": "/legal-library/terms/%D8%B3%D8%B1%D9%82%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_fraud",
@@ -1443,7 +1794,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%DA%A9%D9%84%D8%A7%D9%87%D8%A8%D8%B1%D8%AF%D8%A7%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%DA%A9%D9%84%D8%A7%D9%87%D8%A8%D8%B1%D8%AF%D8%A7%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_computer_crime",
@@ -1471,7 +1831,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AC%D8%B1%D8%A7%DB%8C%D9%85%20%D8%B1%D8%A7%DB%8C%D8%A7%D9%86%D9%87%E2%80%8C%D8%A7%DB%8C"
+      "path": "/legal-library/terms/%D8%AC%D8%B1%D8%A7%DB%8C%D9%85%20%D8%B1%D8%A7%DB%8C%D8%A7%D9%86%D9%87%E2%80%8C%D8%A7%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_complaint",
@@ -1505,7 +1874,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%B4%DA%A9%D9%88%D8%A7%DB%8C%DB%8C%D9%87"
+      "path": "/legal-library/terms/%D8%B4%DA%A9%D9%88%D8%A7%DB%8C%DB%8C%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_preliminary_investigation",
@@ -1532,7 +1910,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D8%AA%D8%AD%D9%82%DB%8C%D9%82%D8%A7%D8%AA%20%D9%85%D9%82%D8%AF%D9%85%D8%A7%D8%AA%DB%8C"
+      "path": "/legal-library/terms/%D8%AA%D8%AD%D9%82%DB%8C%D9%82%D8%A7%D8%AA%20%D9%85%D9%82%D8%AF%D9%85%D8%A7%D8%AA%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_bail_order",
@@ -1561,7 +1948,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%20%D8%AA%D8%A3%D9%85%DB%8C%D9%86%20%DA%A9%DB%8C%D9%81%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%20%D8%AA%D8%A3%D9%85%DB%8C%D9%86%20%DA%A9%DB%8C%D9%81%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_criminology_prevention",
@@ -1585,7 +1981,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "تعریف فهرست‌ساز است؛ برای استناد حقوقی، متن رسمی و آخرین اصلاحات بررسی شود.",
-      "path": "/legal-library/terms/%D9%BE%DB%8C%D8%B4%DA%AF%DB%8C%D8%B1%DB%8C%20%D8%A7%D8%B2%20%D8%AC%D8%B1%D9%85"
+      "path": "/legal-library/terms/%D9%BE%DB%8C%D8%B4%DA%AF%DB%8C%D8%B1%DB%8C%20%D8%A7%D8%B2%20%D8%AC%D8%B1%D9%85",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_001",
@@ -1608,7 +2013,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این وب‌سایت مرجع رسمی قوه قضاییه نیست و صرفاً محتوای آموزشی حقوقی منتشر می‌کند.",
-      "path": "/legal-library/terms/%D9%82%D9%88%D9%87%20%D9%82%D8%B6%D8%A7%DB%8C%DB%8C%D9%87"
+      "path": "/legal-library/terms/%D9%82%D9%88%D9%87%20%D9%82%D8%B6%D8%A7%DB%8C%DB%8C%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_002",
@@ -1632,7 +2046,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%B3%D8%AA%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%B3%D8%AA%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_003",
@@ -1655,7 +2078,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_004",
@@ -1677,7 +2109,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%D8%B9%D9%85%D9%88%D9%85%DB%8C%20%D8%AD%D9%82%D9%88%D9%82%DB%8C"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%D8%B9%D9%85%D9%88%D9%85%DB%8C%20%D8%AD%D9%82%D9%88%D9%82%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_005",
@@ -1699,7 +2140,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%DA%A9%DB%8C%D9%81%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%DA%A9%DB%8C%D9%81%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_006",
@@ -1720,7 +2170,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%DA%A9%DB%8C%D9%81%D8%B1%DB%8C%20%DB%8C%DA%A9"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%DA%A9%DB%8C%D9%81%D8%B1%DB%8C%20%DB%8C%DA%A9",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_007",
@@ -1741,7 +2200,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%DA%A9%DB%8C%D9%81%D8%B1%DB%8C%20%D8%AF%D9%88"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%DA%A9%DB%8C%D9%81%D8%B1%DB%8C%20%D8%AF%D9%88",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_008",
@@ -1762,7 +2230,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%D8%A7%D9%86%D9%82%D9%84%D8%A7%D8%A8"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%D8%A7%D9%86%D9%82%D9%84%D8%A7%D8%A8",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_009",
@@ -1783,7 +2260,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%D8%AE%D8%A7%D9%86%D9%88%D8%A7%D8%AF%D9%87"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%D8%AE%D8%A7%D9%86%D9%88%D8%A7%D8%AF%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_010",
@@ -1805,7 +2291,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%D8%B5%D9%84%D8%AD"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%D8%B5%D9%84%D8%AD",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_011",
@@ -1827,7 +2322,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%D8%AA%D8%AC%D8%AF%DB%8C%D8%AF%D9%86%D8%B8%D8%B1%20%D8%A7%D8%B3%D8%AA%D8%A7%D9%86"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DA%AF%D8%A7%D9%87%20%D8%AA%D8%AC%D8%AF%DB%8C%D8%AF%D9%86%D8%B8%D8%B1%20%D8%A7%D8%B3%D8%AA%D8%A7%D9%86",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_012",
@@ -1849,7 +2353,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%DB%8C%D9%88%D8%A7%D9%86%20%D8%B9%D8%A7%D9%84%DB%8C%20%DA%A9%D8%B4%D9%88%D8%B1"
+      "path": "/legal-library/terms/%D8%AF%DB%8C%D9%88%D8%A7%D9%86%20%D8%B9%D8%A7%D9%84%DB%8C%20%DA%A9%D8%B4%D9%88%D8%B1",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_013",
@@ -1872,7 +2385,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%DB%8C%D9%88%D8%A7%D9%86%20%D8%B9%D8%AF%D8%A7%D9%84%D8%AA%20%D8%A7%D8%AF%D8%A7%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%D8%AF%DB%8C%D9%88%D8%A7%D9%86%20%D8%B9%D8%AF%D8%A7%D9%84%D8%AA%20%D8%A7%D8%AF%D8%A7%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_014",
@@ -1894,7 +2416,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%D8%B3%D8%B1%D8%A7"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%D8%B3%D8%B1%D8%A7",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_015",
@@ -1916,7 +2447,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%D8%B3%D8%AA%D8%A7%D9%86"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%D8%B3%D8%AA%D8%A7%D9%86",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_016",
@@ -1938,7 +2478,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A8%D8%A7%D8%B2%D9%BE%D8%B1%D8%B3"
+      "path": "/legal-library/terms/%D8%A8%D8%A7%D8%B2%D9%BE%D8%B1%D8%B3",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_017",
@@ -1960,7 +2509,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DB%8C%D8%A7%D8%B1"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%DB%8C%D8%A7%D8%B1",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_018",
@@ -1982,7 +2540,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%B4%D9%88%D8%B1%D8%A7%DB%8C%20%D8%AD%D9%84%20%D8%A7%D8%AE%D8%AA%D9%84%D8%A7%D9%81"
+      "path": "/legal-library/terms/%D8%B4%D9%88%D8%B1%D8%A7%DB%8C%20%D8%AD%D9%84%20%D8%A7%D8%AE%D8%AA%D9%84%D8%A7%D9%81",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_019",
@@ -2004,7 +2571,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%B1%D8%A7%DB%8C%20%D8%A7%D8%AD%DA%A9%D8%A7%D9%85%20%D9%85%D8%AF%D9%86%DB%8C"
+      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%B1%D8%A7%DB%8C%20%D8%A7%D8%AD%DA%A9%D8%A7%D9%85%20%D9%85%D8%AF%D9%86%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_020",
@@ -2025,7 +2601,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%B1%D8%A7%DB%8C%20%D8%A7%D8%AD%DA%A9%D8%A7%D9%85%20%DA%A9%DB%8C%D9%81%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%B1%D8%A7%DB%8C%20%D8%A7%D8%AD%DA%A9%D8%A7%D9%85%20%DA%A9%DB%8C%D9%81%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_021",
@@ -2049,7 +2634,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AF%D9%81%D8%AA%D8%B1%20%D8%AE%D8%AF%D9%85%D8%A7%D8%AA%20%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9%20%D9%82%D8%B6%D8%A7%DB%8C%DB%8C"
+      "path": "/legal-library/terms/%D8%AF%D9%81%D8%AA%D8%B1%20%D8%AE%D8%AF%D9%85%D8%A7%D8%AA%20%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9%20%D9%82%D8%B6%D8%A7%DB%8C%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_022",
@@ -2076,7 +2670,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D9%87%20%D8%AB%D9%86%D8%A7"
+      "path": "/legal-library/terms/%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D9%87%20%D8%AB%D9%86%D8%A7",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_023",
@@ -2099,7 +2702,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D9%87%20%D8%B9%D8%AF%D9%84%20%D8%A7%DB%8C%D8%B1%D8%A7%D9%86"
+      "path": "/legal-library/terms/%D8%B3%D8%A7%D9%85%D8%A7%D9%86%D9%87%20%D8%B9%D8%AF%D9%84%20%D8%A7%DB%8C%D8%B1%D8%A7%D9%86",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_024",
@@ -2126,7 +2738,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A7%D8%A8%D9%84%D8%A7%D8%BA%20%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9%20%D9%82%D8%B6%D8%A7%DB%8C%DB%8C"
+      "path": "/legal-library/terms/%D8%A7%D8%A8%D9%84%D8%A7%D8%BA%20%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9%20%D9%82%D8%B6%D8%A7%DB%8C%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_027",
@@ -2153,7 +2774,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%84%D8%A7%DB%8C%D8%AD%D9%87%20%D8%AF%D9%81%D8%A7%D8%B9%DB%8C%D9%87"
+      "path": "/legal-library/terms/%D9%84%D8%A7%DB%8C%D8%AD%D9%87%20%D8%AF%D9%81%D8%A7%D8%B9%DB%8C%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_028",
@@ -2178,7 +2808,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A7%D8%B8%D9%87%D8%A7%D8%B1%D9%86%D8%A7%D9%85%D9%87"
+      "path": "/legal-library/terms/%D8%A7%D8%B8%D9%87%D8%A7%D8%B1%D9%86%D8%A7%D9%85%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_029",
@@ -2200,7 +2839,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AE%D9%88%D8%A7%D9%87%D8%A7%D9%86"
+      "path": "/legal-library/terms/%D8%AE%D9%88%D8%A7%D9%87%D8%A7%D9%86",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_030",
@@ -2221,7 +2869,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AE%D9%88%D8%A7%D9%86%D8%AF%D9%87"
+      "path": "/legal-library/terms/%D8%AE%D9%88%D8%A7%D9%86%D8%AF%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_031",
@@ -2243,7 +2900,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%B4%D8%A7%DA%A9%DB%8C"
+      "path": "/legal-library/terms/%D8%B4%D8%A7%DA%A9%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_032",
@@ -2265,7 +2931,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%85%D8%AA%D9%87%D9%85"
+      "path": "/legal-library/terms/%D9%85%D8%AA%D9%87%D9%85",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_033",
@@ -2287,7 +2962,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%85%D8%AD%DA%A9%D9%88%D9%85%E2%80%8C%D9%84%D9%87"
+      "path": "/legal-library/terms/%D9%85%D8%AD%DA%A9%D9%88%D9%85%E2%80%8C%D9%84%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_034",
@@ -2309,7 +2993,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%85%D8%AD%DA%A9%D9%88%D9%85%E2%80%8C%D8%B9%D9%84%DB%8C%D9%87"
+      "path": "/legal-library/terms/%D9%85%D8%AD%DA%A9%D9%88%D9%85%E2%80%8C%D8%B9%D9%84%DB%8C%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_035",
@@ -2331,7 +3024,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%20%D9%85%D9%86%D8%B9%20%D8%AA%D8%B9%D9%82%DB%8C%D8%A8"
+      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%20%D9%85%D9%86%D8%B9%20%D8%AA%D8%B9%D9%82%DB%8C%D8%A8",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_036",
@@ -2352,7 +3054,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%20%D8%AC%D9%84%D8%A8%20%D8%A8%D9%87%20%D8%AF%D8%A7%D8%AF%D8%B1%D8%B3%DB%8C"
+      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%20%D8%AC%D9%84%D8%A8%20%D8%A8%D9%87%20%D8%AF%D8%A7%D8%AF%D8%B1%D8%B3%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_037",
@@ -2374,7 +3085,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AD%DA%A9%D9%85%20%D9%82%D8%B7%D8%B9%DB%8C"
+      "path": "/legal-library/terms/%D8%AD%DA%A9%D9%85%20%D9%82%D8%B7%D8%B9%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_038",
@@ -2400,7 +3120,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AA%D8%AC%D8%AF%DB%8C%D8%AF%D9%86%D8%B8%D8%B1%D8%AE%D9%88%D8%A7%D9%87%DB%8C"
+      "path": "/legal-library/terms/%D8%AA%D8%AC%D8%AF%DB%8C%D8%AF%D9%86%D8%B8%D8%B1%D8%AE%D9%88%D8%A7%D9%87%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_039",
@@ -2424,7 +3153,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%88%D8%A7%D8%AE%D9%88%D8%A7%D9%87%DB%8C"
+      "path": "/legal-library/terms/%D9%88%D8%A7%D8%AE%D9%88%D8%A7%D9%87%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_040",
@@ -2448,7 +3186,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%81%D8%B1%D8%AC%D8%A7%D9%85%E2%80%8C%D8%AE%D9%88%D8%A7%D9%87%DB%8C"
+      "path": "/legal-library/terms/%D9%81%D8%B1%D8%AC%D8%A7%D9%85%E2%80%8C%D8%AE%D9%88%D8%A7%D9%87%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_041",
@@ -2474,7 +3221,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A7%D8%B9%D8%A7%D8%AF%D9%87%20%D8%AF%D8%A7%D8%AF%D8%B1%D8%B3%DB%8C"
+      "path": "/legal-library/terms/%D8%A7%D8%B9%D8%A7%D8%AF%D9%87%20%D8%AF%D8%A7%D8%AF%D8%B1%D8%B3%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_045",
@@ -2496,7 +3252,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%DA%A9%D8%A7%D8%B1%D8%B4%D9%86%D8%A7%D8%B3%20%D8%B1%D8%B3%D9%85%DB%8C%20%D8%AF%D8%A7%D8%AF%DA%AF%D8%B3%D8%AA%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%DA%A9%D8%A7%D8%B1%D8%B4%D9%86%D8%A7%D8%B3%20%D8%B1%D8%B3%D9%85%DB%8C%20%D8%AF%D8%A7%D8%AF%DA%AF%D8%B3%D8%AA%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_046",
@@ -2521,7 +3286,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%B1%D8%A7%DB%8C%DB%8C%D9%87"
+      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%B1%D8%A7%DB%8C%DB%8C%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_047",
@@ -2548,7 +3322,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A7%D8%B9%D8%B3%D8%A7%D8%B1%20%D8%A7%D8%B2%20%D9%BE%D8%B1%D8%AF%D8%A7%D8%AE%D8%AA%20%D9%85%D8%AD%DA%A9%D9%88%D9%85%E2%80%8C%D8%A8%D9%87"
+      "path": "/legal-library/terms/%D8%A7%D8%B9%D8%B3%D8%A7%D8%B1%20%D8%A7%D8%B2%20%D9%BE%D8%B1%D8%AF%D8%A7%D8%AE%D8%AA%20%D9%85%D8%AD%DA%A9%D9%88%D9%85%E2%80%8C%D8%A8%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_048",
@@ -2576,7 +3359,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%85%D9%87%D8%B1%DB%8C%D9%87"
+      "path": "/legal-library/terms/%D9%85%D9%87%D8%B1%DB%8C%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_049",
@@ -2602,7 +3394,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%86%D9%81%D9%82%D9%87"
+      "path": "/legal-library/terms/%D9%86%D9%81%D9%82%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_050",
@@ -2629,7 +3430,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AD%D8%B6%D8%A7%D9%86%D8%AA"
+      "path": "/legal-library/terms/%D8%AD%D8%B6%D8%A7%D9%86%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_051",
@@ -2658,7 +3468,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%B7%D9%84%D8%A7%D9%82"
+      "path": "/legal-library/terms/%D8%B7%D9%84%D8%A7%D9%82",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_052",
@@ -2683,7 +3502,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%B1%D8%AA%E2%80%8C%D8%A7%D9%84%D9%85%D8%AB%D9%84%20%D8%A7%DB%8C%D8%A7%D9%85%20%D8%B2%D9%88%D8%AC%DB%8C%D8%AA"
+      "path": "/legal-library/terms/%D8%A7%D8%AC%D8%B1%D8%AA%E2%80%8C%D8%A7%D9%84%D9%85%D8%AB%D9%84%20%D8%A7%DB%8C%D8%A7%D9%85%20%D8%B2%D9%88%D8%AC%DB%8C%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_054",
@@ -2710,7 +3538,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%85%D8%B7%D8%A7%D9%84%D8%A8%D9%87%20%D9%88%D8%AC%D9%87"
+      "path": "/legal-library/terms/%D9%85%D8%B7%D8%A7%D9%84%D8%A8%D9%87%20%D9%88%D8%AC%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_055",
@@ -2736,7 +3573,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A7%D9%84%D8%B2%D8%A7%D9%85%20%D8%A8%D9%87%20%D8%AA%D9%86%D8%B8%DB%8C%D9%85%20%D8%B3%D9%86%D8%AF%20%D8%B1%D8%B3%D9%85%DB%8C"
+      "path": "/legal-library/terms/%D8%A7%D9%84%D8%B2%D8%A7%D9%85%20%D8%A8%D9%87%20%D8%AA%D9%86%D8%B8%DB%8C%D9%85%20%D8%B3%D9%86%D8%AF%20%D8%B1%D8%B3%D9%85%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_056",
@@ -2762,7 +3608,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AA%D8%B5%D8%B1%D9%81%20%D8%B9%D8%AF%D9%88%D8%A7%D9%86%DB%8C"
+      "path": "/legal-library/terms/%D8%AA%D8%B5%D8%B1%D9%81%20%D8%B9%D8%AF%D9%88%D8%A7%D9%86%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_057",
@@ -2787,7 +3642,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%A7%D9%84%D8%B2%D8%A7%D9%85%20%D8%A8%D9%87%20%D8%A7%D9%86%D8%AC%D8%A7%D9%85%20%D8%AA%D8%B9%D9%87%D8%AF"
+      "path": "/legal-library/terms/%D8%A7%D9%84%D8%B2%D8%A7%D9%85%20%D8%A8%D9%87%20%D8%A7%D9%86%D8%AC%D8%A7%D9%85%20%D8%AA%D8%B9%D9%87%D8%AF",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_058",
@@ -2811,7 +3675,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%81%D8%B3%D8%AE%20%D9%82%D8%B1%D8%A7%D8%B1%D8%AF%D8%A7%D8%AF"
+      "path": "/legal-library/terms/%D9%81%D8%B3%D8%AE%20%D9%82%D8%B1%D8%A7%D8%B1%D8%AF%D8%A7%D8%AF",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_060",
@@ -2836,7 +3709,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AE%DB%8C%D8%A7%D9%86%D8%AA%20%D8%AF%D8%B1%20%D8%A7%D9%85%D8%A7%D9%86%D8%AA"
+      "path": "/legal-library/terms/%D8%AE%DB%8C%D8%A7%D9%86%D8%AA%20%D8%AF%D8%B1%20%D8%A7%D9%85%D8%A7%D9%86%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_061",
@@ -2863,7 +3745,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AC%D8%B9%D9%84%20%D9%88%20%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87%20%D8%A7%D8%B2%20%D8%B3%D9%86%D8%AF%20%D9%85%D8%AC%D8%B9%D9%88%D9%84"
+      "path": "/legal-library/terms/%D8%AC%D8%B9%D9%84%20%D9%88%20%D8%A7%D8%B3%D8%AA%D9%81%D8%A7%D8%AF%D9%87%20%D8%A7%D8%B2%20%D8%B3%D9%86%D8%AF%20%D9%85%D8%AC%D8%B9%D9%88%D9%84",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_062",
@@ -2890,7 +3781,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%B6%D8%B1%D8%A8%20%D9%88%20%D8%AC%D8%B1%D8%AD"
+      "path": "/legal-library/terms/%D8%B6%D8%B1%D8%A8%20%D9%88%20%D8%AC%D8%B1%D8%AD",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_063",
@@ -2914,7 +3814,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D9%88%DA%A9%DB%8C%D9%84%20%D8%AF%D8%A7%D8%AF%DA%AF%D8%B3%D8%AA%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%D9%88%DA%A9%DB%8C%D9%84%20%D8%AF%D8%A7%D8%AF%DA%AF%D8%B3%D8%AA%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_legacy_064",
@@ -2937,7 +3846,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "این مدخل از فرهنگ اصطلاحات حقوقی پیشین منتقل شده است و پیش از استناد نیازمند تطبیق با منبع اولیه و بازبینی حقوقی است.",
-      "path": "/legal-library/terms/%D8%AD%D9%82%E2%80%8C%D8%A7%D9%84%D9%88%DA%A9%D8%A7%D9%84%D9%87"
+      "path": "/legal-library/terms/%D8%AD%D9%82%E2%80%8C%D8%A7%D9%84%D9%88%DA%A9%D8%A7%D9%84%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_labor_contract",
@@ -2963,7 +3881,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%D8%AF%D8%A7%D8%AF%20%DA%A9%D8%A7%D8%B1"
+      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%D8%AF%D8%A7%D8%AF%20%DA%A9%D8%A7%D8%B1",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_worker",
@@ -2989,7 +3916,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%DA%A9%D8%A7%D8%B1%DA%AF%D8%B1"
+      "path": "/legal-library/terms/%DA%A9%D8%A7%D8%B1%DA%AF%D8%B1",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_employer",
@@ -3014,7 +3950,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%DA%A9%D8%A7%D8%B1%D9%81%D8%B1%D9%85%D8%A7"
+      "path": "/legal-library/terms/%DA%A9%D8%A7%D8%B1%D9%81%D8%B1%D9%85%D8%A7",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_overtime",
@@ -3040,7 +3985,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%A7%D8%B6%D8%A7%D9%81%D9%87%E2%80%8C%DA%A9%D8%A7%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%D8%A7%D8%B6%D8%A7%D9%81%D9%87%E2%80%8C%DA%A9%D8%A7%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_severance",
@@ -3066,7 +4020,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%AD%D9%82%20%D8%B3%D9%86%D9%88%D8%A7%D8%AA"
+      "path": "/legal-library/terms/%D8%AD%D9%82%20%D8%B3%D9%86%D9%88%D8%A7%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_tax_return",
@@ -3092,7 +4055,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%A7%D8%B8%D9%87%D8%A7%D8%B1%D9%86%D8%A7%D9%85%D9%87%20%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA%DB%8C"
+      "path": "/legal-library/terms/%D8%A7%D8%B8%D9%87%D8%A7%D8%B1%D9%86%D8%A7%D9%85%D9%87%20%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_tax_assessment",
@@ -3117,7 +4089,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%A8%D8%B1%DA%AF%20%D8%AA%D8%B4%D8%AE%DB%8C%D8%B5%20%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA"
+      "path": "/legal-library/terms/%D8%A8%D8%B1%DA%AF%20%D8%AA%D8%B4%D8%AE%DB%8C%D8%B5%20%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_tax_dispute_board",
@@ -3142,7 +4123,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D9%87%DB%8C%D8%A3%D8%AA%20%D8%AD%D9%84%20%D8%A7%D8%AE%D8%AA%D9%84%D8%A7%D9%81%20%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA%DB%8C"
+      "path": "/legal-library/terms/%D9%87%DB%8C%D8%A3%D8%AA%20%D8%AD%D9%84%20%D8%A7%D8%AE%D8%AA%D9%84%D8%A7%D9%81%20%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_vat",
@@ -3167,7 +4157,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA%20%D8%A8%D8%B1%20%D8%A7%D8%B1%D8%B2%D8%B4%20%D8%A7%D9%81%D8%B2%D9%88%D8%AF%D9%87"
+      "path": "/legal-library/terms/%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA%20%D8%A8%D8%B1%20%D8%A7%D8%B1%D8%B2%D8%B4%20%D8%A7%D9%81%D8%B2%D9%88%D8%AF%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_tax_objection",
@@ -3193,7 +4192,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%A7%D8%B9%D8%AA%D8%B1%D8%A7%D8%B6%20%D8%A8%D9%87%20%D8%A8%D8%B1%DA%AF%20%D8%AA%D8%B4%D8%AE%DB%8C%D8%B5%20%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA"
+      "path": "/legal-library/terms/%D8%A7%D8%B9%D8%AA%D8%B1%D8%A7%D8%B6%20%D8%A8%D9%87%20%D8%A8%D8%B1%DA%AF%20%D8%AA%D8%B4%D8%AE%DB%8C%D8%B5%20%D9%85%D8%A7%D9%84%DB%8C%D8%A7%D8%AA",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_third_party_insurance",
@@ -3219,7 +4227,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%A8%DB%8C%D9%85%D9%87%20%D8%B4%D8%AE%D8%B5%20%D8%AB%D8%A7%D9%84%D8%AB"
+      "path": "/legal-library/terms/%D8%A8%DB%8C%D9%85%D9%87%20%D8%B4%D8%AE%D8%B5%20%D8%AB%D8%A7%D9%84%D8%AB",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_insurer",
@@ -3242,7 +4259,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%A8%DB%8C%D9%85%D9%87%E2%80%8C%DA%AF%D8%B1"
+      "path": "/legal-library/terms/%D8%A8%DB%8C%D9%85%D9%87%E2%80%8C%DA%AF%D8%B1",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_policyholder",
@@ -3265,7 +4291,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%A8%DB%8C%D9%85%D9%87%E2%80%8C%DA%AF%D8%B0%D8%A7%D8%B1"
+      "path": "/legal-library/terms/%D8%A8%DB%8C%D9%85%D9%87%E2%80%8C%DA%AF%D8%B0%D8%A7%D8%B1",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_insurance_claim",
@@ -3291,7 +4326,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D9%85%D8%B7%D8%A7%D9%84%D8%A8%D9%87%20%D8%AE%D8%B3%D8%A7%D8%B1%D8%AA%20%D8%A8%DB%8C%D9%85%D9%87"
+      "path": "/legal-library/terms/%D9%85%D8%B7%D8%A7%D9%84%D8%A8%D9%87%20%D8%AE%D8%B3%D8%A7%D8%B1%D8%AA%20%D8%A8%DB%8C%D9%85%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_vehicle_depreciation",
@@ -3317,7 +4361,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%A7%D9%81%D8%AA%20%D9%82%DB%8C%D9%85%D8%AA%20%D8%AE%D9%88%D8%AF%D8%B1%D9%88"
+      "path": "/legal-library/terms/%D8%A7%D9%81%D8%AA%20%D9%82%DB%8C%D9%85%D8%AA%20%D8%AE%D9%88%D8%AF%D8%B1%D9%88",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_admin_decision",
@@ -3343,7 +4396,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%AA%D8%B5%D9%85%DB%8C%D9%85%20%D8%A7%D8%AF%D8%A7%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%D8%AA%D8%B5%D9%85%DB%8C%D9%85%20%D8%A7%D8%AF%D8%A7%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_annulment_regulation",
@@ -3371,7 +4433,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%A7%D8%A8%D8%B7%D8%A7%D9%84%20%D9%85%D8%B5%D9%88%D8%A8%D9%87"
+      "path": "/legal-library/terms/%D8%A7%D8%A8%D8%B7%D8%A7%D9%84%20%D9%85%D8%B5%D9%88%D8%A8%D9%87",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_municipal_commission_100",
@@ -3398,7 +4469,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%DA%A9%D9%85%DB%8C%D8%B3%DB%8C%D9%88%D9%86%20%D9%85%D8%A7%D8%AF%D9%87%20%DB%B1%DB%B0%DB%B0%20%D8%B4%D9%87%D8%B1%D8%AF%D8%A7%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%DA%A9%D9%85%DB%8C%D8%B3%DB%8C%D9%88%D9%86%20%D9%85%D8%A7%D8%AF%D9%87%20%DB%B1%DB%B0%DB%B0%20%D8%B4%D9%87%D8%B1%D8%AF%D8%A7%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_municipal_commission_77",
@@ -3424,7 +4504,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%DA%A9%D9%85%DB%8C%D8%B3%DB%8C%D9%88%D9%86%20%D9%85%D8%A7%D8%AF%D9%87%20%DB%B7%DB%B7%20%D8%B4%D9%87%D8%B1%D8%AF%D8%A7%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%DA%A9%D9%85%DB%8C%D8%B3%DB%8C%D9%88%D9%86%20%D9%85%D8%A7%D8%AF%D9%87%20%DB%B7%DB%B7%20%D8%B4%D9%87%D8%B1%D8%AF%D8%A7%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_admin_complaint",
@@ -3451,7 +4540,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%B4%DA%A9%D8%A7%DB%8C%D8%AA%20%D8%A7%D8%B2%20%D8%AA%D8%B5%D9%85%DB%8C%D9%85%D8%A7%D8%AA%20%D8%A7%D8%AF%D8%A7%D8%B1%DB%8C"
+      "path": "/legal-library/terms/%D8%B4%DA%A9%D8%A7%DB%8C%D8%AA%20%D8%A7%D8%B2%20%D8%AA%D8%B5%D9%85%DB%8C%D9%85%D8%A7%D8%AA%20%D8%A7%D8%AF%D8%A7%D8%B1%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_unauthorized_access",
@@ -3477,7 +4575,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%AF%D8%B3%D8%AA%D8%B1%D8%B3%DB%8C%20%D8%BA%DB%8C%D8%B1%D9%85%D8%AC%D8%A7%D8%B2"
+      "path": "/legal-library/terms/%D8%AF%D8%B3%D8%AA%D8%B1%D8%B3%DB%8C%20%D8%BA%DB%8C%D8%B1%D9%85%D8%AC%D8%A7%D8%B2",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_illegal_interception",
@@ -3503,7 +4610,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%B4%D9%86%D9%88%D8%AF%20%D8%BA%DB%8C%D8%B1%D9%85%D8%AC%D8%A7%D8%B2"
+      "path": "/legal-library/terms/%D8%B4%D9%86%D9%88%D8%AF%20%D8%BA%DB%8C%D8%B1%D9%85%D8%AC%D8%A7%D8%B2",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_computer_fraud",
@@ -3531,7 +4647,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%DA%A9%D9%84%D8%A7%D9%87%D8%A8%D8%B1%D8%AF%D8%A7%D8%B1%DB%8C%20%D8%B1%D8%A7%DB%8C%D8%A7%D9%86%D9%87%E2%80%8C%D8%A7%DB%8C"
+      "path": "/legal-library/terms/%DA%A9%D9%84%D8%A7%D9%87%D8%A8%D8%B1%D8%AF%D8%A7%D8%B1%DB%8C%20%D8%B1%D8%A7%DB%8C%D8%A7%D9%86%D9%87%E2%80%8C%D8%A7%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_cyber_defamation",
@@ -3558,7 +4683,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D9%87%D8%AA%DA%A9%20%D8%AD%DB%8C%D8%AB%DB%8C%D8%AA%20%D8%B1%D8%A7%DB%8C%D8%A7%D9%86%D9%87%E2%80%8C%D8%A7%DB%8C"
+      "path": "/legal-library/terms/%D9%87%D8%AA%DA%A9%20%D8%AD%DB%8C%D8%AB%DB%8C%D8%AA%20%D8%B1%D8%A7%DB%8C%D8%A7%D9%86%D9%87%E2%80%8C%D8%A7%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_digital_evidence",
@@ -3586,7 +4720,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه برای تکمیل پوشش موضوعی کتابخانه است؛ پیش از استناد یا ایندکس باید متن قانون و منبع اولیه رسمی بررسی و بازبینی حقوقی شود.",
-      "path": "/legal-library/terms/%D8%A7%D8%AF%D9%84%D9%87%20%D8%AF%DB%8C%D8%AC%DB%8C%D8%AA%D8%A7%D9%84"
+      "path": "/legal-library/terms/%D8%A7%D8%AF%D9%84%D9%87%20%D8%AF%DB%8C%D8%AC%DB%8C%D8%AA%D8%A7%D9%84",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_digital_privacy",
@@ -3612,7 +4755,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه؛ پیش از استناد یا ایندکس باید قوانین و منابع اولیه رسمی بررسی شوند.",
-      "path": "/legal-library/terms/%D8%AD%D8%B1%DB%8C%D9%85%20%D8%AE%D8%B5%D9%88%D8%B5%DB%8C%20%D8%AF%DB%8C%D8%AC%DB%8C%D8%AA%D8%A7%D9%84"
+      "path": "/legal-library/terms/%D8%AD%D8%B1%DB%8C%D9%85%20%D8%AE%D8%B5%D9%88%D8%B5%DB%8C%20%D8%AF%DB%8C%D8%AC%DB%8C%D8%AA%D8%A7%D9%84",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_data_message",
@@ -3638,7 +4790,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه؛ پیش از استناد یا ایندکس باید قوانین و منابع اولیه رسمی بررسی شوند.",
-      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%D9%87%E2%80%8C%D9%BE%DB%8C%D8%A7%D9%85"
+      "path": "/legal-library/terms/%D8%AF%D8%A7%D8%AF%D9%87%E2%80%8C%D9%BE%DB%8C%D8%A7%D9%85",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_electronic_signature",
@@ -3664,7 +4825,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه؛ پیش از استناد یا ایندکس باید قوانین و منابع اولیه رسمی بررسی شوند.",
-      "path": "/legal-library/terms/%D8%A7%D9%85%D8%B6%D8%A7%DB%8C%20%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9%DB%8C"
+      "path": "/legal-library/terms/%D8%A7%D9%85%D8%B6%D8%A7%DB%8C%20%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_electronic_evidence",
@@ -3690,7 +4860,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه؛ پیش از استناد یا ایندکس باید قوانین و منابع اولیه رسمی بررسی شوند.",
-      "path": "/legal-library/terms/%D8%A7%D8%AF%D9%84%D9%87%20%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9%DB%8C"
+      "path": "/legal-library/terms/%D8%A7%D8%AF%D9%84%D9%87%20%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "term_electronic_contract",
@@ -3716,7 +4895,16 @@
       "review_status": "needs_legal_review",
       "sources": [],
       "notes": "مدخل اولیه؛ پیش از استناد یا ایندکس باید قوانین و منابع اولیه رسمی بررسی شوند.",
-      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%D8%AF%D8%A7%D8%AF%20%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9%DB%8C"
+      "path": "/legal-library/terms/%D9%82%D8%B1%D8%A7%D8%B1%D8%AF%D8%A7%D8%AF%20%D8%A7%D9%84%DA%A9%D8%AA%D8%B1%D9%88%D9%86%DB%8C%DA%A9%DB%8C",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "این مدخل برای کشف موضوع است و هنوز تأیید حقوقی نهایی نشده است."
+      }
     },
     {
       "id": "law_civil_code",
@@ -3732,8 +4920,25 @@
       "review_status": "secondary_source_only",
       "status": "needs_consolidation_review",
       "source_url": "https://adlio.ir/law/قانون-مدنی-مصوب-1307-02-18/",
-      "sources": [],
-      "notes": "مواد اسناد ۱۲۸۴ تا ۱۲۹۳ در نسخه آغازین شناسایی شده‌اند؛ کل قانون تنقیح نشده است."
+      "sources": [
+        {
+          "title": "متن قانون مدنی در پایگاه ثانویه ادلیو",
+          "url": "https://adlio.ir/law/قانون-مدنی-مصوب-1307-02-18/",
+          "source_id": "src_adlio",
+          "source_class": "secondary_legal_database",
+          "verification_status": "secondary_source_only"
+        }
+      ],
+      "notes": "مواد اسناد ۱۲۸۴ تا ۱۲۹۳ در نسخه آغازین شناسایی شده‌اند؛ کل قانون تنقیح نشده است.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_commercial_code",
@@ -3749,8 +4954,25 @@
       "review_status": "secondary_source_only",
       "status": "needs_consolidation_review",
       "source_url": "https://adlio.ir/law/قانون-تجارت-مصوب-1311-02-13/",
-      "sources": [],
-      "notes": "مواد ۳۰۷ تا ۳۰۹ درباره فته‌طلب و مواد ۳۱۰ به بعد درباره چک بررسی اولیه شده‌اند؛ متن رسمی و مقررات خاص بعدی باید پیش از نظر حقوقی تطبیق شوند."
+      "sources": [
+        {
+          "title": "متن قانون تجارت در پایگاه ثانویه ادلیو",
+          "url": "https://adlio.ir/law/قانون-تجارت-مصوب-1311-02-13/",
+          "source_id": "src_adlio",
+          "source_class": "secondary_legal_database",
+          "verification_status": "secondary_source_only"
+        }
+      ],
+      "notes": "مواد ۳۰۷ تا ۳۰۹ درباره فته‌طلب و مواد ۳۱۰ به بعد درباره چک بررسی اولیه شده‌اند؛ متن رسمی و مقررات خاص بعدی باید پیش از نظر حقوقی تطبیق شوند.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_compulsory_real_estate_registration",
@@ -3766,8 +4988,32 @@
       "review_status": "secondary_source_only",
       "status": "needs_consolidation_review",
       "source_url": "https://www.rrk.ir/Laws/PrintLaw.aspx?Code=29068",
-      "sources": [],
-      "notes": "Official Gazette print URL identified from the Gazette facsimile footer (Official Gazette issue 23068, special issue 1833, 1403/03/17). Direct retrieval of the official host was unavailable during this review; status remains secondary_source_only until the official text and later amendments are directly verified. Existing secondary discovery source: https://law-ir.ir/law/cat/2036/."
+      "sources": [
+        {
+          "title": "نسخه چاپی شناسایی‌شده در روزنامه رسمی؛ دریافت و تطبیق نهایی انجام نشده",
+          "url": "https://www.rrk.ir/Laws/PrintLaw.aspx?Code=29068",
+          "source_id": "src_official_gazette",
+          "source_class": "primary_publication",
+          "verification_status": "official_url_identified_not_retrieved"
+        },
+        {
+          "title": "نسخه ثانویه برای کشف و تطبیق",
+          "url": "https://law-ir.ir/law/cat/2036/",
+          "source_id": "src_law_ir",
+          "source_class": "secondary_legal_database",
+          "verification_status": "secondary_source_only"
+        }
+      ],
+      "notes": "Official Gazette print URL identified from the Gazette facsimile footer (Official Gazette issue 23068, special issue 1833, 1403/03/17). Direct retrieval of the official host was unavailable during this review; status remains secondary_source_only until the official text and later amendments are directly verified. Existing secondary discovery source: https://law-ir.ir/law/cat/2036/.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_registration_law",
@@ -3784,7 +5030,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "متن تنقیحی و اصلاحات باید از منبع رسمی بررسی شود."
+      "notes": "متن تنقیحی و اصلاحات باید از منبع رسمی بررسی شود.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_cheque",
@@ -3800,8 +5055,25 @@
       "review_status": "secondary_source_only",
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/law/cat/1692/",
-      "sources": [],
-      "notes": "متن تجمیعی در منبع ثانویه، اصلاحات ۱۳۹۷ و اصلاحیه ۱۴۰۰/۰۱/۲۹ را نشان می‌دهد. پیش از اعلام مواعد یا آثار کیفری باید مواد مربوط و آیین‌نامه‌های جاری با روزنامه رسمی و منابع بانک مرکزی تطبیق شوند."
+      "sources": [
+        {
+          "title": "متن قانون صدور چک در پایگاه ثانویه قانون",
+          "url": "https://law-ir.ir/law/cat/1692/",
+          "source_id": "src_law_ir",
+          "source_class": "secondary_legal_database",
+          "verification_status": "secondary_source_only"
+        }
+      ],
+      "notes": "متن تجمیعی در منبع ثانویه، اصلاحات ۱۳۹۷ و اصلاحیه ۱۴۰۰/۰۱/۲۹ را نشان می‌دهد. پیش از اعلام مواعد یا آثار کیفری باید مواد مربوط و آیین‌نامه‌های جاری با روزنامه رسمی و منابع بانک مرکزی تطبیق شوند.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_partition",
@@ -3818,7 +5090,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "صلاحیت اداره ثبت و دادگاه و استثناها نیازمند بررسی متن رسمی است."
+      "notes": "صلاحیت اداره ثبت و دادگاه و استثناها نیازمند بررسی متن رسمی است.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_cadastre",
@@ -3835,7 +5116,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "آیین‌نامه‌ها و جزئیات فنی در نسخه نخست تنقیح نشده‌اند."
+      "notes": "آیین‌نامه‌ها و جزئیات فنی در نسخه نخست تنقیح نشده‌اند.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_notary_law",
@@ -3852,7 +5142,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "اصلاحات و مقررات اجرایی باید بررسی شود."
+      "notes": "اصلاحات و مقررات اجرایی باید بررسی شود.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_determine_property_status",
@@ -3869,7 +5168,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "شمول قانون و شرایط هیأت باید با متن و اصلاحات رسمی تطبیق داده شود."
+      "notes": "شمول قانون و شرایط هیأت باید با متن و اصلاحات رسمی تطبیق داده شود.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_civil_procedure",
@@ -3886,7 +5194,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "شماره مواد، مواعد و اصلاحات در این نسخه کامل نشده‌اند."
+      "notes": "شماره مواد، مواعد و اصلاحات در این نسخه کامل نشده‌اند.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_criminal_procedure",
@@ -3903,7 +5220,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "اصلاحات، مواعد و صلاحیت‌ها نیازمند بررسی متن رسمی روزآمد هستند."
+      "notes": "اصلاحات، مواعد و صلاحیت‌ها نیازمند بررسی متن رسمی روزآمد هستند.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_penal_code",
@@ -3920,7 +5246,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "کتاب‌ها، مواد و اصلاحات باید تفکیک و با قوانین خاص تطبیق داده شوند."
+      "notes": "کتاب‌ها، مواد و اصلاحات باید تفکیک و با قوانین خاص تطبیق داده شوند.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_computer_crimes",
@@ -3937,7 +5272,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "با اصلاحات و قوانین کیفری مرتبط باید تطبیق داده شود."
+      "notes": "با اصلاحات و قوانین کیفری مرتبط باید تطبیق داده شود.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_aggravated_fraud",
@@ -3954,7 +5298,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "نسخه روزآمد و نسبت آن با قوانین بعدی باید بررسی شود."
+      "notes": "نسخه روزآمد و نسبت آن با قوانین بعدی باید بررسی شود.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_criminal_policy",
@@ -3971,7 +5324,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "رکورد چتری است و در نسخه تکمیلی به اسناد مستقل تفکیک می‌شود."
+      "notes": "رکورد چتری است و در نسخه تکمیلی به اسناد مستقل تفکیک می‌شود.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "law_execution",
@@ -3988,7 +5350,16 @@
       "status": "needs_consolidation_review",
       "source_url": "https://law-ir.ir/",
       "sources": [],
-      "notes": "تاریخ، وضعیت اعتبار و مواد باید با متن رسمی و اصلاحات بررسی شود."
+      "notes": "تاریخ، وضعیت اعتبار و مواد باید با متن رسمی و اصلاحات بررسی شود.",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "needs_legal_review",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "وضعیت تنقیح و اعتبار روز در این بسته تأیید نشده است."
+      }
     },
     {
       "id": "art_civil_code_1284",
@@ -4011,7 +5382,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی است، نه نقل کامل متن قانون.",
       "sources": [],
-      "path": "/legal-library/articles/art_civil_code_1284"
+      "path": "/legal-library/articles/art_civil_code_1284",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_civil_code_1287",
@@ -4034,7 +5414,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی است، نه نقل کامل متن قانون.",
       "sources": [],
-      "path": "/legal-library/articles/art_civil_code_1287"
+      "path": "/legal-library/articles/art_civil_code_1287",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_civil_code_1289",
@@ -4057,7 +5446,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی است، نه نقل کامل متن قانون.",
       "sources": [],
-      "path": "/legal-library/articles/art_civil_code_1289"
+      "path": "/legal-library/articles/art_civil_code_1289",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_civil_code_1291",
@@ -4080,7 +5478,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی است، نه نقل کامل متن قانون.",
       "sources": [],
-      "path": "/legal-library/articles/art_civil_code_1291"
+      "path": "/legal-library/articles/art_civil_code_1291",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_civil_code_1292",
@@ -4103,7 +5510,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی است، نه نقل کامل متن قانون.",
       "sources": [],
-      "path": "/legal-library/articles/art_civil_code_1292"
+      "path": "/legal-library/articles/art_civil_code_1292",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_commercial_code_307",
@@ -4126,7 +5542,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی است، نه نقل کامل متن قانون.",
       "sources": [],
-      "path": "/legal-library/articles/art_commercial_code_307"
+      "path": "/legal-library/articles/art_commercial_code_307",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_commercial_code_308",
@@ -4149,7 +5574,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی است، نه نقل کامل متن قانون.",
       "sources": [],
-      "path": "/legal-library/articles/art_commercial_code_308"
+      "path": "/legal-library/articles/art_commercial_code_308",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_commercial_code_309",
@@ -4172,7 +5606,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی است، نه نقل کامل متن قانون.",
       "sources": [],
-      "path": "/legal-library/articles/art_commercial_code_309"
+      "path": "/legal-library/articles/art_commercial_code_309",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_commercial_code_310",
@@ -4195,7 +5638,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی است، نه نقل کامل متن قانون.",
       "sources": [],
-      "path": "/legal-library/articles/art_commercial_code_310"
+      "path": "/legal-library/articles/art_commercial_code_310",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_compulsory_registration_01",
@@ -4218,7 +5670,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی است، نه نقل کامل متن قانون.",
       "sources": [],
-      "path": "/legal-library/articles/art_compulsory_registration_01"
+      "path": "/legal-library/articles/art_compulsory_registration_01",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_compulsory_registration_10",
@@ -4241,7 +5702,16 @@
       "exact_text_included": false,
       "notes": "گام نخست طبق گزارش‌های منتسب به سخنگوی سازمان ثبت از ۱۴۰۵/۰۳/۰۱ برای اسناد حدنگار صادرشده از ۱۳۹۶/۰۱/۰۱ تا ۱۴۰۵/۰۲/۳۱ اعلام شده است. وضعیت سایر گروه‌ها نیازمند کنترل آخرین اعلان رسمی است.",
       "sources": [],
-      "path": "/legal-library/articles/art_compulsory_registration_10"
+      "path": "/legal-library/articles/art_compulsory_registration_10",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_cheque_law_4",
@@ -4264,7 +5734,16 @@
       "exact_text_included": false,
       "notes": "خلاصه بر پایه متن تجمیعی قانون صدور چک با اصلاحات ۱۳۹۷؛ برای استفاده عملی، آخرین متن روزنامه رسمی و دستورالعمل بانک مرکزی کنترل شود.",
       "sources": [],
-      "path": "/legal-library/articles/art_cheque_law_4"
+      "path": "/legal-library/articles/art_cheque_law_4",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_cheque_law_21_mokarrar",
@@ -4287,7 +5766,16 @@
       "exact_text_included": false,
       "notes": "این خلاصه جایگزین بررسی موردی تاریخ دسته‌چک، ثبت در صیاد، وضعیت دارنده نهایی و رویه قضایی نیست.",
       "sources": [],
-      "path": "/legal-library/articles/art_cheque_law_21_mokarrar"
+      "path": "/legal-library/articles/art_cheque_law_21_mokarrar",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_registration_law_46",
@@ -4310,7 +5798,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی بر پایه متن بازنشرشده قانون ثبت اسناد و املاک است؛ متن تنقیحی، اصلاحات و قوانین خاص مؤخر باید پیش از استناد بررسی شوند.",
       "sources": [],
-      "path": "/legal-library/articles/art_registration_law_46"
+      "path": "/legal-library/articles/art_registration_law_46",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_registration_law_47",
@@ -4333,7 +5830,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی بر پایه متن بازنشرشده قانون ثبت اسناد و املاک است؛ متن تنقیحی، اصلاحات و قوانین خاص مؤخر باید پیش از استناد بررسی شوند.",
       "sources": [],
-      "path": "/legal-library/articles/art_registration_law_47"
+      "path": "/legal-library/articles/art_registration_law_47",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_registration_law_48",
@@ -4356,7 +5862,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی بر پایه متن بازنشرشده قانون ثبت اسناد و املاک است؛ متن تنقیحی، اصلاحات و قوانین خاص مؤخر باید پیش از استناد بررسی شوند.",
       "sources": [],
-      "path": "/legal-library/articles/art_registration_law_48"
+      "path": "/legal-library/articles/art_registration_law_48",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_registration_law_70",
@@ -4379,7 +5894,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی بر پایه متن بازنشرشده قانون ثبت اسناد و املاک است؛ متن تنقیحی، اصلاحات و قوانین خاص مؤخر باید پیش از استناد بررسی شوند.",
       "sources": [],
-      "path": "/legal-library/articles/art_registration_law_70"
+      "path": "/legal-library/articles/art_registration_law_70",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_registration_law_71",
@@ -4402,7 +5926,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی بر پایه متن بازنشرشده قانون ثبت اسناد و املاک است؛ متن تنقیحی، اصلاحات و قوانین خاص مؤخر باید پیش از استناد بررسی شوند.",
       "sources": [],
-      "path": "/legal-library/articles/art_registration_law_71"
+      "path": "/legal-library/articles/art_registration_law_71",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_registration_law_72",
@@ -4425,7 +5958,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی بر پایه متن بازنشرشده قانون ثبت اسناد و املاک است؛ متن تنقیحی، اصلاحات و قوانین خاص مؤخر باید پیش از استناد بررسی شوند.",
       "sources": [],
-      "path": "/legal-library/articles/art_registration_law_72"
+      "path": "/legal-library/articles/art_registration_law_72",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_registration_law_88",
@@ -4448,7 +5990,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی بر پایه متن بازنشرشده قانون ثبت اسناد و املاک است؛ متن تنقیحی، اصلاحات و قوانین خاص مؤخر باید پیش از استناد بررسی شوند.",
       "sources": [],
-      "path": "/legal-library/articles/art_registration_law_88"
+      "path": "/legal-library/articles/art_registration_law_88",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_registration_law_154",
@@ -4471,7 +6022,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی بر پایه متن بازنشرشده قانون ثبت اسناد و املاک است؛ متن تنقیحی، اصلاحات و قوانین خاص مؤخر باید پیش از استناد بررسی شوند.",
       "sources": [],
-      "path": "/legal-library/articles/art_registration_law_154"
+      "path": "/legal-library/articles/art_registration_law_154",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "art_registration_law_156",
@@ -4494,7 +6054,16 @@
       "exact_text_included": false,
       "notes": "خلاصه آموزشی بر پایه متن بازنشرشده قانون ثبت اسناد و املاک است؛ متن تنقیحی، اصلاحات و قوانین خاص مؤخر باید پیش از استناد بررسی شوند.",
       "sources": [],
-      "path": "/legal-library/articles/art_registration_law_156"
+      "path": "/legal-library/articles/art_registration_law_156",
+      "provenance": {
+        "jurisdiction": "IR",
+        "source_review_status": "secondary_source_only",
+        "exact_primary_document_verified": false,
+        "current_validity_verified": false,
+        "effective_date": null,
+        "last_primary_source_check": null,
+        "verification_note": "خلاصه آموزشی است؛ متن کامل ماده و اصلاحات آن در این بسته از منبع اولیه تطبیق نشده است."
+      }
     },
     {
       "id": "faq_1",
@@ -4698,6 +6267,58 @@
       "use": "شناسایی درگاه‌ها و منابع برای شروع پژوهش؛ تاریخ و اعتبار هر متن باید مستقل بررسی شود",
       "priority": 4,
       "live_access_checked": false
+    },
+    {
+      "id": "src_official_judiciary_gateway",
+      "name": "درگاه ملی قوه قضاییه (عدلیه)",
+      "url": "https://eadil.com/",
+      "class": "official_judiciary_gateway",
+      "authority": "درگاه رسمی معرفی ساختار و سامانه‌های قوه قضاییه",
+      "use": "کشف درگاه‌های رسمی قوانین، نظریات مشورتی، آرای وحدت رویه، آرای هیأت عمومی دیوان عدالت اداری و سامانه ملی آرای قضایی؛ صفحه تجمیعی جایگزین سند اصلی نیست",
+      "priority": 1,
+      "live_access_checked": false,
+      "evidence_url": "https://eadil.com/"
+    },
+    {
+      "id": "src_national_judicial_decisions",
+      "name": "سامانه ملی آرای قضایی",
+      "url": "https://ara.jri.ac.ir/",
+      "class": "official_judicial_decisions_portal",
+      "authority": "سامانه ملی آرای قضایی معرفی‌شده از طریق درگاه ملی قوه قضاییه",
+      "use": "کشف و بررسی آرای منتشرشده؛ نوع رأی، مرجع، تاریخ، قطعیت و اثر حقوقی باید برای هر سند جداگانه ثبت شود",
+      "priority": 1,
+      "live_access_checked": false,
+      "evidence_url": "https://eadil.com/"
     }
-  ]
+  ],
+  "registry_review_date": "2026-11-08",
+  "provenance_policy": {
+    "version": "1.0.0",
+    "jurisdiction": "IR",
+    "rule": "A record is never primary-source-verified merely because an official portal is listed.",
+    "required_for_primary_verification": [
+      "exact_document_url",
+      "issuing_authority",
+      "instrument_or_decision_number",
+      "publication_reference",
+      "publication_date",
+      "effective_date_or_explicitly_unknown",
+      "amendment_and_repeal_review",
+      "retrieved_at",
+      "content_sha256",
+      "human_reviewer",
+      "reviewed_at"
+    ],
+    "current_bundle_statement": "No statute, article summary or legal term in this offline bundle has been certified as current and fully verified against the primary source.",
+    "source_class_separation": [
+      "primary_publication",
+      "official_law_portal",
+      "official_judiciary_gateway",
+      "official_judicial_decisions_portal",
+      "official_legislative_research",
+      "secondary_legal_database",
+      "secondary_translation_archive",
+      "research_guide"
+    ]
+  }
 }
