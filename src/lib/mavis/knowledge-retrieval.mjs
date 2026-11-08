@@ -19,7 +19,8 @@ function resolveSourceClass(record) {
 
   if (record.record_type === "law") return "statute";
   if (record.record_type === "article") return "educational_summary";
-  return "legal_term";
+  if (record.record_type === "term") return "legal_term";
+  return "unclassified";
 }
 
 /**
