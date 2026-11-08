@@ -1,6 +1,6 @@
 begin;
 
-select plan(13);
+select plan(14);
 
 select ok(
   has_schema_privilege('authenticated', 'mavis_private', 'USAGE'),
@@ -55,6 +55,12 @@ select ok(
    from pg_proc
    where oid = 'mavis_private.consume_knowledge_search_limit()'::regprocedure),
   'private rate-limit function has an empty search_path'
+);
+select ok(
+  (select coalesce(proconfig @> array['search_path=""'], false)
+   from pg_proc
+   where oid = 'public.consume_mavis_knowledge_search_limit()'::regprocedure),
+  'public invoker wrapper has an empty search_path'
 );
 
 select * from finish();
