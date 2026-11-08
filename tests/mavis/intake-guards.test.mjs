@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createIntakeRateKeys, isValidIntakeIp, normalizeIntakePhone, validateIntakePayload } from "../../src/lib/mavis/intake-guards.mjs";
+import { isJsonContentType, matchesRequestOrigin } from "../../src/lib/mavis/intake-request-guards.mjs";
 
 const valid = {
   idempotency_key: "11111111-1111-4111-8111-111111111111",
@@ -62,4 +63,18 @@ test("validates contact channel, summary size and optional consent types", () =>
   assert.equal(validateIntakePayload({ ...valid, preferred_contact_method: "email", contact_email: null }).code, "EMAIL_REQUIRED");
   assert.equal(validateIntakePayload({ ...valid, matter_summary: "کوتاه" }).code, "INVALID_SUMMARY");
   assert.equal(validateIntakePayload({ ...valid, marketing_consent: "yes" }).code, "INVALID_OPTIONAL_CONSENT");
+});
+
+test("accepts only exact same-origin requests", () => {
+  assert.equal(matchesRequestOrigin("https://vakilahmadmousavi.ir", "https://vakilahmadmousavi.ir/api/mavis/public-intake"), true);
+  assert.equal(matchesRequestOrigin("https://evil.example", "https://vakilahmadmousavi.ir/api/mavis/public-intake"), false);
+  assert.equal(matchesRequestOrigin("null", "https://vakilahmadmousavi.ir/api/mavis/public-intake"), false);
+  assert.equal(matchesRequestOrigin("not-a-url", "https://vakilahmadmousavi.ir/api/mavis/public-intake"), false);
+});
+
+test("accepts JSON content types with optional charset only", () => {
+  assert.equal(isJsonContentType("application/json"), true);
+  assert.equal(isJsonContentType("application/json; charset=utf-8"), true);
+  assert.equal(isJsonContentType("text/plain"), false);
+  assert.equal(isJsonContentType("application/x-www-form-urlencoded"), false);
 });
