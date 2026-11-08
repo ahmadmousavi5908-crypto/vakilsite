@@ -80,11 +80,11 @@ select ok((select prosecdef from pg_proc
   where oid = 'mavis_intake_private.purge_expired_public_intake(timestamp with time zone)'::regprocedure),
   'retention purge function uses SECURITY DEFINER');
 
-select ok(has_column('mavis_intake_private', 'submissions', 'retention_expires_at'),
+select has_column('mavis_intake_private', 'submissions', 'retention_expires_at',
   'every intake submission requires an explicit retention expiry');
-select ok(has_column('mavis_intake_private', 'submissions', 'initial_review_consent_at'),
+select has_column('mavis_intake_private', 'submissions', 'initial_review_consent_at',
   'initial review consent timestamp is retained');
-select ok(has_column('mavis_intake_private', 'submissions', 'marketing_consent_at'),
+select has_column('mavis_intake_private', 'submissions', 'marketing_consent_at',
   'marketing consent has an independent timestamp');
 
 
