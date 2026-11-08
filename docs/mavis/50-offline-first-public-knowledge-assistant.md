@@ -32,7 +32,7 @@ The bundle also contains a sixteen-entry source registry that distinguishes offi
 The repository also contains a separate, server-side, admin-only deterministic retrieval slice:
 - `src/lib/mavis/knowledge-registry.js` maps the existing canonical legal-library records.
 - `src/lib/mavis/knowledge-search.mjs` performs Persian lexical ranking.
-- `POST /api/mavis/knowledge-search` requires admin authorization and applies origin, body-size, rate-limit and no-store controls.
+- `src/components/admin/MavisKnowledgeSearch.jsx` provides the internal admin search UI; `POST /api/mavis/knowledge-search` requires admin authorization and applies origin, body-size, rate-limit and no-store controls.
 - The route attaches legal evidence and a research dossier with source-status metadata.
 
 This is not part of the offline public app. It is not a public chat endpoint, does not call an LLM, does not create a parallel corpus, and does not establish that a legal source is current or verified. The future Lawyer Copilot integration, central knowledge-manifest reconciliation, retrieval benchmark and primary-source verification remain separate gates.
