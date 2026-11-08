@@ -1,6 +1,6 @@
 begin;
 
-select plan(31);
+select plan(32);
 
 select ok(has_schema_privilege('service_role', 'mavis_intake_private', 'USAGE'),
   'server service role can access the private intake schema');
