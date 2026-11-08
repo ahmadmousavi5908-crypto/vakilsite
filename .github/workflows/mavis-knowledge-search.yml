@@ -6,6 +6,9 @@ on:
       - feature/mavis-deterministic-legal-search-20261108
       - feature/mavis-offline-first-public-knowledge-20261108
   workflow_dispatch:
+  pull_request:
+    branches:
+      - feature/mavis-deterministic-legal-search-20261108
 
 permissions:
   contents: read
@@ -57,9 +60,24 @@ jobs:
       - name: Test deterministic offline answer composition
         run: node --test tests/mavis/offline-answer.test.mjs
 
-
       - name: Lint MAVIS retrieval modules
         run: npm run lint -- src/lib/mavis/knowledge-search.mjs src/lib/mavis/knowledge-registry.js src/lib/mavis/request-guards.mjs src/lib/mavis/rate-limit.mjs src/lib/supabase/admin.js src/app/api/mavis/knowledge-search/route.js src/components/admin/MavisKnowledgeSearch.jsx src/app/admin/mavis/page.js src/app/admin/page.js src/app/admin/login/page.js src/app/admin/login/actions.js tests/mavis/knowledge-search.test.mjs
+
+      - name: Test public intake validation
+        if: ${{ hashFiles('tests/mavis/public-intake-validation.test.mjs') != '' }}
+        run: node --test tests/mavis/public-intake-validation.test.mjs
+
+      - name: Test growth intelligence metrics
+        if: ${{ hashFiles('tests/mavis/growth-metrics.test.mjs') != '' }}
+        run: node --test tests/mavis/growth-metrics.test.mjs
+
+      - name: Test cautious legal intake triage
+        if: ${{ hashFiles('tests/mavis/legal-intake-triage.test.mjs') != '' }}
+        run: node --test tests/mavis/legal-intake-triage.test.mjs
+
+      - name: Lint intake and growth modules
+        if: ${{ hashFiles('src/lib/mavis/public-intake-validation.mjs') != '' }}
+        run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/growth-metrics.mjs src/lib/mavis/legal-intake-triage.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs tests/mavis/legal-intake-triage.test.mjs
 
       - name: Build the site
         run: npm run build
