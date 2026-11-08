@@ -48,7 +48,7 @@ export async function POST(request) {
   const noticeVersion = process.env.MAVIS_INTAKE_PRIVACY_NOTICE_VERSION;
   const serviceKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   const retentionDays = Number(process.env.MAVIS_INTAKE_RETENTION_DAYS);
-  if (typeof secret !== "string" || secret.length < 32 || typeof serviceKey !== "string" || !serviceKey || !noticeVersion || !Number.isInteger(retentionDays) || retentionDays < 1 || retentionDays > 3650) {
+  if (typeof secret !== "string" || secret.length < 32 || typeof serviceKey !== "string" || !serviceKey || !noticeVersion || noticeVersion.length > 40 || !Number.isInteger(retentionDays) || retentionDays < 1 || retentionDays > 3650) {
     return respond("INTAKE_NOT_CONFIGURED", "تنظیمات امنیتی و سیاست نگهداری اطلاعات کامل نیست.", 503);
   }
   if (process.env.MAVIS_INTAKE_TRUSTED_PROXY_HEADERS !== "true") {
