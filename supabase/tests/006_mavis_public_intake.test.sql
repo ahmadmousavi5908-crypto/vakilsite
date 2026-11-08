@@ -1,6 +1,6 @@
 begin;
 
-select plan(39);
+select plan(44);
 
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_intake_submissions'::regclass), 'intake submissions have RLS enabled');
 select ok(not has_table_privilege('anon', 'public.mavis_intake_submissions', 'SELECT'), 'anon cannot read private intake submissions');
@@ -11,6 +11,22 @@ select ok(has_table_privilege('authenticated', 'public.mavis_intake_submissions'
 select ok(has_column_privilege('authenticated', 'public.mavis_intake_submissions', 'status', 'UPDATE'), 'authenticated can update only the status column, subject to RLS');
 select ok(not has_table_privilege('authenticated', 'public.mavis_intake_submissions', 'INSERT'), 'authenticated cannot insert intake submissions directly');
 select ok(not has_table_privilege('authenticated', 'public.mavis_intake_submissions', 'DELETE'), 'authenticated cannot delete intake submissions directly');
+
+select ok(not has_table_privilege('service_role', 'public.mavis_intake_submissions', 'SELECT'), 'service role cannot directly read private intake rows');
+select ok(
+  position('is_site_admin' in (select coalesce(qual, '') from pg_policies where schemaname = 'public' and tablename = 'mavis_intake_submissions' and policyname = 'MAVIS admins can read intake submissions')) > 0,
+  'intake read policy is restricted to site admins'
+);
+select ok(
+  position('is_site_admin' in (select coalesce(qual, '') from pg_policies where schemaname = 'public' and tablename = 'mavis_intake_submissions' and policyname = 'MAVIS admins can update intake status')) > 0,
+  'intake update policy is restricted to site admins'
+);
+select ok(not has_table_privilege('service_role', 'public.mavis_intake_audit_events', 'SELECT'), 'service role cannot directly read intake audit events');
+select ok(
+  position('is_site_admin' in (select coalesce(qual, '') from pg_policies where schemaname = 'public' and tablename = 'mavis_intake_audit_events' and policyname = 'MAVIS admins can read intake audit')) > 0,
+  'intake audit read policy is restricted to site admins'
+);
+
 
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_intake_audit_events'::regclass), 'intake audit events have RLS enabled');
 select ok(not has_table_privilege('anon', 'public.mavis_intake_audit_events', 'SELECT'), 'anon cannot read intake audit events');
