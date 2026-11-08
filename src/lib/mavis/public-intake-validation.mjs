@@ -2,7 +2,11 @@ const CASE_TYPES = new Set(["civil", "criminal", "family", "property", "commerci
 const URGENCY_LEVELS = new Set(["routine", "soon", "urgent"]);
 const PHONE_PATTERN = /^(?:\+98|0098|0)?9\d{9}$/;
 
-function normalizeDigits(value) {\n  return value.replace(/[۰-۹٠-٩]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩".indexOf(digit) % 10));\n}\n\nfunction cleanText(value, max) {
+function normalizeDigits(value) {
+  return value.replace(/[۰-۹٠-٩]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩".indexOf(digit) % 10));
+}
+
+function cleanText(value, max) {
   if (typeof value !== "string") return "";
   return value.normalize("NFC").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
 }
@@ -13,7 +17,7 @@ export function validatePublicIntake(input) {
   }
 
   const fullName = cleanText(input.fullName, 100);
-  const phone = cleanText(input.phone, 20).replace(/[\s()-]/g, "");
+  const phone = normalizeDigits(cleanText(input.phone, 20)).replace(/[\s()-]/g, "");
   const caseType = input.caseType;
   const summary = cleanText(input.summary, 6000);
   const urgency = input.urgency;
