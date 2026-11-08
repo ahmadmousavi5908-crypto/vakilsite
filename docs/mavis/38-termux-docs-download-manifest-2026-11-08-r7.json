@@ -3,7 +3,7 @@
   "bundle_id": "MAVIS-DOCS-2026-11-08-R7",
   "purpose": "Pinned documentation-only MAVIS bundle covering the master charter, repository/admin audit, legal research protocol, three-arm scorecard and performance benchmark.",
   "repository": "ahmadmousavi5908-crypto/vakilsite",
-  "pinned_commit": "b1ca0f42dd68d0be46347487b92b437bb6aa1379",
+  "pinned_commit": "5ef3b03f7863d2d2b199dc62a1cc85329f217fba",
   "verification": {
     "algorithm": "git-blob-sha1",
     "command": "git hash-object --stdin",
@@ -56,7 +56,7 @@
     },
     {
       "path": "docs/mavis/README.md",
-      "blob_sha": "a5f17de662ac822a27473a3acf140c166c443ff4"
+      "blob_sha": "684ecb1004b225aed941032076ce59abfb250ff5"
     }
   ],
   "safety": {
