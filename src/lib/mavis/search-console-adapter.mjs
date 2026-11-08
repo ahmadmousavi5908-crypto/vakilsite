@@ -1,4 +1,4 @@
-const ALLOWED_DIMENSIONS = new Set(["date", "query", "page", "country", "device", "searchAppearance"]);
+const ALLOWED_DIMENSIONS = new Set(["date", "hour", "query", "page", "country", "device", "searchAppearance"]);
 const ALLOWED_TYPES = new Set(["web", "news", "discover", "googleNews", "image", "video"]);
 const ALLOWED_DATA_STATES = new Set(["final", "all", "hourly_all"]);
 const ALLOWED_AGGREGATIONS = new Set(["auto", "byPage", "byProperty", "byNewsShowcasePanel"]);
@@ -49,6 +49,10 @@ export function normalizeSearchAnalyticsResponse(response, request) {
   const aggregationType = response.responseAggregationType ?? "auto";
   if (!ALLOWED_AGGREGATIONS.has(aggregationType)) {
     return { ok: false, reason: "unknown_aggregation_type" };
+  }
+  if (aggregationType === "byNewsShowcasePanel" &&
+      (!["discover", "googleNews"].includes(type) || dimensions.includes("page"))) {
+    return { ok: false, reason: "invalid_news_showcase_aggregation" };
   }
 
   const rows = [];
