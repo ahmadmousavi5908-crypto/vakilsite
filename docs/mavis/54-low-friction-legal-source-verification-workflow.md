@@ -75,6 +75,8 @@ Minimum fields:
 
 Do not store a status without its evidence. Keep the source snapshot immutable; a later correction creates a new snapshot and review event.
 
+The initial operational queue is `docs/mavis/legal-source-review-queue-2026-11-08.csv` and contains all 175 legal records (132 terms, 16 laws, 22 article summaries and 5 research notes). Blank evidence columns mean the evidence has not yet been collected; they are not implied values or proof of non-existence. The canonical corpus remains `public/mavis-offline/knowledge.json`; the CSV is only a review queue and must not be used as a second knowledge source.
+
 ## 6. Conservative status transitions
 
 - discovered: candidate source found; no claim about authority or currentness.
