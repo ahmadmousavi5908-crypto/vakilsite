@@ -41,7 +41,12 @@ supabase db dump --local --data-only --use-copy \
   --exclude storage.vector_indexes \
   --file "$WORK_DIR/data.sql"
 
-for dump_file in roles.sql schema.sql data.sql; do
+if [[ ! -f "$WORK_DIR/roles.sql" ]]; then
+  echo "Backup role dump was not created." >&2
+  exit 1
+fi
+
+for dump_file in schema.sql data.sql; do
   if [[ ! -s "$WORK_DIR/$dump_file" ]]; then
     echo "Backup dump is missing or empty: $dump_file" >&2
     exit 1
