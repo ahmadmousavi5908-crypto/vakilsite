@@ -138,19 +138,19 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
         <div className={styles.grid}>
           <div className={styles.field}>
             <label htmlFor="mavis-full-name">نام و نام خانوادگی *</label>
-            <input id="mavis-full-name" name="fullName" autoComplete="name" maxLength={100} value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} required />
+            <input id="mavis-full-name" name="fullName" autoComplete="name" maxLength={100} disabled={submitting} value={form.fullName} onChange={(event) => updateField("fullName", event.target.value)} required />
             {errors.fullName && <small>{errors.fullName}</small>}
           </div>
 
           <div className={styles.field}>
             <label htmlFor="mavis-phone">شماره همراه *</label>
-            <input id="mavis-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" maxLength={20} placeholder="0912..." value={form.phone} onChange={(event) => updateField("phone", event.target.value)} required />
+            <input id="mavis-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" maxLength={20} placeholder="0912..." disabled={submitting} value={form.phone} onChange={(event) => updateField("phone", event.target.value)} required />
             {errors.phone && <small>{errors.phone}</small>}
           </div>
 
           <div className={styles.field}>
             <label htmlFor="mavis-case-type">موضوع درخواست *</label>
-            <select id="mavis-case-type" name="caseType" value={form.caseType} onChange={(event) => updateField("caseType", event.target.value)} required>
+            <select id="mavis-case-type" name="caseType" disabled={submitting} value={form.caseType} onChange={(event) => updateField("caseType", event.target.value)} required>
               <option value="">انتخاب موضوع</option>
               {caseOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
@@ -159,7 +159,7 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
 
           <div className={styles.field}>
             <label htmlFor="mavis-urgency">فوریت اعلام‌شده *</label>
-            <select id="mavis-urgency" name="urgency" value={form.urgency} onChange={(event) => updateField("urgency", event.target.value)}>
+            <select id="mavis-urgency" name="urgency" disabled={submitting} value={form.urgency} onChange={(event) => updateField("urgency", event.target.value)}>
               {urgencyOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
             {errors.urgency && <small>{errors.urgency}</small>}
@@ -167,12 +167,12 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
 
           <div className={styles.field}>
             <label htmlFor="mavis-opposing-party">نام طرف مقابل (اختیاری)</label>
-            <input id="mavis-opposing-party" name="opposingParty" maxLength={120} value={form.opposingParty} onChange={(event) => updateField("opposingParty", event.target.value)} />
+            <input id="mavis-opposing-party" name="opposingParty" maxLength={120} disabled={submitting} value={form.opposingParty} onChange={(event) => updateField("opposingParty", event.target.value)} />
           </div>
 
           <div className={styles.field + " " + styles.full}>
             <label htmlFor="mavis-summary">شرح اولیه موضوع *</label>
-            <textarea id="mavis-summary" name="summary" rows={5} maxLength={6000} value={form.summary} onChange={(event) => updateField("summary", event.target.value)} placeholder="موضوع، اتفاقات اصلی، تاریخ‌های مهم و وضعیت فعلی را توضیح دهید. از درج اطلاعات غیرضروری خودداری کنید." required />
+            <textarea id="mavis-summary" name="summary" rows={5} maxLength={6000} disabled={submitting} value={form.summary} onChange={(event) => updateField("summary", event.target.value)} placeholder="موضوع، اتفاقات اصلی، تاریخ‌های مهم و وضعیت فعلی را توضیح دهید. از درج اطلاعات غیرضروری خودداری کنید." required />
             <div className={styles.counter}>{form.summary.length.toLocaleString("fa-IR")} / ۶۰۰۰</div>
             {errors.summary && <small>{errors.summary}</small>}
           </div>
@@ -181,19 +181,19 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
         <fieldset className={styles.consents}>
           <legend>رضایت‌ها و اطلاع‌رسانی</legend>
           <label className={styles.checkbox}>
-            <input type="checkbox" checked={form.consent} onChange={(event) => updateField("consent", event.target.checked)} required />
+            <input type="checkbox" disabled={submitting} checked={form.consent} onChange={(event) => updateField("consent", event.target.checked)} required />
             <span>{consentCopy.initialReview} *</span>
           </label>
           {errors.consent && <small>{errors.consent}</small>}
           <p className={styles.retention}>{consentCopy.retention}</p>
 
           <label className={styles.checkbox}>
-            <input type="checkbox" checked={form.marketingConsent} onChange={(event) => updateField("marketingConsent", event.target.checked)} />
+            <input type="checkbox" disabled={submitting} checked={form.marketingConsent} onChange={(event) => updateField("marketingConsent", event.target.checked)} />
             <span>{consentCopy.marketing}</span>
           </label>
 
           <label className={styles.checkbox}>
-            <input type="checkbox" checked={form.thirdPartyDataNoticeAcknowledged} onChange={(event) => updateField("thirdPartyDataNoticeAcknowledged", event.target.checked)} />
+            <input type="checkbox" disabled={submitting} checked={form.thirdPartyDataNoticeAcknowledged} onChange={(event) => updateField("thirdPartyDataNoticeAcknowledged", event.target.checked)} />
             <span>{consentCopy.thirdParty}</span>
           </label>
         </fieldset>
