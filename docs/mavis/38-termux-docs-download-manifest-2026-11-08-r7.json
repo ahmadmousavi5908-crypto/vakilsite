@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0.0",
+  "bundle_id": "MAVIS-DOCS-2026-11-08-R7",
+  "purpose": "Pinned documentation-only MAVIS bundle covering the master charter, repository/admin audit, legal research protocol, three-arm scorecard and performance benchmark.",
+  "repository": "ahmadmousavi5908-crypto/vakilsite",
+  "pinned_commit": "b1ca0f42dd68d0be46347487b92b437bb6aa1379",
+  "verification": {
+    "algorithm": "git-blob-sha1",
+    "command": "git hash-object --stdin",
+    "note": "Verify exact raw file bytes against every Git blob SHA. Verify Mother Two separately by SHA-256. No archive, credentials, database dump, client data or runtime source is included."
+  },
+  "files": [
+    {
+      "path": "docs/mavis/22-master-project-charter-v1.1.md",
+      "blob_sha": "426dfb024aea5cc77b8e5d668a16b31ca93e0513"
+    },
+    {
+      "path": "docs/mavis/22-master-project-charter-v1.2.md",
+      "blob_sha": "63a2675ee0ab6ecaab20ec094ec0cf0d732b8003"
+    },
+    {
+      "path": "docs/mavis/23-initial-repository-audit-2026-11-08.md",
+      "blob_sha": "4bd62f3745bec42eafda7179333f1fed623d84a7"
+    },
+    {
+      "path": "docs/mavis/24-termux-single-pass-delivery-protocol.md",
+      "blob_sha": "2731c65a75a55f261a639686dfc863b1c749554e"
+    },
+    {
+      "path": "docs/mavis/25-official-search-and-ads-api-research-2026-11-08.md",
+      "blob_sha": "1a7892ab775ef9eca9d4b48f81b81461ac9eb344"
+    },
+    {
+      "path": "docs/mavis/26-admin-and-article-management-ux-specification.md",
+      "blob_sha": "e6d4e035544fc59f9a07f0623bc68549a6107be1"
+    },
+    {
+      "path": "docs/mavis/27-project-knowledge-access-and-mother-two-recovery-plan.md",
+      "blob_sha": "89ad2fa01c243983bae93a6df80d19f63f212398"
+    },
+    {
+      "path": "docs/mavis/28-execution-blueprint-and-integration-acceptance.md",
+      "blob_sha": "b11ca2b1b163c4eddb75db3d0b8040802c243de4"
+    },
+    {
+      "path": "docs/mavis/31-admin-desktop-experience-and-ux-scorecard.md",
+      "blob_sha": "55ab00607918b5cf7c0c63e4bd91de2cedadd51a"
+    },
+    {
+      "path": "docs/mavis/33-legal-research-quality-and-prioritization-protocol.md",
+      "blob_sha": "f55284abe3b47909e1d86656e88ed0ae2bc31101"
+    },
+    {
+      "path": "docs/mavis/37-three-arm-scorecard-and-performance-benchmark.md",
+      "blob_sha": "d138cc19b01a8a07b810cd2e9da718350a55ee4f"
+    },
+    {
+      "path": "docs/mavis/README.md",
+      "blob_sha": "a5f17de662ac822a27473a3acf140c166c443ff4"
+    }
+  ],
+  "safety": {
+    "documentation_only": true,
+    "includes_runtime_code": false,
+    "includes_credentials": false,
+    "includes_database_dump": false,
+    "includes_client_data": false,
+    "includes_mother_two_archive": false,
+    "merge_or_deploy_authorized": false
+  }
+}
