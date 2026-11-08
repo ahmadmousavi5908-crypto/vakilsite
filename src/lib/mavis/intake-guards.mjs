@@ -9,9 +9,11 @@ const ALLOWED_FIELDS = new Set([
 ]);
 
 export function normalizeIntakePhone(value) {
-  return String(value ?? "").replace(/[\s()\-]/g, "");
+  return String(value ?? "")
+    .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 1776))
+    .replace(/[٠-٩]/g, (digit) => String(digit.charCodeAt(0) - 1632))
+    .replace(/[\s()\-]/g, "");
 }
-
 export function isValidIntakeIp(value) {
   return typeof value === "string" && isIP(value.trim()) !== 0;
 }
