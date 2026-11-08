@@ -6,9 +6,9 @@
 
 ## 1. What is already evidenced
 
-- Application and database CI both passed on PR #31 head `ebbf8cefa1b45c9b0ce9db41ef734876cf5b6` (before this runbook correction).
-- Exact-head application run `42524665893` completed successfully: dependency install, legal-library validation, deterministic/offline tests, intake/growth tests, lint, and Webpack build.
-- Exact-head database run `42524665979` completed successfully: isolated Supabase startup, migrations and pgTAP security tests, and clean shutdown. The earlier 167-assertion count belongs to a prior baseline and is not asserted for this run.
+- Application and database CI both passed on the current PR #31 head `09f680360701f2e6dda4380e8f60fd46ad4ce190`.
+- Exact-head application run `42524992697` completed successfully: dependency install, legal-library validation, deterministic/offline tests, intake/growth tests, lint, and Webpack build.
+- Exact-head database run `42524992681` completed successfully: isolated Supabase startup, migrations and pgTAP security tests, and clean shutdown. The earlier 167-assertion count belongs to a prior baseline and is not asserted for this run.
 - Application workflow passed the legal-library validator, deterministic/offline checks, Intake and growth tests, lint, and Webpack build.
 - Intake uses bounded JSON parsing, origin/content-type guards, rate limiting, idempotent submissions, and narrow RPC access.
 - The offline legal bundle intentionally does not claim current-law verification.

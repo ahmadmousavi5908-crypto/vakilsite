@@ -5,7 +5,7 @@ on:
     branches:
       - security/restrict-social-links-grants-20261108
       - integration/mavis-mvp-candidate-20261108
-      - integration/mavis-release-closure-20261109
+      - integration/mavis-release-gate-20261109
   pull_request:
     branches:
       - integration/mavis-mvp-candidate-20261108
