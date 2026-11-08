@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { isPrimaryVerificationComplete } from "../../src/lib/mavis/legal-provenance-contract.mjs";
 
 const bundle = JSON.parse(await readFile(new URL("../../public/mavis-offline/knowledge.json", import.meta.url), "utf8"));
 let failures = 0;
@@ -33,8 +34,8 @@ for (const record of bundle.records) {
     if (!/^https:\/\//i.test(source.url || "")) fail("Non-HTTPS source URL in " + record.id);
   }
 
-  if (record.review_status === "verified_primary_source" && !(record.sources || []).some((source) => source.verification_status === "verified_primary_source")) {
-    fail("Primary verified label has no verified primary source: " + record.id);
+  if (record.review_status === "verified_primary_source" && !isPrimaryVerificationComplete(record)) {
+    fail("Primary verified label lacks complete primary-source evidence: " + record.id);
   }
 }
 
