@@ -49,11 +49,12 @@ The server route `POST /api/mavis/intake` is implemented but remains fail-closed
 
 - `SUPABASE_SECRET_KEY` using the current Supabase secret-key format; never a browser-exposed publishable key.
 - `MAVIS_INTAKE_RATE_LIMIT_SECRET` with at least 32 characters for HMAC-SHA256 IP bucket pseudonyms.
+- `MAVIS_INTAKE_IDEMPOTENCY_SECRET` with at least 32 characters, separate from the rate-limit secret, for keyed HMAC-SHA256 fingerprints of canonical validated submissions.
 - `MAVIS_TRUST_X_REAL_IP=true` only when the hosting reverse proxy strips client-supplied `X-Real-IP` and overwrites it with the verified client address.
 - `MAVIS_INTAKE_RETENTION_DAYS` explicitly approved and bounded to 1–3650 days; no default legal retention period is assumed.
 - Consent text is versioned in code as `mavis-intake-v1-{retentionDays}d`; any change to the consent wording requires a version bump.
 
-The route checks same-origin, JSON content type, an 8 KB streamed body cap, strict field allowlist, deterministic validation and triage, persistent database rate limit, then calls the service-role-only RPC. Database failure is returned as failure; no success receipt is emitted unless a tracking code is returned. Raw IP, name, phone and summary are never written to application logs by this route.
+The route checks same-origin, JSON content type, an 8 KB streamed body cap, a UUID idempotency key, strict field allowlist, deterministic validation and triage, persistent database rate limit, and then calls the service-role-only idempotent RPC. The browser reuses the same in-memory request key for retries and clears it when the user edits the form; no sensitive form data or key is persisted to localStorage. The database unique constraint returns the original receipt for the same key and keyed request fingerprint, and rejects reuse of a key with different content. The previous non-idempotent service-role RPC is revoked. Database failure is returned as failure; no success receipt is emitted unless a tracking code is returned. Raw IP, name, phone and summary are never written to application logs by this route.
 
 The endpoint is not active until all environment settings, migration 006, proxy behavior, approved retention schedule and live local Supabase CI have been verified. No public form or visual change is included in this implementation.
 
