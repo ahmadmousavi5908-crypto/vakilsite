@@ -21,7 +21,12 @@ export async function signIn(formData) {
 
   const { data: isAdmin, error: adminError } = await supabase.rpc("is_site_admin");
 
-  if (adminError || isAdmin !== true) {
+  if (adminError) {
+    await supabase.auth.signOut();
+    redirect("/admin/login?error=authorization");
+  }
+
+  if (isAdmin !== true) {
     await supabase.auth.signOut();
     redirect("/admin/login?error=unauthorized");
   }
