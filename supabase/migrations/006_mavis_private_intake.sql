@@ -373,7 +373,14 @@ returns table (
   requires_deadline_check boolean,
   status text,
   created_at timestamptz,
-  retention_expires_at timestamptz
+  retention_expires_at timestamptz,
+  initial_review_consent boolean,
+  initial_review_consent_at timestamptz,
+  consent_version text,
+  marketing_consent boolean,
+  marketing_consent_at timestamptz,
+  third_party_data_notice_acknowledged boolean,
+  third_party_data_notice_acknowledged_at timestamptz
 )
 language plpgsql
 security definer
@@ -405,7 +412,10 @@ begin
     s.id, s.tracking_code, s.full_name, s.phone, s.case_type,
     s.summary, s.urgency, s.opposing_party, s.review_priority,
     s.detected_signals, s.requires_deadline_check, s.status,
-    s.created_at, s.retention_expires_at
+    s.created_at, s.retention_expires_at,
+    s.initial_review_consent, s.initial_review_consent_at, s.consent_version,
+    s.marketing_consent, s.marketing_consent_at,
+    s.third_party_data_notice_acknowledged, s.third_party_data_notice_acknowledged_at
   from mavis_intake_private.submissions as s
   where p_status is null or s.status = p_status
   order by s.created_at desc, s.id desc
