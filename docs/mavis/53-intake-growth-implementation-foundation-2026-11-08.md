@@ -51,7 +51,7 @@ The server route `POST /api/mavis/intake` is implemented but remains fail-closed
 - `MAVIS_INTAKE_RATE_LIMIT_SECRET` with at least 32 characters for HMAC-SHA256 IP bucket pseudonyms.
 - `MAVIS_TRUST_X_REAL_IP=true` only when the hosting reverse proxy strips client-supplied `X-Real-IP` and overwrites it with the verified client address.
 - `MAVIS_INTAKE_RETENTION_DAYS` explicitly approved and bounded to 1–3650 days; no default legal retention period is assumed.
-- `MAVIS_INTAKE_CONSENT_VERSION` identifying the exact consent text shown to the submitter.
+- Consent text is versioned in code as `mavis-intake-v1-{retentionDays}d`; any change to the consent wording requires a version bump.
 
 The route checks same-origin, JSON content type, an 8 KB streamed body cap, strict field allowlist, deterministic validation and triage, persistent database rate limit, then calls the service-role-only RPC. Database failure is returned as failure; no success receipt is emitted unless a tracking code is returned. Raw IP, name, phone and summary are never written to application logs by this route.
 
@@ -63,3 +63,8 @@ The endpoint is not active until all environment settings, migration 006, proxy 
 The existing `/admin/mavis` workspace now includes a private intake inbox. It reads through `GET /api/admin/mavis/intake` and changes only the workflow status through `PATCH`. Both routes require the current admin authorization check, the service-side secret client, the persistent admin rate-limit guard, and the database RPC's second admin-role check. The list is bounded to 50 rows per page, supports an allowlisted status filter, and the database records list views and status changes.
 
 The inbox displays contact details and matter summaries only to authorized administrators. It does not calculate legal deadlines, accept files, edit submitted facts, or expose a public tracking lookup. It remains unavailable until Migration 006 is applied and the server-side secret key is configured.
+
+
+## Gated public intake page
+
+A standalone `/mavis/intake` page and compact responsive RTL form have been added without changing the homepage, contact dock, header or existing public design. The page is `noindex,nofollow`, is not linked from public navigation, and displays a disabled notice unless all server configuration gates are present. When enabled, it displays the exact versioned consent copy, independent optional marketing choice, third-party notice acknowledgement, retention period, strict field set and no-file/no-national-ID warning. It returns a tracking receipt only after the database confirms persistence.
