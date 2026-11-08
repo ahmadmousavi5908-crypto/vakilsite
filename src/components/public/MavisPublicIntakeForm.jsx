@@ -39,9 +39,11 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
   const [submitting, setSubmitting] = useState(false);
   const [receipt, setReceipt] = useState(null);
   const [requestError, setRequestError] = useState("");
+  const [idempotencyKey, setIdempotencyKey] = useState(null);
   const consentCopy = getIntakeConsentCopy(retentionDays);
 
   function updateField(name, value) {
+    setIdempotencyKey(null);
     setForm((current) => ({ ...current, [name]: value }));
     setErrors((current) => ({ ...current, [name]: undefined }));
   }
@@ -55,10 +57,18 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
     setReceipt(null);
 
     try {
+      const requestKey = idempotencyKey || (
+        typeof globalThis.crypto?.randomUUID === "function"
+          ? globalThis.crypto.randomUUID()
+          : null
+      );
+      if (!requestKey) throw new Error("مرورگر شما امکان ساخت شناسه امن درخواست را فراهم نمی‌کند.");
+      setIdempotencyKey(requestKey);
+
       const response = await fetch("/api/mavis/intake", {
         method: "POST",
         credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Idempotency-Key": requestKey },
         body: JSON.stringify(form),
         cache: "no-store",
       });
@@ -74,6 +84,7 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
 
       setReceipt(payload);
       setForm(initialState);
+      setIdempotencyKey(null);
     } catch (error) {
       setRequestError(error instanceof Error ? error.message : "خطای ناشناخته در ارسال درخواست.");
     } finally {
