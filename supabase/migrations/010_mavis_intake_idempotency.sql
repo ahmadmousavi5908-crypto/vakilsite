@@ -81,7 +81,7 @@ begin
   end if;
 
   v_full_name := btrim(coalesce(p_payload ->> 'fullName', ''));
-  v_phone := regexp_replace(coalesce(p_payload ->> 'phone', ''), '[[:space:]()\\-]', '', 'g');
+  v_phone := regexp_replace(coalesce(p_payload ->> 'phone', ''), '[[:space:]()\-]', '', 'g');
   v_case_type := p_payload ->> 'caseType';
   v_summary := btrim(coalesce(p_payload ->> 'summary', ''));
   v_urgency := p_payload ->> 'urgency';
@@ -98,7 +98,7 @@ begin
   end if;
 
   if char_length(v_full_name) not between 3 and 100
-    or v_phone !~ '^\\+989[0-9]{9}$'
+    or v_phone !~ '^\+989[0-9]{9}$'
     or v_case_type not in ('civil', 'criminal', 'family', 'property', 'commercial', 'labor', 'administrative', 'other')
     or char_length(v_summary) not between 30 and 6000
     or v_urgency not in ('routine', 'soon', 'urgent')
