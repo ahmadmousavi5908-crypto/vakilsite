@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { requireAdmin } from "../../../../lib/supabase/admin";
+import { requireAdmin } from "../../../lib/supabase/admin";
 import { updateIntakeStatus } from "./actions";
 import { signOut } from "../actions";
 
