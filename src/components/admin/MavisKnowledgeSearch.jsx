@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import styles from "./MavisKnowledgeSearch.module.css";
-import { safeInternalPath } from "../../lib/mavis/request-guards.mjs";
+import {
+  safeExternalHttpUrl,
+  safeInternalPath,
+} from "../../lib/mavis/request-guards.mjs";
 
 const reviewLabels = {
   verified_primary_source: "تطبیق‌شده با منبع اولیه",
@@ -28,27 +31,18 @@ const statusLabels = {
   needs_consolidation_review: "نیازمند بررسی تنقیح و اصلاحات",
 };
 
-function safeExternalUrl(value) {
-  if (typeof value !== "string") return null;
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" || url.protocol === "http:" ? url.href : null;
-  } catch {
-    return null;
-  }
-}
 
 function recordSources(record) {
   const sources = Array.isArray(record.sources) ? record.sources : [];
   const items = sources
     .map((source) => ({
       title: source?.title || "مشاهده منبع",
-      url: safeExternalUrl(source?.url),
+      url: safeExternalHttpUrl(source?.url),
       type: source?.source_type,
     }))
     .filter((source) => source.url);
 
-  const fallbackUrl = safeExternalUrl(record.source_url);
+  const fallbackUrl = safeExternalHttpUrl(record.source_url);
   if (fallbackUrl && !items.some((source) => source.url === fallbackUrl)) {
     items.push({ title: "صفحه منبع ثبت‌شده", url: fallbackUrl, type: "secondary" });
   }
@@ -69,6 +63,7 @@ export default function MavisKnowledgeSearch() {
     if (cleanQuery.length < 2 || cleanQuery.length > 120 || loading) return;
 
     setLoading(true);
+    setResults([]);
     setError("");
     setNotice("");
     setSearched(false);
