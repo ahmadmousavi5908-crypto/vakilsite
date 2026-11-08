@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "../../../../lib/supabase/admin";
+import { requireAdmin } from "../../../lib/supabase/admin";
 
 const ALLOWED_STATUSES = new Set(["new", "reviewing", "contacted", "closed", "rejected"]);
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
