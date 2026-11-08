@@ -33,6 +33,8 @@
 - [سند مادر پروژه MAVIS و Vakilsite نسخه ۱.۱](./22-master-project-charter-v1.1.md)
 - [گزارش ممیزی اولیه مخزن و شواهد GitHub](./23-initial-repository-audit-2026-11-08.md)
 - [پروتکل تحویل یک‌مرحله‌ای و idempotent برای Termux](./24-termux-single-pass-delivery-protocol.md)
+- [پژوهش رسمی APIهای جست‌وجو و Google Ads](./25-official-search-and-ads-api-research-2026-11-08.md)
+- [مشخصات UX پنل MAVIS و مدیریت فشرده مقالات](./26-admin-and-article-management-ux-specification.md)
 
 ## اسناد تکمیلی محصول و اجرا
 
