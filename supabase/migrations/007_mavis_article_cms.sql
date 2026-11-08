@@ -132,7 +132,7 @@ begin
     if new.status = 'published' then
       new.published_at := coalesce(new.published_at, pg_catalog.now());
       new.approved_at := coalesce(new.approved_at, pg_catalog.now());
-      new.approved_by := auth.uid();
+      new.approved_by := coalesce(new.approved_by, auth.uid());
     end if;
     return new;
   end if;
