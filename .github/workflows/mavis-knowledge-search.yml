@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/mavis-deterministic-legal-search-20261108
+      - feature/mavis-intake-growth-foundation-20261108
   workflow_dispatch:
 
 permissions:
@@ -37,8 +38,17 @@ jobs:
       - name: Test deterministic MAVIS retrieval
         run: npm run test:mavis-search
 
+      - name: Test public intake validation
+        run: node --test tests/mavis/public-intake-validation.test.mjs
+
+      - name: Test growth intelligence metrics
+        run: node --test tests/mavis/growth-metrics.test.mjs
+
       - name: Lint MAVIS retrieval modules
         run: npm run lint -- src/lib/mavis/knowledge-search.mjs src/lib/mavis/knowledge-registry.js src/lib/mavis/request-guards.mjs src/lib/mavis/rate-limit.mjs src/lib/supabase/admin.js src/app/api/mavis/knowledge-search/route.js src/components/admin/MavisKnowledgeSearch.jsx src/app/admin/mavis/page.js src/app/admin/page.js src/app/admin/login/page.js src/app/admin/login/actions.js tests/mavis/knowledge-search.test.mjs
+
+      - name: Lint intake and growth modules
+        run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/growth-metrics.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs
 
       - name: Build the site
         run: npm run build
