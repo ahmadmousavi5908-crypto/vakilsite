@@ -18,15 +18,16 @@ export function isValidIntakeIp(value) {
   return typeof value === "string" && isIP(value.trim()) !== 0;
 }
 
-export function createIntakeRateKey(secret, phone, ip) {
+export function createIntakeRateKeys(secret, phone, ip) {
   if (typeof secret !== "string" || secret.length < 32 || !isValidIntakeIp(ip)) {
     throw new TypeError("Invalid intake rate-key configuration");
   }
-  return createHmac("sha256", secret)
-    .update(normalizeIntakePhone(phone) + "\n" + ip.trim())
-    .digest("hex");
+  const normalizedIp = ip.trim();
+  return {
+    ipKey: createHmac("sha256", secret).update("ip\\n" + normalizedIp).digest("hex"),
+    contactKey: createHmac("sha256", secret).update("contact\\n" + normalizeIntakePhone(phone) + "\\n" + normalizedIp).digest("hex"),
+  };
 }
-
 export function validateIntakePayload(payload) {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) return { code: "INVALID_REQUEST", message: "بدنه درخواست معتبر نیست." };
   if (Object.keys(payload).some((key) => !ALLOWED_FIELDS.has(key))) return { code: "UNEXPECTED_FIELDS", message: "فیلد اضافی در درخواست وجود دارد." };
