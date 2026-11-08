@@ -4,7 +4,7 @@
 This is a separate, public, deterministic knowledge-retrieval surface. It does not modify or replace the legacy `/ai-assistant` page and does not share private intake data.
 
 ## Offline behavior
-- The user must open `/mavis-offline/` once while online and wait for the knowledge bundle to load.
+- The user must open `/mavis-offline/index.html` once while online and wait for the knowledge bundle to load.
 - A scoped service worker caches only this standalone application and its public knowledge bundle.
 - Subsequent searches run locally in the browser. No ChatGPT, LLM, external API, server-side search endpoint, or network request is required for search.
 - Search text is not persisted and is not transmitted.
