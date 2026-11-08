@@ -47,6 +47,7 @@
 - [ممیزی کد شاخه اجرایی MAVIS و برنامه اصلاح](./45-runtime-branch-code-audit-and-remediation-2026-11-08.md) — بررسی هسته، Intake، Admin، CI، محدودیت‌های Provider و یافته‌های P0/P1/P2؛ فقط remote و بدون ادعای تست محلی
 - [تطبیق شاخه‌های GitHub و شواهد ساختار اجرایی MAVIS](./46-github-branch-reconciliation-and-runtime-evidence-2026-11-08.md) — نقشه ahead/behind، APIها، migrations، کتابخانه حقوقی موجود و دروازه امن انتقال به Termux
 - [تداوم خدمت مستقل از توکن و امنیت اعتبارنامه‌ها](./47-provider-independent-continuity-and-secure-credentials-2026-11-08.md) — ادامه Intake، دانش، جست‌وجو و گردش‌کار بدون LLM؛ صف بازیابی؛ کنترل هزینه؛ تفکیک اختلال‌ها و سیاست سخت‌گیرانه گذرواژه/secret
+- [دروازه‌های سنجش آمادگی انتشار MVP و تعریف تکمیل ۱۰۰٪](./57-mavis-mvp-release-readiness-gates-2026-11-08.md) — معیارهای قابل آزمون برای یکپارچه‌سازی، دیتابیس، پذیرش، پژوهش حقوقی، رشد، آفلاین و عملیات تولید
 - [معماری مرحله اول: اولویت دارایی‌های داخلی، موتور جست‌وجو و پذیرش مستقل](./48-first-party-first-stage-one-search-and-intake-architecture-2026-11-08.md) — اصل First-Party First، مرز مرحله اول و دوم، اهداف benchmark و معیار واقعی امتیاز ۹/۱۰
 - [ماتریس مجوزها و مرزبندی داده سه بازوی MAVIS](./49-three-arm-authorization-and-data-boundary-matrix-2026-11-08.md) — طبقه‌بندی داده، نقش‌ها، مرز بازوها، enforcement و آزمون‌های منفی
 
