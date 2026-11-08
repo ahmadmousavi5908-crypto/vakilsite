@@ -7,7 +7,8 @@ function finiteNonNegative(value) {
 export function analyzeSearchPerformance(row) {
   const impressions = finiteNonNegative(row?.impressions);
   const clicks = finiteNonNegative(row?.clicks);
-  const rawPosition = finiteNonNegative(row?.averagePosition);\n  const position = rawPosition !== null && rawPosition > 0 ? rawPosition : null;
+  const rawPosition = finiteNonNegative(row?.averagePosition);
+  const position = rawPosition !== null && rawPosition > 0 ? rawPosition : null;
   const conversions = finiteNonNegative(row?.qualifiedLeads);
 
   if (impressions === null || clicks === null || clicks > impressions) {
