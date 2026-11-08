@@ -42,6 +42,7 @@ jobs:
         run: |
           node --check public/mavis-offline/app.js
           node --check public/mavis-offline/search.mjs
+          node --check public/mavis-offline/answer.mjs
           node --check public/mavis-offline/sw.js
 
       - name: Validate offline knowledge bundle and provenance
@@ -49,6 +50,9 @@ jobs:
 
       - name: Test offline Persian search
         run: node --test tests/mavis/offline-search.test.mjs
+
+      - name: Test deterministic offline answer composition
+        run: node --test tests/mavis/offline-answer.test.mjs
 
 
       - name: Lint MAVIS retrieval modules
