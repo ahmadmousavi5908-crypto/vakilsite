@@ -63,6 +63,13 @@ export async function POST(request) {
     );
   }
 
+  if (access.authenticationAvailable === false) {
+    return NextResponse.json(
+      { error: { code: "AUTH_UNAVAILABLE", message: "سرویس احراز هویت در حال حاضر پاسخ‌گو نیست." } },
+      { status: 503, headers: NO_STORE_HEADERS },
+    );
+  }
+
   if (!access.user) {
     return NextResponse.json(
       { error: { code: "UNAUTHENTICATED", message: "برای دسترسی باید وارد شوید." } },
