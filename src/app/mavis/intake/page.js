@@ -2,6 +2,8 @@ import MavisPublicIntakeForm from "../../../components/public/MavisPublicIntakeF
 import styles from "./page.module.css";
 import { parseIntakeRetentionDays } from "../../../lib/mavis/intake-request.mjs";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "ثبت درخواست بررسی اولیه | گروه وکیل سید احمد موسوی",
   description: "فرم امن ثبت درخواست بررسی اولیه برای ارجاع به بررسی انسانی.",
