@@ -84,23 +84,6 @@ export async function POST(request) {
     );
   }
 
-  if (!hasOnlyAllowedIntakeFields(payload)) {
-    return errorResponse("INVALID_FIELDS", "ساختار یا فیلدهای درخواست معتبر نیست.", 400);
-  }
-
-  const validation = validatePublicIntake(payload);
-  if (!validation.ok) {
-    return NextResponse.json(
-      { error: { code: "VALIDATION_FAILED", message: "برخی اطلاعات لازم یا معتبر نیستند.", fields: validation.errors } },
-      { status: 400, headers: NO_STORE_HEADERS },
-    );
-  }
-
-  const triage = triageLegalIntake(validation.value.summary);
-  if (!triage.ok) {
-    return errorResponse("TRIAGE_FAILED", "شرح درخواست برای اولویت‌بندی اولیه کافی نیست.", 400);
-  }
-
   const retentionDays = parseIntakeRetentionDays(process.env.MAVIS_INTAKE_RETENTION_DAYS);
   const consentVersion = process.env.MAVIS_INTAKE_CONSENT_VERSION;
   const rateLimitSecret = process.env.MAVIS_INTAKE_RATE_LIMIT_SECRET;
@@ -140,6 +123,23 @@ export async function POST(request) {
       429,
       { "Retry-After": String(rateLimit.retryAfterSeconds) },
     );
+  }
+
+  if (!hasOnlyAllowedIntakeFields(payload)) {
+    return errorResponse("INVALID_FIELDS", "ساختار یا فیلدهای درخواست معتبر نیست.", 400);
+  }
+
+  const validation = validatePublicIntake(payload);
+  if (!validation.ok) {
+    return NextResponse.json(
+      { error: { code: "VALIDATION_FAILED", message: "برخی اطلاعات لازم یا معتبر نیستند.", fields: validation.errors } },
+      { status: 400, headers: NO_STORE_HEADERS },
+    );
+  }
+
+  const triage = triageLegalIntake(validation.value.summary);
+  if (!triage.ok) {
+    return errorResponse("TRIAGE_FAILED", "شرح درخواست برای اولویت‌بندی اولیه کافی نیست.", 400);
   }
 
   const databasePayload = {
