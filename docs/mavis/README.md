@@ -48,6 +48,7 @@
 - [امتیازنامه سه بازوی MAVIS و پروتکل سنجش سرعت و کارایی](./37-three-arm-scorecard-and-performance-benchmark.md) — ارزیابی شواهد فعلی، اهداف p95/TTFT، تست بار، کیفیت حقوقی و کنترل هزینه
 - [مانیفست R7 بسته مستندات و امتیازنامه عملکرد سه بازو](./38-termux-docs-download-manifest-2026-11-08-r7.json) — نسخه پین‌شده برای دریافت و تطبیق در Termux
 - [استاندارد دانش زنده، تحویل بدون آرشیو و دسترسی سه بازو](./39-live-knowledge-workspace-and-three-arm-access-standard.md) — تفکیک Backup، Workspace و Registry و معیار استفاده واقعی ماویس
+- [مانیفست R8 بسته فایل‌های مستقل و استاندارد دانش زنده](./40-termux-docs-download-manifest-2026-11-08-r8.json) — دریافت فایل‌به‌فایل بدون نیاز به آرشیو
 
 ## اسناد تکمیلی محصول و اجرا
 
