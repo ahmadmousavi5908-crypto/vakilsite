@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "../../../../lib/supabase/admin";
-import { createServiceClient } from "../../../../lib/supabase/service";
-import { parseKnowledgeSearchRateLimit } from "../../../../lib/mavis/rate-limit.mjs";
+import { requireAdmin } from "../../../../../lib/supabase/admin";
+import { createServiceClient } from "../../../../../lib/supabase/service";
+import { parseKnowledgeSearchRateLimit } from "../../../../../lib/mavis/rate-limit.mjs";
 import {
   isJsonContentType,
   matchesRequestOrigin,
-} from "../../../../lib/mavis/request-guards.mjs";
+} from "../../../../../lib/mavis/request-guards.mjs";
 import {
   parseAdminIntakeListParams,
   parseAdminIntakeListResult,
   parseAdminIntakeStatusUpdate,
   parseAdminIntakeUpdateResult,
-} from "../../../../lib/mavis/intake-admin.mjs";
+} from "../../../../../lib/mavis/intake-admin.mjs";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
