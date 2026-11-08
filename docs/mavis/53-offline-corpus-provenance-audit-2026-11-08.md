@@ -10,8 +10,8 @@ A source directory is not the same as a citation attached to the exact law or ar
 - Added five research notes with individual source links, colloquial aliases, search phrases, findings and cautions. All remain secondary-source-only; no new legal rule was marked verified.
 - Expanded the source registry to 16 entries, including secondary legal news and commentary sources.
 - Added a versioned provenance policy with mandatory fields for primary-source verification.
-- Added conservative machine-readable provenance to all 170 legal records (terms, laws and article summaries). No record is marked as current or primary-source verified.
-- Added record-level traceable links for four law records where exact discovery URLs already existed in the dataset. Secondary links remain secondary; the Official Gazette URL is labeled identified but not retrieved.
+- Added conservative machine-readable provenance to all 175 legal records (132 terms, 16 laws, 22 article summaries and 5 research notes). No record is marked as current or primary-source verified.
+- Added record-level traceable links to five law records and five research notes. Official URLs that have not been retrieved remain labeled as identified-but-not-retrieved; secondary links remain explicitly secondary.
 - Kept existing review states; no record was upgraded.
 - Added a CI validator for IDs, record counts, source references, HTTPS URLs and conservative provenance flags.
 
@@ -21,6 +21,12 @@ A source directory is not the same as a citation attached to the exact law or ar
 - Primary-source texts for the 22 article summaries.
 - Every one of the 132 legal-term definitions.
 - Live availability, terms of use, API availability and automated reuse permissions for source portals.
+
+## Measured source coverage in the bundled dataset
+
+The validated bundle contains 183 total records: 132 terms, 16 laws, 22 article summaries, 8 FAQs and 5 research notes. Of the 175 legal/research records (excluding FAQs), 10 have at least one attached source link and 165 have none. Those 10 records contain 25 source links in total. The 10 source-bearing records comprise 5 law records and 5 research notes; no term or article-summary record currently has an attached source. The registry contains 16 entries, all with live access explicitly unverified. No record is marked as primary-source verified or current-validity verified.
+
+These counts describe provenance coverage, not legal correctness. The highest-value next step is to attach exact, record-specific sources in controlled batches, then verify each document under the acceptance rule below. Do not bulk-promote records based on a registry entry or portal homepage.
 
 ## Acceptance rule
 A record can become `verified_primary_source` only after an exact document is retrieved, issuing authority and instrument number are recorded, publication and effective dates are separated, amendments/repeals and transitional rules are checked, a SHA-256 content hash is stored, and a named human reviewer approves it. A link to a portal homepage is never sufficient.
