@@ -167,3 +167,31 @@ Do not collapse these into one optimistic number. The overall percentage is 100 
 - Bing Webmaster REST/API transition: https://learn.microsoft.com/en-us/bingwebmaster/
 - Bing Webmaster access and OAuth/API key: https://learn.microsoft.com/en-us/bingwebmaster/getting-access
 - IndexNow protocol: https://www.indexnow.org/documentation
+
+
+---
+
+## 7. Remote verification update — 2026-11-08
+
+The following evidence supersedes earlier provisional status notes:
+
+| PR | Exact head | Workflow run | Result |
+|---|---|---:|---|
+| #18 Database/security | `a47e0caad0716c712fda40c11165e2906db4e796` | `42496732466` | Success; 4 pgTAP files, 115 assertions |
+| #17 Deterministic retrieval | `dd7869c1b554df4fb0160f57f2de144b6f1af5a9` | `42495442900` | Success |
+| #23 Intake and Growth | `174025a236ca7527d62e614fa6cfa97d3aad1e85` | `42495814700` | Success |
+| #24 Legal evidence, stacked on #23 | `57e099bf48d9f610e927858519de5dbc7e5e57e4` | `42497020788` | Success; evidence, intake, growth, lint and build |
+| #19 Offline assistant, stacked on #24 | `c0695c0b32acdb8bc27fa4d3913e5dc4b2f26d44` | `42497156039` | Success; offline, evidence, intake, growth, lint and build |
+
+### Confirmed corrections
+
+- The database workflow initially failed because an unused local email-testing service attempted to bind host port 54324. The CI startup command now excludes the unused service. The latest run completed migration application and all 115 pgTAP assertions successfully.
+- The CI startup log is filtered for credential-bearing lines on failure; local Supabase demo credentials are not needed by the tests.
+- PR #24 and PR #19 were converted into explicit two-parent stack commits so their PR bases now contain the preceding feature branch changes. Both PRs are GitHub-mergeable and their latest stack CI runs passed.
+- PR #19's workflow now includes the legal-evidence tests and the intake/growth checks, in addition to offline tests and the production build.
+
+### Remaining integration boundary
+
+These green workflows are separate branch-level checks. There is not yet one final integration commit that runs the database migration suite and every application suite against the exact same combined tree. That combined verification remains a required gate before any merge or release.
+
+All PRs #16, #17, #18, #19, #23 and #24 remain Draft and unmerged. No production migration, OAuth connection, deployment, or public Intake activation has occurred. The Mother Two archive and approved public-site appearance remain protected.
