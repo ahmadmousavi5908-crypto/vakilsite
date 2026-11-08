@@ -1,6 +1,6 @@
 begin;
 
-select plan(24);
+select plan(27);
 
 select is((select allowed from public.consume_mavis_public_intake_rate_limit(repeat('a', 64))), true,
   'first intake request in a window is allowed');
@@ -112,6 +112,24 @@ select ok(not exists (select 1 from mavis_intake_private.submissions
 select ok(exists (select 1 from mavis_intake_private.audit_events
   where event_code = 'submission_received' and submission_id is null),
   'metadata-only audit event survives submission deletion without personal content');
+
+select is((select count(*)::integer from mavis_intake_private.audit_events
+  where event_code = 'submission_purged' and actor_type = 'system' and submission_id is null), 1,
+  'purge appends a metadata-only system audit marker');
+
+select throws_ok(
+  $select * from public.purge_mavis_expired_public_intake(null::timestamptz)$,
+  'P0001',
+  'A valid audit retention cutoff is required',
+  'purge rejects a null audit-retention cutoff'
+);
+
+select throws_ok(
+  $select * from public.purge_mavis_expired_public_intake(clock_timestamp() + interval '1 day')$,
+  'P0001',
+  'A valid audit retention cutoff is required',
+  'purge rejects a future audit-retention cutoff'
+);
 
 insert into mavis_intake_private.submissions (
   full_name, phone, case_type, summary, urgency,
