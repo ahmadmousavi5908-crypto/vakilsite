@@ -1,6 +1,6 @@
 begin;
 
-select plan(24);
+select plan(27);
 
 select ok(
   has_schema_privilege('authenticated', 'mavis_private', 'USAGE'),
