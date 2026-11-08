@@ -87,7 +87,7 @@ test("retains exact amendment and repeal links without inventing relationships",
 
   assert.deepEqual(dossier.items[0].relatedRecordIds, ["law-demo"]);
   assert.equal(dossier.items[0].sourceVerified, false);
-  assert.ok(dossier.items[0].missingFields.includes("verified_source_citation"));
+  assert.ok(dossier.items[0].missingFields.includes("verified_primary_source_verification"));
 });
 
 test("keeps partially repealed and unknown validity visible", () => {
