@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { safeExternalHttpUrl } from "../../lib/mavis/request-guards.mjs";
 import styles from "./MavisArticleInventory.module.css";
 
@@ -57,14 +57,16 @@ export default function MavisArticleInventory({ articles, audit }) {
               const open = Boolean(expanded[article.slug]);
               const auditLabel = report?.criticalCount ? String(report.criticalCount) + " بحرانی" : report?.warningCount ? String(report.warningCount) + " هشدار" : "بدون هشدار";
               return (
-                <tr key={article.slug}>
-                  <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
-                  <td>{article.category || "بدون دسته"}</td>
-                  <td>{(article.sections || []).length.toLocaleString("fa-IR")} بخش <small>{(article.checklist || []).length.toLocaleString("fa-IR")} مورد چک‌لیست</small></td>
-                  <td>{(article.sources || []).length.toLocaleString("fa-IR")}</td>
-                  <td><span className={report?.criticalCount ? styles.critical : report?.warningCount ? styles.warning : styles.clean}>{auditLabel}</span></td>
-                  <td><button className={styles.expand} type="button" aria-expanded={open} onClick={() => toggle(article.slug)}>{open ? "بستن" : "بازبینی"}</button></td>
-                  {open && <td className={styles.detailCell} colSpan={6}>
+                <Fragment key={article.slug}>
+                  <tr>
+                    <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
+                    <td>{article.category || "بدون دسته"}</td>
+                    <td>{(article.sections || []).length.toLocaleString("fa-IR")} بخش <small>{(article.checklist || []).length.toLocaleString("fa-IR")} مورد چک‌لیست</small></td>
+                    <td>{(article.sources || []).length.toLocaleString("fa-IR")}</td>
+                    <td><span className={report?.criticalCount ? styles.critical : report?.warningCount ? styles.warning : styles.clean}>{auditLabel}</span></td>
+                    <td><button className={styles.expand} type="button" aria-expanded={open} onClick={() => toggle(article.slug)}>{open ? "بستن" : "بازبینی"}</button></td>
+                  </tr>
+                  {open && <tr><td className={styles.detailCell} colSpan={6}>
                     <div className={styles.detail}>
                       <p>{article.excerpt}</p>
                       <strong>تیترهای مقاله</strong><ul>{(article.sections || []).map((section) => <li key={section.heading}>{section.heading}</li>)}</ul>
@@ -72,8 +74,8 @@ export default function MavisArticleInventory({ articles, audit }) {
                       <strong>منابع ثبت‌شده</strong><div className={styles.sources}>{(article.sources || []).map((source, index) => { const url = safeExternalHttpUrl(source.url); return url ? <a key={source.url + index} href={url} target="_blank" rel="noopener noreferrer">{source.label || "منبع مقاله"}</a> : <span key={index}>پیوند نامعتبر یا ناامن</span>; })}</div>
                       <p className={styles.warningText}>{article.warning}</p>
                     </div>
-                  </td>}
-                </tr>
+                  </td></tr>}
+                </Fragment>
               );
             })}
             {!visible.length && <tr><td colSpan={6} className={styles.empty}>مقاله‌ای با این فیلترها پیدا نشد.</td></tr>}
