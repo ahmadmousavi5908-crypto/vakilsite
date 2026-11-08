@@ -17,6 +17,18 @@ test("offline service worker precaches every runtime dependency", () => {
   assert.match(worker, /self\.skipWaiting\(\)/);
 });
 
+test("offline cache reads stay inside the versioned MAVIS cache", () => {
+  assert.match(worker, /const CACHE_NAME = "mavis-offline-v1\\.0\\.6-/);
+  assert.match(worker, /caches\.open\(CACHE_NAME\)[\s\S]*?cache\.match\(request\)/);
+  assert.doesNotMatch(worker, /caches\.match\(/);
+});
+
+test("network cache writes extend the service-worker event lifetime", () => {
+  assert.match(worker, /event\.waitUntil\([\s\S]*?responsePromise/);
+  assert.match(worker, /cache\.put\(request, response\.clone\(\)\)/);
+  assert.match(worker, /cache\.put\(OFFLINE_INDEX, response\.clone\(\)\)/);
+});
+
 test("offline readiness is not announced before service-worker activation", () => {
   assert.match(app, /updateCacheStatus\("pending"\)/);
   assert.match(app, /worker\.state==="activated"\)updateCacheStatus\("ready"\)/);
