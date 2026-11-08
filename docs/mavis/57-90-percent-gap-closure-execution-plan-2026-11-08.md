@@ -125,3 +125,31 @@ Do not average these into one flattering number. Overall readiness is capped by 
 2. Run the exact fresh Termux verification command from the acceptance matrix in a new clone; never reuse or overwrite the Mother Two backup.
 3. Obtain the retention decision and authorized Search Console/Bing access while legal review starts with a small, high-value batch.
 4. Do not merge, deploy, activate retention jobs or publish generated legal content as part of this work.
+
+
+## 8. Iranian primary-source discovery map (research update)
+
+Use these official destinations as a discovery and verification map, not as proof that every endpoint is currently reachable or that every page is complete:
+
+| Material | Primary destination | Use and caution |
+|---|---|---|
+| Official publication of laws, regulations and mandatory notices | https://rrk.ir/ | Capture exact issue number, publication date and document. The older root has had URL/availability changes; verify the current document route and do not treat a homepage response as a retrieved instrument. |
+| National laws and regulations | https://qavanin.ir/ and https://dotic.ir/ | Discover law text, metadata, status and amendment history. Confirm the exact law/document page and cross-check its official publication. |
+| Judiciary portal | https://eadl.ir/ | Navigation point for official judiciary circulars, advisory opinions, unifying decisions and linked judiciary systems. |
+| National judicial decisions repository | https://ara.jri.ac.ir/ | Discover published trial/appellate and higher-court decisions. Record court, branch, decision number/date and publication status. Do not label an ordinary published judgment as generally binding. |
+| Parliament and legislative history | https://www.parliran.ir/ and https://rc.majlis.ir/ | Identify bills, enacted text, parliamentary history and research commentary; research reports are not statutes. |
+| Guardian Council | https://www.shora-gc.ir/ and https://nazarat.ccri.ac.ir/ | Check review opinions and constitutional interpretations relevant to enactment history. |
+| Government resolutions | https://cabinetoffice.ir/ | Discover cabinet resolutions, bylaws and executive decisions; check publication and effective dates. |
+| Administrative Court | https://divan-edalat.ir/ | Check General Board decisions, especially annulment of administrative rules and circulars. |
+
+The current official judiciary portal search result lists the National Judicial Decisions System, advisory opinions, unifying decisions and administrative-court decisions. The portal itself returned a gateway error during this research session, so reachability remains unverified. The National Judicial Decisions System is identified at `ara.jri.ac.ir`; its exact document pages must be checked individually.
+
+A secondary legal-platform source map identifies the official destinations above and distinguishes published judgments from binding unifying decisions. Use it only for discovery; the official issuing body/document remains the evidence source. The Library of Congress guide also lists the Iranian Official Gazette as an official-gazette destination, while the ecoi guide explicitly warns that its research guide does not replace independent verification of currency, validity and accuracy.
+
+**Research references checked 2026-11-08:**
+- Law Library of Congress, Iran Guide: https://wwws.loc.gov/law/help/guide/nations/iran.php
+- ecoi, Iran Law Guide: https://www.ecoi.net/en/countries/islamic-republic-of-iran/law-guide/
+- Judiciary portal: https://www.eadil.com/
+- Official-source directory (discovery only): https://loyadesk.com/laws/official-sources
+
+**Access status:** this research did not retrieve a specific official legal instrument and did not verify live access to RRK, Qavanin, Dotic or Ara document endpoints. No legal record status is changed by this source map.
