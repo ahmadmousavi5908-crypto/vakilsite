@@ -41,6 +41,7 @@ test("rejects unsafe, incomplete and malformed source metadata", () => {
     sources: [
       { title: "No HTTPS", url: "http://example.org" },
       { title: "No title", url: "https://example.org" },
+      { title: "Embedded credentials", url: "https://user:pass@example.org/law", source_type: "secondary" },
       { title: "Valid secondary", url: "https://example.org/law", source_type: "secondary" },
     ],
   });
@@ -70,7 +71,7 @@ test("marks explicit repeal as outdated and keeps answer generation disabled", (
     review_status: "verified_primary_source",
   }]);
 
-  assert.equal(packet.state, "needs_official_check");
+  assert.equal(packet.state, "outdated");
   assert.equal(packet.items[0].state, "outdated");
   assert.equal(packet.legalOpinion, null);
   assert.equal(packet.deadlineCalculation, null);
