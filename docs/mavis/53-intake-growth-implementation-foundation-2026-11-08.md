@@ -10,7 +10,7 @@ This branch adds three provider-independent, deterministic foundations: intake v
 
 - Validate minimum contact and matter-summary fields before any future persistence adapter.
 - Case category and urgency use allowlists.
-- Initial-review consent is required and distinct from optional marketing and third-party consent.
+- Initial-review consent is required and distinct from optional marketing consent and a third-party data notice acknowledgement. An acknowledgement by the submitter is not treated as consent from the third party.
 - No national identifier, bank credential, password, document upload, or unnecessary sensitive detail is requested by this validation contract.
 - Validation success is not a submission receipt, engagement agreement, conflict check, limitation/deadline review, or legal assessment.
 - The next persistence milestone requires a dedicated schema, RLS/grants, private storage policy, retention/deletion policy, audit events, abuse controls, and live database tests before activation.
