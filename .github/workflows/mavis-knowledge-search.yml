@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/mavis-deterministic-legal-search-20261108
+      - feature/mavis-offline-first-public-knowledge-20261108
   workflow_dispatch:
 
 permissions:
@@ -36,6 +37,20 @@ jobs:
 
       - name: Test deterministic MAVIS retrieval
         run: npm run test:mavis-search
+
+      - name: Validate offline application syntax
+        run: |
+          node --check public/mavis-offline/app.js
+          node --check public/mavis-offline/search.mjs
+          node --check public/mavis-offline/sw.js
+
+      - name: Validate offline knowledge bundle
+        run: |
+          node -e "const fs=require('node:fs'); const d=JSON.parse(fs.readFileSync('public/mavis-offline/knowledge.json','utf8')); const count=t=>d.records.filter(r=>r.record_type===t).length; if(d.jurisdiction!=='IR'||d.language!=='fa-IR'||count('term')!==d.counts.terms||count('law')!==d.counts.laws||count('article')!==d.counts.articles||count('faq')!==d.counts.faqs) process.exit(1); console.log(JSON.stringify(d.counts));"
+
+      - name: Test offline Persian search
+        run: node --test tests/mavis/offline-search.test.mjs
+
 
       - name: Lint MAVIS retrieval modules
         run: npm run lint -- src/lib/mavis/knowledge-search.mjs src/lib/mavis/knowledge-registry.js src/lib/mavis/request-guards.mjs src/lib/mavis/rate-limit.mjs src/lib/supabase/admin.js src/app/api/mavis/knowledge-search/route.js src/components/admin/MavisKnowledgeSearch.jsx src/app/admin/mavis/page.js src/app/admin/page.js src/app/admin/login/page.js src/app/admin/login/actions.js tests/mavis/knowledge-search.test.mjs
