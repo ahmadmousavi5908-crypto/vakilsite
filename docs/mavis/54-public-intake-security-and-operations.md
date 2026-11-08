@@ -60,7 +60,7 @@ The public legal knowledge bundle may work offline after download. Intake submis
 
 ## Required release gates
 1. Apply migrations 004, 005 and 006 in a controlled Supabase database in order.
-2. Run `supabase test db`; all 44 pgTAP assertions for migration 006 and all previous database tests must pass.
+2. Run `supabase test db`; all 48 pgTAP assertions for migration 006 and all previous database tests must pass.
 3. Verify the actual Supabase Exposed schemas do not include `mavis_intake_private`.
 4. Verify the proxy overwrites `x-real-ip`; otherwise leave the feature disabled.
 5. Verify secret key is configured server-side only.
@@ -69,4 +69,4 @@ The public legal knowledge bundle may work offline after download. Intake submis
 8. Keep public activation disabled until all gates pass.
 
 ## Known limitation
-The current repository does not contain a Supabase local config or a live database connection. The pgTAP file is authored but has not been executed. CI currently covers JavaScript guards and lint only; it does not prove the migration or live Supabase behavior.
+The PR workflow now initializes an isolated local Supabase stack, applies migrations 001–006, and runs `supabase test db` alongside JavaScript tests, lint and a production build. This is configured but not yet evidenced by a completed workflow run. No live Supabase project has been inspected or changed; a passing local CI run still does not prove production Exposed-schema, proxy or secret settings.
