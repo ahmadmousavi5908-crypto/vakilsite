@@ -10,6 +10,7 @@
 - PR #32 merged the property-registration source audit note as `5f4ebfbe13dc7993f1cea267b435a88376e685ef`. Its exact documentation-only head `167267ea5508333488d356eb6bbe54675fe46c37` passed application CI `42525462721` and database CI `42525462744`.
 - PR #33 merged the precise web-origin connectivity wording as `47d38bdc0ca040743676a5eacac57a3387d55163`. Its exact head `259f2befb6122564f23125726f45ea110bb970a1` passed application CI `42525521429` and database CI `42525521302`.
 - PR #34 merged the client-authentication configuration audit, server-only secret-key template entry, and private client-portal data model as `e627bcf1eca66d520b871a854ed4f4c6b394dbd1`. Its exact head `947ca49aa18e7306d6ae23b99e7b92758f8a7e41` passed application CI `42525724144` and database CI `42525724224`.
+- PR #35 merged the synthetic local database backup/restore gate and current-branch Termux runbook as `7b5ba5c0c3b6096ebbae6df03ab2d728c9b9dd9e`. Its exact head `3cec4465ee32e589692ed0cf7041290732d5eda4` passed application CI `42526647140` and database CI `42526647146`; the database log explicitly reports `Synthetic local database backup/restore check passed.`
 - These are exact PR-head results, not proof that a later integration-branch commit has passed. Every new candidate SHA must pass its own checks.
 - Intake uses bounded JSON parsing, origin/content-type guards, rate limiting, idempotent submissions, and narrow RPC access.
 - The offline legal bundle intentionally does not claim current-law verification.
@@ -61,7 +62,7 @@ Record environment, migration version, test data identifiers, timestamps, observ
 - **Mother Two** protects the approved project source/workspace snapshot. Keep its archive and checksum unchanged.
 - **Database backup** protects live Postgres data and schema. It does not automatically include objects stored through the Supabase Storage API; verify storage objects separately.
 - A backup is not accepted merely because it exists or its checksum matches. A restore into a disposable target is the evidence that it can be recovered.
-- The database CI now includes a **synthetic local dump/restore check**: it creates a disposable probe row, dumps roles/schema/data, restores them into a fresh local Supabase stack, and verifies the row plus key RLS/least-privilege properties. Dump files are temporary and are not uploaded or committed.
+- The database CI now includes a **synthetic local dump/restore check**: it creates a disposable probe row, dumps roles/schema/data, restores them into a fresh local Supabase stack, and verifies the row plus key RLS/least-privilege properties. Dump files are temporary and are not uploaded or committed. This check passed on PR #35 exact head `3cec4465ee32e589692ed0cf7041290732d5eda4` (run `42526647146`).
 - This CI check is not a remote/staging backup restore, does not include real client data, and does not verify Supabase Storage objects. The disposable staging restore and Storage-object verification remain separate release gates.
 - Never commit database dumps, credentials, private intake data, or backup archives to this public repository.
 
@@ -71,6 +72,8 @@ Supabase's backup workflow guidance explicitly warns against storing database du
 ## 5. Idempotency secret lifecycle
 
 `MAVIS_INTAKE_IDEMPOTENCY_SECRET` is a server-only HMAC key and must be at least 32 characters. Keep it stable while any browser tab may retry an existing submission: the fingerprint is derived from this secret, so rotating it mid-retry-window can turn a legitimate retry into a conflicting-key response.
+
+Generate a high-entropy value locally with `openssl rand -hex 32` and place it directly in the deployment secret manager. The `.env.example` contains only an empty variable name; never paste the generated value into the repository, chat, logs, or issue tracker.
 
 - Store it only in the deployment secret manager; never in `NEXT_PUBLIC_*`, source, browser storage, logs, or issue comments.
 - Restrict access to the smallest operator set and record who changed it and when, without recording its value.
@@ -140,7 +143,7 @@ Release readiness is **not achieved** until all applicable items below have evid
 - [ ] Retention policy approved and purge/alert/recovery tested, or explicitly deferred with owner sign-off.
 - [ ] Primary-source legal review completed for every record that claims verification.
 - [ ] Privacy review confirms no PII in browser storage, public bundle, analytics, or logs.
-- [ ] Synthetic local database dump/restore CI passes on the exact candidate SHA.
+- [x] Synthetic local database dump/restore CI passed on PR #35 exact head `3cec4465ee32e589692ed0cf7041290732d5eda4` (run `42526647146`); repeat on every later candidate SHA before release.
 - [ ] Disposable staging backup/restore and rollback drill passes, including Storage objects.
 - [ ] Provider integrations individually approved and tested, or explicitly deferred.
 - [ ] Both application and database CI workflows pass on the exact release candidate SHA.
