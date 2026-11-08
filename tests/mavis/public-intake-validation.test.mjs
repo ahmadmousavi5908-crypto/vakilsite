@@ -45,3 +45,8 @@ test("rejects arrays and null input", () => {
   assert.equal(validatePublicIntake(null).ok, false);
   assert.equal(validatePublicIntake([]).ok, false);
 });
+
+test("accepts Persian and Arabic numerals in Iranian mobile numbers", () => {
+  assert.equal(validatePublicIntake({ ...valid, phone: "۰۹۱۲۳۴۵۶۷۸۹" }).ok, true);
+  assert.equal(validatePublicIntake({ ...valid, phone: "٠٩١٢٣٤٥٦٧٨٩" }).ok, true);
+});
