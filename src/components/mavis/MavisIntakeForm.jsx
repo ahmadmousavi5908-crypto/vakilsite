@@ -17,7 +17,7 @@ const initialValues = {
   marketing_consent: false,
 };
 
-export default function MavisIntakeForm() {
+export default function MavisIntakeForm({ privacyNoticeVersion, retentionDays }) {
   const [values, setValues] = useState(initialValues);
   const [idempotencyKey, setIdempotencyKey] = useState("");
   const [loading, setLoading] = useState(false);
@@ -71,7 +71,7 @@ export default function MavisIntakeForm() {
       <label>شرح کوتاه موضوع<textarea value={values.matter_summary} onChange={(event) => update("matter_summary", event.target.value)} minLength={20} maxLength={4000} rows={5} required placeholder="موضوع را به‌صورت خلاصه و بدون درج اطلاعات محرمانه توضیح دهید." /></label>
       <p className={styles.warning}>در این فرم کد ملی، شماره پرونده، نشانی دقیق، اطلاعات بانکی، رمزها یا تصویر اسناد را وارد نکنید. این فرم صرفاً برای ثبت درخواست تماس اولیه است و به‌تنهایی رابطه وکالت ایجاد نمی‌کند.</p>
       <fieldset><legend>رضایت‌های ضروری</legend>
-        <label className={styles.check}><input type="checkbox" checked={values.privacy_notice_accepted} onChange={(event) => update("privacy_notice_accepted", event.target.checked)} required /> اطلاعیه حریم خصوصی و هدف جمع‌آوری اطلاعات را مطالعه کردم.</label>
+        <label className={styles.check}><input type="checkbox" checked={values.privacy_notice_accepted} onChange={(event) => update("privacy_notice_accepted", event.target.checked)} required /> <span><a href="/mavis-intake/privacy" target="_blank" rel="noopener noreferrer">اطلاعیه حریم خصوصی نسخه {privacyNoticeVersion}</a> را مطالعه کردم؛ مدت نگهداری اعلام‌شده {retentionDays} روز است.</span></label>
         <label className={styles.check}><input type="checkbox" checked={values.contact_consent} onChange={(event) => update("contact_consent", event.target.checked)} required /> برای پیگیری همین درخواست با من تماس گرفته شود.</label>
       </fieldset>
       <fieldset><legend>رضایت‌های اختیاری و مستقل</legend>
