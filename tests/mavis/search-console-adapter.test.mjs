@@ -61,9 +61,17 @@ test("supports the hourly dimension and validates News Showcase aggregation", ()
     rows: [],
   }, request);
 
+  const invalidHour = normalizeSearchAnalyticsResponse({ rows: [] }, {
+    ...request,
+    dimensions: ["hour"],
+    dataState: "final",
+  });
+
   assert.equal(hourly.ok, true);
+  assert.equal(invalidHour.ok, false);
+  assert.equal(invalidHour.reason, "hour_dimension_requires_hourly_data_state");
   assert.equal(invalidShowcase.ok, false);
-  assert.equal(invalidShowcase.reason, "invalid_news_showcase_aggregation");
+  assert.equal(invalidShowcase.reason, "unknown_aggregation_type");
 });
 
 test("masks sensitive values embedded in page URL query parameters", () => {
