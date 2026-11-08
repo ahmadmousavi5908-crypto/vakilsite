@@ -16,13 +16,13 @@ export async function generateMetadata({ params }) {
   if (!article) return { title: "مطلب پیدا نشد" };
   const canonicalPath = "/articles/" + article.slug;
   return {
-    title: article.title,
-    description: article.excerpt,
+    title: article.seoTitle || article.title,
+    description: article.seoDescription || article.excerpt,
     alternates: { canonical: canonicalPath },
     openGraph: {
       type: "article",
-      title: article.title,
-      description: article.excerpt,
+      title: article.seoTitle || article.title,
+      description: article.seoDescription || article.excerpt,
       locale: "fa_IR",
       url: canonicalPath,
     },
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ArticleDetailPage({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const article = await getPublishedArticleBySlug(slug);
   if (!article) notFound();
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
