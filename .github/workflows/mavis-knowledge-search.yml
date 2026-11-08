@@ -44,11 +44,14 @@ jobs:
       - name: Test growth intelligence metrics
         run: node --test tests/mavis/growth-metrics.test.mjs
 
+      - name: Test cautious legal intake triage
+        run: node --test tests/mavis/legal-intake-triage.test.mjs
+
       - name: Lint MAVIS retrieval modules
         run: npm run lint -- src/lib/mavis/knowledge-search.mjs src/lib/mavis/knowledge-registry.js src/lib/mavis/request-guards.mjs src/lib/mavis/rate-limit.mjs src/lib/supabase/admin.js src/app/api/mavis/knowledge-search/route.js src/components/admin/MavisKnowledgeSearch.jsx src/app/admin/mavis/page.js src/app/admin/page.js src/app/admin/login/page.js src/app/admin/login/actions.js tests/mavis/knowledge-search.test.mjs
 
       - name: Lint intake and growth modules
-        run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/growth-metrics.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs
+        run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/growth-metrics.mjs src/lib/mavis/legal-intake-triage.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs tests/mavis/legal-intake-triage.test.mjs
 
       - name: Build the site
         run: npm run build
