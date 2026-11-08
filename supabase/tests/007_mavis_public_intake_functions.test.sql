@@ -1,6 +1,6 @@
 begin;
 
-select plan(31);
+select plan(33);
 
 select ok(
   (select relrowsecurity from pg_class where oid = 'mavis_intake_private.retention_policy'::regclass),
@@ -165,11 +165,30 @@ insert into mavis_intake_private.submissions (
   review_priority, status, retention_expires_at, created_at
 )
 values (
+  'آزمون حداقل مهلت', '+989123456789', 'civil',
+  'رکورد آزمایشی برای اثبات حداقل مدت نگهداری مستقل از زمان انقضا.',
+  'routine', true, clock_timestamp() - interval '2 days', 'test-v1',
+  'standard_human_review', 'closed',
+  clock_timestamp() - interval '1 day', clock_timestamp() - interval '2 days'
+);
+
+select is((select submissions_deleted from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '31 days')),
+  0::bigint, 'purge respects the approved minimum submission retention period');
+select ok(exists (select 1 from mavis_intake_private.submissions
+  where full_name = 'آزمون حداقل مهلت'),
+  'submission younger than the approved minimum retention period remains stored');
+
+insert into mavis_intake_private.submissions (
+  full_name, phone, case_type, summary, urgency,
+  initial_review_consent, initial_review_consent_at, consent_version,
+  review_priority, status, retention_expires_at, created_at
+)
+values (
   'آزمون توقف حذف', '+989123456789', 'civil',
   'رکورد آزمایشی دارای توقف قانونی حذف و نگهداری.',
   'routine', true, clock_timestamp() - interval '31 days', 'test-v1',
   'standard_human_review', 'retention_hold',
-  clock_timestamp() - interval '1 day', clock_timestamp() - interval '2 days'
+  clock_timestamp() - interval '1 day', clock_timestamp() - interval '31 days'
 );
 
 select is((select submissions_deleted from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '31 days')),
