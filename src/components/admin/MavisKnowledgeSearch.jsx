@@ -31,22 +31,34 @@ const statusLabels = {
   needs_consolidation_review: "نیازمند بررسی تنقیح و اصلاحات",
 };
 
+const evidenceLabels = {
+  verified_primary: "منبع اولیه با وضعیت بررسی‌شده",
+  secondary_reference: "ارجاع ثانویه",
+  outdated: "منسوخ یا خارج از اعتبار",
+  needs_official_check: "نیازمند بررسی منبع رسمی",
+  not_found: "منبع قابل استناد ثبت نشده",
+};
+
+const validityLabels = {
+  in_force: "در حال اجرا (طبق داده ثبت‌شده)",
+  partially_repealed: "دارای نسخ جزئی؛ نیازمند تطبیق",
+  repealed: "منسوخ",
+  unknown: "وضعیت اعتبار نامشخص",
+};
+
 
 function recordSources(record) {
-  const sources = Array.isArray(record.sources) ? record.sources : [];
-  const items = sources
+  const sources = Array.isArray(record.evidence?.citations) ? record.evidence.citations : [];
+  return sources
     .map((source) => ({
-      title: source?.title || "مشاهده منبع",
-      url: safeExternalHttpUrl(source?.url),
-      type: source?.source_type,
+      title: source.title || "مشاهده منبع",
+      url: safeExternalHttpUrl(source.url),
+      type: source.sourceType,
+      accessedAt: source.accessedAt,
+      publicationDate: source.publicationDate,
+      sourceVersion: source.sourceVersion,
     }))
     .filter((source) => source.url);
-
-  const fallbackUrl = safeExternalHttpUrl(record.source_url);
-  if (fallbackUrl && !items.some((source) => source.url === fallbackUrl)) {
-    items.push({ title: "صفحه منبع ثبت‌شده", url: fallbackUrl, type: "secondary" });
-  }
-  return items;
 }
 
 export default function MavisKnowledgeSearch() {
@@ -142,6 +154,8 @@ export default function MavisKnowledgeSearch() {
           {results.map((record) => {
             const sources = recordSources(record);
             const excerpt = record.summary || record.definition || record.notes;
+            const evidence = record.evidence || {};
+            const validity = evidence.validity || {};
             return (
               <article className={styles.result} key={record.id}>
                 <div className={styles.resultTop}>
@@ -150,26 +164,36 @@ export default function MavisKnowledgeSearch() {
                 </div>
                 <h3>{record.title || record.canonical || "مدخل بدون عنوان"}</h3>
                 {excerpt && <p className={styles.excerpt}>{excerpt}</p>}
+                <div className={styles.evidencePanel}>
+                  <div className={styles.evidenceHeader}>
+                    <strong>وضعیت مستندات و اعتبار</strong>
+                    <span className={styles.evidenceState}>{evidenceLabels[evidence.state] || evidenceLabels.needs_official_check}</span>
+                  </div>
+                  <p>{validityLabels[validity.status] || validityLabels.unknown}</p>
+                  {evidence.requiresHumanReview !== false && <small>این مدخل پیش از هر پاسخ حقوقی باید توسط کارشناس بررسی شود.</small>}
+                </div>
                 <div className={styles.meta}>
                   {record.article_number && <span>شماره ماده: {record.article_number}</span>}
                   {record.status && <span>وضعیت: {statusLabels[record.status] || "ثبت‌شده، نیازمند بررسی"}</span>}
                   {record.matched_field && <span>تطبیق بر اساس: {matchedFieldLabels[record.matched_field] || "معیار داخلی"}</span>}
                 </div>
-                {sources.length > 0 && (
-                  <div className={styles.sources}>
-                    <strong>منابع ثبت‌شده</strong>
+                <div className={styles.sources}>
+                    <strong>منابع قابل نمایش در قرارداد اعتبارسنجی</strong>
                     <ul>
                       {sources.map((source) => (
                         <li key={source.url}>
                           <a href={source.url} target="_blank" rel="noopener noreferrer">
                             {source.title}
                           </a>
-                          {source.type && <small>{source.type === "primary" ? "منبع اولیه" : "منبع ثانویه"}</small>}
+                          {source.type && <small>{source.type === "primary" ? "دامنه اولیه ثبت‌شده" : "منبع ثانویه یا تأییدنشده"}</small>}
+                          {source.accessedAt && <small>تاریخ دسترسی ثبت‌شده: {source.accessedAt}</small>}
+                          {source.publicationDate && <small>تاریخ انتشار: {source.publicationDate}</small>}
+                          {source.sourceVersion && <small>نسخه: {source.sourceVersion}</small>}
                         </li>
                       ))}
                     </ul>
+                    {sources.length === 0 && <p className={styles.noSource}>برای این مدخل، منبع رسمی قابل استناد و تأییدشده ثبت نشده است.</p>}
                   </div>
-                )}
                 {safeInternalPath(record.path) && <a className={styles.recordLink} href={safeInternalPath(record.path)}>مشاهده مدخل در کتابخانه ←</a>}
               </article>
             );
