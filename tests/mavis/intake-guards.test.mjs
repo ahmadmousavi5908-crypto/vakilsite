@@ -19,6 +19,7 @@ const valid = {
 
 test("normalizes telephone formatting without changing digits", () => {
   assert.equal(normalizeIntakePhone("+98 (912) 123-4567"), "+989121234567");
+  assert.equal(normalizeIntakePhone("+۹۸ (۹۱۲) ۱۲۳-۴۵۶۷"), "+989121234567");
 });
 
 test("accepts valid IPv4 and IPv6 but rejects untrusted text", () => {
