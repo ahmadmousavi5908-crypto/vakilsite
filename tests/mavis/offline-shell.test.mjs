@@ -19,6 +19,9 @@ test("offline connectivity status probes the uncached same-origin server indepen
   assert.match(app, /credentials:"omit"/);
   assert.match(app, /setTimeout\(\(\)=>controller\.abort\(\),1800\)/);
   assert.match(app, /جست‌وجوی آفلاین همچنان فعال است/);
+  assert.match(app, /میزبان وب ماویس پاسخ می‌دهد/);
+  assert.doesNotMatch(app, /سرویس ماویس در دسترس است/);
+  assert.doesNotMatch(connectivityRoute, /createServiceClient|supabase/i);
   assert.match(connectivityRoute, /force-dynamic/);
   assert.match(connectivityRoute, /Cache-Control/);
   assert.match(connectivityRoute, /no-store, no-cache, must-revalidate/);

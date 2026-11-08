@@ -9,7 +9,7 @@ MAVIS must track three independent states. A single `navigator.onLine` boolean i
 | State | Detection | User-facing meaning |
 |---|---|---|
 | Device network | browser `online` / `offline` event and `navigator.onLine` | the browser believes a network interface exists |
-| MAVIS service reachability | uncached same-origin `GET /api/mavis/connectivity`, 1.8-second timeout | the deployed MAVIS origin responds |
+| MAVIS origin reachability | uncached same-origin `GET /api/mavis/connectivity`, 1.8-second timeout | the MAVIS web origin responds; this does not establish database, provider, or client-portal readiness |
 | Offline knowledge readiness | current service-worker activation after its atomic precache succeeds | the offline app shell and public corpus are cached |
 
 Do not conflate "server unavailable" with "device offline". Both may use local public search, but the explanation should be accurate.
@@ -18,8 +18,8 @@ Do not conflate "server unavailable" with "device offline". Both may use local p
 
 1. On page boot, inspect `navigator.onLine`. If false, immediately show local/offline status; do not wait for a network timeout.
 2. If true, show a brief checking state and call the no-store same-origin connectivity endpoint.
-3. If the endpoint returns the expected `{status: "ok"}` response, show "MAVIS service reachable".
-4. If the endpoint fails, times out, or returns an unexpected payload, show "MAVIS service unavailable; local search remains available". Do not claim the device itself is offline.
+3. If the endpoint returns the expected `{status: "ok"}` response, show "MAVIS web origin responds"; do not imply that the database or private case services are healthy.
+4. If the endpoint fails, times out, or returns an unexpected payload, show "MAVIS web origin unavailable; local search remains available". Do not claim the device itself is offline.
 5. On `offline`, immediately update state and invalidate any older in-flight probe.
 6. On `online`, run a fresh probe. Ignore stale responses from earlier probes.
 7. Show the offline-search-ready state only after the service worker for the current page has completed installation/activation. The worker's `cache.addAll` must succeed before activation.
@@ -58,7 +58,7 @@ This is not a first-release feature because a disconnected device cannot learn t
 | Device reports offline | immediate offline status; local search works |
 | Wi-Fi connected, internet blocked | probe fails quickly; say service unavailable, not definitely device offline |
 | Internet works, MAVIS origin down | same local-search fallback; server unavailable status |
-| Server responds | service reachable; local search remains local |
+| Web origin responds | origin responds; database/provider/client-portal readiness is not implied; local search remains local |
 | Connectivity probe timeout | fail closed for online operations; do not block local search |
 | Older probe returns after a newer one | stale response ignored |
 | Offline bundle not fully cached | never claim offline-ready |
@@ -68,7 +68,7 @@ This is not a first-release feature because a disconnected device cannot learn t
 
 ## 6. Current implementation note
 
-The public offline app now separates browser network hints from actual MAVIS-origin reachability by calling an uncached health endpoint with a short timeout. Local search remains independent of the probe. Automated source-contract tests cover this behavior; a real airplane-mode/device test is still required.
+The public offline app now separates browser network hints from MAVIS web-origin reachability by calling an uncached health endpoint with a short timeout. Local search remains independent of the probe. Automated source-contract tests cover this behavior; a real airplane-mode/device test is still required.
 
 ## 7. Research references
 
