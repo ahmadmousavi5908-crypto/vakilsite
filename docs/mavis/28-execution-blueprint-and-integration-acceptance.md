@@ -203,6 +203,21 @@
 - Supabase backups: https://supabase.com/docs/guides/platform/backups
 - Supabase RLS and grants: https://supabase.com/docs/guides/database/postgres/row-level-security
 
+
+
+## 13. تداوم خدمت در نبود LLM و مدیریت credential
+الزام پذیرش: هیچ‌یک از سه بازوی MAVIS نباید برای فرم، قواعد، ذخیره‌سازی، retrieval پایه، نمایش منابع یا محاسبات قطعی به توکن LLM وابسته باشد.
+
+- Intake بدون LLM باید فرم شرطی نسخه‌دار، validation، consent، چک‌لیست و tracking ID را اجرا کند؛ موفقیت فقط پس از commit پایدار DB اعلام شود.
+- Knowledge Gateway باید exact/metadata/PostgreSQL full-text را بدون embedding یا LLM ارائه کند. متن و citation ثبت‌شده قابل نمایش است؛ تفسیر حقوقی مولد بدون مدل به human review منتقل می‌شود.
+- Growth باید شاخص‌های قطعی و گزارش داده خام را بدون LLM بسازد؛ متن تحلیلی مولد در صف بماند.
+- Provider quota exhaustion، provider outage، database outage، search-index outage و secret-manager outage کد وضعیت و fallback جدا دارند. در خرابی DB هیچ Intake با موفقیت کاذب یا ذخیره پنهان در مرورگر پذیرفته نیست.
+- LLM jobs باید idempotent، قابل resume، دارای سقف تلاش/هزینه و بدون retry loop باشند؛ Provider ثانویه بدون ارزیابی و approval فعال نمی‌شود.
+- هیچ password انسانی در Knowledge Library، prompt، log یا Git ذخیره نمی‌شود. API/OAuth secrets فقط در secret manager سرور با scope حداقلی و چرخه rotation/revocation نگهداری می‌شوند.
+- معیارهای آزمون کامل در سند ۴۷ ثبت شده‌اند و به release gateهای این سند افزوده می‌شوند.
+
+مرجع: [سند ۴۷ تداوم خدمت مستقل از توکن و امنیت اعتبارنامه‌ها](./47-provider-independent-continuity-and-secure-credentials-2026-11-08.md).
+
 ## 12. وضعیت و محدودیت
 این سند طراحی اجرایی است. هیچ API متصل، credential ساخته، Supabase migration اعمال، مقاله منتشر یا سایت deploy نشده است. دسترسی و وضعیت واقعی حساب‌های Google، Bing، Supabase و فایل‌سیستم Termux باید در محیط مالک بررسی شود.
 
