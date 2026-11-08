@@ -98,7 +98,7 @@ create temporary table mavis_expired_receipt on commit drop as
 select id from mavis_intake_private.submissions where full_name = 'آزمون حذف';
 
 insert into mavis_intake_private.audit_events (submission_id, event_code, actor_type, created_at)
-select id, 'submission_received', 'system', clock_timestamp() - interval '2 days'
+select id, 'submission_received', 'system', clock_timestamp()
 from mavis_expired_receipt;
 
 create temporary table mavis_purge_result on commit drop as
