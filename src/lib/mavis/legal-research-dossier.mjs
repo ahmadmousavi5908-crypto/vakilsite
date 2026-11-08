@@ -62,7 +62,8 @@ function normalizeRecord(record) {
     ? ["source_class"]
     : REQUIRED_FIELDS[sourceClass].filter((field) => !hasValue(record, field));
 
-  if (evidence.citations.length === 0) missingFields.push("verified_source_citation");
+  if (evidence.citations.length === 0) missingFields.push("source_citation");
+  if (evidence.state !== "verified_primary") missingFields.push("verified_primary_source_verification");
 
   return {
     id: typeof record.id === "string" ? record.id : null,
