@@ -61,7 +61,7 @@
 ## Cross-workstream release gate
 
 - [ ] CI green on the exact candidate commit.
-- [ ] Local Termux npm ci, legal-library validator, MAVIS tests, lint and production build.
+- [ ] Run `npm ci --no-audit --no-fund`, then `npm run mavis:verify` in a fresh Termux workspace; capture the complete output and review the Git diff.
 - [ ] Cold-online then true-offline browser/device test.
 - [ ] Staging tests for DB outage, rate limit, unauthorized access, same-key retries, conflicting-key reuse and data retention.
 - [ ] Obtain owner/legal approval for minimum submission and audit retention periods; record the approval reference and enable the private retention policy only after review.
@@ -71,4 +71,4 @@
 - [ ] Backup/restore and rollback procedure tested against a disposable staging environment.
 - [ ] Explicit owner approval before merge, production migration, activation or deployment.
 
-A green CI run proves only the checks executed by that workflow on that commit. It does not prove legal currency, device-offline behavior, production security, provider connectivity, or deployment readiness.
+A green CI run proves only the checks executed by that workflow on that commit. The local helper `npm run mavis:verify` runs the canonical legal-library validator, all `tests/mavis/*.test.mjs`, offline-bundle validation, offline syntax checks, MAVIS lint and a Webpack production build. It intentionally does not claim to run Supabase pgTAP, staging failure-injection or physical-device offline tests. It does not prove legal currency, device-offline behavior, production security, provider connectivity, or deployment readiness.
