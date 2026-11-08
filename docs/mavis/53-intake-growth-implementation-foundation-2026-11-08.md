@@ -41,3 +41,18 @@ The legal corpus must prioritize the original promulgated text and official amen
 4. Browser test confirms no sensitive content is cached or written to local storage/service-worker caches.
 5. Growth calculations are reconciled against real Search Console exports and conversion definitions.
 6. Enable public intake only after server-side authorization, rate limiting, CSRF/origin controls, private storage and monitoring are verified.
+
+
+## Public intake endpoint implementation boundary
+
+The server route `POST /api/mavis/intake` is implemented but remains fail-closed unless `MAVIS_INTAKE_ENABLED=true`. It requires all of the following server-side settings before it can accept data:
+
+- `SUPABASE_SECRET_KEY` using the current Supabase secret-key format; never a browser-exposed publishable key.
+- `MAVIS_INTAKE_RATE_LIMIT_SECRET` with at least 32 characters for HMAC-SHA256 IP bucket pseudonyms.
+- `MAVIS_TRUST_X_REAL_IP=true` only when the hosting reverse proxy strips client-supplied `X-Real-IP` and overwrites it with the verified client address.
+- `MAVIS_INTAKE_RETENTION_DAYS` explicitly approved and bounded to 1–3650 days; no default legal retention period is assumed.
+- `MAVIS_INTAKE_CONSENT_VERSION` identifying the exact consent text shown to the submitter.
+
+The route checks same-origin, JSON content type, an 8 KB streamed body cap, strict field allowlist, deterministic validation and triage, persistent database rate limit, then calls the service-role-only RPC. Database failure is returned as failure; no success receipt is emitted unless a tracking code is returned. Raw IP, name, phone and summary are never written to application logs by this route.
+
+The endpoint is not active until all environment settings, migration 006, proxy behavior, approved retention schedule and live local Supabase CI have been verified. No public form or visual change is included in this implementation.
