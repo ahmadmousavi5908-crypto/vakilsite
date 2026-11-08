@@ -38,3 +38,11 @@
 .initialState span{font-size:27px;color:#b49a69}
 .initialState p{margin:0}
 @media(max-width:620px){.workspace{padding:17px 13px}.heading{align-items:flex-start}.heading h2{font-size:16px}.heading p{font-size:10px}.mark{width:38px;height:38px;flex-basis:38px;font-size:20px}.searchRow{flex-direction:column}.searchRow button{min-height:42px}.result{padding:14px}.result h3{font-size:13px}}
+
+.evidencePanel{margin-top:12px;padding:10px 12px;background:#f8f7f2;border:1px solid #e9e2d4;border-radius:5px}
+.evidenceHeader{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.evidenceHeader strong{font-size:10px;color:#43566a}
+.evidenceState{font-size:9px;color:#755d32;background:#f1eadb;border:1px solid #e3d7bd;padding:4px 7px;border-radius:3px}
+.evidencePanel p{font-size:10px;color:#566675;margin:7px 0 3px}
+.evidencePanel>small{font-size:9px;color:#8b6a3e}
+.noSource{font-size:9px;color:#8b7770;margin:8px 0 0}
