@@ -123,3 +123,35 @@ MAVIS از نظر جهت‌گیری محصول و اصول طراحی قوی ا�
 - Google Search AI features: https://developers.google.com/search/docs/appearance/ai-features
 - OpenAI crawlers: https://developers.openai.com/api/docs/bots
 - Bing Webmaster Guidelines: https://www.bing.com/webmasters/help/webmaster-guidelines-30fba23a
+
+
+## 11. به‌روزرسانی اجرایی 2026-11-08 — نخستین برش بازیابی دانش
+
+از روی شاخه مبنای remote یعنی `integration/mother-two-research-only-20261106` یک شاخه مستقل برای نخستین برش اجرایی ایجاد شد:
+
+- Branch: `feature/mavis-deterministic-legal-search-20261108`
+- PR: https://github.com/ahmadmousavi5908-crypto/vakilsite/pull/17
+- وضعیت: Draft، باز، ادغام‌نشده.
+- Base SHA: `0f582a57a7aad57cc3b0ac847aa4e3ccab263962`
+- Head SHA: `dad3001f6e6355f69028bae55740fb240f800b2d`
+
+### انجام‌شده و دارای شاهد
+1. نرمال‌سازی فارسی/عربی، ارقام، اعراب و نیم‌فاصله برای جست‌وجوی قطعی.
+2. رتبه‌بندی عنوان، نام معیار، مترادف، عبارت جست‌وجو و تعریف/خلاصه.
+3. اتصال Registry سمت سرور به `src/lib/legal-library.js` و داده‌های موجود؛ بدون corpus موازی.
+4. API فقط‌مدیر برای جست‌وجوی داخلی، با `requireAdmin`، کنترل Origin، JSON، سقف بدنه 4KB، محدودیت طول query و limit، پاسخ no-store و هشدار عدم ارائه نظر حقوقی.
+5. ۱۳ تست خودکار شامل fixture و داده واقعی کتابخانه.
+6. CI run شماره `42479018957` با نتیجه success: اعتبارسنج کتابخانه، ۱۳ تست، ESLint و production build همگی موفق.
+
+اعتبارسنج کتابخانه در همین run تعداد ۱۳۲ اصطلاح، ۱۶ قانون و ۲۲ خلاصه ماده را با صفر خطا گزارش کرد. Build مسیر پویا `/api/mavis/knowledge-search` را شناسایی کرد.
+
+### مرز این پیشرفت
+این برش فقط retrieval و رتبه‌بندی است؛ هیچ تحلیل حقوقی، بررسی اعتبار روز قانون، محاسبه مهلت یا نتیجه‌گیری درباره پرونده انجام نمی‌دهد. API به نقش مدیر فعلی سایت محدود است و هنوز RBAC اختصاصی MAVIS، rate limit پایدار، audit ledger، schema/RLS زنده، ذخیره Intake، اتصال Provider، Growth API یا رابط کاربری ندارد.
+
+### وضعیت دروازه‌ها پس از این تغییر
+- G0 Baseline محلی و Mother Two: **Pending**؛ فقط base remote ثبت شده و workspace/آرشیو محلی مستقلاً تطبیق نشده است.
+- G2 Retrieval پایه: **Implemented + CI-tested**؛ ارزیابی golden set حقوقی، Recall/Precision و citation verification هنوز Pending است.
+- G1 Security کامل: **Pending**؛ gate فعلی API صرفاً احراز هویت مدیر و اعتبارسنجی درخواست است؛ تست RLS و cross-arm اجرا نشده.
+- G3 Intake، G4 Growth، G5 Reliability، G6 Performance، G7 UX و G8 Release: **Pending**.
+
+این پیشرفت امتیاز کلی آمادگی MAVIS را خودکار افزایش نمی‌دهد؛ تنها نخستین قابلیت اجرایی و قابل تست به وضعیت پیاده‌سازی/تست رسیده است. PR #17 باید Draft بماند تا تطبیق محلی Mother Two و دروازه‌های امنیتی انجام شوند.
