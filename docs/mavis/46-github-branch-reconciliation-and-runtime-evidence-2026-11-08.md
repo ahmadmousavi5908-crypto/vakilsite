@@ -22,7 +22,7 @@
 | docs نسبت به runtime | 65 | 152 | diverged |
 | runtime نسبت به integration/mother-two-research-only | 152 | 4 | diverged |
 
-مقایسه runtime با شاخه `integration/mother-two-research-only-20261106` شامل 75 فایل است: 60 فایل افزوده و 15 فایل اصلاح‌شده؛ 41 فایل در docs و 34 مورد در فهرست تفاوت‌ها خارج از docs قرار دارند (تعداد فایل‌های غیرمستنداتیِ گزارش‌شده در مقایسه کامل: 33 فایل). هیچ فایل حذف‌شده‌ای در این compare دیده نشد.
+مقایسه runtime با شاخه `integration/mother-two-research-only-20261106` شامل 75 فایل است: 60 فایل افزوده و 15 فایل اصلاح‌شده؛ 41 فایل در docs و 34 فایل خارج از docs قرار دارند. هیچ فایل حذف‌شده‌ای در این compare دیده نشد.
 
 **تصمیم:** شاخه مستندات و شاخه runtime نباید مستقیماً به یکدیگر merge شوند. ابتدا baseline محلی، تغییرات untracked/modified و تفاوت چهار commit باید بررسی شوند؛ سپس cherry-pick یا reconciliation انتخابی با حفظ ancestry و فایل‌های موجود انجام شود. عدد ahead/behind به‌تنهایی مجوز merge نیست.
 
