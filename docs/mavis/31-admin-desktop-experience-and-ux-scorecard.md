@@ -252,3 +252,38 @@ MAVIS باید داخل پنل فعلی مدیریت Vakilsite به‌عنوان
 - Next.js Authentication guide: https://nextjs.org/docs/app/guides/authentication
 - Supabase RLS and grants: https://supabase.com/docs/guides/database/postgres/row-level-security
 - Supabase Storage access control: https://supabase.com/docs/guides/storage/security/access-control
+
+
+## 16. شواهد ممیزی پنل موجود در شاخه کاندید یکپارچه‌سازی — محدود به همان شاخه
+در 2026-11-08 شاخه `feature/mavis-seo-integration-validation` با commit مرجع `fd6eb077865b4929955baabe4993d91a1179365d` برای شناخت ساختار admin بررسی شد. این شاخه **معادل Mother Two محلی تأییدشده فرض نمی‌شود**؛ این بخش صرفاً شواهد همان snapshot است و باید در Termux دوباره تطبیق شود.
+
+### 16.1 آنچه در snapshot مشاهده شد
+- مسیر `src/app/admin/page.js` وجود دارد و صفحه فعلی یک داشبورد تنظیمات دفتر، موقعیت و شبکه‌های اجتماعی است.
+- صفحه از `requireAdmin()` استفاده می‌کند و پیش از query داده، وضعیت configured، session و isAdmin را بررسی می‌کند.
+- `src/app/admin/layout.js` فقط metadata و `children` را برمی‌گرداند؛ shell مشترک admin در layout قرار نگرفته و shell درون صفحه اصلی admin ساخته شده است.
+- ناوبری موجود در همین صفحه سه anchor دارد: نمای کلی، موقعیت دفتر و راه‌های ارتباطی؛ در این snapshot، مسیر یا آیتم `/admin/mavis` در فهرست مشاهده‌شده وجود ندارد.
+- helper در `src/lib/supabase/admin.js` از `supabase.auth.getClaims()` برای claim هویت و RPC `is_site_admin` برای تشخیص مدیر استفاده می‌کند. این فقط gate مدیر سایت است؛ ماتریس نقش‌های چندگانه MAVIS نیست.
+- `src/app/admin/actions.js` شامل Server Actions برای ذخیره تنظیمات و خروج است. عملیات ذخیره لینک‌های اجتماعی رکوردهای حذف‌شده از payload را حذف می‌کند؛ بنابراین نباید این action برای مدیریت داده MAVIS reuse یا تعمیم داده شود.
+- migrationهای مشاهده‌شده در `supabase/migrations` فقط شامل social links، office location و social link types بودند؛ در این snapshot schema عملیاتی MAVIS مشاهده نشد.
+- `src/lib/mavis/public-chat.mjs` ورودی و history محدود را به provider می‌دهد؛ در فایل بررسی‌شده retrieval از legal-library و citation enforcement مشاهده نشد.
+- `src/lib/mavis/public-policy.mjs` مرزهای راهنمای عمومی و عدم جعل منبع را تعریف می‌کند؛ این policy به‌تنهایی جایگزین retrieval و اعتبارسنجی منبع نیست.
+
+### 16.2 نتیجه معماری برای ادغام پنل
+با این شواهد، پیشنهاد قبلی «افزودن route و shared shell» باید با احتیاط اجرا شود:
+1. در Mother Two ابتدا بررسی شود آیا admin shell از این snapshot تغییر کرده است یا خیر.
+2. اگر ساختار هنوز مشابه است، shell فعلی بدون بازنویسی عمومی به یک component scoped استخراج شود؛ صفحه `/admin` و ظاهر فعلی pixel/behavior regression test شوند.
+3. فقط یک لینک MAVIS در navigation موجود افزوده شود و routeهای MAVIS در زیر `/admin/mavis` قرار گیرند.
+4. برای جلوگیری از رگرسیون، استخراج shell و افزودن navigation در یک commit کوچک و قابل rollback انجام شود؛ سپس صفحات MAVIS در commitهای مستقل افزوده شوند.
+5. اگر استخراج shell باعث تغییر DOM/CSS یا screenshot صفحه فعلی شود، کار متوقف و مسیر جایگزین کم‌تغییر طراحی شود.
+6. `requireAdmin` فعلی می‌تواند نقطه شروع بررسی باشد، اما permissionهای granular برای legal review، article edit، approval، publish، growth read و connection management باید مستقل طراحی شوند. تا آن زمان همه صفحات جدید به‌صورت owner_admin-only باقی بمانند.
+7. از actionهای فعلی که حذف/به‌روزرسانی دسته‌ای دارند برای جداول جدید reuse نشود؛ هر عملیات MAVIS باید قرارداد، policy و audit مستقل داشته باشد.
+
+### 16.3 اصلاح امتیاز بر مبنای شواهد جدید
+این ممیزی، قابلیت اتصال به admin را از «نامعلوم کامل» خارج می‌کند، اما پیاده‌سازی MAVIS را اثبات نمی‌کند:
+- شناخت ساختار فعلی admin در snapshot: 6/10
+- اثبات تطبیق با Mother Two: 0/10 تا دریافت خروجی Termux
+- اثبات route authorization در تمام زیرمسیرهای آینده: 2/10 تا طراحی و تست
+- آمادگی extraction امن shell: 4/10؛ نیازمند بررسی CSS و screenshot baseline
+- آمادگی نقش‌های granular: 1/10؛ مدل فعلی فقط is_site_admin را نشان می‌دهد.
+
+هیچ‌یک از این امتیازها مجوز تغییر admin یا دیتابیس نیست.
