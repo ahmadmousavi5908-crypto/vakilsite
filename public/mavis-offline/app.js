@@ -24,7 +24,7 @@ async function updateNetwork(){
     dot.classList.remove("online");
     return;
   }
-  status.textContent="شبکه وصل است؛ در حال بررسی دسترسی به سرویس ماویس…";
+  status.textContent="شبکه وصل است؛ در حال بررسی پاسخ میزبان وب ماویس…";
   dot.classList.remove("online");
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),1800);
@@ -40,11 +40,11 @@ async function updateNetwork(){
     const payload=await response.json();
     if(payload?.status!=="ok")throw new Error("unexpected connectivity response");
     if(probeId!==connectivityProbe)return;
-    status.textContent="سرویس ماویس در دسترس است؛ جست‌وجوی این صفحه همچنان محلی انجام می‌شود.";
+    status.textContent="میزبان وب ماویس پاسخ می‌دهد؛ این بررسی دسترسی به پایگاه داده یا پرونده را تأیید نمی‌کند. جست‌وجوی این صفحه محلی است.";
     dot.classList.add("online");
   }catch{
     if(probeId!==connectivityProbe)return;
-    status.textContent="شبکه برقرار به نظر می‌رسد، اما سرویس ماویس پاسخ نمی‌دهد؛ جست‌وجوی آفلاین همچنان فعال است.";
+    status.textContent="میزبان وب ماویس پاسخ نمی‌دهد؛ جست‌وجوی آفلاین همچنان فعال است.";
   }finally{
     clearTimeout(timeout);
   }
