@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "../../../../lib/supabase/server";
+import { createServiceClient } from "../../../../lib/supabase/service";
 import { isJsonContentType, matchesRequestOrigin } from "../../../../lib/mavis/request-guards.mjs";
 import { createIntakeRateKey, isValidIntakeIp, normalizeIntakePhone, validateIntakePayload } from "../../../../lib/mavis/intake-guards.mjs";
 
@@ -46,8 +46,9 @@ export async function POST(request) {
 
   const secret = process.env.MAVIS_INTAKE_RATE_LIMIT_SECRET;
   const noticeVersion = process.env.MAVIS_INTAKE_PRIVACY_NOTICE_VERSION;
+  const serviceKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   const retentionDays = Number(process.env.MAVIS_INTAKE_RETENTION_DAYS);
-  if (typeof secret !== "string" || secret.length < 32 || !noticeVersion || !Number.isInteger(retentionDays) || retentionDays < 1 || retentionDays > 3650) {
+  if (typeof secret !== "string" || secret.length < 32 || typeof serviceKey !== "string" || !serviceKey || !noticeVersion || !Number.isInteger(retentionDays) || retentionDays < 1 || retentionDays > 3650) {
     return respond("INTAKE_NOT_CONFIGURED", "تنظیمات امنیتی و سیاست نگهداری اطلاعات کامل نیست.", 503);
   }
   if (process.env.MAVIS_INTAKE_TRUSTED_PROXY_HEADERS !== "true") {
@@ -89,7 +90,7 @@ export async function POST(request) {
 
   let supabase;
   try {
-    supabase = await createClient();
+    supabase = createServiceClient();
   } catch {
     return respond("DATABASE_UNAVAILABLE", "اتصال امن به سامانه ثبت درخواست در دسترس نیست.", 503);
   }
