@@ -24,6 +24,11 @@ test("offline connectivity status probes the uncached same-origin server indepen
   assert.match(connectivityRoute, /no-store, no-cache, must-revalidate/);
 });
 
+test("network status changes are announced to assistive technology", () => {
+  assert.match(html, /id="network-status" role="status" aria-live="polite"/);
+  assert.match(html, /id="network-dot" aria-hidden="true"/);
+});
+
 test("offline service worker precaches every runtime dependency", () => {
   for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json"]) {
     assert.ok(worker.includes("/mavis-offline/" + asset), "missing precache asset: " + asset);
@@ -33,7 +38,7 @@ test("offline service worker precaches every runtime dependency", () => {
 });
 
 test("offline cache reads stay inside the versioned MAVIS cache", () => {
-  assert.match(worker, /const CACHE_NAME = "mavis-offline-v1\.0\.7-/);
+  assert.match(worker, /const CACHE_NAME = "mavis-offline-v1\.0\.8-/);
   assert.match(worker, /caches\.open\(CACHE_NAME\)[\s\S]*?cache\.match\(request\)/);
   assert.doesNotMatch(worker, /caches\.match\(/);
 });
