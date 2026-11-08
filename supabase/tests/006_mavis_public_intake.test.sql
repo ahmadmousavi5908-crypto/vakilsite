@@ -38,15 +38,15 @@ select ok(not has_schema_privilege('authenticated', 'mavis_intake_private', 'USA
 select ok(not has_schema_privilege('service_role', 'mavis_intake_private', 'USAGE'), 'service role does not receive private schema usage');
 
 select ok(not has_function_privilege('anon', 'mavis_intake_private.submit_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'anon cannot execute the private intake function');
-select ok(not has_function_privilege('authenticated', 'mavis_intake_private.submit_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'authenticated cannot execute the private intake function');
+select ok(not has_function_privilege('authenticated', 'mavis_intake_private.submit_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'authenticated cannot execute the private intake function');
 select ok(not has_function_privilege('anon', 'public.submit_mavis_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'anon cannot bypass the application intake guards through direct RPC');
-select ok(not has_function_privilege('authenticated', 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'authenticated users cannot bypass the application intake guards through direct RPC');
-select ok(has_function_privilege('service_role', 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'only the server service role can call the guarded intake RPC');
+select ok(not has_function_privilege('authenticated', 'public.submit_mavis_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'authenticated users cannot bypass the application intake guards through direct RPC');
+select ok(has_function_privilege('service_role', 'public.submit_mavis_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'only the server service role can call the guarded intake RPC');
 
-select ok((select prosecdef from pg_proc where oid = 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)'::regprocedure), 'public intake wrapper uses SECURITY DEFINER with fixed search_path');
-select ok((select coalesce(proconfig @> array['search_path=""'], false) from pg_proc where oid = 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)'::regprocedure), 'public intake wrapper has an empty search_path');
-select ok((select prosecdef from pg_proc where oid = 'mavis_intake_private.submit_public_intake(jsonb,text,uuid,text,integer)'::regprocedure), 'private intake function uses SECURITY DEFINER');
-select ok((select coalesce(proconfig @> array['search_path=""'], false) from pg_proc where oid = 'mavis_intake_private.submit_public_intake(jsonb,text,uuid,text,integer)'::regprocedure), 'private intake function has an empty search_path');
+select ok((select prosecdef from pg_proc where oid = 'public.submit_mavis_public_intake(jsonb,text,text,uuid,text,integer)'::regprocedure), 'public intake wrapper uses SECURITY DEFINER with fixed search_path');
+select ok((select coalesce(proconfig @> array['search_path=""'], false) from pg_proc where oid = 'public.submit_mavis_public_intake(jsonb,text,text,uuid,text,integer)'::regprocedure), 'public intake wrapper has an empty search_path');
+select ok((select prosecdef from pg_proc where oid = 'mavis_intake_private.submit_public_intake(jsonb,text,text,uuid,text,integer)'::regprocedure), 'private intake function uses SECURITY DEFINER');
+select ok((select coalesce(proconfig @> array['search_path=""'], false) from pg_proc where oid = 'mavis_intake_private.submit_public_intake(jsonb,text,text,uuid,text,integer)'::regprocedure), 'private intake function has an empty search_path');
 select ok((select prosecdef from pg_proc where oid = 'mavis_intake_private.audit_status_change()'::regprocedure), 'status audit trigger uses SECURITY DEFINER');
 select ok(has_function_privilege('service_role', 'public.purge_expired_mavis_intake()', 'EXECUTE'), 'service role can invoke the retention purge wrapper');
 select ok(not has_function_privilege('anon', 'public.purge_expired_mavis_intake()', 'EXECUTE'), 'anon cannot invoke the retention purge wrapper');
