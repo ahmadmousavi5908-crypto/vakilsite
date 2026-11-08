@@ -259,7 +259,7 @@ end;
 $$;
 
 revoke all on function public.submit_mavis_public_intake(jsonb, text, uuid, text, integer) from public, anon, authenticated, service_role;
-grant execute on function public.submit_mavis_public_intake(jsonb, text, uuid, text, integer) to anon, authenticated;
+grant execute on function public.submit_mavis_public_intake(jsonb, text, uuid, text, integer) to service_role;
 
 create or replace function mavis_intake_private.audit_status_change()
 returns trigger
