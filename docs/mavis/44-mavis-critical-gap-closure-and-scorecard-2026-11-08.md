@@ -114,7 +114,9 @@ MAVIS از نظر جهت‌گیری محصول و اصول طراحی قوی ا�
 - PR مستندات باید Draft بماند؛ ادغام، استقرار و تغییرات runtime خارج از این اقدام‌اند.
 
 ## 10. منابع مهندسی
-- OWASP Top 10 for LLM Applications: https://owasp.org/www-project-top-10-for-large-language-model-applications/
+- OWASP GenAI LLM Top 10 2026 (مرجع جاری؛ منتشرشده در 3 اوت 2026): https://genai.owasp.org/resource/owasp-genai-llm-top-10-2026/
+- OWASP Agent Control Standard و منابع رسمی کنترل عامل‌ها: https://genai.owasp.org/resources/
+- OWASP Top 10 for LLM Applications 2025 فقط برای ردیابی تاریخی: https://owasp.org/www-project-top-10-for-large-language-model-applications/
 - OWASP ASVS: https://owasp.org/www-project-application-security-verification-standard/
 - Supabase Row Level Security: https://supabase.com/docs/guides/database/postgres/row-level-security
 - PostgreSQL Full Text Search: https://www.postgresql.org/docs/current/textsearch.html
