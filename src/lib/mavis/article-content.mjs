@@ -100,3 +100,18 @@ export function validateArticleDraft(payload) {
   if (text(payload.seo_description).length > 320) errors.push("توضیحات سئو بیش از حد طولانی است.");
   return { ok: errors.length === 0, errors };
 }
+
+export function mapArticleRowToAdminArticle(row) {
+  if (!row || !row.content || typeof row.content !== "object") return null;
+  const mapped = mapArticleRowToPublicArticle({ ...row, status: "published" });
+  if (!mapped) return null;
+  return {
+    ...mapped,
+    status: row.status || "unknown",
+    updatedAt: row.updated_at || null,
+    createdAt: row.created_at || null,
+    sourceOrigin: row.source_origin || "unknown",
+    lastChangeNote: text(row.last_change_note),
+    approvedAt: row.approved_at || null,
+  };
+}
