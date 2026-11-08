@@ -25,12 +25,19 @@ function normalizeSources(record) {
 
   return record.sources.flatMap((source) => {
     if (!source || typeof source !== "object") return [];
-    if (typeof source.url !== "string" || !/^https:\/\//i.test(source.url)) return [];
-    if (typeof source.title !== "string" || !source.title.trim()) return [];
+    if (typeof source.url !== "string" || typeof source.title !== "string" || !source.title.trim()) return [];
+
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(source.url);
+    } catch {
+      return [];
+    }
+    if (parsedUrl.protocol !== "https:" || !parsedUrl.hostname || parsedUrl.username || parsedUrl.password) return [];
 
     return [{
       title: source.title.trim().slice(0, 240),
-      url: source.url,
+      url: parsedUrl.toString(),
       sourceType: source.source_type === "primary" ? "primary" : "secondary",
       publicationDate: safeDate(source.publication_date),
       accessedAt: safeDate(source.accessed_at),
@@ -93,7 +100,13 @@ export function buildLegalEvidencePacket(records) {
 
   return {
     mode: "retrieval_only",
-    state: items.length === 0 ? "not_found" : hasPrimaryEvidence ? "primary_evidence_available" : "needs_official_check",
+    state: items.length === 0
+      ? "not_found"
+      : hasPrimaryEvidence
+        ? "primary_evidence_available"
+        : items.every((item) => item.state === "outdated")
+          ? "outdated"
+          : "needs_official_check",
     items,
     requiresHumanReview: true,
     legalOpinion: null,
