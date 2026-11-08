@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "mavis-offline-v1.0.7-20261109";
+const CACHE_NAME = "mavis-offline-v1.0.8-20261109";
 const OFFLINE_INDEX = "/mavis-offline/index.html";
 const ASSETS = [
   OFFLINE_INDEX,
