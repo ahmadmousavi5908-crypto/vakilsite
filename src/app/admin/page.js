@@ -42,6 +42,7 @@ export default async function AdminDashboard({ searchParams }) {
         </Link>
         <nav className="admin-nav" aria-label="منوی مدیریت">
           <a className="active" href="#overview">نمای کلی</a>
+          <Link href="/admin/mavis">مرکز دانش MAVIS</Link>
           <a href="#office-settings">موقعیت و اطلاعات دفتر</a>
           <a href="#social-settings">راه‌های ارتباط و شبکه‌ها</a>
         </nav>
