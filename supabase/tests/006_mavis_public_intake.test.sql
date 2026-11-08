@@ -1,0 +1,146 @@
+begin;
+
+select plan(36);
+
+select ok((select relrowsecurity from pg_class where oid = 'public.mavis_intake_submissions'::regclass), 'intake submissions have RLS enabled');
+select ok(not has_table_privilege('anon', 'public.mavis_intake_submissions', 'SELECT'), 'anon cannot read private intake submissions');
+select ok(not has_table_privilege('anon', 'public.mavis_intake_submissions', 'INSERT'), 'anon cannot insert directly into intake submissions');
+select ok(not has_table_privilege('anon', 'public.mavis_intake_submissions', 'UPDATE'), 'anon cannot update intake submissions');
+select ok(not has_table_privilege('anon', 'public.mavis_intake_submissions', 'DELETE'), 'anon cannot delete intake submissions');
+select ok(has_table_privilege('authenticated', 'public.mavis_intake_submissions', 'SELECT'), 'authenticated has the privilege needed for admin reads, subject to RLS');
+select ok(has_column_privilege('authenticated', 'public.mavis_intake_submissions', 'status', 'UPDATE'), 'authenticated can update only the status column, subject to RLS');
+select ok(not has_table_privilege('authenticated', 'public.mavis_intake_submissions', 'INSERT'), 'authenticated cannot insert intake submissions directly');
+select ok(not has_table_privilege('authenticated', 'public.mavis_intake_submissions', 'DELETE'), 'authenticated cannot delete intake submissions directly');
+
+select ok((select relrowsecurity from pg_class where oid = 'public.mavis_intake_audit_events'::regclass), 'intake audit events have RLS enabled');
+select ok(not has_table_privilege('anon', 'public.mavis_intake_audit_events', 'SELECT'), 'anon cannot read intake audit events');
+select ok(has_table_privilege('authenticated', 'public.mavis_intake_audit_events', 'SELECT'), 'authenticated can read audit events subject to admin RLS');
+select ok(not has_table_privilege('authenticated', 'public.mavis_intake_audit_events', 'INSERT'), 'authenticated cannot forge audit events');
+
+select ok(not has_schema_privilege('anon', 'mavis_intake_private', 'USAGE'), 'anon cannot use the private intake schema');
+select ok(not has_schema_privilege('authenticated', 'mavis_intake_private', 'USAGE'), 'authenticated cannot use the private intake schema');
+select ok(not has_schema_privilege('service_role', 'mavis_intake_private', 'USAGE'), 'service role does not receive private schema usage');
+
+select ok(not has_function_privilege('anon', 'mavis_intake_private.submit_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'anon cannot execute the private intake function');
+select ok(not has_function_privilege('authenticated', 'mavis_intake_private.submit_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'authenticated cannot execute the private intake function');
+select ok(has_function_privilege('anon', 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'anon can submit only through the validated public RPC');
+select ok(has_function_privilege('authenticated', 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'authenticated can submit through the same validated public RPC');
+select ok(not has_function_privilege('service_role', 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'service role does not receive unnecessary intake RPC execution');
+
+select ok((select prosecdef from pg_proc where oid = 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)'::regprocedure), 'public intake wrapper uses SECURITY DEFINER with fixed search_path');
+select ok((select coalesce(proconfig @> array['search_path=""'], false) from pg_proc where oid = 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)'::regprocedure), 'public intake wrapper has an empty search_path');
+select ok((select prosecdef from pg_proc where oid = 'mavis_intake_private.submit_public_intake(jsonb,text,uuid,text,integer)'::regprocedure), 'private intake function uses SECURITY DEFINER');
+select ok((select coalesce(proconfig @> array['search_path=""'], false) from pg_proc where oid = 'mavis_intake_private.submit_public_intake(jsonb,text,uuid,text,integer)'::regprocedure), 'private intake function has an empty search_path');
+select ok((select prosecdef from pg_proc where oid = 'mavis_intake_private.audit_status_change()'::regprocedure), 'status audit trigger uses SECURITY DEFINER');
+select ok(has_function_privilege('service_role', 'public.purge_expired_mavis_intake()', 'EXECUTE'), 'service role can invoke the retention purge wrapper');
+select ok(not has_function_privilege('anon', 'public.purge_expired_mavis_intake()', 'EXECUTE'), 'anon cannot invoke the retention purge wrapper');
+
+set local role anon;
+
+select is(
+  (public.submit_mavis_public_intake(
+    '{"contact_name":"کاربر آزمایشی","contact_phone":"+989121234567","contact_email":null,"preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی برای بررسی اولیه موضوع حقوقی و هماهنگی تماس.","privacy_notice_accepted":true,"contact_consent":true,"third_party_consent":false,"marketing_consent":false}'::jsonb,
+    repeat('a',64),
+    '11111111-1111-4111-8111-111111111111'::uuid,
+    'test-v1',
+    30
+  ) ->> 'ok')::boolean,
+  true,
+  'anonymous visitor can submit through the validated RPC'
+);
+
+select is(
+  (public.submit_mavis_public_intake(
+    '{"contact_name":"کاربر آزمایشی","contact_phone":"+989121234567","contact_email":null,"preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی برای بررسی اولیه موضوع حقوقی و هماهنگی تماس.","privacy_notice_accepted":true,"contact_consent":true,"third_party_consent":false,"marketing_consent":false}'::jsonb,
+    repeat('a',64),
+    '11111111-1111-4111-8111-111111111111'::uuid,
+    'test-v1',
+    30
+  ) ->> 'duplicate')::boolean,
+  true,
+  'idempotent retry returns the existing reference without creating a second row'
+);
+
+select is(
+  public.submit_mavis_public_intake(
+    '{"contact_name":"کاربر آزمایشی","contact_phone":"+989121234567","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی برای بررسی اولیه موضوع حقوقی و هماهنگی تماس.","privacy_notice_accepted":false,"contact_consent":true}'::jsonb,
+    repeat('c',64),
+    '22222222-2222-4222-8222-222222222222'::uuid,
+    'test-v1',
+    30
+  ) ->> 'code',
+  'consent_required',
+  'submission is rejected when required privacy consent is missing'
+);
+
+select is(
+  (public.submit_mavis_public_intake(
+    '{"contact_name":"کاربر دوم","contact_phone":"+989121234568","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی اول برای کنترل محدودیت نرخ درخواست و بررسی اولیه.","privacy_notice_accepted":true,"contact_consent":true}'::jsonb,
+    repeat('b',64),
+    '33333333-3333-4333-8333-333333333331'::uuid,
+    'test-v1',
+    30
+  ) ->> 'ok')::boolean,
+  true,
+  'first request within a rate window is allowed'
+);
+
+select is(
+  (public.submit_mavis_public_intake(
+    '{"contact_name":"کاربر دوم","contact_phone":"+989121234568","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی دوم برای کنترل محدودیت نرخ درخواست و بررسی اولیه.","privacy_notice_accepted":true,"contact_consent":true}'::jsonb,
+    repeat('b',64),
+    '33333333-3333-4333-8333-333333333332'::uuid,
+    'test-v1',
+    30
+  ) ->> 'ok')::boolean,
+  true,
+  'second request within a rate window is allowed'
+);
+
+select is(
+  (public.submit_mavis_public_intake(
+    '{"contact_name":"کاربر دوم","contact_phone":"+989121234568","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی سوم برای کنترل محدودیت نرخ درخواست و بررسی اولیه.","privacy_notice_accepted":true,"contact_consent":true}'::jsonb,
+    repeat('b',64),
+    '33333333-3333-4333-8333-333333333333'::uuid,
+    'test-v1',
+    30
+  ) ->> 'ok')::boolean,
+  true,
+  'third request within a rate window is allowed'
+);
+
+select is(
+  public.submit_mavis_public_intake(
+    '{"contact_name":"کاربر دوم","contact_phone":"+989121234568","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی چهارم برای کنترل محدودیت نرخ درخواست و بررسی اولیه.","privacy_notice_accepted":true,"contact_consent":true}'::jsonb,
+    repeat('b',64),
+    '33333333-3333-4333-8333-333333333334'::uuid,
+    'test-v1',
+    30
+  ) ->> 'code',
+  'rate_limited',
+  'fourth request within a rate window is rate limited'
+);
+
+reset role;
+
+select is(
+  (select third_party_consent from public.mavis_intake_submissions where idempotency_key = '11111111-1111-4111-8111-111111111111'::uuid),
+  false,
+  'third-party consent remains false unless separately selected'
+);
+select is(
+  (select marketing_consent from public.mavis_intake_submissions where idempotency_key = '11111111-1111-4111-8111-111111111111'::uuid),
+  false,
+  'marketing consent remains false unless separately selected'
+);
+select ok(
+  (select retention_due_at > created_at from public.mavis_intake_submissions where idempotency_key = '11111111-1111-4111-8111-111111111111'::uuid),
+  'each intake row receives a configured retention deadline'
+);
+select ok(
+  exists (select 1 from cron.job where jobname = 'mavis-intake-retention-purge'),
+  'daily retention cleanup job is scheduled'
+);
+
+select * from finish();
+rollback;
