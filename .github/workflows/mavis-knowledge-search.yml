@@ -12,6 +12,7 @@ on:
   pull_request:
     branches:
       - feature/mavis-deterministic-legal-search-20261108
+      - feature/mavis-legal-evidence-contract-20261108
 
 permissions:
   contents: read
