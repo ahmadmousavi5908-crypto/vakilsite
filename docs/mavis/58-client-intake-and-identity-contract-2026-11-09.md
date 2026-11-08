@@ -147,6 +147,9 @@ Enforce this boundary at the database/RLS and server authorization layers, not o
 ### If a password is required
 - The client chooses it during verified account activation; the office never chooses or sees it.
 - Follow current NIST SP 800-63B-4: minimum 15 characters when password is the sole factor; permit at least 64 characters; block common/compromised passwords; no arbitrary character-class rules; no routine forced rotation; force change only after compromise evidence.
+- Configure Supabase Auth `password_min_length` to at least 15 for a single-factor password flow. The current Auth Management API exposes this setting; verify the hosted project's effective value before activation. Do not enable character-class composition requirements.
+- Supabase's built-in leaked-password protection (`password_hibp_enabled`) is documented as available on Pro and above. Verify the actual project plan and setting. If this protection is unavailable, keep password-based client login disabled until an equivalent approved blocklist control exists; do not silently waive the NIST blocklist requirement.
+- Production email invitation and recovery require a configured, verified custom SMTP route. Production phone OTP requires a supported SMS provider, deliverability testing for Iranian mobile networks, anti-abuse limits, and legal/provider review. Do not assume a provider is configured because the Auth API supports it.
 - Use the identity provider's maintained password verifier. Never store plaintext or reversible passwords in MAVIS.
 - Require MFA for sensitive case access and high-risk account changes.
 - Use generic login/recovery errors to avoid account enumeration, bounded attempts, server-side session expiry, secure HttpOnly/Secure/SameSite cookies, session rotation after authentication/privilege change, and immediate revocation on account compromise.
