@@ -71,3 +71,17 @@ Every source and legal record should retain:
 The Official Gazette is identified as Iran's official gazette by the Library of Congress archive. Research guides identify qavanin.ir as the state-run Laws and Regulations Portal and point to the Majlis research center as a legislative resource. Lawlex advertises linked statutes, judgments, advisory opinions and unifying opinions, but remains a secondary database. Iran Data Portal explicitly describes its legal documents as selected translations and collections.
 
 This registry is a discovery map, not proof that each endpoint is currently reachable or that each page provides a supported API.
+
+
+## Additional independent research guides checked — 2026-11-08
+
+- **Library of Congress, current Guide to Law Online: Iran:** https://guides.loc.gov/law-iran  
+  The guide organizes discovery across constitutional, executive, legislative and judicial materials. Its inclusion of a link is not an endorsement or a certification that the linked source is current. Use it to discover candidate official channels, not as the legal instrument itself.
+- **Library of Congress, Legislative materials:** https://guides.loc.gov/law-iran/legislative  
+  The guide explicitly preserves older links while noting that several government websites were unavailable as of September 2022. This is historical access context, not proof of current outage.
+- **University of Wisconsin Law Library, Iran legislative materials:** https://researchguides.library.wisc.edu/c.php?g=1501934&p=11223476  
+  Useful as a second research map for locating legislative databases. It is a research guide, not an issuing authority.
+- **Library of Congress, Foreign Legal Gazette Collection:** https://wwws.loc.gov/law/find/gazettes.php  
+  Explains the primary-source role of official gazettes in foreign-law research. It does not certify a specific Iranian law's current validity.
+
+The refreshed Library of Congress guide is preferred over the older legacy URL for future discovery, but the existing registry URL is retained for traceability. No new source has been marked live, no endpoint has been declared available, and no legal record has been upgraded.
