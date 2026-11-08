@@ -21,6 +21,27 @@ const urgencyOptions = [
   ["urgent", "فوری یا دارای ابلاغ / مهلت نزدیک"],
 ];
 
+const IDEMPOTENCY_STORAGE_KEY = "mavis-intake-idempotency-key-v1";
+
+function readStoredIdempotencyKey() {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.sessionStorage.getItem(IDEMPOTENCY_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredIdempotencyKey(value) {
+  if (typeof window === "undefined") return;
+  try {
+    if (value) window.sessionStorage.setItem(IDEMPOTENCY_STORAGE_KEY, value);
+    else window.sessionStorage.removeItem(IDEMPOTENCY_STORAGE_KEY);
+  } catch {
+    // The request remains protected for the lifetime of the current component.
+  }
+}
+
 function createIdempotencyKey() {
   const cryptoApi = globalThis.crypto;
   if (typeof cryptoApi?.randomUUID === "function") return cryptoApi.randomUUID();
@@ -51,11 +72,12 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
   const [submitting, setSubmitting] = useState(false);
   const [receipt, setReceipt] = useState(null);
   const [requestError, setRequestError] = useState("");
-  const [idempotencyKey, setIdempotencyKey] = useState(null);
+  const [idempotencyKey, setIdempotencyKey] = useState(readStoredIdempotencyKey);
   const consentCopy = getIntakeConsentCopy(retentionDays);
 
   function updateField(name, value) {
     setIdempotencyKey(null);
+    writeStoredIdempotencyKey(null);
     setForm((current) => ({ ...current, [name]: value }));
     setErrors((current) => ({ ...current, [name]: undefined }));
   }
@@ -72,6 +94,7 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
       const requestKey = idempotencyKey || createIdempotencyKey();
       if (!requestKey) throw new Error("مرورگر شما امکان ساخت شناسه امن درخواست را فراهم نمی‌کند.");
       setIdempotencyKey(requestKey);
+      writeStoredIdempotencyKey(requestKey);
 
       const response = await fetch("/api/mavis/intake", {
         method: "POST",
@@ -93,6 +116,7 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
       setReceipt(payload);
       setForm(initialState);
       setIdempotencyKey(null);
+      writeStoredIdempotencyKey(null);
     } catch (error) {
       setRequestError(error instanceof Error ? error.message : "خطای ناشناخته در ارسال درخواست.");
     } finally {
