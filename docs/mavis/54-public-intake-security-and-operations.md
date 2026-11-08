@@ -17,7 +17,7 @@ This is a contact-request intake, not a public legal adviser and not a case-file
 - Intake and audit tables have RLS. Only site admins can read submissions and audit events; admins can update only the status column.
 - Status changes create a database audit event.
 - Idempotency keys prevent duplicate records after network retries.
-- A persistent database rate limit permits at most three submissions per HMAC key in a 15-minute window. The HMAC combines normalized phone and trusted client IP; the raw IP is not stored in the rate-limit table. Expired rate-limit keys are cleaned during requests.
+- Two persistent database rate limits apply: at most ten submissions per trusted IP and at most three submissions for the same normalized contact plus IP, each in a 15-minute window. Both identifiers are HMACs created server-side; the raw IP is not stored in the rate-limit table. Expired rate-limit keys are cleaned during requests.
 - A daily Supabase Cron job invokes the retention purge at 02:17 UTC. Each record receives its own retention deadline at creation.
 
 ## Required server environment
