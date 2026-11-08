@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "../../../lib/supabase/admin";
 import { getMavisKnowledgeInventory } from "../../../lib/mavis/knowledge-registry";
 import MavisKnowledgeSearch from "../../../components/admin/MavisKnowledgeSearch";
+import MavisIntakeInbox from "../../../components/admin/MavisIntakeInbox";
 import { signOut } from "../actions";
 
 export const metadata = {
@@ -30,6 +31,8 @@ export default async function MavisAdminPage() {
         <nav className="admin-nav" aria-label="منوی مدیریت">
           <Link href="/admin">داشبورد</Link>
           <Link className="active" href="/admin/mavis">مرکز دانش MAVIS</Link>
+          <a href="#mavis-intake-inbox">صندوق درخواست‌های اولیه</a>
+          <a href="#knowledge-search">پژوهش حقوقی</a>
         </nav>
         <div className="admin-sidebar-foot">
           <span>دسترسی مدیر</span>
@@ -57,7 +60,11 @@ export default async function MavisAdminPage() {
             <article><span>خلاصه مواد</span><strong>{inventory.articles.toLocaleString("fa-IR")}</strong><small>مرتبط با قانون مادر</small></article>
           </section>
 
-          <MavisKnowledgeSearch />
+          <MavisIntakeInbox />
+
+          <section id="knowledge-search">
+            <MavisKnowledgeSearch />
+          </section>
 
           <section className="admin-help">
             <strong>مرز استفاده از نتایج</strong>
