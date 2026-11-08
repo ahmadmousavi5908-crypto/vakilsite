@@ -16,12 +16,27 @@ export async function signIn(formData) {
     redirect("/admin/login?error=config");
   }
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) redirect("/admin/login?error=credentials");
+  let signInResult;
+  try {
+    signInResult = await supabase.auth.signInWithPassword({ email, password });
+  } catch {
+    redirect("/admin/login?error=authorization");
+  }
 
-  const { data: isAdmin, error: adminError } = await supabase.rpc("is_site_admin");
+  if (signInResult.error) redirect("/admin/login?error=credentials");
 
-  if (adminError || isAdmin !== true) {
+  let adminResult;
+  try {
+    adminResult = await supabase.rpc("is_site_admin");
+  } catch {
+    redirect("/admin/login?error=authorization");
+  }
+
+  const { data: isAdmin, error: adminError } = adminResult;
+
+  if (adminError) redirect("/admin/login?error=authorization");
+
+  if (isAdmin !== true) {
     await supabase.auth.signOut();
     redirect("/admin/login?error=unauthorized");
   }

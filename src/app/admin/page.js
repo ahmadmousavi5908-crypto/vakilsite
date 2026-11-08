@@ -9,9 +9,11 @@ export const metadata = { title: "پنل مدیریت" };
 
 export default async function AdminDashboard({ searchParams }) {
   const params = await searchParams;
-  const { supabase, user, isAdmin, configured } = await requireAdmin();
+  const { supabase, user, isAdmin, configured, authenticationAvailable, adminCheckAvailable } = await requireAdmin();
   if (!configured) redirect("/admin/login?error=config");
+  if (authenticationAvailable === false) redirect("/admin/login?error=authorization");
   if (!user) redirect("/admin/login");
+  if (adminCheckAvailable === false) redirect("/admin/login?error=authorization");
   if (!isAdmin) redirect("/admin/login?error=unauthorized");
 
   const { data } = await supabase
@@ -42,6 +44,7 @@ export default async function AdminDashboard({ searchParams }) {
         </Link>
         <nav className="admin-nav" aria-label="منوی مدیریت">
           <a className="active" href="#overview">نمای کلی</a>
+          <Link href="/admin/mavis">مرکز دانش MAVIS</Link>
           <a href="#office-settings">موقعیت و اطلاعات دفتر</a>
           <a href="#social-settings">راه‌های ارتباط و شبکه‌ها</a>
         </nav>
@@ -57,7 +60,7 @@ export default async function AdminDashboard({ searchParams }) {
         </header>
         <main className="admin-content" id="overview">
           <section className="admin-welcome">
-            <div><span className="admin-eyebrow">OVERVIEW</span><h1>خوش آمدید</h1><p>اطلاعات اصلی دفتر و آنچه بازدیدکنندگان در سایت می‌بینند را از این بخش مدیریت کنید.</p></div>
+            <div><span className="admin-eyebrow">OVERVIEW</span><h1>خوش آمدید</h1><p>اطلاعات اصلی دفتر و آنچه بازدیدکنندگان در سایت می‌بینند را از این بخش مدیریت کنید. <Link href="/admin/mavis">ورود به مرکز دانش MAVIS ←</Link></p></div>
             <div className="admin-status"><i /> حساب مدیر فعال</div>
           </section>
 
