@@ -33,7 +33,7 @@ declare
 begin
   v_user_id := auth.uid();
 
-  if v_user_id is null then
+  if v_user_id is null or not public.is_site_admin() then
     return query select false, 60;
     return;
   end if;
@@ -72,6 +72,6 @@ end;
 $function$;
 
 revoke all on function public.consume_mavis_knowledge_search_limit()
-  from public, anon, authenticated;
+  from public, anon, authenticated, service_role;
 grant execute on function public.consume_mavis_knowledge_search_limit()
   to authenticated;
