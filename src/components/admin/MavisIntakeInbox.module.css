@@ -32,3 +32,7 @@
 .empty{color:#6d7680;background:#f7f7f4;border:1px dashed #d9dedf}
 .notice{font-size:9px;line-height:1.9;color:#7d6a4b;background:#f8f7f2;border-right:3px solid #c4a46c;padding:9px 11px;margin:14px 0 0}
 @media(max-width:620px){.inbox{padding:16px 12px}.heading{align-items:flex-start;flex-direction:column}.heading h2{font-size:16px}.heading button{width:100%;min-height:40px}.item{padding:12px}.created{white-space:normal;text-align:left}.itemTop{flex-direction:column}.toolbar select{max-width:100%}}
+
+.pagination{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.pagination button{border:1px solid #dce2e7;background:#fff;color:#31495d;border-radius:4px;padding:7px 12px;font-size:9px;cursor:pointer}
+.pagination button:disabled{opacity:.4;cursor:not-allowed}
