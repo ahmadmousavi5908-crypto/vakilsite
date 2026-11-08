@@ -55,7 +55,8 @@ for (const record of records) {
 
   if (record.review_status === "verified_primary_source"
     && (record.provenance?.exact_primary_document_verified !== true
-      || !(record.sources || []).some((source) => source.verification_status === "verified_primary_source"))) {
+      || !Array.isArray(record.sources)
+      || !record.sources.some((source) => source.verification_status === "verified_primary_source"))) {
     fail("Primary verified label lacks explicit primary-document provenance: " + record.id);
   }
 }
@@ -68,11 +69,22 @@ for (const source of sourceRegistry) {
 if (bundle.counts.source_registry !== sourceRegistry.length) fail("Source registry count mismatch.");
 if (!bundle.provenance_policy?.required_for_primary_verification?.includes("content_sha256")) fail("Missing primary-source verification contract.");
 
+const legalRecords = records.filter((record) => legalTypes.has(record.record_type));
+const recordsWithSources = legalRecords.filter((record) => Array.isArray(record.sources) && record.sources.length > 0);
+const sourceCoverage = {
+  legalRecords: legalRecords.length,
+  recordsWithSources: recordsWithSources.length,
+  recordsWithoutSources: legalRecords.length - recordsWithSources.length,
+  attachedSourceLinks: legalRecords.reduce((total, record) => total + (Array.isArray(record.sources) ? record.sources.length : 0), 0),
+  primaryVerifiedRecords: legalRecords.filter((record) => record.review_status === "verified_primary_source").length,
+  currentValidityVerifiedRecords: legalRecords.filter((record) => record.provenance?.current_validity_verified === true).length
+};
+
 if (failures > 0) process.exitCode = 1;
 else console.log(JSON.stringify({
-  records: bundle.records.length,
+  records: records.length,
   ...bundle.counts,
   registryReviewDate: bundle.registry_review_date,
-  primaryVerifiedRecords: records.filter((record) => record.review_status === "verified_primary_source").length,
+  sourceCoverage,
   validationFailures: failures
 }, null, 2));
