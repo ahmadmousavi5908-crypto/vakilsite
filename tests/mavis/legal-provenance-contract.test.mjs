@@ -42,9 +42,27 @@ test("rejects a secondary source even when all metadata is present", () => {
   assert.equal(isPrimaryVerificationComplete(record), false);
 });
 
-test("rejects a mismatched source URL and malformed content hash", () => {
+test("rejects a source URL that differs from the exact verified document URL", () => {
+  const record = validRecord();
+  record.sources[0].url = "https://official.example/law/456";
+  assert.equal(isPrimaryVerificationComplete(record), false);
+});
+
+test("rejects malformed content hashes", () => {
   const record = validRecord();
   record.provenance.content_sha256 = "not-a-hash";
+  assert.equal(isPrimaryVerificationComplete(record), false);
+});
+
+test("rejects impossible publication calendar dates", () => {
+  const record = validRecord();
+  record.provenance.publication_date = "2024-02-31";
+  assert.equal(isPrimaryVerificationComplete(record), false);
+});
+
+test("rejects timestamps without an explicit timezone", () => {
+  const record = validRecord();
+  record.provenance.reviewed_at = "2026-11-08T11:00:00";
   assert.equal(isPrimaryVerificationComplete(record), false);
 });
 
