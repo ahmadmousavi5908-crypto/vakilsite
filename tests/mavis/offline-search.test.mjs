@@ -55,3 +55,11 @@ test("real corpus resolves common client wording to the intended record", () => 
   assert.equal(rankOfflineRecords("قولنامه", knowledge.records)[0].id, "term_ordinary_document");
   assert.equal(rankOfflineRecords("فیشینگ", knowledge.records)[0].id, "term_computer_fraud");
 });
+
+test("offline bundle includes ranked primary and secondary legal research sources", () => {
+  assert.ok(knowledge.source_registry.length >= 8);
+  const primary = knowledge.source_registry.filter((source) => source.class === "primary_publication" || source.class === "official_law_portal");
+  assert.ok(primary.some((source) => source.url === "https://www.rrk.ir/"));
+  assert.ok(primary.some((source) => source.url === "https://qavanin.ir/"));
+  assert.ok(knowledge.source_registry.every((source) => source.live_access_checked === false));
+});
