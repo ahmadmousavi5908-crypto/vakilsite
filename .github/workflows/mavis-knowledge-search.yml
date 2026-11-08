@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
       - feature/mavis-deterministic-legal-search-20261108
+      - integration/mother-two-research-only-20261106
 
 permissions:
   contents: read
