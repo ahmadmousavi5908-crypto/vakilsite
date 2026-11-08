@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServiceClient } from "../../../../lib/supabase/service";
-import { isJsonContentType, matchesRequestOrigin } from "../../../../lib/mavis/request-guards.mjs";
+import { isJsonContentType, matchesRequestOrigin } from "../../../../lib/mavis/intake-request-guards.mjs";
 import { createIntakeRateKeys, isValidIntakeIp, normalizeIntakePhone, validateIntakePayload } from "../../../../lib/mavis/intake-guards.mjs";
 
 export const dynamic = "force-dynamic";
