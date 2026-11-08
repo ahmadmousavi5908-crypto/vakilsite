@@ -38,8 +38,8 @@ test("deduplicates repeated record IDs and preserves stable tie order", () => {
 const knowledge = JSON.parse(await readFile(new URL("../../public/mavis-offline/knowledge.json", import.meta.url), "utf8"));
 
 test("offline bundle counts match the actual corpus", () => {
-  const counts = Object.fromEntries(["term", "law", "article", "faq"].map((type) => [
-    type === "term" ? "terms" : type === "law" ? "laws" : type === "article" ? "articles" : "faqs",
+  const counts = Object.fromEntries(["term", "law", "article", "faq", "research_note"].map((type) => [
+    type === "term" ? "terms" : type === "law" ? "laws" : type === "article" ? "articles" : type === "faq" ? "faqs" : "research_notes",
     knowledge.records.filter((record) => record.record_type === type).length,
   ]));
   assert.deepEqual(counts, {
@@ -47,6 +47,7 @@ test("offline bundle counts match the actual corpus", () => {
     laws: knowledge.counts.laws,
     articles: knowledge.counts.articles,
     faqs: knowledge.counts.faqs,
+    research_notes: knowledge.counts.research_notes,
   });
 });
 
@@ -57,7 +58,7 @@ test("real corpus resolves common client wording to the intended record", () => 
 });
 
 test("offline bundle includes ranked primary and secondary legal research sources", () => {
-  assert.ok(knowledge.source_registry.length >= 8);
+  assert.ok(knowledge.source_registry.length >= 16);
   const primary = knowledge.source_registry.filter((source) => source.class === "primary_publication" || source.class === "official_law_portal");
   assert.ok(primary.some((source) => source.url === "https://www.rrk.ir/"));
   assert.ok(primary.some((source) => source.url === "https://qavanin.ir/"));
@@ -65,7 +66,7 @@ test("offline bundle includes ranked primary and secondary legal research source
 });
 
 test("legal records carry conservative provenance and never imply verified current law", () => {
-  for (const record of knowledge.records.filter((item) => ["term", "law", "article"].includes(item.record_type))) {
+  for (const record of knowledge.records.filter((item) => ["term", "law", "article", "research_note"].includes(item.record_type))) {
     assert.equal(record.provenance?.exact_primary_document_verified, false, record.id);
     assert.equal(record.provenance?.current_validity_verified, false, record.id);
   }
@@ -85,4 +86,18 @@ test("record-level citations identify secondary and not-yet-retrieved official l
   const compulsory = knowledge.records.find((record) => record.id === "law_compulsory_real_estate_registration");
   assert.ok(compulsory.sources.some((source) => source.verification_status === "official_url_identified_not_retrieved"));
   assert.ok(compulsory.sources.some((source) => source.verification_status === "secondary_source_only"));
+});
+
+test("real corpus retrieves the new research notes using client-style wording", () => {
+  assert.equal(rankOfflineRecords("سامانه ثبت ادعا", knowledge.records)[0].id, "research_note_real_estate_registration_claims");
+  assert.equal(rankOfflineRecords("واخواست سفته", knowledge.records)[0].id, "research_note_promissory_note");
+  assert.equal(rankOfflineRecords("چک صیادی", knowledge.records)[0].id, "research_note_cheque_amendments");
+});
+
+test("research notes retain secondary-only status and conservative provenance", () => {
+  const notes = knowledge.records.filter((record) => record.record_type === "research_note");
+  assert.equal(notes.length, 5);
+  assert.ok(notes.every((record) => record.review_status === "secondary_source_only"));
+  assert.ok(notes.every((record) => record.provenance.current_validity_verified === false));
+  assert.ok(notes.every((record) => record.sources.length > 0));
 });
