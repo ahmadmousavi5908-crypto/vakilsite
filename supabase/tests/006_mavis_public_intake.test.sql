@@ -1,6 +1,6 @@
 begin;
 
-select plan(44);
+select plan(45);
 
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_intake_submissions'::regclass), 'intake submissions have RLS enabled');
 select ok(not has_table_privilege('anon', 'public.mavis_intake_submissions', 'SELECT'), 'anon cannot read private intake submissions');
@@ -37,9 +37,9 @@ select ok(not has_schema_privilege('anon', 'mavis_intake_private', 'USAGE'), 'an
 select ok(not has_schema_privilege('authenticated', 'mavis_intake_private', 'USAGE'), 'authenticated cannot use the private intake schema');
 select ok(not has_schema_privilege('service_role', 'mavis_intake_private', 'USAGE'), 'service role does not receive private schema usage');
 
-select ok(not has_function_privilege('anon', 'mavis_intake_private.submit_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'anon cannot execute the private intake function');
+select ok(not has_function_privilege('anon', 'mavis_intake_private.submit_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'anon cannot execute the private intake function');
 select ok(not has_function_privilege('authenticated', 'mavis_intake_private.submit_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'authenticated cannot execute the private intake function');
-select ok(not has_function_privilege('anon', 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'anon cannot bypass the application intake guards through direct RPC');
+select ok(not has_function_privilege('anon', 'public.submit_mavis_public_intake(jsonb,text,text,uuid,text,integer)', 'EXECUTE'), 'anon cannot bypass the application intake guards through direct RPC');
 select ok(not has_function_privilege('authenticated', 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'authenticated users cannot bypass the application intake guards through direct RPC');
 select ok(has_function_privilege('service_role', 'public.submit_mavis_public_intake(jsonb,text,uuid,text,integer)', 'EXECUTE'), 'only the server service role can call the guarded intake RPC');
 
@@ -57,6 +57,7 @@ select is(
   (public.submit_mavis_public_intake(
     '{"contact_name":"کاربر آزمایشی","contact_phone":"+989121234567","contact_email":null,"preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی برای بررسی اولیه موضوع حقوقی و هماهنگی تماس.","privacy_notice_accepted":true,"contact_consent":true,"third_party_consent":false,"marketing_consent":false}'::jsonb,
     repeat('a',64),
+    repeat('f',64),
     '11111111-1111-4111-8111-111111111111'::uuid,
     'test-v1',
     30
@@ -81,6 +82,7 @@ select is(
   public.submit_mavis_public_intake(
     '{"contact_name":"کاربر آزمایشی","contact_phone":"+989121234567","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی برای بررسی اولیه موضوع حقوقی و هماهنگی تماس.","privacy_notice_accepted":false,"contact_consent":true}'::jsonb,
     repeat('c',64),
+    repeat('e',64),
     '22222222-2222-4222-8222-222222222222'::uuid,
     'test-v1',
     30
@@ -92,6 +94,7 @@ select is(
 select is(
   (public.submit_mavis_public_intake(
     '{"contact_name":"کاربر دوم","contact_phone":"+989121234568","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی اول برای کنترل محدودیت نرخ درخواست و بررسی اولیه.","privacy_notice_accepted":true,"contact_consent":true}'::jsonb,
+    repeat('b',64),
     repeat('b',64),
     '33333333-3333-4333-8333-333333333331'::uuid,
     'test-v1',
@@ -105,6 +108,7 @@ select is(
   (public.submit_mavis_public_intake(
     '{"contact_name":"کاربر دوم","contact_phone":"+989121234568","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی دوم برای کنترل محدودیت نرخ درخواست و بررسی اولیه.","privacy_notice_accepted":true,"contact_consent":true}'::jsonb,
     repeat('b',64),
+    repeat('b',64),
     '33333333-3333-4333-8333-333333333332'::uuid,
     'test-v1',
     30
@@ -116,6 +120,7 @@ select is(
 select is(
   (public.submit_mavis_public_intake(
     '{"contact_name":"کاربر دوم","contact_phone":"+989121234568","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی سوم برای کنترل محدودیت نرخ درخواست و بررسی اولیه.","privacy_notice_accepted":true,"contact_consent":true}'::jsonb,
+    repeat('b',64),
     repeat('b',64),
     '33333333-3333-4333-8333-333333333333'::uuid,
     'test-v1',
@@ -129,12 +134,33 @@ select is(
   public.submit_mavis_public_intake(
     '{"contact_name":"کاربر دوم","contact_phone":"+989121234568","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی چهارم برای کنترل محدودیت نرخ درخواست و بررسی اولیه.","privacy_notice_accepted":true,"contact_consent":true}'::jsonb,
     repeat('b',64),
+    repeat('b',64),
     '33333333-3333-4333-8333-333333333334'::uuid,
     'test-v1',
     30
   ) ->> 'code',
   'rate_limited',
   'fourth request within a rate window is rate limited'
+);
+
+
+select is(
+  (
+    select count(*)
+    from generate_series(1,11) as attempt(number)
+    where (
+      public.submit_mavis_public_intake(
+        '{"contact_name":"کاربر سوم","contact_phone":"+989121234569","preferred_contact_method":"phone","city":"اهواز","legal_area":"املاک","matter_summary":"درخواست آزمایشی برای آزمون محدودیت مستقل نشانی شبکه.","privacy_notice_accepted":true,"contact_consent":true}'::jsonb,
+        repeat('d',64),
+        repeat(pg_catalog.md5(attempt.number::text),2),
+        pg_catalog.gen_random_uuid(),
+        'test-v1',
+        30
+      ) ->> 'ok'
+    )::boolean
+  ),
+  10::bigint,
+  'IP-wide rate limit allows ten requests and blocks the eleventh even when contact identifiers rotate'
 );
 
 reset role;
