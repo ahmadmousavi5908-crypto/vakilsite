@@ -51,6 +51,9 @@ jobs:
       - name: Test offline Persian search
         run: node --test tests/mavis/offline-search.test.mjs
 
+      - name: Test offline shell and cache readiness contract
+        run: node --test tests/mavis/offline-shell.test.mjs
+
       - name: Test deterministic offline answer composition
         run: node --test tests/mavis/offline-answer.test.mjs
 
