@@ -119,7 +119,7 @@ Keep Google Search Console, Bing, Trends, and other providers read-only and inac
 
 ## 9. Client fields, passwords, and offline behavior
 
-The client intake and identity contract is in `docs/mavis/58-client-intake-and-identity-contract-2026-11-09.md`. The offline state contract is in `docs/mavis/59-offline-detection-and-private-data-boundary-2026-11-09.md`.
+The client intake and identity contract is in `docs/mavis/58-client-intake-and-identity-contract-2026-11-09.md`. The offline state contract is in `docs/mavis/59-offline-detection-and-private-data-boundary-2026-11-09.md`. The post-approval client portal security and data model is in `docs/mavis/60-client-portal-security-and-data-model-2026-11-09.md`; provider constraints are recorded in `docs/mavis/research/03-client-auth-provider-configuration-audit-2026-11-09.md`.
 
 - Public intake remains passwordless and must reject unknown credential fields. Do not ask a visitor for a password or OTP.
 - The tracking code and idempotency UUID are references only; neither authenticates a client.

@@ -27,7 +27,7 @@
 **Current state:** automated syntax/search/shell/answer tests pass in CI; genuine device airplane-mode test remains pending.
 
 
-**Client identity and form contract:** See `docs/mavis/58-client-intake-and-identity-contract-2026-11-09.md` for the staged intake fields, conditional case-specific questions, consent separation, client-visible/private field boundary, tracking-code semantics, and verified-account authentication. Public intake must never collect passwords or OTPs. Client workspace activation is deferred until human approval, verified identity, configured delivery, and tested MFA/session/RLS controls.
+**Client identity and form contract:** See `docs/mavis/58-client-intake-and-identity-contract-2026-11-09.md` for the staged intake fields, conditional case-specific questions, consent separation, client-visible/private field boundary, tracking-code semantics, and verified-account authentication. The post-approval portal data and authorization model is in `docs/mavis/60-client-portal-security-and-data-model-2026-11-09.md`; current Supabase Auth/provider constraints are audited in `docs/mavis/research/03-client-auth-provider-configuration-audit-2026-11-09.md`. Public intake must never collect passwords or OTPs. Client workspace activation is deferred until human approval, verified identity, configured delivery, and tested MFA/session/RLS controls.
 
 **Offline reachability:** See `docs/mavis/59-offline-detection-and-private-data-boundary-2026-11-09.md`. Browser network hints, actual MAVIS-origin reachability, and offline-cache readiness are separate states. The public offline assistant probes an uncached health endpoint with a short timeout; client private data remains uncached and inaccessible offline.
 
