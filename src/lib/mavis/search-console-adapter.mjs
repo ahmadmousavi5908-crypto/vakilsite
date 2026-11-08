@@ -1,12 +1,18 @@
 const ALLOWED_DIMENSIONS = new Set(["date", "hour", "query", "page", "country", "device", "searchAppearance"]);
 const ALLOWED_TYPES = new Set(["web", "news", "discover", "googleNews", "image", "video"]);
 const ALLOWED_DATA_STATES = new Set(["final", "all", "hourly_all"]);
-const ALLOWED_AGGREGATIONS = new Set(["auto", "byPage", "byProperty"]);
+const ALLOWED_AGGREGATIONS = new Set(["auto", "byPage", "byProperty", "byNewsShowcasePanel"]);
 
 function isDate(value) {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const date = new Date(value + "T00:00:00.000Z");
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+function isOffsetDateTime(value) {
+  if (typeof value !== "string") return false;
+  const match = /^(\d{4}-\d{2}-\d{2})T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d[+-](?:(?:0\d|1[0-3]):[0-5]\d|14:00)$/.exec(value);
+  return Boolean(match && isDate(match[1]) && !Number.isNaN(Date.parse(value)));
 }
 
 function finiteMetric(value) {
@@ -99,13 +105,31 @@ export function normalizeSearchAnalyticsResponse(response, request) {
   }
 
   const metadata = response.metadata && typeof response.metadata === "object" ? response.metadata : {};
-  const firstIncompleteDate = isDate(metadata.first_incomplete_date) ? metadata.first_incomplete_date : null;
-  const firstIncompleteHour = typeof metadata.first_incomplete_hour === "string" ? metadata.first_incomplete_hour : null;
+  const rawIncompleteDate = metadata.first_incomplete_date;
+  const rawIncompleteHour = metadata.first_incomplete_hour;
+  const firstIncompleteDate = dataState === "all" && dimensions.includes("date") && isDate(rawIncompleteDate)
+    ? rawIncompleteDate
+    : null;
+  const firstIncompleteHour = dataState === "hourly_all" && dimensions.includes("hour") && isOffsetDateTime(rawIncompleteHour)
+    ? rawIncompleteHour
+    : null;
+  const hasInvalidIncompleteMetadata =
+    (rawIncompleteDate != null && firstIncompleteDate === null) ||
+    (rawIncompleteHour != null && firstIncompleteHour === null);
 
   return {
     ok: true,
     source: "google_search_console_search_analytics",
-    request: { startDate, endDate, dimensions: [...dimensions], type, dataState, rowLimit, startRow },
+    request: {
+      startDate,
+      endDate,
+      dateRangeTimeZone: "America/Los_Angeles",
+      dimensions: [...dimensions],
+      type,
+      dataState,
+      rowLimit,
+      startRow,
+    },
     aggregationType,
     rows,
     coverage: {
@@ -115,6 +139,7 @@ export function normalizeSearchAnalyticsResponse(response, request) {
       hasIncompleteRecentData: Boolean(firstIncompleteDate || firstIncompleteHour),
       firstIncompleteDate,
       firstIncompleteHour,
+      hasInvalidIncompleteMetadata,
     },
     disclaimer: "داده‌های Search Analytics ممکن است همه ردیف‌های موجود را پوشش ندهند؛ خروجی این مبدل تضمین‌کننده کامل‌بودن داده نیست.",
   };
