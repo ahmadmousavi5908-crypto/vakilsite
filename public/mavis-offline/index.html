@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#142b43">
+<meta name="description" content="جست‌وجوی آفلاین در کتابخانه حقوقی ایران و راهنمای اولیه خدمات حقوقی.">
+<title>پاسخ‌گوی آفلاین ماویس | کتابخانه حقوقی</title>
+<style>
+:root{color-scheme:light;--navy:#142b43;--gold:#b79a5b;--ink:#233447;--muted:#657386;--line:#dce3e9;--paper:#f5f7f9;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Tahoma,"Segoe UI",sans-serif;line-height:1.85}
+header{background:linear-gradient(125deg,#10253a,#1d3b56);color:#fff;padding:26px 18px 30px;border-bottom:3px solid var(--gold)}
+.wrap{width:min(920px,calc(100% - 28px));margin:auto}header .eyebrow{font-size:12px;color:#e0c78d;letter-spacing:.5px}h1{font-size:clamp(22px,4vw,32px);margin:8px 0}header p{color:#e2e8ee;margin:0;max-width:760px}
+main{padding:22px 0 48px}.statusbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px;color:var(--muted);font-size:13px}
+.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:3px 11px;background:#fff}.dot{width:8px;height:8px;border-radius:50%;background:#9a7a39}.dot.online{background:#2b8a65}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 8px 28px #172d4010}
+label{display:block;font-weight:700;margin-bottom:8px}form{display:flex;gap:9px;flex-wrap:wrap}input{flex:1;min-width:210px;border:1px solid #cbd5df;border-radius:10px;padding:13px 14px;font:inherit;outline-offset:2px}button{border:0;border-radius:10px;background:var(--navy);color:#fff;padding:11px 22px;font:inherit;font-weight:700;cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+.hint{font-size:12px;color:var(--muted);margin:9px 0 0}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.chip{background:#f4f0e7;border:1px solid #e5dcc8;color:#56482e;border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer}
+#message{margin:14px 0 0;font-size:13px;color:var(--muted)}#results{display:grid;gap:12px;margin-top:16px}.result{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}.top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px}.type{background:#edf2f6;color:#28445e;border-radius:6px;padding:2px 8px}.review{background:#f5f0e4;color:#6d5625;border-radius:6px;padding:2px 8px}.result h2{font-size:17px;margin:10px 0 6px;color:var(--navy)}.result p{margin:6px 0;white-space:pre-wrap}.meta{font-size:12px;color:var(--muted);margin-top:9px}.refs{font-size:12px;margin-top:9px;padding-top:8px;border-top:1px solid var(--line);color:#526274}.sources{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.sources a{color:#285b80;font-size:12px;overflow-wrap:anywhere}.warning{background:#fff8e9;border:1px solid #ead9ac;border-radius:12px;padding:12px 14px;margin-top:16px;font-size:12px;color:#665326}.footer{font-size:12px;color:var(--muted);text-align:center;margin:18px auto 0;max-width:760px}.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed #c7d1dc;border-radius:12px;background:#fff}
+@media(max-width:560px){.panel{padding:14px}form button{width:100%}input{width:100%}.result{padding:13px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><span class="eyebrow">MAVIS · OFFLINE KNOWLEDGE</span><h1>پاسخ‌گوی آفلاین ماویس</h1><p>جست‌وجوی محلی در واژه‌نامه، قوانین ثبت‌شده، خلاصه مواد و پرسش‌های متداول. این بخش بدون اتصال به ChatGPT یا API هوش مصنوعی کار می‌کند.</p></div></header>
+<main class="wrap">
+<div class="statusbar"><span class="pill"><i class="dot" id="network-dot"></i><span id="network-status">در حال بررسی وضعیت اتصال…</span></span><span id="bundle-status">در حال بارگذاری کتابخانه…</span></div>
+<section class="panel" aria-labelledby="search-title"><h2 id="search-title" style="font-size:18px;margin:0 0 12px">موضوع یا پرسش خود را بنویسید</h2>
+<form id="search-form"><label for="query" style="position:absolute;right:-9999px">عبارت جست‌وجو</label><input id="query" type="search" maxlength="160" minlength="2" placeholder="مثلاً چک برگشتی، قولنامه، مهریه، فیشینگ یا اعتراض به رأی" autocomplete="off" required><button id="submit" type="submit" disabled>جست‌وجو در کتابخانه</button></form>
+<p class="hint">جست‌وجو روی همین دستگاه انجام می‌شود. پرسش شما ذخیره یا به سرور ارسال نمی‌شود.</p>
+<div class="chips" aria-label="موضوعات پرتکرار">
+<button class="chip" type="button" data-query="چک برگشتی">چک برگشتی</button><button class="chip" type="button" data-query="قولنامه و سند ملک">قولنامه و سند ملک</button><button class="chip" type="button" data-query="طلاق و مهریه">طلاق و مهریه</button><button class="chip" type="button" data-query="کلاهبرداری اینترنتی">کلاهبرداری اینترنتی</button><button class="chip" type="button" data-query="اعتراض به رأی">اعتراض به رأی</button><button class="chip" type="button" data-query="حقوق کارگر">حقوق کارگر</button>
+</div><p id="message" role="status" aria-live="polite">برای شروع یک موضوع را جست‌وجو کنید.</p></section>
+<section id="results" aria-live="polite" aria-label="نتایج جست‌وجو"></section>
+<section class="warning"><strong>محدودیت مهم:</strong> این ابزار پاسخ‌گوی مولد یا مشاور حقوقی نیست. فقط اطلاعات موجود را بازیابی می‌کند. خلاصه‌ها متن رسمی قانون نیستند و وضعیت اعتبار همه قوانین به‌طور کامل تنقیح نشده است. برای مهلت‌ها، اقدامات فوری و تصمیم درباره پرونده، متن رسمی روز و نظر وکیل لازم است.</section>
+<p class="footer">برای استفاده آفلاین، این صفحه را یک‌بار با اینترنت باز کنید و تا پایان بارگذاری کتابخانه باز نگه دارید. در حالت آفلاین، فقط همین بخش و داده‌های ذخیره‌شده روی دستگاه در دسترس است؛ ثبت درخواست و ارسال مدارک بدون اتصال انجام نمی‌شود.</p>
+</main>
+<script src="./app.js" defer></script>
+</body></html>
