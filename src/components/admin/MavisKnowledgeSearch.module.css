@@ -46,3 +46,14 @@
 .evidencePanel p{font-size:10px;color:#566675;margin:7px 0 3px}
 .evidencePanel>small{font-size:9px;color:#8b6a3e}
 .noSource{font-size:9px;color:#8b7770;margin:8px 0 0}
+
+.dossier{margin:4px 0 18px;padding:14px 15px;border:1px solid #e7e0d2;border-radius:6px;background:#faf9f5}
+.dossierHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.dossierHeader strong{font-size:11px;color:#263f54}
+.dossierHeader span{font-size:9px;color:#8a6336;line-height:1.8}
+.dossierCounts{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.dossierCounts span{font-size:9px;color:#5c6975;background:#fff;border:1px solid #e8e8e3;padding:4px 7px;border-radius:3px}
+.dossierGaps{margin-top:10px;font-size:10px;color:#596875}
+.dossierGaps summary{cursor:pointer;font-weight:700}
+.dossierGaps ul{margin:8px 0 0;padding-right:18px;line-height:2}
+.dossier>p{margin:10px 0 0;color:#8b6a3e;font-size:9px;line-height:1.9}
