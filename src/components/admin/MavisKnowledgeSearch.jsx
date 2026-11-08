@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import styles from "./MavisKnowledgeSearch.module.css";
+import { safeInternalPath } from "../../lib/mavis/request-guards.mjs";
 
 const reviewLabels = {
   verified_primary_source: "تطبیق‌شده با منبع اولیه",
@@ -14,6 +15,17 @@ const typeLabels = {
   term: "اصطلاح حقوقی",
   law: "قانون",
   article: "خلاصه ماده",
+};
+
+const matchedFieldLabels = {
+  title: "عنوان",
+  alias: "مترادف",
+  search_phrase: "عبارت منتخب",
+  body: "تعریف یا خلاصه",
+};
+
+const statusLabels = {
+  needs_consolidation_review: "نیازمند بررسی تنقیح و اصلاحات",
 };
 
 function safeExternalUrl(value) {
@@ -145,8 +157,8 @@ export default function MavisKnowledgeSearch() {
                 {excerpt && <p className={styles.excerpt}>{excerpt}</p>}
                 <div className={styles.meta}>
                   {record.article_number && <span>شماره ماده: {record.article_number}</span>}
-                  {record.status && <span>وضعیت ثبت‌شده: {record.status}</span>}
-                  <span>امتیاز تطبیق: {record.search_score}</span>
+                  {record.status && <span>وضعیت: {statusLabels[record.status] || "ثبت‌شده، نیازمند بررسی"}</span>}
+                  {record.matched_field && <span>تطبیق بر اساس: {matchedFieldLabels[record.matched_field] || "معیار داخلی"}</span>}
                 </div>
                 {sources.length > 0 && (
                   <div className={styles.sources}>
@@ -163,7 +175,7 @@ export default function MavisKnowledgeSearch() {
                     </ul>
                   </div>
                 )}
-                {record.path && <a className={styles.recordLink} href={record.path} target="_blank" rel="noopener noreferrer">مشاهده مدخل در کتابخانه ←</a>}
+                {safeInternalPath(record.path) && <a className={styles.recordLink} href={safeInternalPath(record.path)}>مشاهده مدخل در کتابخانه ←</a>}
               </article>
             );
           })}
