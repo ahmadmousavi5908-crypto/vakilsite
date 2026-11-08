@@ -180,10 +180,9 @@ export async function POST(request) {
 
   return NextResponse.json(
     {
-      accepted: true,
+      received: true,
       trackingCode: receipt.tracking_code,
       receivedAt: receipt.created_at,
-      reviewPriority: triage.reviewPriority,
       notice: "درخواست اولیه ثبت و برای بررسی انسانی در صف قرار گرفت. این رسید به معنی پذیرش وکالت، بررسی تعارض منافع یا ارائه نظر حقوقی نیست.",
     },
     { status: 202, headers: NO_STORE_HEADERS },
