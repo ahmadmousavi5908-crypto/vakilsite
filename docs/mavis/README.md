@@ -46,6 +46,7 @@
 - [ممیزی سخت‌گیرانه، امتیازدهی و برنامه بستن شکاف‌های MAVIS](./44-mavis-critical-gap-closure-and-scorecard-2026-11-08.md) — امتیاز تفکیکی، P0/P1/P2، دروازه‌های پذیرش و مرزبندی شواهد طراحی با اجرای واقعی
 - [ممیزی کد شاخه اجرایی MAVIS و برنامه اصلاح](./45-runtime-branch-code-audit-and-remediation-2026-11-08.md) — بررسی هسته، Intake، Admin، CI، محدودیت‌های Provider و یافته‌های P0/P1/P2؛ فقط remote و بدون ادعای تست محلی
 - [تطبیق شاخه‌های GitHub و شواهد ساختار اجرایی MAVIS](./46-github-branch-reconciliation-and-runtime-evidence-2026-11-08.md) — نقشه ahead/behind، APIها، migrations، کتابخانه حقوقی موجود و دروازه امن انتقال به Termux
+- [تداوم خدمت مستقل از توکن و امنیت اعتبارنامه‌ها](./47-provider-independent-continuity-and-secure-credentials-2026-11-08.md) — ادامه Intake، دانش، جست‌وجو و گردش‌کار بدون LLM؛ صف بازیابی؛ کنترل هزینه؛ تفکیک اختلال‌ها و سیاست سخت‌گیرانه گذرواژه/secret
 
 ## مانیفست‌های دریافت و تطبیق
 
