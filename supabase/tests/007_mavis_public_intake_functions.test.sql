@@ -11,7 +11,7 @@ select ok(
   'service role cannot read or change the owner-approved retention policy'
 );
 select throws_ok(
-  $select * from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '31 days')$,
+  $$select * from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '31 days')$$,
   'P0001',
   'An approved retention policy is required before purge',
   'purge remains disabled until an approved retention policy is configured'
@@ -139,14 +139,14 @@ select is((select count(*)::integer from mavis_intake_private.audit_events
   'purge appends a metadata-only system audit marker');
 
 select throws_ok(
-  $select * from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '1 day')$,
+  $$select * from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '1 day')$$,
   'P0001',
   'Audit retention cutoff is shorter than the approved minimum',
   'purge rejects an audit cutoff that violates the approved minimum retention period'
 );
 
 select throws_ok(
-  $select * from public.purge_mavis_expired_public_intake(null::timestamptz)$,
+  $$select * from public.purge_mavis_expired_public_intake(null::timestamptz)$$,
   'P0001',
   'A valid audit retention cutoff is required',
   'purge rejects a null audit-retention cutoff'
