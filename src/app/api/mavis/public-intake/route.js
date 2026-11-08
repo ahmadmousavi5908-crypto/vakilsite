@@ -8,6 +8,11 @@ export const runtime = "nodejs";
 
 const NO_STORE = { "Cache-Control": "no-store" };
 const MAX_BODY_BYTES = 8192;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function respond(code, message, status, extra = {}) {
+  return NextResponse.json({ error: { code, message, ...extra } }, { status, headers: NO_STORE });
+}
 async function readBoundedJson(request) {
   const reader = request.body?.getReader();
   if (!reader) throw new Error("Missing body");
@@ -79,7 +84,7 @@ export async function POST(request) {
   } catch {
     return respond("RATE_LIMIT_CONFIGURATION", "پیکربندی کنترل درخواست معتبر نیست.", 503);
   }
-  const submission = { ...payload };
+  const submission = { ...payload, contact_phone: normalizeIntakePhone(payload.contact_phone) };
   delete submission.idempotency_key;
 
   let supabase;
