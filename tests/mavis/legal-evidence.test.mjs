@@ -85,7 +85,7 @@ test("does not infer enactment, effective or verification dates", () => {
     id: "law-demo",
     enactment_date: "not-a-date",
     effective_date: null,
-    last_verified_at: "2026-11-01",
+    last_verified_at: "2026-02-31",
   });
 
   assert.equal(evidence.validity.enactmentDate, null);
