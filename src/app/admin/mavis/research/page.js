@@ -11,7 +11,12 @@ export const metadata = {
 };
 
 export default async function MavisResearchPage() {
-  const access = await requireAdmin();
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    redirect("/admin/login?error=authorization");
+  }
   if (!access.configured) redirect("/admin/login?error=config");
   if (access.authenticationAvailable === false || access.adminCheckAvailable === false) redirect("/admin/login?error=authorization");
   if (!access.user) redirect("/admin/login");
