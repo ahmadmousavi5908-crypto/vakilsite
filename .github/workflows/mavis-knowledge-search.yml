@@ -64,6 +64,10 @@ jobs:
         if: ${{ hashFiles('tests/mavis/intake-request.test.mjs') != '' }}
         run: node --test tests/mavis/intake-request.test.mjs
 
+      - name: Test admin intake API guards
+        if: ${{ hashFiles('tests/mavis/intake-admin.test.mjs') != '' }}
+        run: node --test tests/mavis/intake-admin.test.mjs
+
       - name: Lint intake and growth modules
         if: ${{ hashFiles('src/lib/mavis/public-intake-validation.mjs') != '' }}
         run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/growth-metrics.mjs src/lib/mavis/legal-intake-triage.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs tests/mavis/legal-intake-triage.test.mjs
@@ -71,6 +75,10 @@ jobs:
       - name: Lint intake API and server-only Supabase client
         if: ${{ hashFiles('src/app/api/mavis/intake/route.js') != '' }}
         run: npm run lint -- src/app/api/mavis/intake/route.js src/lib/mavis/intake-request.mjs src/lib/supabase/service.js tests/mavis/intake-request.test.mjs
+
+      - name: Lint admin intake API
+        if: ${{ hashFiles('src/app/api/admin/mavis/intake/route.js') != '' }}
+        run: npm run lint -- src/app/api/admin/mavis/intake/route.js src/lib/mavis/intake-admin.mjs tests/mavis/intake-admin.test.mjs
 
       - name: Lint Search Console adapter
         if: ${{ hashFiles('src/lib/mavis/search-console-adapter.mjs') != '' }}
