@@ -74,7 +74,7 @@ test("rejects invalid boolean metadata", () => {
 });
 
 test("does not allow a verified label without complete primary evidence", () => {
-  const result = validateLegalReviewQueue(makeCsv(makeRow({ review_status: "verified_primary_source" })));
+  const result = validateLegalReviewQueue(makeCsv(makeRow({ review_status: "verified_primary_source", source_ids: "" })));
   assert.ok(result.errors.some((error) => error.includes("without a retrieved primary document")));
   assert.ok(result.errors.some((error) => error.includes("amendment/repeal review")));
   assert.ok(result.errors.some((error) => error.includes("without a linked source")));
