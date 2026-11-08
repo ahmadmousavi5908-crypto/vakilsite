@@ -1,13 +1,14 @@
 # MAVIS Release Closure Runbook — 2026-11-09
 
 **Purpose:** Close the remaining acceptance gaps with the smallest safe sequence. This is an operational runbook, not a release approval.
-**Baseline:** Candidate branch `integration/mavis-mvp-candidate-20261108`, previously verified head `1307624d120f3fff99c94bf4d4bf1c30e883dd15`.
+**Candidate:** PR #31 branch `integration/mavis-release-gate-20261109`. The PR base is `integration/mavis-mvp-candidate-20261108`; it is not the candidate branch to clone. Before local verification, read the current PR head SHA from GitHub and record it.
 **Safety:** The updated Mother Two archive is a protected rollback artifact. Never overwrite, rename, delete, or use it as a working directory. No merge, production migration, OAuth activation, public Intake activation, or deployment is authorized by this document.
 
 ## 1. What is already evidenced
 
-- Application and database CI passed on the exact baseline SHA above.
-- Database workflow applied migrations 001–011 and passed six pgTAP files (167 assertions).
+- Application and database CI both passed on PR #31 head `ebbf8cefa1b45c9b0ce9db41ef734876cf5b6` (before this runbook correction).
+- Exact-head application run `42524665893` completed successfully: dependency install, legal-library validation, deterministic/offline tests, intake/growth tests, lint, and Webpack build.
+- Exact-head database run `42524665979` completed successfully: isolated Supabase startup, migrations and pgTAP security tests, and clean shutdown. The earlier 167-assertion count belongs to a prior baseline and is not asserted for this run.
 - Application workflow passed the legal-library validator, deterministic/offline checks, Intake and growth tests, lint, and Webpack build.
 - Intake uses bounded JSON parsing, origin/content-type guards, rate limiting, idempotent submissions, and narrow RPC access.
 - The offline legal bundle intentionally does not claim current-law verification.
@@ -20,11 +21,15 @@ A green CI result is evidence only for the checks actually executed. It is not p
 
 ```bash
 cd ~/downloads
-git clone --branch integration/mavis-mvp-candidate-20261108 --single-branch https://github.com/ahmadmousavi5908-crypto/vakilsite.git mavis-verification-20261109
+git clone --branch integration/mavis-release-gate-20261109 --single-branch https://github.com/ahmadmousavi5908-crypto/vakilsite.git mavis-verification-20261109
 cd mavis-verification-20261109
+git rev-parse HEAD
+git status --short
 npm ci --no-audit --no-fund
 npm run mavis:verify
 ```
+
+**Precondition:** compare the `git rev-parse HEAD` output with the current `head.sha` of PR #31 in GitHub immediately before running. If they differ, stop and obtain fresh exact-head CI for the new SHA; do not test an unreviewed branch tip.
 
 **Pass evidence:** preserve the complete terminal output, command exit code 0, Node/npm versions, commit SHA, and available device/Android details. If any step fails, stop at the first failure, preserve its full output, and fix the root cause before continuing. Do not report a local pass until this output is reviewed.
 
@@ -106,7 +111,7 @@ Supabase Cron may be suitable, but availability and current behavior must be che
 Keep Google Search Console, Bing, Trends, and other providers read-only and inactive until each provider's current official OAuth documentation, scopes, redirect URI, token storage, refresh/revocation, quotas, and data-use terms have been reviewed. Use synthetic fixtures for empty, stale, partial, unauthorized, expired-token, quota, and timezone-boundary cases. Never treat an indexing request as proof of indexing or ranking.
 
 
-## 10. Client fields, passwords, and offline behavior
+## 9. Client fields, passwords, and offline behavior
 
 The client intake and identity contract is in `docs/mavis/58-client-intake-and-identity-contract-2026-11-09.md`. The offline state contract is in `docs/mavis/59-offline-detection-and-private-data-boundary-2026-11-09.md`.
 
@@ -119,7 +124,7 @@ The client intake and identity contract is in `docs/mavis/58-client-intake-and-i
 - Public offline knowledge search may run without network. Private client records, case uploads, messages, login, and account changes remain online-only. An offline page or cached browser session must never bypass server-side authentication or revocation.
 - Offline status now uses an uncached same-origin connectivity probe with a 1.8-second timeout, separate from `navigator.onLine`. A failed probe must not disable local search.
 
-## 9. Final release gate
+## 10. Final release gate
 
 Release readiness is **not achieved** until all applicable items below have evidence:
 
