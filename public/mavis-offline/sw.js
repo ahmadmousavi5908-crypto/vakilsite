@@ -1,5 +1,5 @@
 "use strict";
-const CACHE_NAME="mavis-offline-v1.0.4-20261108";
+const CACHE_NAME="mavis-offline-v1.0.5-20261108";
 const ASSETS=["/mavis-offline/index.html","/mavis-offline/app.js","/mavis-offline/search.mjs","/mavis-offline/knowledge.json"];
 self.addEventListener("install",event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));});
 self.addEventListener("activate",event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith("mavis-offline-")&&key!==CACHE_NAME).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
