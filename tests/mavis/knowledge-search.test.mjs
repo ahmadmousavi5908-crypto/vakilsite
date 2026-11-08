@@ -93,3 +93,63 @@ test("keeps stable input order when scores are equal", () => {
   const results = searchLegalRecords({ query: "اختلاف ملکی", records: equalRecords });
   assert.deepEqual(results.map((record) => record.id), ["a", "b"]);
 });
+
+
+import { readFileSync } from "node:fs";
+
+const readDataset = (relativePath) =>
+  JSON.parse(readFileSync(new URL(relativePath, import.meta.url), "utf8"));
+
+const termsDataset = readDataset("../../src/data/legal-library/terms/terms.json");
+const lawsDataset = readDataset("../../src/data/legal-library/laws/laws.json");
+const articlesDataset = readDataset("../../src/data/legal-library/articles/articles.json");
+
+const actualLibraryRecords = [
+  ...termsDataset.records.map((record) => ({
+    ...record,
+    title: record.search_title || record.canonical,
+    record_type: "term",
+  })),
+  ...lawsDataset.records.map((record) => ({
+    ...record,
+    title: record.title,
+    record_type: "law",
+  })),
+  ...articlesDataset.records.map((record) => ({
+    ...record,
+    title: record.title,
+    record_type: "article",
+  })),
+].filter((record) => record.review_status !== "draft");
+
+test("indexes the existing legal library inventory without a parallel corpus", () => {
+  assert.equal(termsDataset.records.length, 132);
+  assert.equal(lawsDataset.records.length, 16);
+  assert.equal(articlesDataset.records.length, 22);
+  assert.equal(actualLibraryRecords.length, 170);
+});
+
+test("retrieves actual library records and retains legal review status", () => {
+  const results = searchLegalRecords({
+    query: "سند مالکیت",
+    records: actualLibraryRecords,
+  });
+  assert.equal(results[0].record_type, "term");
+  assert.equal(results[0].canonical, "سند مالکیت");
+  assert.equal(results[0].review_status, "needs_legal_review");
+});
+
+test("does not expose draft records through the first-stage retrieval fixture", () => {
+  const draft = {
+    id: "term_test_draft",
+    canonical: "موضوع محرمانه آزمایشی",
+    review_status: "draft",
+  };
+  const visibleRecords = [...actualLibraryRecords, draft]
+    .filter((record) => record.review_status !== "draft");
+  const results = searchLegalRecords({
+    query: "موضوع محرمانه آزمایشی",
+    records: visibleRecords,
+  });
+  assert.deepEqual(results, []);
+});
