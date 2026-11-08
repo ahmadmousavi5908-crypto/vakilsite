@@ -12,6 +12,7 @@ export default function MavisIntakePage() {
     && Boolean(process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)
     && process.env.MAVIS_INTAKE_RATE_LIMIT_SECRET?.length >= 32
     && Boolean(process.env.MAVIS_INTAKE_PRIVACY_NOTICE_VERSION)
+    && process.env.MAVIS_INTAKE_PRIVACY_NOTICE_VERSION.length <= 40
     && Number.isInteger(Number(process.env.MAVIS_INTAKE_RETENTION_DAYS))
     && Number(process.env.MAVIS_INTAKE_RETENTION_DAYS) >= 1
     && Number(process.env.MAVIS_INTAKE_RETENTION_DAYS) <= 3650
