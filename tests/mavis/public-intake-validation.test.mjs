@@ -15,7 +15,7 @@ test("accepts a minimal valid intake and keeps optional consents independent", (
   const result = validatePublicIntake(valid);
   assert.equal(result.ok, true);
   assert.equal(result.value.marketingConsent, false);
-  assert.equal(result.value.thirdPartyConsent, false);
+  assert.equal(result.value.thirdPartyDataNoticeAcknowledged, false);
   assert.equal(result.value.consentPurpose, "initial_intake_review");
 });
 
