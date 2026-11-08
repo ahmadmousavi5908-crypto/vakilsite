@@ -332,3 +332,8 @@
 7. فقط پس از عبور مرحله اول، اتصال‌های بیرونی مرحله دوم به‌صورت read-only و مستقل طراحی شوند.
 
 مرجع کامل: [معماری مرحله اول، جست‌وجو و پذیرش مستقل](./48-first-party-first-stage-one-search-and-intake-architecture-2026-11-08.md).
+
+## ۱۶. دروازه امنیت و آزمون مجوزهای سه بازو
+پیش از پذیرش runtime، inventory تمام routeها، جدول‌ها، viewها، functionها، grants، RLS policyها و Storage bucketها الزامی است. تست‌های مثبت و منفی cross-user، cross-case، cross-arm، cache isolation، export/download و revoke باید روی staging پاس شوند. هدف پذیرش صفر cross-scope access و صفر secret exposure است؛ این هدف تا ثبت گزارش آزمون و commit دقیق pending باقی می‌ماند.
+
+مرجع: [ماتریس مجوزها و مرزبندی داده سه بازوی MAVIS](./49-three-arm-authorization-and-data-boundary-matrix-2026-11-08.md).
