@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { searchMavisKnowledge } from "../../../../lib/mavis/knowledge-registry";
 import { buildLegalEvidence } from "../../../../lib/mavis/legal-evidence.mjs";
+import { buildLegalResearchDossier } from "../../../../lib/mavis/legal-research-dossier.mjs";
 import {
   isJsonContentType,
   matchesRequestOrigin,
@@ -167,7 +168,16 @@ export async function POST(request) {
   }
 
   try {
-    const results = searchMavisKnowledge(query, limit).map((record) => ({
+    const dossierRecords = searchMavisKnowledge(query, limit).map((record) => ({
+      ...record,
+      source_class: record.source_class || (
+        record.record_type === "law" ? "statute" :
+        record.record_type === "article" ? "educational_summary" :
+        "legal_term"
+      ),
+    }));
+    const researchDossier = buildLegalResearchDossier({ topic: query, records: dossierRecords });
+    const results = dossierRecords.map((record) => ({
       evidence: buildLegalEvidence(record),
       id: record.id,
       record_type: record.record_type,
@@ -192,6 +202,7 @@ export async function POST(request) {
         query,
         count: results.length,
         results,
+        researchDossier,
         notice: "این خروجی فقط بازیابی از کتابخانه موجود است؛ نظر حقوقی، بررسی اعتبار روز قانون یا تحلیل پرونده محسوب نمی‌شود.",
       },
       { status: 200, headers: NO_STORE_HEADERS },
