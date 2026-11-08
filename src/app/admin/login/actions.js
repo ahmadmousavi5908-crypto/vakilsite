@@ -19,7 +19,15 @@ export async function signIn(formData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) redirect("/admin/login?error=credentials");
 
-  const { data: isAdmin, error: adminError } = await supabase.rpc("is_site_admin");
+  let adminResult;
+  try {
+    adminResult = await supabase.rpc("is_site_admin");
+  } catch {
+    await supabase.auth.signOut();
+    redirect("/admin/login?error=authorization");
+  }
+
+  const { data: isAdmin, error: adminError } = adminResult;
 
   if (adminError) {
     await supabase.auth.signOut();
