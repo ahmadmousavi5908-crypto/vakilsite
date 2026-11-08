@@ -40,9 +40,22 @@ const steps = [
   {
     label: "Check offline application syntax",
     command: process.execPath,
-    args: [
-      "--check", "public/mavis-offline/app.js",
-    ],
+    args: ["--check", "public/mavis-offline/app.js"],
+  },
+  {
+    label: "Check offline search module syntax",
+    command: process.execPath,
+    args: ["--check", "public/mavis-offline/search.mjs"],
+  },
+  {
+    label: "Check offline answer module syntax",
+    command: process.execPath,
+    args: ["--check", "public/mavis-offline/answer.mjs"],
+  },
+  {
+    label: "Check offline service-worker syntax",
+    command: process.execPath,
+    args: ["--check", "public/mavis-offline/sw.js"],
   },
   {
     label: "Lint MAVIS routes, components, libraries and tests",
