@@ -100,3 +100,11 @@
 - `MavisAvatarDock` صرفاً لینک به `/ai-assistant` است؛ این داک به‌تنهایی runtime مکالمه یا هسته هوشمند فعال ایجاد نمی‌کند.
 - نتیجه انتخاب baseline: شاخه SEO برای بررسی runtime و قابلیت‌های فنی، شاخه official-face فقط مرجع مقایسه تغییرات منو/داک، و workspace محلی تأییدشده Mother Two مرجع نهایی ظاهر. هیچ‌یک به‌تنهایی جایگزین بررسی محلی Mother Two نیست.
 - تا دریافت snapshot/manifest واقعی workspace محلی، هیچ merge یا port کردن تغییرات منو/داک مجاز نیست.
+
+
+## 10. شاخه کاری تلفیق runtime و اسناد — 2026-11-08
+- شاخه remote کاری `integration/mavis-runtime-reconciliation-20261108` از `feature/mavis-seo-integration-validation` ساخته شد تا runtime و اصلاحات فنی موجود MAVIS/SEO در یک محل بررسی شوند.
+- اسناد مادر نسخه ۱.۱، گزارش ممیزی، پروتکل Termux، پژوهش رسمی APIها، مشخصات UX و برنامه اتصال دانش/بکاپ به این شاخه منتقل شدند.
+- این شاخه صرفاً baseline بررسی و آماده‌سازی است؛ هنوز با workspace محلی Mother Two مقایسه نشده، هیچ فایل runtime در آن تغییر نکرده و هیچ migration یا deploy انجام نشده است.
+- این شاخه نسبت به main تاریخچه گسترده feature/SEO را به ارث می‌برد؛ به همین دلیل merge مستقیم آن به main مجاز نیست.
+- قبل از هر کدنویسی runtime، باید snapshot واقعی workspace محلی، branch/HEAD/status و فایل‌های untracked/modified با این شاخه و شاخه official-face مقایسه شود. ظاهر تأییدشده محلی بر هر نسخه remote مقدم است.
