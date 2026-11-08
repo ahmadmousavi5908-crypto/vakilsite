@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - feature/mavis-deterministic-legal-search-20261108
+      - feature/mavis-growth-intelligence-audit-20261108
+  pull_request:
+    branches:
+      - feature/mavis-deterministic-legal-search-20261108
   workflow_dispatch:
 
 permissions:
