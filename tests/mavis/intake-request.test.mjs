@@ -2,11 +2,51 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   createIntakeRateLimitHash,
+  createIntakeIdempotencyFingerprint,
+  isValidIntakeIdempotencyKey,
   getTrustedClientIp,
   hasOnlyAllowedIntakeFields,
   parseIntakeRateLimit,
   parseIntakeRetentionDays,
 } from "../../src/lib/mavis/intake-request.mjs";
+
+
+test("validates random idempotency keys and fingerprints canonical validated intake data", () => {
+  const key = "550e8400-e29b-41d4-a716-446655440000";
+  const value = {
+    fullName: "علی رضایی",
+    phone: "+989123456789",
+    caseType: "civil",
+    summary: "شرح کافی برای بررسی اولیه و ثبت درخواست حقوقی.",
+    urgency: "soon",
+    opposingParty: null,
+    consentPurpose: "initial_intake_review",
+    marketingConsent: false,
+    thirdPartyDataNoticeAcknowledged: false,
+  };
+  const context = {
+    reviewPriority: "standard_human_review",
+    detectedSignals: ["time_sensitive"],
+    requiresDeadlineCheck: true,
+    consentVersion: "mavis-intake-v1-30d",
+    retentionDays: 30,
+  };
+  const secret = "a".repeat(40);
+  const first = createIntakeIdempotencyFingerprint(value, secret, context);
+  const reorderedSignals = createIntakeIdempotencyFingerprint(value, secret, {
+    ...context,
+    detectedSignals: ["time_sensitive"],
+  });
+
+  assert.equal(isValidIntakeIdempotencyKey(key), true);
+  assert.equal(isValidIntakeIdempotencyKey("not-a-uuid"), false);
+  assert.match(first, /^[0-9a-f]{64}$/);
+  assert.equal(first, reorderedSignals);
+  assert.notEqual(first, createIntakeIdempotencyFingerprint({ ...value, summary: "شرح متفاوت برای همان شناسه." }, secret, context));
+  assert.notEqual(first, createIntakeIdempotencyFingerprint(value, "b".repeat(40), context));
+  assert.equal(createIntakeIdempotencyFingerprint(value, "short", context), null);
+  assert.equal(createIntakeIdempotencyFingerprint(value, secret, { ...context, retentionDays: 0 }), null);
+});
 
 test("trusts only a proxy-supplied x-real-ip when proxy trust is explicitly enabled", () => {
   const headers = new Headers({ "x-real-ip": "203.0.113.10", "x-forwarded-for": "198.51.100.20" });
