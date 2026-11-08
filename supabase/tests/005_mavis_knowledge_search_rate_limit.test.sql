@@ -39,7 +39,7 @@ select ok(
   'rate-limit function runs with its controlled definer privileges'
 );
 select ok(
-  (select coalesce(proconfig @> array['search_path='], false)
+  (select coalesce(proconfig @> array['search_path=""'], false)
    from pg_proc
    where oid = 'public.consume_mavis_knowledge_search_limit()'::regprocedure),
   'rate-limit function has an empty search_path'
