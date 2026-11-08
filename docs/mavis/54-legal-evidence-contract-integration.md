@@ -29,3 +29,12 @@ The admin-only `POST /api/mavis/knowledge-search` response includes the evidence
 ## Release boundary
 
 This contract does not mark any existing law as current by itself, and does not perform live source retrieval. A reviewer must verify the official publication and legal status before setting the source metadata that qualifies a record for `verified_primary`.
+
+
+## Structured research dossier
+
+The same admin search response now includes a `researchDossier` assembled from the matching existing legal-library records. It separates statutes, amendments, repeals, executive regulations, unifying opinions, published judgments, Administrative Justice Court decisions, advisory opinions, judicial sessions, academic commentary, official guidance, legal terms and educational article summaries.
+
+The dossier reports missing evidence tracks and exact-citation gaps as "not found in the current library", never as proof that no legal source exists. It returns no legal answer and no deadline calculation. The current 170-record seed corpus is mostly statutes, article summaries and legal terms; the absence of amendment/repeal chains, unifying opinions, published judgments and advisory opinions is therefore surfaced explicitly rather than hidden.
+
+A record becomes answer-ready only for internal review when its source evidence meets the conservative primary-source contract. Even then, human legal review remains mandatory.
