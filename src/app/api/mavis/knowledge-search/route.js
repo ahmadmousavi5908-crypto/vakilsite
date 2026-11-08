@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { searchMavisKnowledge } from "../../../../lib/mavis/knowledge-registry";
+import { buildLegalEvidence } from "../../../../lib/mavis/legal-evidence.mjs";
 import {
   isJsonContentType,
   matchesRequestOrigin,
@@ -167,6 +168,7 @@ export async function POST(request) {
 
   try {
     const results = searchMavisKnowledge(query, limit).map((record) => ({
+      evidence: buildLegalEvidence(record),
       id: record.id,
       record_type: record.record_type,
       title: record.title,
