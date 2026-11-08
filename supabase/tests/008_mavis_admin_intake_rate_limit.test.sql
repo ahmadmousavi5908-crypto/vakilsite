@@ -1,6 +1,6 @@
 begin;
 
-select plan(27);
+select plan(28);
 
 select ok(
   has_schema_privilege('authenticated', 'mavis_private', 'USAGE'),
@@ -117,13 +117,31 @@ select is(
   true,
   'a signed-in site admin can consume the dedicated intake quota'
 );
+do $test$
+declare
+  v_index integer;
+  v_allowed_count integer := 0;
+  v_allowed boolean;
+  v_retry_after integer;
+begin
+  for v_index in 1..29 loop
+    select decision.allowed, decision.retry_after_seconds
+    into v_allowed, v_retry_after
+    from public.consume_mavis_admin_intake_rate_limit() as decision;
+
+    if v_allowed then
+      v_allowed_count := v_allowed_count + 1;
+    end if;
+  end loop;
+
+  perform set_config('test.mavis_admin_quota_allowed_count', v_allowed_count::text, true);
+end;
+$test$;
+
 select is(
-  (select count(*)::integer
-   from generate_series(1, 29) as n
-   cross join lateral public.consume_mavis_admin_intake_rate_limit() as decision
-   where decision.allowed),
+  current_setting('test.mavis_admin_quota_allowed_count')::integer,
   29,
-  'the admin quota allows requests through the thirtieth request in its window'
+  'the admin quota allows twenty-nine additional independent calls after the first request'
 );
 select is(
   (select allowed from public.consume_mavis_admin_intake_rate_limit()),
@@ -144,6 +162,13 @@ select is(
    where user_id = '10000000-0000-4000-8000-000000000001'),
   1,
   'only the authorized admin receives a dedicated intake counter'
+);
+select is(
+  (select request_count
+   from mavis_private.admin_intake_rate_limits
+   where user_id = '10000000-0000-4000-8000-000000000001'),
+  31,
+  'the admin request counter is capped at thirty-one stored attempts'
 );
 select is(
   (select count(*)::integer
