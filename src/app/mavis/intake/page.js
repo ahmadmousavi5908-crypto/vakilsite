@@ -20,6 +20,8 @@ export default function MavisIntakePage() {
     process.env.MAVIS_TRUST_X_REAL_IP === "true" &&
     typeof process.env.MAVIS_INTAKE_RATE_LIMIT_SECRET === "string" &&
     process.env.MAVIS_INTAKE_RATE_LIMIT_SECRET.length >= 32 &&
+    typeof process.env.MAVIS_INTAKE_IDEMPOTENCY_SECRET === "string" &&
+    process.env.MAVIS_INTAKE_IDEMPOTENCY_SECRET.length >= 32 &&
     typeof process.env.SUPABASE_SECRET_KEY === "string" &&
     process.env.SUPABASE_SECRET_KEY.startsWith("sb_secret_") &&
     typeof process.env.NEXT_PUBLIC_SUPABASE_URL === "string";
