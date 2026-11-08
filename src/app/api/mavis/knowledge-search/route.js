@@ -6,6 +6,39 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 const NO_STORE_HEADERS = { "Cache-Control": "no-store" };
+const MAX_BODY_BYTES = 4096;
+
+async function readBoundedJson(request) {
+  const reader = request.body?.getReader();
+  if (!reader) throw new SyntaxError("Missing request body");
+
+  const chunks = [];
+  let totalBytes = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    totalBytes += value.byteLength;
+    if (totalBytes > MAX_BODY_BYTES) {
+      await reader.cancel();
+      const error = new Error("Request body too large");
+      error.code = "PAYLOAD_TOO_LARGE";
+      throw error;
+    }
+
+    chunks.push(value);
+  }
+
+  const bytes = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
 
 export async function POST(request) {
   const access = await requireAdmin();
@@ -31,13 +64,44 @@ export async function POST(request) {
     );
   }
 
-  let payload;
+  const origin = request.headers.get("origin");
+  let expectedOrigin;
   try {
-    payload = await request.json();
+    expectedOrigin = new URL(request.url).origin;
   } catch {
     return NextResponse.json(
-      { error: { code: "INVALID_JSON", message: "بدنه درخواست باید JSON معتبر باشد." } },
+      { error: { code: "INVALID_REQUEST", message: "مبدأ درخواست معتبر نیست." } },
       { status: 400, headers: NO_STORE_HEADERS },
+    );
+  }
+
+  if (!origin || origin !== expectedOrigin) {
+    return NextResponse.json(
+      { error: { code: "ORIGIN_REJECTED", message: "مبدأ درخواست مجاز نیست." } },
+      { status: 403, headers: NO_STORE_HEADERS },
+    );
+  }
+
+  if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) {
+    return NextResponse.json(
+      { error: { code: "UNSUPPORTED_MEDIA_TYPE", message: "نوع محتوای درخواست باید JSON باشد." } },
+      { status: 415, headers: NO_STORE_HEADERS },
+    );
+  }
+
+  let payload;
+  try {
+    payload = await readBoundedJson(request);
+  } catch (error) {
+    const tooLarge = error?.code === "PAYLOAD_TOO_LARGE";
+    return NextResponse.json(
+      {
+        error: {
+          code: tooLarge ? "PAYLOAD_TOO_LARGE" : "INVALID_JSON",
+          message: tooLarge ? "حجم درخواست بیش از حد مجاز است." : "بدنه درخواست باید JSON معتبر باشد.",
+        },
+      },
+      { status: tooLarge ? 413 : 400, headers: NO_STORE_HEADERS },
     );
   }
 
