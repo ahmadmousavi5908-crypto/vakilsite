@@ -6,7 +6,7 @@ const fail = (message) => {
   failures += 1;
   console.error("MAVIS bundle validation failed:", message);
 };
-const expectedTypes = { term: "terms", law: "laws", article: "articles", faq: "faqs" };
+const expectedTypes = { term: "terms", law: "laws", article: "articles", faq: "faqs", research_note: "research_notes" };
 const ids = new Set();
 const sourceIds = new Set(bundle.source_registry.map((source) => source.id));
 
@@ -22,7 +22,7 @@ for (const record of bundle.records) {
   if (!record.id || ids.has(record.id)) fail("Missing or duplicate record id: " + record.id);
   ids.add(record.id);
 
-  if (["term", "law", "article"].includes(record.record_type)) {
+  if (["term", "law", "article", "research_note"].includes(record.record_type)) {
     if (!record.provenance || record.provenance.exact_primary_document_verified !== false || record.provenance.current_validity_verified !== false) {
       fail("Legal record lacks conservative provenance flags: " + record.id);
     }
