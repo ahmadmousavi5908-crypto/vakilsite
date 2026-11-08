@@ -325,6 +325,9 @@ as $$
 declare
   v_deleted integer;
 begin
+  delete from mavis_intake_private.rate_limits
+   where window_started_at < now() - interval '1 day';
+
   delete from public.mavis_intake_submissions
    where retention_due_at <= now();
   get diagnostics v_deleted = row_count;
