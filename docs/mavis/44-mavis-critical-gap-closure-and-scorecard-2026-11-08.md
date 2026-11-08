@@ -254,7 +254,7 @@ MAVIS از نظر جهت‌گیری محصول و اصول طراحی قوی ا�
 - تابع، `auth.uid()` و `public.is_site_admin()` را بررسی می‌کند؛ کاربر ناشناس یا غیرمدیر مجاز نیست.
 - تابع داخلی `SECURITY DEFINER` با `search_path = ''` و نام‌گذاری کامل اشیا در schema خصوصی قرار دارد؛ wrapper عمومی `SECURITY INVOKER` است و جدول مجوز مستقیم ندارد.
 - API در خطای RPC fail-closed با 503 پاسخ می‌دهد؛ در عبور از حد با 429 و `Retry-After`.
-- migration شماره 005 و ۱۷ assertion در pgTAP در PR شماره 18 قرار گرفتند. PR شماره 17 فقط مصرف‌کننده RPC است و به migration شماره 005 وابسته است.
+- migration شماره 005 و ۲۱ assertion در pgTAP در PR شماره 18 قرار گرفتند. PR شماره 17 فقط مصرف‌کننده RPC است و به migration شماره 005 وابسته است.
 
 ### وضعیت شواهد
 - کد API، parser پاسخ محدودکننده، تست‌های واحد parser و migration در شاخه‌های مستقل ثبت شده‌اند.
