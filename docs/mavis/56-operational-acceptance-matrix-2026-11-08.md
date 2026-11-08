@@ -37,10 +37,10 @@
 | Database unavailable | Explicit failure; never return a fake success or tracking reference |
 | LLM quota/provider outage | Intake validation, persistence, checklist and tracking remain independent of LLM |
 | Unauthorized admin | No private record or audit data disclosed |
-| Retention/purge | Only policy-eligible records purged; audit trail remains compliant |
+| Retention/purge | Only policy-eligible records purged; audit cutoff is bounded by an approved retention policy and cannot be chosen ad hoc |
 
 **Pass:** integration tests prove each failure path, RLS/grants and server authorization agree, no private payload is emitted to logs or public responses, and an approved scheduler runs retention purges with observable last-success/failure state and alerting.  
-**Current state:** DB migrations and pgTAP assertions passed in CI; a purge function exists, but no scheduled execution or operational monitoring configuration was found in the candidate repository. Local device/staging failure-injection remains pending.
+**Current state:** DB migrations and pgTAP assertions passed in CI; a purge function exists, but no scheduled execution or operational monitoring configuration was found in the candidate repository. Its audit cutoff is caller-supplied and accepts any past timestamp, so the approved audit-retention horizon must be defined and enforced before scheduling. Local device/staging failure-injection remains pending.
 
 ## Workstream D — Growth intelligence
 
