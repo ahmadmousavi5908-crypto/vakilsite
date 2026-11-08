@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 
 export const LEGAL_QUEUE_HEADERS = [
   "record_id",
@@ -205,26 +206,29 @@ export function validateLegalReviewQueue(source, options = {}) {
   return { errors, recordCount: records.length, statusCounts };
 }
 
-const queueUrl = new URL("../../docs/mavis/legal-source-review-queue-2026-11-08.csv", import.meta.url);
-const bundleUrl = new URL("../../public/mavis-offline/knowledge.json", import.meta.url);
-const queue = readFileSync(queueUrl, "utf8");
-const bundle = JSON.parse(readFileSync(bundleUrl, "utf8"));
-const expectedRecordIds = bundle.records
-  .filter((record) => ALLOWED_RECORD_TYPES.has(record.record_type))
-  .map((record) => record.id);
-const result = validateLegalReviewQueue(queue, {
-  knownSourceIds: bundle.source_registry.map((source) => source.id),
-  expectedRecordIds,
-});
-
-if (result.errors.length > 0) {
-  for (const error of result.errors) console.error("MAVIS legal review queue:", error);
-  process.exitCode = 1;
-} else {
-  console.log(JSON.stringify({
-    recordCount: result.recordCount,
-    statusCounts: result.statusCounts,
-    canonicalRecordCoverage: expectedRecordIds.length,
-    validationErrors: result.errors.length,
-  }, null, 2));
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const queueUrl = new URL("../../docs/mavis/legal-source-review-queue-2026-11-08.csv", import.meta.url);
+  const bundleUrl = new URL("../../public/mavis-offline/knowledge.json", import.meta.url);
+  const queue = readFileSync(queueUrl, "utf8");
+  const bundle = JSON.parse(readFileSync(bundleUrl, "utf8"));
+  const expectedRecordIds = bundle.records
+    .filter((record) => ALLOWED_RECORD_TYPES.has(record.record_type))
+    .map((record) => record.id);
+  const result = validateLegalReviewQueue(queue, {
+    knownSourceIds: bundle.source_registry.map((source) => source.id),
+    expectedRecordIds,
+  });
+  
+  if (result.errors.length > 0) {
+    for (const error of result.errors) console.error("MAVIS legal review queue:", error);
+    process.exitCode = 1;
+  } else {
+    console.log(JSON.stringify({
+      recordCount: result.recordCount,
+      statusCounts: result.statusCounts,
+      canonicalRecordCoverage: expectedRecordIds.length,
+      validationErrors: result.errors.length,
+    }, null, 2));
+  }
+  
 }
