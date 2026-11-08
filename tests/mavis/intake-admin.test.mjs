@@ -41,6 +41,11 @@ test("accepts only well-formed admin list results", () => {
     phone: "+989123456789",
     summary: "شرح اولیه درخواست",
     status: "pending_human_review",
+    initial_review_consent: true,
+    initial_review_consent_at: "2026-11-08T12:00:00.000Z",
+    consent_version: "intake-v1",
+    marketing_consent: false,
+    third_party_data_notice_acknowledged: false,
   };
   assert.deepEqual(parseAdminIntakeListResult({ data: [valid], error: null }), { status: "ok", items: [valid] });
   assert.deepEqual(parseAdminIntakeListResult({ data: [{ ...valid, tracking_code: "short" }], error: null }), { status: "unavailable" });
