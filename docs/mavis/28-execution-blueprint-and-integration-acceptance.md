@@ -205,3 +205,44 @@
 
 ## 12. وضعیت و محدودیت
 این سند طراحی اجرایی است. هیچ API متصل، credential ساخته، Supabase migration اعمال، مقاله منتشر یا سایت deploy نشده است. دسترسی و وضعیت واقعی حساب‌های Google، Bing، Supabase و فایل‌سیستم Termux باید در محیط مالک بررسی شود.
+
+
+## 13. شکاف‌های اجرایی و اولویت‌بندی مبتنی بر شواهد
+این فهرست از ممیزی remote و اسناد موجود استخراج شده است. موارد مربوط به Termux، Supabase و حساب‌های سرویس تا بررسی محیط مالک، نامعلوم باقی می‌مانند.
+
+| اولویت | شکاف | شواهد فعلی | اقدام لازم | مانع پذیرش |
+|---|---|---|---|---|
+| P0 | تطبیق Mother Two با workspace و Git | گزارش مالک وجود دارد؛ filesystem محلی در دسترس نیست | بررسی hash آرشیو، manifest، Git state و مسیر پورت 3002 در Termux | هر mismatch یا dirty state ناشناخته |
+| P0 | بازیابی registry و inventory دانش | آمار تاریخی 32 سند، 11 dataset و 47 ref گزارش شده؛ فایل/hash واقعی هنوز کامل دریافت نشده | استخراج inventory از Mother Two، Library و branchها و تطبیق SHA-256 | سند یا dataset بدون provenance/hash |
+| P0 | امنیت داده و مجوز | مستندات موجود؛ وضعیت واقعی Supabase/RLS/grants نامعلوم | ممیزی schema، grants، policies، storage و auth؛ تست مثبت/منفی | هر دسترسی ناخواسته به B/C |
+| P1 | اتصال واقعی legal retrieval | public-chat در شاخه بررسی‌شده فقط پیام/history را به provider می‌دهد؛ retrieval/citation مشاهده نشده | طراحی adapter فقط‌خواندنی از legal-library/registry و تست citation | citation ساختگی، منبع منقضی یا نشت Scope |
+| P1 | Provider زنده | mock/disabled-by-default در ممیزی قبلی ثبت شده؛ وضعیت شاخه باید دوباره pin شود | تصمیم مستقل درباره provider، هزینه، privacy، retention و secret | فعال‌سازی بدون تأیید و ارزیابی حریم خصوصی |
+| P1 | فرم جامع پذیرش | PublicIntake فعلی سه‌مرحله‌ای و محدود است | طراحی فرم شرطی جامع مطابق سند مادر؛ حفظ همه پرسش‌های لازم | تحلیل حقوقی پاسخ یا حذف پرسش‌های لازم |
+| P1 | راهنمای ثابت intake | متن guidance در فرم فعلی ممکن است از گزارش صرف پاسخ‌ها فراتر رود | بازبینی حقوقی؛ تفکیک پیام ایمنی عمومی از توصیه مختص پرونده | توصیه قطعی یا ایجاد انتظار حقوقی نادرست |
+| P1 | مدل عملیاتی MAVIS | migrationهای MAVIS در ممیزی شاخه‌های بررسی‌شده مشاهده نشد | طراحی ERD، migration، RLS، grants و pgTAP در شاخه مستقل | اعمال مستقیم به Supabase production |
+| P2 | اتصال‌های Search/Ads/Bing | دسترسی حساب و credential نامعلوم | OAuth/API access در محیط مالک، ابتدا read-only | فرض اتصال بدون احراز واقعی |
+| P2 | چرخه انتشار/کشف | برخی ابزارهای SEO/IndexNow در branchهای دیگر وجود دارند؛ baseline محلی نامعلوم | ممیزی مجدد sitemap/RSS/Article/IndexNow و ساخت event ledger | یکی دانستن submit و index |
+| P2 | UX پنل 400 مقاله | سند طراحی موجود، UI اجرایی تأیید نشده | prototype مستقل و benchmark با 400 رکورد | تغییر ظاهر عمومی یا افت عملکرد |
+
+### 13.1 تصمیم درباره guidance فرم پذیرش
+نسخه فعلی PublicIntake دارای پیام‌های ثابت موضوعی است. چون سند مادر، intake را «گزارشگر پاسخ» تعریف کرده، هر متن راهنما باید در سه دسته بازبینی شود:
+1. اطلاع ایمنی/فرآیندی عمومی، مانند مسیر تماس انسانی در فوریت؛
+2. توضیح اینکه چه اطلاعاتی برای هماهنگی اولیه لازم است؛
+3. توصیه حقوقی یا راهبردی مرتبط با پرونده که خارج از دامنه این فرم است.
+
+دسته سوم باید حذف یا به پیام خنثیِ ارجاع به وکیل تبدیل شود. متن آزاد مراجعه‌کننده نباید توسط سیستم به تشخیص، مهلت، احتمال موفقیت یا راهکار تبدیل شود.
+
+### 13.2 ترتیب اجرا پس از دریافت خروجی Termux
+1. فقط تطبیق و inventory؛ هیچ کد runtime تغییر نکند.
+2. تعیین source of truth برای registry و مقالات موجود.
+3. تکمیل threat model و authorization matrix.
+4. طراحی ERD و migration روی کپی/branch مستقل؛ اجرای DB فقط پس از approval.
+5. پیاده‌سازی Knowledge Gateway read-only و تست‌های منبع/مجوز.
+6. تکمیل Article Research Center و approval workflow.
+7. تکمیل Intake و بازبینی guidance.
+8. اتصالات read-only به Search Console، Bing و Ads؛ Trends فقط در صورت پذیرش Alpha.
+9. publication discovery ledger و کنترل‌های مجاز.
+10. UX پنل و تست رگرسیون بصری.
+11. پذیرش staging و تصمیم مستقل درباره production.
+
+هیچ مرحله‌ای صرفاً با commit شدن کد پذیرفته نمی‌شود.
