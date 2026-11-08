@@ -20,13 +20,15 @@ test("requires explicit primary-source verification and access date", () => {
     id: "law-demo",
     review_status: "verified_primary_source",
     source_verified: false,
-    sources: [{ title: "Official text", url: "https://official.example/law", source_type: "primary", accessed_at: "2026-11-01" }],
+    sources: [{ title: "Official text", url: "https://qavanin.ir/law", source_type: "primary", accessed_at: "2026-11-01" }],
   });
   const verified = buildLegalEvidence({
     id: "law-demo",
     review_status: "verified_primary_source",
     source_verified: true,
-    sources: [{ title: "Official text", url: "https://official.example/law", source_type: "primary", accessed_at: "2026-11-01" }],
+    validity_status: "in_force",
+    last_verified_at: "2026-11-01",
+    sources: [{ title: "Official text", url: "https://qavanin.ir/law", source_type: "primary", accessed_at: "2026-11-01" }],
   });
 
   assert.equal(unverified.state, "needs_official_check");
@@ -50,12 +52,40 @@ test("rejects unsafe, incomplete and malformed source metadata", () => {
   assert.equal(evidence.citations[0].sourceType, "secondary");
 });
 
+test("does not promote an untrusted host even when the record claims primary verification", () => {
+  const evidence = buildLegalEvidence({
+    id: "law-demo",
+    review_status: "verified_primary_source",
+    source_verified: true,
+    validity_status: "in_force",
+    last_verified_at: "2026-11-01",
+    sources: [{ title: "Untrusted host", url: "https://official.example/law", source_type: "primary", accessed_at: "2026-11-01" }],
+  });
+
+  assert.equal(evidence.state, "needs_official_check");
+  assert.equal(evidence.citations[0].sourceType, "secondary");
+});
+
+test("does not promote a partially repealed law as fully current", () => {
+  const evidence = buildLegalEvidence({
+    id: "law-partial",
+    review_status: "verified_primary_source",
+    source_verified: true,
+    validity_status: "partially_repealed",
+    last_verified_at: "2026-11-01",
+    sources: [{ title: "Official text", url: "https://qavanin.ir/law", source_type: "primary", accessed_at: "2026-11-01" }],
+  });
+
+  assert.equal(evidence.state, "needs_official_check");
+  assert.equal(evidence.validity.status, "partially_repealed");
+});
+
 test("does not infer enactment, effective or verification dates", () => {
   const evidence = buildLegalEvidence({
     id: "law-demo",
     enactment_date: "not-a-date",
     effective_date: null,
-    last_verified_at: "2026-02-31",
+    last_verified_at: "2026-11-01",
   });
 
   assert.equal(evidence.validity.enactmentDate, null);
