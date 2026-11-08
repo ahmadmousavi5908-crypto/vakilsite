@@ -5,7 +5,7 @@ const ALLOWED_AGGREGATIONS = new Set(["auto", "byPage", "byProperty", "byNewsSho
 
 function isDate(value) {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-  const date = new Date(`${value}T00:00:00.000Z`);
+  const date = new Date(value + "T00:00:00.000Z");
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
@@ -13,10 +13,26 @@ function finiteMetric(value) {
   return typeof value === "number" && Number.isFinite(value) && value >= 0;
 }
 
+function normalizeDigits(value) {
+  return value.replace(/[۰-۹٠-٩]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩".indexOf(digit) % 10));
+}
+
 function mayContainPersonalQuery(value) {
   if (typeof value !== "string") return false;
-  return /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(value) ||
-    /(?:\+98|0098|0)?9[\s-]?\d{2,3}[\s-]?\d{3}[\s-]?\d{4}/.test(value);
+  const normalized = normalizeDigits(value);
+  return /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(normalized) ||
+    /(?:\+98|0098|0)?9[\s-]?\d{2,3}[\s-]?\d{3}[\s-]?\d{4}/.test(normalized) ||
+    /(?:^|\D)\d{10}(?:$|\D)/.test(normalized);
+}
+
+function pageContainsSensitiveQuery(value) {
+  if (typeof value !== "string") return false;
+  try {
+    const url = new URL(value);
+    return Boolean(url.search && mayContainPersonalQuery(decodeURIComponent(url.search)));
+  } catch {
+    return false;
+  }
 }
 
 export function normalizeSearchAnalyticsResponse(response, request) {
@@ -37,6 +53,9 @@ export function normalizeSearchAnalyticsResponse(response, request) {
   }
   if (!ALLOWED_TYPES.has(type) || !ALLOWED_DATA_STATES.has(dataState)) {
     return { ok: false, reason: "invalid_search_type_or_data_state" };
+  }
+  if (dimensions.includes("hour") && dataState !== "hourly_all") {
+    return { ok: false, reason: "hour_dimension_requires_hourly_data_state" };
   }
   if (!Number.isInteger(rowLimit) || rowLimit < 1 || rowLimit > 25000 ||
       !Number.isInteger(startRow) || startRow < 0) {
@@ -66,8 +85,10 @@ export function normalizeSearchAnalyticsResponse(response, request) {
     }
 
     const values = Object.fromEntries(dimensions.map((dimension, index) => [dimension, row.keys[index]]));
-    const privacyReviewRequired = dimensions.includes("query") && mayContainPersonalQuery(values.query);
-    if (privacyReviewRequired) values.query = null;
+    const sensitiveQuery = dimensions.includes("query") && mayContainPersonalQuery(values.query);
+    const sensitivePage = dimensions.includes("page") && pageContainsSensitiveQuery(values.page);
+    if (sensitiveQuery) values.query = null;
+    if (sensitivePage) values.page = null;
 
     rows.push({
       dimensions: values,
@@ -77,7 +98,7 @@ export function normalizeSearchAnalyticsResponse(response, request) {
         ctr: row.ctr,
         averagePosition: row.position,
       },
-      privacyReviewRequired,
+      privacyReviewRequired: sensitiveQuery || sensitivePage,
     });
   }
 
