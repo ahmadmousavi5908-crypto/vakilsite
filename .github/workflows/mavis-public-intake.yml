@@ -33,6 +33,8 @@ permissions:
 jobs:
   intake-guards:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: https://vakilsite-ci.example
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -41,6 +43,9 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - name: Test intake validation and rate-key guards
-        run: node --test tests/mavis/intake-guards.test.mjs
+        run: npm run test:mavis-intake
       - name: Lint public intake and admin files
         run: npm run lint -- src/app/api/mavis/public-intake/route.js src/app/mavis-intake/page.js src/app/mavis-intake/privacy/page.js src/app/admin/mavis-intake/page.js src/app/admin/mavis-intake/actions.js src/components/mavis/MavisIntakeForm.jsx src/lib/mavis/intake-guards.mjs src/lib/supabase/service.js tests/mavis/intake-guards.test.mjs
+
+      - name: Build site and protected MAVIS routes
+        run: npm run build
