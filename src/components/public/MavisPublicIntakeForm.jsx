@@ -21,6 +21,18 @@ const urgencyOptions = [
   ["urgent", "فوری یا دارای ابلاغ / مهلت نزدیک"],
 ];
 
+function createIdempotencyKey() {
+  const cryptoApi = globalThis.crypto;
+  if (typeof cryptoApi?.randomUUID === "function") return cryptoApi.randomUUID();
+  if (typeof cryptoApi?.getRandomValues !== "function") return null;
+
+  const bytes = cryptoApi.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 const initialState = {
   fullName: "",
   phone: "",
@@ -57,11 +69,7 @@ export default function MavisPublicIntakeForm({ retentionDays }) {
     setReceipt(null);
 
     try {
-      const requestKey = idempotencyKey || (
-        typeof globalThis.crypto?.randomUUID === "function"
-          ? globalThis.crypto.randomUUID()
-          : null
-      );
+      const requestKey = idempotencyKey || createIdempotencyKey();
       if (!requestKey) throw new Error("مرورگر شما امکان ساخت شناسه امن درخواست را فراهم نمی‌کند.");
       setIdempotencyKey(requestKey);
 
