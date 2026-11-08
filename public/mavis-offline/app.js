@@ -3,7 +3,7 @@ import { normalizeOfflineQuery, rankOfflineRecords } from "./search.mjs";
 const DATA_URL="./knowledge.json";
 let corpus=null;
 const reviewLabels={verified_primary_source:"تطبیق‌شده با منبع اولیه",secondary_source_only:"منبع ثانویه؛ نیازمند تطبیق",needs_legal_review:"نیازمند بازبینی حقوقی",draft:"پیش‌نویس",service_information:"اطلاعات خدمات"};
-const typeLabels={term:"اصطلاح حقوقی",law:"قانون ثبت‌شده",article:"خلاصه ماده",faq:"پرسش متداول"};
+const typeLabels={term:"اصطلاح حقوقی",law:"قانون ثبت‌شده",article:"خلاصه ماده",faq:"پرسش متداول",research_note:"یادداشت پژوهشی · منبع ثانویه"};
 const $=id=>document.getElementById(id);
 function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=String(text);return node;}
 function appendText(parent,tag,className,text){const node=el(tag,className,text);parent.append(node);return node;}
