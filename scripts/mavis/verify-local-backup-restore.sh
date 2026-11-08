@@ -74,7 +74,9 @@ mkdir -p "$RESTORE_DIR"
 echo "Restoring the logical backup in a single transaction..."
 psql --no-psqlrc --set ON_ERROR_STOP=1 --single-transaction --dbname "$DB_URL" \
   --file "$WORK_DIR/roles.sql" \
-  --command 'ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM anon, authenticated;' \
+  --command 'ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM PUBLIC, anon, authenticated, service_role;' \
+  --command 'ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON SEQUENCES FROM PUBLIC, anon, authenticated, service_role;' \
+  --command 'ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC, anon, authenticated, service_role;' \
   --file "$WORK_DIR/schema.sql" \
   --command 'SET session_replication_role = replica' \
   --file "$WORK_DIR/data.sql"
