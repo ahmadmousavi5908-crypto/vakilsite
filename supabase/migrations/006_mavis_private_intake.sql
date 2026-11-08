@@ -190,6 +190,199 @@ revoke all on function mavis_intake_private.purge_expired_public_intake(timestam
 grant execute on function mavis_intake_private.purge_expired_public_intake(timestamptz)
   to service_role;
 
+
+create or replace function mavis_intake_private.submit_public_intake(
+  p_payload jsonb,
+  p_review_priority text,
+  p_detected_signals text[],
+  p_requires_deadline_check boolean,
+  p_retention_expires_at timestamptz,
+  p_consent_version text
+)
+returns table (
+  id uuid,
+  tracking_code text,
+  created_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_full_name text;
+  v_phone text;
+  v_case_type text;
+  v_summary text;
+  v_urgency text;
+  v_opposing_party text;
+  v_marketing_consent boolean;
+  v_third_party_notice boolean;
+  v_submission_id uuid;
+  v_tracking_code text;
+  v_created_at timestamptz;
+begin
+  if jsonb_typeof(p_payload) <> 'object'
+    or p_payload - array[
+      'fullName', 'phone', 'caseType', 'summary', 'urgency',
+      'opposingParty', 'consent', 'marketingConsent',
+      'thirdPartyDataNoticeAcknowledged'
+    ]::text[] <> '{}'::jsonb then
+    raise exception 'Invalid intake payload shape';
+  end if;
+
+  v_full_name := btrim(coalesce(p_payload ->> 'fullName', ''));
+  v_phone := regexp_replace(coalesce(p_payload ->> 'phone', ''), '[[:space:]()\-]', '', 'g');
+  v_case_type := p_payload ->> 'caseType';
+  v_summary := btrim(coalesce(p_payload ->> 'summary', ''));
+  v_urgency := p_payload ->> 'urgency';
+  v_opposing_party := nullif(btrim(coalesce(p_payload ->> 'opposingParty', '')), '');
+  v_marketing_consent := coalesce((p_payload ->> 'marketingConsent')::boolean, false);
+  v_third_party_notice := coalesce((p_payload ->> 'thirdPartyDataNoticeAcknowledged')::boolean, false);
+
+  if v_phone ~ '^09[0-9]{9}
+  'Private MAVIS intake data; do not expose through Supabase Data API schemas.';
+comment on table mavis_intake_private.submissions is
+  'Contains personal intake data. Access only through server-side authorization and approved retention policy.';
+comment on table mavis_intake_private.audit_events is
+  'Metadata-only audit trail; never store intake text, phone numbers, names, or credentials here.';
+comment on table mavis_intake_private.rate_limits is
+  'Short-lived HMAC-derived request buckets; raw client IP addresses must never be stored.';
+ then
+    v_phone := '+98' || substr(v_phone, 2);
+  elsif v_phone ~ '^00989[0-9]{9}
+  'Private MAVIS intake data; do not expose through Supabase Data API schemas.';
+comment on table mavis_intake_private.submissions is
+  'Contains personal intake data. Access only through server-side authorization and approved retention policy.';
+comment on table mavis_intake_private.audit_events is
+  'Metadata-only audit trail; never store intake text, phone numbers, names, or credentials here.';
+comment on table mavis_intake_private.rate_limits is
+  'Short-lived HMAC-derived request buckets; raw client IP addresses must never be stored.';
+ then
+    v_phone := '+' || substr(v_phone, 3);
+  elsif v_phone ~ '^989[0-9]{9}
+  'Private MAVIS intake data; do not expose through Supabase Data API schemas.';
+comment on table mavis_intake_private.submissions is
+  'Contains personal intake data. Access only through server-side authorization and approved retention policy.';
+comment on table mavis_intake_private.audit_events is
+  'Metadata-only audit trail; never store intake text, phone numbers, names, or credentials here.';
+comment on table mavis_intake_private.rate_limits is
+  'Short-lived HMAC-derived request buckets; raw client IP addresses must never be stored.';
+ then
+    v_phone := '+' || v_phone;
+  end if;
+
+  if char_length(v_full_name) not between 3 and 100
+    or v_phone !~ '^\+989[0-9]{9}
+  'Private MAVIS intake data; do not expose through Supabase Data API schemas.';
+comment on table mavis_intake_private.submissions is
+  'Contains personal intake data. Access only through server-side authorization and approved retention policy.';
+comment on table mavis_intake_private.audit_events is
+  'Metadata-only audit trail; never store intake text, phone numbers, names, or credentials here.';
+comment on table mavis_intake_private.rate_limits is
+  'Short-lived HMAC-derived request buckets; raw client IP addresses must never be stored.';
+
+    or v_case_type not in ('civil', 'criminal', 'family', 'property', 'commercial', 'labor', 'administrative', 'other')
+    or char_length(v_summary) not between 30 and 6000
+    or v_urgency not in ('routine', 'soon', 'urgent')
+    or (v_opposing_party is not null and char_length(v_opposing_party) > 120)
+    or p_payload ->> 'consent' is distinct from 'true'
+    or p_review_priority not in ('urgent_human_review', 'priority_human_review', 'standard_human_review')
+    or p_detected_signals is null
+    or not (p_detected_signals <@ array['time_sensitive', 'liberty_or_criminal', 'family_safety', 'enforcement_or_property']::text[])
+    or p_requires_deadline_check is null
+    or p_retention_expires_at is null
+    or p_retention_expires_at <= clock_timestamp()
+    or p_retention_expires_at > clock_timestamp() + interval '10 years'
+    or p_consent_version is null
+    or char_length(p_consent_version) not between 1 and 40 then
+    raise exception 'Intake validation failed';
+  end if;
+
+  insert into mavis_intake_private.submissions (
+    full_name, phone, case_type, summary, urgency, opposing_party,
+    initial_review_consent, initial_review_consent_at, consent_version,
+    marketing_consent, marketing_consent_at,
+    third_party_data_notice_acknowledged, third_party_data_notice_acknowledged_at,
+    review_priority, detected_signals, requires_deadline_check,
+    retention_expires_at
+  )
+  values (
+    v_full_name, v_phone, v_case_type, v_summary, v_urgency, v_opposing_party,
+    true, clock_timestamp(), p_consent_version,
+    v_marketing_consent, case when v_marketing_consent then clock_timestamp() else null end,
+    v_third_party_notice, case when v_third_party_notice then clock_timestamp() else null end,
+    p_review_priority, p_detected_signals, p_requires_deadline_check,
+    p_retention_expires_at
+  )
+  returning submissions.id, submissions.tracking_code, submissions.created_at
+  into v_submission_id, v_tracking_code, v_created_at;
+
+  insert into mavis_intake_private.audit_events (submission_id, event_code, actor_type)
+  values (v_submission_id, 'submission_received', 'system');
+
+  return query select v_submission_id, v_tracking_code, v_created_at;
+end;
+$function$;
+
+revoke all on function mavis_intake_private.submit_public_intake(
+  jsonb, text, text[], boolean, timestamptz, text
+) from public, anon, authenticated, service_role;
+grant execute on function mavis_intake_private.submit_public_intake(
+  jsonb, text, text[], boolean, timestamptz, text
+) to service_role;
+
+-- Public-schema invoker wrappers keep the private schema outside PostgREST's exposed schemas.
+create or replace function public.consume_mavis_public_intake_rate_limit(p_key_hash text)
+returns table (allowed boolean, retry_after_seconds integer)
+language sql
+security invoker
+set search_path = ''
+as $function$
+  select * from mavis_intake_private.consume_public_intake_rate_limit(p_key_hash);
+$function$;
+
+create or replace function public.submit_mavis_public_intake(
+  p_payload jsonb,
+  p_review_priority text,
+  p_detected_signals text[],
+  p_requires_deadline_check boolean,
+  p_retention_expires_at timestamptz,
+  p_consent_version text
+)
+returns table (id uuid, tracking_code text, created_at timestamptz)
+language sql
+security invoker
+set search_path = ''
+as $function$
+  select * from mavis_intake_private.submit_public_intake(
+    p_payload, p_review_priority, p_detected_signals,
+    p_requires_deadline_check, p_retention_expires_at, p_consent_version
+  );
+$function$;
+
+create or replace function public.purge_mavis_expired_public_intake(p_audit_before timestamptz)
+returns table (submissions_deleted bigint, audit_events_deleted bigint)
+language sql
+security invoker
+set search_path = ''
+as $function$
+  select * from mavis_intake_private.purge_expired_public_intake(p_audit_before);
+$function$;
+
+revoke all on function public.consume_mavis_public_intake_rate_limit(text)
+  from public, anon, authenticated, service_role;
+revoke all on function public.submit_mavis_public_intake(
+  jsonb, text, text[], boolean, timestamptz, text
+) from public, anon, authenticated, service_role;
+revoke all on function public.purge_mavis_expired_public_intake(timestamptz)
+  from public, anon, authenticated, service_role;
+
+grant execute on function public.consume_mavis_public_intake_rate_limit(text) to service_role;
+grant execute on function public.submit_mavis_public_intake(
+  jsonb, text, text[], boolean, timestamptz, text
+) to service_role;
+grant execute on function public.purge_mavis_expired_public_intake(timestamptz) to service_role;
+
 comment on schema mavis_intake_private is
   'Private MAVIS intake data; do not expose through Supabase Data API schemas.';
 comment on table mavis_intake_private.submissions is
