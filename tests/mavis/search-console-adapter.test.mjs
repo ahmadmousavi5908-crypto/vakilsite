@@ -50,7 +50,7 @@ test("masks Persian-digit phone numbers and national-ID-shaped query values", ()
   assert.equal(nationalId.rows[0].privacyReviewRequired, true);
 });
 
-test("supports the hourly dimension and validates News Showcase aggregation", () => {
+test("supports the hourly dimension and rejects unsupported response aggregation", () => {
   const hourly = normalizeSearchAnalyticsResponse({ rows: [] }, {
     ...request,
     dimensions: ["hour"],
