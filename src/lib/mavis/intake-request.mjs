@@ -1,6 +1,45 @@
 import { createHmac } from "node:crypto";
 import { isIP } from "node:net";
 
+
+const IDEMPOTENCY_KEY_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export function isValidIntakeIdempotencyKey(value) {
+  return typeof value === "string" && IDEMPOTENCY_KEY_PATTERN.test(value);
+}
+
+export function createIntakeIdempotencyFingerprint(value, secret, context) {
+  if (!value || typeof value !== "object" || typeof secret !== "string" || secret.length < 32 ||
+      !context || typeof context !== "object" ||
+      !Array.isArray(context.detectedSignals) ||
+      typeof context.reviewPriority !== "string" ||
+      typeof context.requiresDeadlineCheck !== "boolean" ||
+      typeof context.consentVersion !== "string" ||
+      !Number.isInteger(context.retentionDays) || context.retentionDays < 1 || context.retentionDays > 3650) {
+    return null;
+  }
+
+  const canonical = JSON.stringify({
+    version: 1,
+    fullName: value.fullName,
+    phone: value.phone,
+    caseType: value.caseType,
+    summary: value.summary,
+    urgency: value.urgency,
+    opposingParty: value.opposingParty ?? null,
+    consentPurpose: value.consentPurpose,
+    marketingConsent: value.marketingConsent === true,
+    thirdPartyDataNoticeAcknowledged: value.thirdPartyDataNoticeAcknowledged === true,
+    reviewPriority: context.reviewPriority,
+    detectedSignals: [...context.detectedSignals].sort(),
+    requiresDeadlineCheck: context.requiresDeadlineCheck,
+    consentVersion: context.consentVersion,
+    retentionDays: context.retentionDays,
+  });
+
+  return createHmac("sha256", secret).update(canonical).digest("hex");
+}
+
 export function getTrustedClientIp(headers, trustProxyHeader) {
   if (trustProxyHeader !== true || !headers || typeof headers.get !== "function") return null;
   const value = headers.get("x-real-ip");
