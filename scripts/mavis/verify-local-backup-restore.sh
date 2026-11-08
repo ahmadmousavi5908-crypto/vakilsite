@@ -82,22 +82,34 @@ SELECT CASE WHEN
     FROM mavis_intake_private.ci_backup_restore_probe
     WHERE id = 1 AND marker = 'mavis-local-backup-restore-ok'
   )
-  AND COALESCE((
-    SELECT bool_and(c.relrowsecurity)
+  AND (
+    SELECT count(*) = 3 AND bool_and(c.relrowsecurity)
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE n.nspname = 'mavis_intake_private'
       AND c.relname IN ('submissions', 'audit_events', 'rate_limits')
-  ), false)
+  )
+  AND NOT has_schema_privilege('anon', 'mavis_intake_private', 'USAGE')
+  AND NOT has_schema_privilege('authenticated', 'mavis_intake_private', 'USAGE')
+  AND has_schema_privilege('service_role', 'mavis_intake_private', 'USAGE')
   AND NOT has_table_privilege('anon', 'mavis_intake_private.submissions', 'SELECT')
   AND NOT has_table_privilege('authenticated', 'mavis_intake_private.submissions', 'SELECT')
   AND NOT has_table_privilege('service_role', 'mavis_intake_private.submissions', 'SELECT')
+  AND NOT has_table_privilege('anon', 'mavis_intake_private.audit_events', 'SELECT')
+  AND NOT has_table_privilege('authenticated', 'mavis_intake_private.audit_events', 'SELECT')
+  AND NOT has_table_privilege('service_role', 'mavis_intake_private.audit_events', 'SELECT')
+  AND NOT has_table_privilege('anon', 'mavis_intake_private.rate_limits', 'SELECT')
+  AND NOT has_table_privilege('authenticated', 'mavis_intake_private.rate_limits', 'SELECT')
+  AND NOT has_table_privilege('service_role', 'mavis_intake_private.rate_limits', 'SELECT')
   AND EXISTS (
     SELECT 1
     FROM pg_proc p
     JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'mavis_intake_private'
       AND p.proname = 'submit_public_intake'
+      AND has_function_privilege('service_role', p.oid, 'EXECUTE')
+      AND NOT has_function_privilege('anon', p.oid, 'EXECUTE')
+      AND NOT has_function_privilege('authenticated', p.oid, 'EXECUTE')
   )
 THEN 'PASS' ELSE 'FAIL' END;
 "
