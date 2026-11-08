@@ -60,7 +60,7 @@ async function authorizeAdmin(request, requireOrigin) {
   } catch {
     limitResult = { error: true };
   }
-  const limit = parseKnowledgeSearchRateLimit(limitResult);
+  const limit = parseAdminIntakeRateLimit(limitResult);
   if (limit.status === "unavailable") {
     return { response: errorResponse("RATE_LIMIT_UNAVAILABLE", "کنترل ظرفیت سرویس در دسترس نیست.", 503) };
   }
