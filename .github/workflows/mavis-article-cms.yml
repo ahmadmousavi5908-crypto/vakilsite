@@ -1,0 +1,45 @@
+name: MAVIS article CMS
+on:
+  push:
+    branches:
+      - feature/mavis-article-content-management-20261108
+  pull_request:
+    branches:
+      - feature/mavis-growth-intelligence-audit-20261108
+  workflow_dispatch:
+concurrency:
+  group: mavis-article-cms-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  article-cms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SITE_URL: https://vakilsite-ci.example
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - uses: supabase/setup-cli@v3
+      - name: Initialize local Supabase configuration
+        run: supabase init --force
+      - name: Start isolated local Supabase stack
+        run: supabase start
+      - name: Apply migrations and execute pgTAP database tests
+        run: |
+          supabase db reset
+          supabase test db
+      - name: Test article content mapping
+        run: node --test tests/mavis/article-content.test.mjs
+      - name: Lint article repository and pages
+        run: npm run lint -- src/lib/mavis/article-content.mjs src/lib/mavis/articles-repository.js src/app/articles/page.js 'src/app/articles/[slug]/page.js' scripts/mavis/seed-articles.mjs tests/mavis/article-content.test.mjs
+      - name: Build site and article routes
+        run: npm run build
+      - name: Stop local Supabase stack
+        if: always()
+        run: supabase stop --no-backup || true
