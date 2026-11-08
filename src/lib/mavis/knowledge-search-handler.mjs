@@ -44,9 +44,7 @@ async function readBoundedJson(request) {
 function validateDependencies(dependencies) {
   const required = [
     "requireAdmin",
-    "searchMavisKnowledge",
-    "buildLegalEvidence",
-    "buildLegalResearchDossier",
+    "retrieveMavisKnowledge",
     "isJsonContentType",
     "matchesRequestOrigin",
     "parseKnowledgeSearchRateLimit",
@@ -68,9 +66,7 @@ export function createKnowledgeSearchHandler(dependencies) {
 
   const {
     requireAdmin,
-    searchMavisKnowledge,
-    buildLegalEvidence,
-    buildLegalResearchDossier,
+    retrieveMavisKnowledge,
     isJsonContentType,
     matchesRequestOrigin,
     parseKnowledgeSearchRateLimit,
@@ -203,45 +199,7 @@ export function createKnowledgeSearchHandler(dependencies) {
     }
 
     try {
-      const dossierRecords = searchMavisKnowledge(query, limit).map((record) => ({
-        ...record,
-        source_class: record.source_class || (
-          record.record_type === "law" ? "statute" :
-          record.record_type === "article" ? "educational_summary" :
-          "legal_term"
-        ),
-      }));
-      const researchDossier = buildLegalResearchDossier({ topic: query, records: dossierRecords });
-      const results = dossierRecords.map((record) => ({
-        evidence: buildLegalEvidence(record),
-        id: record.id,
-        record_type: record.record_type,
-        title: record.title,
-        canonical: record.canonical,
-        article_number: record.article_number,
-        law_id: record.law_id,
-        definition: record.definition,
-        summary: record.summary,
-        review_status: record.review_status,
-        status: record.status,
-        source_url: record.source_url,
-        sources: record.sources,
-        notes: record.notes,
-        path: record.path,
-        search_score: record.search_score,
-        matched_field: record.matched_field,
-      }));
-
-      return jsonResponse(
-        {
-          query,
-          count: results.length,
-          results,
-          researchDossier,
-          notice: "این خروجی فقط بازیابی از کتابخانه موجود است؛ نظر حقوقی، بررسی اعتبار روز قانون یا تحلیل پرونده محسوب نمی‌شود.",
-        },
-        200,
-      );
+      return jsonResponse(retrieveMavisKnowledge(query, limit), 200);
     } catch {
       return jsonResponse(
         { error: { code: "SEARCH_FAILED", message: "جست‌وجوی داخلی انجام نشد." } },

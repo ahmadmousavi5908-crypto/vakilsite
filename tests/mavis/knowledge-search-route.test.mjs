@@ -30,11 +30,8 @@ function makeAccess(overrides = {}) {
 function createHarness(overrides = {}) {
   const calls = {
     rateLimit: 0,
-    search: 0,
-    evidence: 0,
-    dossier: 0,
-    searchArgs: null,
-    dossierArgs: null,
+    retrieve: 0,
+    retrieveArgs: null,
   };
 
   const defaultAccess = makeAccess({
@@ -51,27 +48,16 @@ function createHarness(overrides = {}) {
 
   const dependencies = {
     requireAdmin: async () => defaultAccess,
-    searchMavisKnowledge: (query, limit) => {
-      calls.search += 1;
-      calls.searchArgs = { query, limit };
-      return [{
-        id: "law_civil_code",
-        record_type: "law",
-        title: "قانون مدنی",
-        review_status: "needs_legal_review",
-        source_class: undefined,
-        search_score: 1000,
-        matched_field: "title",
-      }];
-    },
-    buildLegalEvidence: (record) => {
-      calls.evidence += 1;
-      return { recordId: record.id, state: "needs_official_check" };
-    },
-    buildLegalResearchDossier: (args) => {
-      calls.dossier += 1;
-      calls.dossierArgs = args;
-      return { ok: true, topic: args.topic, itemCount: args.records.length };
+    retrieveMavisKnowledge: (query, limit) => {
+      calls.retrieve += 1;
+      calls.retrieveArgs = { query, limit };
+      return {
+        query,
+        count: 1,
+        results: [{ id: "law_civil_code", evidence: { state: "needs_official_check" } }],
+        researchDossier: { ok: true, topic: query, itemCount: 1 },
+        notice: "این خروجی فقط بازیابی است و نظر حقوقی محسوب نمی‌شود.",
+      };
     },
     isJsonContentType,
     matchesRequestOrigin,
@@ -111,7 +97,7 @@ test("rejects missing admin configuration without searching", async () => {
   const response = await handler(makeRequest({ query: "قانون مدنی" }));
   assert.equal(response.status, 503);
   assert.equal((await readError(response)).code, "SERVICE_UNAVAILABLE");
-  assert.equal(calls.search, 0);
+  assert.equal(calls.retrieve, 0);
 });
 
 test("fails closed when admin authentication throws or is unavailable", async () => {
@@ -253,16 +239,14 @@ test("normalizes legal records and returns evidence plus a research dossier", as
   assert.equal(payload.results[0].evidence.state, "needs_official_check");
   assert.equal(payload.researchDossier.ok, true);
   assert.equal(payload.notice.includes("نظر حقوقی"), true);
-  assert.deepEqual(calls.searchArgs, { query: "قانون مدنی", limit: 10 });
-  assert.equal(calls.dossierArgs.records[0].source_class, "statute");
+  assert.deepEqual(calls.retrieveArgs, { query: "قانون مدنی", limit: 10 });
   assert.equal(calls.rateLimit, 1);
-  assert.equal(calls.evidence, 1);
-  assert.equal(calls.dossier, 1);
+  assert.equal(calls.retrieve, 1);
 });
 
 test("returns a generic no-store error when retrieval or evidence assembly fails", async () => {
   const { handler } = createHarness({
-    searchMavisKnowledge: () => { throw new Error("private internal failure"); },
+    retrieveMavisKnowledge: () => { throw new Error("private internal failure"); },
   });
   const response = await handler(makeRequest({ query: "قانون مدنی" }));
   assert.equal(response.status, 500);
