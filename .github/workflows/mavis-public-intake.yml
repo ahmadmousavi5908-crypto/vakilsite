@@ -33,6 +33,7 @@ permissions:
 jobs:
   intake-guards:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       NEXT_PUBLIC_SITE_URL: https://vakilsite-ci.example
     steps:
@@ -42,6 +43,15 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci --no-audit --no-fund
+      - uses: supabase/setup-cli@v3
+      - name: Initialize local Supabase configuration
+        run: supabase init --force
+      - name: Start isolated local Supabase stack
+        run: supabase start
+      - name: Apply migrations and execute pgTAP database tests
+        run: |
+          supabase db reset
+          supabase test db
       - name: Test intake validation and rate-key guards
         run: npm run test:mavis-intake
       - name: Lint public intake and admin files
@@ -49,3 +59,7 @@ jobs:
 
       - name: Build site and protected MAVIS routes
         run: npm run build
+
+      - name: Stop local Supabase stack
+        if: always()
+        run: supabase stop --no-backup || true
