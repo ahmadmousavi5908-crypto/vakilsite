@@ -28,10 +28,19 @@
 18. [تطبیق شاخه‌ها و اعتبارسنجی یکپارچه](./20-integration-reconciliation.md)
 17. [مبنای امنیت و دروازه‌های انتشار](./19-security-baseline-and-release-gates.md)
 
+## اسناد مرجع و وضعیت پروژه
+
+- [سند مادر پروژه MAVIS و Vakilsite نسخه ۱.۱](./22-master-project-charter-v1.1.md)
+- [گزارش ممیزی اولیه مخزن و شواهد GitHub](./23-initial-repository-audit-2026-11-08.md)
+- [پروتکل تحویل یک‌مرحله‌ای و idempotent برای Termux](./24-termux-single-pass-delivery-protocol.md)
+- [پژوهش رسمی APIهای جست‌وجو و Google Ads](./25-official-search-and-ads-api-research-2026-11-08.md)
+- [مشخصات UX پنل MAVIS و مدیریت فشرده مقالات](./26-admin-and-article-management-ux-specification.md)
+
 ## اسناد تکمیلی محصول و اجرا
 
 - [برنامه اجرایی زنده و ایده‌بانک](./13-operating-plan-and-idea-backlog.md)
 - [طراحی توسعه‌پذیر موتور مکالمه](./14-extensible-conversation-engine-design.md)
+- [برنامه اتصال دانش MAVIS و ارتقای بکاپ مادر دو](./21-knowledge-retrieval-and-mother-two-backup-plan.md)
 - [پژوهش روان‌شناسی ارتباط و جذب اخلاقی موکل](./research/02-client-psychology-and-ethical-engagement.md)
 - [پژوهش طراحی Intake و ارتباط اخلاقی](./research/01-client-intake-and-ethical-communication.md)
 
