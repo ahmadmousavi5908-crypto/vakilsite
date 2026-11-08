@@ -19,7 +19,7 @@ test("flags detention and family safety without producing legal conclusions", ()
 
 test("routes enforcement signals for priority review", () => {
   const result = triageLegalIntake("برای ملک اجرائیه صادر شده و حساب بانکی مسدود شده است.");
-  assert.equal(result.reviewPriority, "priority_human_review");
+  assert.equal(result.reviewPriority, "urgent_human_review");
   assert.ok(result.detectedSignals.includes("enforcement_or_property"));
 });
 
