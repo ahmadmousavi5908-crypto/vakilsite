@@ -24,6 +24,7 @@ test("maps Search Analytics keys and metrics without recomputing source values",
   assert.equal(result.rows[0].metrics.ctr, 0.1);
   assert.equal(result.rows[0].metrics.averagePosition, 8.5);
   assert.equal(result.coverage.apiCompletenessGuaranteed, false);
+  assert.equal(result.request.dateRangeTimeZone, "America/Los_Angeles");
 });
 
 test("masks likely personal contact data in query dimensions", () => {
@@ -86,14 +87,52 @@ test("masks sensitive values embedded in page URL query parameters", () => {
 
 test("reports partial recent data and row-limit risk explicitly", () => {
   const result = normalizeSearchAnalyticsResponse({
-    rows: [{ keys: ["قانون مدنی", "https://vakilahmadmousavi.ir/"], clicks: 1, impressions: 5, ctr: 0.2, position: 3 }],
+    rows: [{ keys: ["2026-10-30"], clicks: 1, impressions: 5, ctr: 0.2, position: 3 }],
     metadata: { first_incomplete_date: "2026-10-30" },
-  }, { ...request, dataState: "all", rowLimit: 1 });
+  }, { ...request, dimensions: ["date"], dataState: "all", rowLimit: 1 });
 
   assert.equal(result.ok, true);
   assert.equal(result.coverage.mayBeTruncated, true);
   assert.equal(result.coverage.hasIncompleteRecentData, true);
   assert.equal(result.coverage.firstIncompleteDate, "2026-10-30");
+});
+
+test("accepts the documented News Showcase aggregation response", () => {
+  const result = normalizeSearchAnalyticsResponse({
+    responseAggregationType: "byNewsShowcasePanel",
+    rows: [],
+  }, {
+    ...request,
+    dimensions: ["searchAppearance"],
+    type: "discover",
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.aggregationType, "byNewsShowcasePanel");
+});
+
+test("validates incomplete-hour metadata and its required query context", () => {
+  const valid = normalizeSearchAnalyticsResponse({
+    rows: [{ keys: ["2026-10-30T12:00:00-07:00"], clicks: 1, impressions: 2, ctr: 0.5, position: 4 }],
+    metadata: { first_incomplete_hour: "2026-10-30T12:00:00-07:00" },
+  }, { ...request, dimensions: ["hour"], dataState: "hourly_all" });
+
+  const malformed = normalizeSearchAnalyticsResponse({
+    rows: [],
+    metadata: { first_incomplete_hour: "2026-10-30T24:00:00" },
+  }, { ...request, dimensions: ["hour"], dataState: "hourly_all" });
+
+  const unexpected = normalizeSearchAnalyticsResponse({
+    rows: [],
+    metadata: { first_incomplete_hour: "2026-10-30T12:00:00-07:00" },
+  }, { ...request, dimensions: ["date"], dataState: "all" });
+
+  assert.equal(valid.coverage.firstIncompleteHour, "2026-10-30T12:00:00-07:00");
+  assert.equal(valid.coverage.hasIncompleteRecentData, true);
+  assert.equal(malformed.coverage.firstIncompleteHour, null);
+  assert.equal(malformed.coverage.hasInvalidIncompleteMetadata, true);
+  assert.equal(unexpected.coverage.firstIncompleteHour, null);
+  assert.equal(unexpected.coverage.hasInvalidIncompleteMetadata, true);
 });
 
 test("rejects invalid dimensions, dates, pagination and inconsistent rows", () => {
