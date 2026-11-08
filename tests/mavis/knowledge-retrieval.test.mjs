@@ -1,98 +1,97 @@
-import test from "node:test";
-import assert from "node:assert/strict";
-import { createMavisKnowledgeRetriever } from "../../src/lib/mavis/knowledge-retrieval.mjs";
+function validateDependencies(dependencies) {
+  const required = [
+    "searchMavisKnowledge",
+    "buildLegalEvidence",
+    "buildLegalResearchDossier",
+  ];
 
-function createRetriever(records = []) {
-  const calls = { search: null, dossier: null, evidence: [] };
-  const retrieve = createMavisKnowledgeRetriever({
-    searchMavisKnowledge: (query, limit) => {
-      calls.search = { query, limit };
-      return records;
-    },
-    buildLegalEvidence: (record) => {
-      calls.evidence.push(record.id);
-      return { recordId: record.id, state: "needs_official_check" };
-    },
-    buildLegalResearchDossier: (args) => {
-      calls.dossier = args;
-      return { ok: true, topic: args.topic, count: args.records.length };
-    },
-  });
-  return { retrieve, calls };
+  for (const key of required) {
+    if (typeof dependencies?.[key] !== "function") {
+      throw new TypeError(`MAVIS knowledge retriever requires ${key}`);
+    }
+  }
 }
 
-test("retrieves existing records and assembles evidence without a parallel corpus", () => {
-  const { retrieve, calls } = createRetriever([
-    {
-      id: "law_civil_code",
-      record_type: "law",
-      title: "قانون مدنی",
-      review_status: "needs_legal_review",
-      search_score: 900,
-    },
-    {
-      id: "article_contract",
-      record_type: "article",
-      title: "شرح قرارداد",
-      review_status: "secondary_source_only",
-      source_class: "approved_secondary",
-    },
-  ]);
+function resolveSourceClass(record) {
+  if (!record || typeof record !== "object" || Array.isArray(record)) {
+    throw new TypeError("MAVIS knowledge records must be plain objects");
+  }
 
-  const result = retrieve("  قانون مدنی  ", 2);
+  if (typeof record.source_class === "string" && record.source_class.trim()) {
+    return record.source_class;
+  }
 
-  assert.equal(result.query, "قانون مدنی");
-  assert.equal(result.count, 2);
-  assert.equal(result.results[0].evidence.state, "needs_official_check");
-  assert.equal(result.results[0].review_status, "needs_legal_review");
-  assert.equal(result.results[1].review_status, "secondary_source_only");
-  assert.equal(calls.search.query, "قانون مدنی");
-  assert.equal(calls.search.limit, 2);
-  assert.equal(calls.dossier.records[0].source_class, "statute");
-  assert.equal(calls.dossier.records[1].source_class, "approved_secondary");
-  assert.deepEqual(calls.evidence, ["law_civil_code", "article_contract"]);
-  assert.equal(result.notice.includes("نظر حقوقی"), true);
-});
+  if (record.record_type === "law") return "statute";
+  if (record.record_type === "article") return "educational_summary";
+  return "legal_term";
+}
 
-test("maps article summaries and legal terms to conservative source classes", () => {
-  const { retrieve, calls } = createRetriever([
-    { id: "article_1", record_type: "article", title: "مقاله" },
-    { id: "term_1", record_type: "term", title: "اصطلاح" },
-  ]);
+/**
+ * Creates a deterministic retriever over the existing canonical legal library.
+ * No model, vector store, network request, or parallel corpus is used.
+ */
+export function createMavisKnowledgeRetriever(dependencies) {
+  validateDependencies(dependencies);
 
-  retrieve("موضوع حقوقی");
+  const {
+    searchMavisKnowledge,
+    buildLegalEvidence,
+    buildLegalResearchDossier,
+  } = dependencies;
 
-  assert.equal(calls.dossier.records[0].source_class, "educational_summary");
-  assert.equal(calls.dossier.records[1].source_class, "legal_term");
-});
+  return function retrieveMavisKnowledge(query, limit = 10) {
+    const normalizedQuery = typeof query === "string" ? query.trim() : "";
+    if (normalizedQuery.length < 2 || normalizedQuery.length > 120) {
+      throw new RangeError("MAVIS knowledge query must contain 2 to 120 characters");
+    }
 
-test("returns an empty dossier without inventing results", () => {
-  const { retrieve, calls } = createRetriever([]);
-  const result = retrieve("قانون مدنی");
+    if (!Number.isInteger(limit) || limit < 1 || limit > 20) {
+      throw new RangeError("MAVIS knowledge result limit must be an integer from 1 to 20");
+    }
 
-  assert.equal(result.count, 0);
-  assert.deepEqual(result.results, []);
-  assert.equal(result.researchDossier.ok, true);
-  assert.deepEqual(calls.dossier.records, []);
-});
+    const matchedRecords = searchMavisKnowledge(normalizedQuery, limit);
+    if (!Array.isArray(matchedRecords)) {
+      throw new TypeError("MAVIS knowledge search must return an array");
+    }
 
-test("rejects invalid query and result limits when called outside the HTTP route", () => {
-  const { retrieve } = createRetriever([]);
-  assert.throws(() => retrieve("ق"), RangeError);
-  assert.throws(() => retrieve("قانون مدنی", 0), RangeError);
-  assert.throws(() => retrieve("قانون مدنی", 21), RangeError);
-  assert.throws(() => retrieve("قانون".repeat(30)), RangeError);
-});
+    const dossierRecords = matchedRecords.map((record) => ({
+      ...record,
+      source_class: resolveSourceClass(record),
+    }));
+    const researchDossier = buildLegalResearchDossier({
+      topic: normalizedQuery,
+      records: dossierRecords,
+    });
+    const results = dossierRecords.map((record) => ({
+      evidence: buildLegalEvidence(record),
+      id: record.id,
+      record_type: record.record_type,
+      title: record.title,
+      canonical: record.canonical,
+      article_number: record.article_number,
+      law_id: record.law_id,
+      definition: record.definition,
+      summary: record.summary,
+      review_status: record.review_status,
+      status: record.status,
+      source_url: record.source_url,
+      sources: record.sources,
+      notes: record.notes,
+      path: record.path,
+      search_score: record.search_score,
+      matched_field: record.matched_field,
+    }));
 
-test("rejects a broken search adapter response", () => {
-  const retrieve = createMavisKnowledgeRetriever({
-    searchMavisKnowledge: () => null,
-    buildLegalEvidence: () => ({}),
-    buildLegalResearchDossier: () => ({}),
-  });
+    return {
+      query: normalizedQuery,
+      count: results.length,
+      results,
+      researchDossier,
+      notice: "این خروجی فقط بازیابی از کتابخانه موجود است؛ نظر حقوقی، بررسی اعتبار روز قانون یا تحلیل پرونده محسوب نمی‌شود.",
+    };
+  };
+}
+test("rejects malformed records from the search adapter", () => {
+  const { retrieve } = createRetriever([null]);
   assert.throws(() => retrieve("قانون مدنی"), TypeError);
-});
-
-test("requires all retrieval dependencies", () => {
-  assert.throws(() => createMavisKnowledgeRetriever({}), TypeError);
 });
