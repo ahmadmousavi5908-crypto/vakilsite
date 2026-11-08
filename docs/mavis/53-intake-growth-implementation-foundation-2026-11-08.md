@@ -4,7 +4,7 @@ Date: 2026-11-08
 
 ## Scope of this implementation slice
 
-This branch adds two provider-independent, deterministic foundations. It does not expose a public form, persist intake data, call external APIs, or publish SEO recommendations automatically.
+This branch adds three provider-independent, deterministic foundations: intake validation, cautious urgency triage, and growth metrics. It does not expose a public form, persist intake data, call external APIs, or publish SEO recommendations automatically.
 
 ## Public Intake boundary
 
@@ -14,6 +14,12 @@ This branch adds two provider-independent, deterministic foundations. It does no
 - No national identifier, bank credential, password, document upload, or unnecessary sensitive detail is requested by this validation contract.
 - Validation success is not a submission receipt, engagement agreement, conflict check, limitation/deadline review, or legal assessment.
 - The next persistence milestone requires a dedicated schema, RLS/grants, private storage policy, retention/deletion policy, audit events, abuse controls, and live database tests before activation.
+
+## Lawyer-style initial triage boundary
+
+- Lexical red-flag detection routes apparent deadlines, court notices, detention/liberty concerns and family-safety language to human review.
+- It never calculates a deadline, assesses the merits, recommends a procedural step, or promises a response time.
+- False negatives remain possible; this is a prioritization aid, not a legal risk classifier. All matters still require human review.
 
 ## Growth Intelligence boundary
 
