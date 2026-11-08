@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { searchMavisKnowledge } from "../../../../lib/mavis/knowledge-registry";
+import {
+  isJsonContentType,
+  matchesRequestOrigin,
+} from "../../../../lib/mavis/request-guards.mjs";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -41,7 +45,15 @@ async function readBoundedJson(request) {
 }
 
 export async function POST(request) {
-  const access = await requireAdmin();
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return NextResponse.json(
+      { error: { code: "AUTH_UNAVAILABLE", message: "بررسی دسترسی در حال حاضر ممکن نیست." } },
+      { status: 503, headers: NO_STORE_HEADERS },
+    );
+  }
 
   if (!access.configured) {
     return NextResponse.json(
@@ -65,24 +77,15 @@ export async function POST(request) {
   }
 
   const origin = request.headers.get("origin");
-  let expectedOrigin;
-  try {
-    expectedOrigin = new URL(request.url).origin;
-  } catch {
-    return NextResponse.json(
-      { error: { code: "INVALID_REQUEST", message: "مبدأ درخواست معتبر نیست." } },
-      { status: 400, headers: NO_STORE_HEADERS },
-    );
-  }
 
-  if (!origin || origin !== expectedOrigin) {
+  if (!matchesRequestOrigin(origin, request.url)) {
     return NextResponse.json(
       { error: { code: "ORIGIN_REJECTED", message: "مبدأ درخواست مجاز نیست." } },
       { status: 403, headers: NO_STORE_HEADERS },
     );
   }
 
-  if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) {
+  if (!isJsonContentType(request.headers.get("content-type"))) {
     return NextResponse.json(
       { error: { code: "UNSUPPORTED_MEDIA_TYPE", message: "نوع محتوای درخواست باید JSON باشد." } },
       { status: 415, headers: NO_STORE_HEADERS },
