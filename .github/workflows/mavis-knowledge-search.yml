@@ -12,6 +12,9 @@ on:
   pull_request:
     branches:
       - feature/mavis-deterministic-legal-search-20261108
+      - integration/mother-two-research-only-20261106
+      - security/restrict-social-links-grants-20261108
+      - feature/mavis-intake-growth-foundation-20261108
       - feature/mavis-legal-evidence-contract-20261108
 
 permissions:
@@ -45,9 +48,6 @@ jobs:
       - name: Test deterministic MAVIS retrieval
         run: npm run test:mavis-search
 
-      - name: Test legal evidence provenance and research dossier
-        run: node --test tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
-
       - name: Validate offline application syntax
         run: |
           node --check public/mavis-offline/app.js
@@ -66,6 +66,9 @@ jobs:
 
       - name: Test deterministic offline answer composition
         run: node --test tests/mavis/offline-answer.test.mjs
+
+      - name: Test legal evidence provenance and research dossier
+        run: node --test tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
 
       - name: Lint MAVIS retrieval modules
         run: npm run lint -- src/lib/mavis/knowledge-search.mjs src/lib/mavis/knowledge-registry.js src/lib/mavis/request-guards.mjs src/lib/mavis/rate-limit.mjs src/lib/supabase/admin.js src/app/api/mavis/knowledge-search/route.js src/components/admin/MavisKnowledgeSearch.jsx src/app/admin/mavis/page.js src/app/admin/page.js src/app/admin/login/page.js src/app/admin/login/actions.js tests/mavis/knowledge-search.test.mjs
