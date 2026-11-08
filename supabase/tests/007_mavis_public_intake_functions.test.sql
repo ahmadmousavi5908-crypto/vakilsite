@@ -1,6 +1,6 @@
 begin;
 
-select plan(22);
+select plan(24);
 
 select is((select allowed from public.consume_mavis_public_intake_rate_limit(repeat('a', 64))), true,
   'first intake request in a window is allowed');
@@ -137,6 +137,27 @@ values ('status_changed', 'system', clock_timestamp() - interval '10 days');
 
 select is((select audit_events_deleted from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '5 days')),
   1::bigint, 'purge removes audit metadata older than the approved cutoff');
+
+
+select throws_ok(
+  $select * from public.list_mavis_public_intake_submissions(
+    '00000000-0000-0000-0000-000000000001'::uuid, null, 50, 0
+  )$,
+  'P0001',
+  'Forbidden',
+  'admin intake list rejects a caller who is not a site admin'
+);
+
+select throws_ok(
+  $select public.update_mavis_public_intake_status(
+    '00000000-0000-0000-0000-000000000001'::uuid,
+    gen_random_uuid(),
+    'in_review'
+  )$,
+  'P0001',
+  'Forbidden',
+  'admin status update rejects a caller who is not a site admin'
+);
 
 select * from finish();
 rollback;
