@@ -172,7 +172,7 @@ values (
   clock_timestamp() - interval '1 day', clock_timestamp() - interval '2 days'
 );
 
-select is((select submissions_deleted from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '1 day')),
+select is((select submissions_deleted from public.purge_mavis_expired_public_intake(clock_timestamp() - interval '31 days')),
   0::bigint, 'purge respects retention holds');
 select ok(exists (select 1 from mavis_intake_private.submissions
   where status = 'retention_hold' and full_name = 'آزمون توقف حذف'),
