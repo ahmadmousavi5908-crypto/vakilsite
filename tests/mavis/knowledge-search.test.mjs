@@ -188,3 +188,26 @@ test("allows only safe same-site relative result paths", async () => {
   assert.equal(safeInternalPath("javascript:alert(1)"), null);
   assert.equal(safeInternalPath(null), null);
 });
+
+const goldenSet = readDataset("./knowledge-search-golden.json");
+
+test("passes the curated legal-library top-1 retrieval smoke set", () => {
+  const outcomes = goldenSet.cases.map((item) => {
+    const result = searchLegalRecords({
+      query: item.query,
+      records: actualLibraryRecords,
+      limit: 10,
+    });
+    return {
+      query: item.query,
+      expected: item.expected_id,
+      actual: result[0]?.id || null,
+    };
+  });
+
+  assert.deepEqual(
+    outcomes.filter((item) => item.actual !== item.expected),
+    [],
+    JSON.stringify(outcomes, null, 2),
+  );
+});
