@@ -66,7 +66,7 @@
 ## Cross-workstream release gate
 
 - [ ] CI green on the exact candidate commit.
-- [ ] Run `npm ci --no-audit --no-fund`, then `npm run mavis:verify` in a fresh Termux workspace; capture the complete output and review the Git diff.
+- [ ] **Final step only:** after remote CI, legal/owner review, staging failure-injection and disposable restore checks pass, run `npm ci --no-audit --no-fund`, then `npm run mavis:verify` in a fresh Termux workspace; capture the complete output and review the Git diff.
 - [ ] Cold-online then true-offline browser/device test.
 - [ ] Staging tests for DB outage, rate limit, unauthorized access, same-key retries, conflicting-key reuse and data retention.
 - [ ] Obtain owner/legal approval for minimum submission and audit retention periods; record the approval reference and enable the private retention policy only after review.
