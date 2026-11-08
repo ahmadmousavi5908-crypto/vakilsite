@@ -1,6 +1,6 @@
 begin;
 
-select plan(46);
+select plan(58);
 
 select ok(has_schema_privilege('service_role', 'mavis_intake_private', 'USAGE'),
   'server service role can access the private intake schema');
@@ -135,6 +135,49 @@ select ok((select coalesce(proconfig @> array['search_path=""'], false)
   from pg_proc
   where oid = 'mavis_intake_private.submit_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)'::regprocedure),
   'private intake submit function has an empty search_path');
+
+
+select ok(has_function_privilege('service_role',
+  'public.list_mavis_public_intake_submissions(uuid,text,integer,integer)', 'EXECUTE'),
+  'service role can call the admin intake list wrapper');
+select ok(not has_function_privilege('anon',
+  'public.list_mavis_public_intake_submissions(uuid,text,integer,integer)', 'EXECUTE'),
+  'anonymous users cannot call the admin intake list wrapper');
+select ok(not has_function_privilege('authenticated',
+  'public.list_mavis_public_intake_submissions(uuid,text,integer,integer)', 'EXECUTE'),
+  'authenticated users cannot call the admin intake list wrapper directly');
+
+select ok(has_function_privilege('service_role',
+  'public.update_mavis_public_intake_status(uuid,uuid,text)', 'EXECUTE'),
+  'service role can call the admin status update wrapper');
+select ok(not has_function_privilege('anon',
+  'public.update_mavis_public_intake_status(uuid,uuid,text)', 'EXECUTE'),
+  'anonymous users cannot call the admin status update wrapper');
+select ok(not has_function_privilege('authenticated',
+  'public.update_mavis_public_intake_status(uuid,uuid,text)', 'EXECUTE'),
+  'authenticated users cannot call the admin status update wrapper directly');
+
+select ok(not (select prosecdef from pg_proc
+  where oid = 'public.list_mavis_public_intake_submissions(uuid,text,integer,integer)'::regprocedure),
+  'public admin list wrapper uses invoker privileges');
+select ok(not (select prosecdef from pg_proc
+  where oid = 'public.update_mavis_public_intake_status(uuid,uuid,text)'::regprocedure),
+  'public admin status wrapper uses invoker privileges');
+
+select ok((select prosecdef from pg_proc
+  where oid = 'mavis_intake_private.list_public_intake_submissions(uuid,text,integer,integer)'::regprocedure),
+  'private admin list function uses SECURITY DEFINER');
+select ok((select coalesce(proconfig @> array['search_path=""'], false)
+  from pg_proc
+  where oid = 'mavis_intake_private.list_public_intake_submissions(uuid,text,integer,integer)'::regprocedure),
+  'private admin list function has an empty search_path');
+select ok((select prosecdef from pg_proc
+  where oid = 'mavis_intake_private.update_public_intake_status(uuid,uuid,text)'::regprocedure),
+  'private admin status function uses SECURITY DEFINER');
+select ok((select coalesce(proconfig @> array['search_path=""'], false)
+  from pg_proc
+  where oid = 'mavis_intake_private.update_public_intake_status(uuid,uuid,text)'::regprocedure),
+  'private admin status function has an empty search_path');
 
 select * from finish();
 rollback;
