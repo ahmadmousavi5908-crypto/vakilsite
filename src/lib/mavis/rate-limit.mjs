@@ -1,4 +1,4 @@
-export function parseKnowledgeSearchRateLimit(result) {
+function parseRateLimit(result) {
   if (!result || result.error) return { status: "unavailable" };
 
   const rows = Array.isArray(result.data)
@@ -24,4 +24,12 @@ export function parseKnowledgeSearchRateLimit(result) {
   return row.allowed
     ? { status: "allowed" }
     : { status: "limited", retryAfterSeconds: Math.max(1, retryAfter) };
+}
+
+export function parseKnowledgeSearchRateLimit(result) {
+  return parseRateLimit(result);
+}
+
+export function parseAdminIntakeRateLimit(result) {
+  return parseRateLimit(result);
 }
