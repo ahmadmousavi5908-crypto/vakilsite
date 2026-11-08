@@ -3,7 +3,7 @@
   "bundle_id": "MAVIS-DOCS-2026-11-08-R8",
   "purpose": "Pinned individual-file documentation bundle: three-arm performance scorecard and live knowledge workspace/access standard. This is not a runtime knowledge corpus or backup archive.",
   "repository": "ahmadmousavi5908-crypto/vakilsite",
-  "pinned_commit": "719ee39f9cde6c7aeed5eeff86d0dd81a8da8228",
+  "pinned_commit": "b1b5fb4aceb977c945878759c2f86b4f1eb84bb9",
   "delivery": {
     "format": "individual-files",
     "archive_required": false,
@@ -67,7 +67,7 @@
     },
     {
       "path": "docs/mavis/README.md",
-      "blob_sha": "6d569657a0659ab28f42ba3e9605b49689147855"
+      "blob_sha": "eb951c0df930036c62722ec291b8ce85d12f5928"
     }
   ],
   "safety": {
