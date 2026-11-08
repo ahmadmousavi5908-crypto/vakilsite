@@ -14,9 +14,9 @@
 
 A green CI result is evidence only for the checks actually executed. It is not proof of legal validity, real-device offline behavior, production configuration, or successful restore.
 
-## 2. Minimal local verification (Termux)
+## 2. Final local verification (Termux — execute last)
 
-Use a fresh directory. Do not reuse or overwrite the existing site workspace or any Mother Two backup.
+**Do not run this step yet.** It is deliberately the final operator-side verification after remote code review, exact-SHA CI, legal/owner decisions, staging tests, and backup/restore checks are complete. Use a fresh directory. Do not reuse or overwrite the existing site workspace or any Mother Two backup.
 
 ```bash
 cd ~/downloads
