@@ -6,7 +6,7 @@
 Provide a public, first-party, deterministic legal-information retrieval surface that remains usable when ChatGPT, external LLM APIs, and the network are unavailable after the user has downloaded the bundle once.
 
 ## Delivered boundary
-- Static application at `/mavis-offline/`.
+- Static application at `/mavis-offline/index.html`.
 - Scoped service worker; caches only the offline application shell and its public knowledge bundle.
 - Local Persian normalization and deterministic ranking.
 - Reuses canonical legal-library records and review labels.
