@@ -196,7 +196,7 @@ export async function POST(request) {
     : null;
 
   if (submissionResult?.error?.code === "22023") {
-    return errorResponse("IDEMPOTENCY_CONFLICT", "این شناسه قبلاً برای اطلاعات متفاوتی استفاده شده است؛ فرم را تازه‌سازی و دوباره ارسال کنید.", 409);
+    return errorResponse("IDEMPOTENCY_CONFLICT", "شناسه قبلی با اطلاعات فعلی مطابقت ندارد. برای جلوگیری از ثبت تکراری، از ارسال مجدد خودداری کنید و با دفتر تماس بگیرید تا وضعیت بررسی شود.", 409);
   }
 
   if (submissionResult?.error || !receipt ||
