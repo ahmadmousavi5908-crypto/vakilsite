@@ -29,6 +29,7 @@ function makeAccess(overrides = {}) {
 
 function createHarness(overrides = {}) {
   const calls = {
+    rateLimit: 0,
     search: 0,
     evidence: 0,
     dossier: 0,
@@ -36,8 +37,20 @@ function createHarness(overrides = {}) {
     dossierArgs: null,
   };
 
+  const defaultAccess = makeAccess({
+    supabase: {
+      rpc: async () => {
+        calls.rateLimit += 1;
+        return {
+          data: [{ allowed: true, retry_after_seconds: 0 }],
+          error: null,
+        };
+      },
+    },
+  });
+
   const dependencies = {
-    requireAdmin: async () => makeAccess(),
+    requireAdmin: async () => defaultAccess,
     searchMavisKnowledge: (query, limit) => {
       calls.search += 1;
       calls.searchArgs = { query, limit };
@@ -148,12 +161,29 @@ test("rejects cross-origin requests before consuming a rate-limit slot", async (
   const response = await handler(makeRequest({ query: "قانون مدنی" }, { origin: "https://evil.example" }));
   assert.equal(response.status, 403);
   assert.equal((await readError(response)).code, "ORIGIN_REJECTED");
+  assert.equal(calls.rateLimit, 0);
   assert.equal(calls.search, 0);
 });
 
 test("fails closed when database rate limiting is unavailable", async () => {
   const { handler, calls } = createHarness({
     parseKnowledgeSearchRateLimit: () => ({ status: "unavailable" }),
+  });
+  const response = await handler(makeRequest({ query: "قانون مدنی" }));
+  assert.equal(response.status, 503);
+  assert.equal((await readError(response)).code, "RATE_LIMIT_UNAVAILABLE");
+  assert.equal(calls.search, 0);
+});
+
+test("fails closed when the database rate-limit RPC throws", async () => {
+  const { handler, calls } = createHarness({
+    requireAdmin: async () => makeAccess({
+      supabase: {
+        rpc: async () => {
+          throw new Error("private database detail");
+        },
+      },
+    }),
   });
   const response = await handler(makeRequest({ query: "قانون مدنی" }));
   assert.equal(response.status, 503);
@@ -225,6 +255,7 @@ test("normalizes legal records and returns evidence plus a research dossier", as
   assert.equal(payload.notice.includes("نظر حقوقی"), true);
   assert.deepEqual(calls.searchArgs, { query: "قانون مدنی", limit: 10 });
   assert.equal(calls.dossierArgs.records[0].source_class, "statute");
+  assert.equal(calls.rateLimit, 1);
   assert.equal(calls.evidence, 1);
   assert.equal(calls.dossier, 1);
 });
