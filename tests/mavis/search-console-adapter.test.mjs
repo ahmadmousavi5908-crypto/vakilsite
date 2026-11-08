@@ -36,6 +36,36 @@ test("masks likely personal contact data in query dimensions", () => {
   assert.equal(result.rows[0].privacyReviewRequired, true);
 });
 
+test("masks Persian-digit phone numbers and national-ID-shaped query values", () => {
+  const phone = normalizeSearchAnalyticsResponse({
+    rows: [{ keys: ["۰۹۱۲۳۴۵۶۷۸۹", "https://vakilahmadmousavi.ir/"], clicks: 1, impressions: 2, ctr: 0.5, position: 4 }],
+  }, request);
+  const nationalId = normalizeSearchAnalyticsResponse({
+    rows: [{ keys: ["۱۲۳۴۵۶۷۸۹۰", "https://vakilahmadmousavi.ir/"], clicks: 1, impressions: 2, ctr: 0.5, position: 4 }],
+  }, request);
+
+  assert.equal(phone.rows[0].dimensions.query, null);
+  assert.equal(nationalId.rows[0].dimensions.query, null);
+  assert.equal(phone.rows[0].privacyReviewRequired, true);
+  assert.equal(nationalId.rows[0].privacyReviewRequired, true);
+});
+
+test("supports the hourly dimension and validates News Showcase aggregation", () => {
+  const hourly = normalizeSearchAnalyticsResponse({ rows: [] }, {
+    ...request,
+    dimensions: ["hour"],
+    dataState: "hourly_all",
+  });
+  const invalidShowcase = normalizeSearchAnalyticsResponse({
+    responseAggregationType: "byNewsShowcasePanel",
+    rows: [],
+  }, request);
+
+  assert.equal(hourly.ok, true);
+  assert.equal(invalidShowcase.ok, false);
+  assert.equal(invalidShowcase.reason, "invalid_news_showcase_aggregation");
+});
+
 test("reports partial recent data and row-limit risk explicitly", () => {
   const result = normalizeSearchAnalyticsResponse({
     rows: [{ keys: ["قانون مدنی", "https://vakilahmadmousavi.ir/"], clicks: 1, impressions: 5, ctr: 0.2, position: 3 }],
