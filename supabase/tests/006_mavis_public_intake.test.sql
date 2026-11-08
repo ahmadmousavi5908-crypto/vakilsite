@@ -1,6 +1,6 @@
 begin;
 
-select plan(51);
+select plan(53);
 
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_intake_submissions'::regclass), 'intake submissions have RLS enabled');
 select ok(not has_table_privilege('anon', 'public.mavis_intake_submissions', 'SELECT'), 'anon cannot read private intake submissions');
@@ -170,6 +170,25 @@ select is(
 );
 
 reset role;
+
+
+update public.mavis_intake_submissions
+   set status = 'reviewing'
+ where idempotency_key = '11111111-1111-4111-8111-111111111111'::uuid;
+
+select ok(
+  exists (
+    select 1 from public.mavis_intake_audit_events
+     where submission_id = (select id from public.mavis_intake_submissions where idempotency_key = '11111111-1111-4111-8111-111111111111'::uuid)
+       and old_status = 'new'
+       and new_status = 'reviewing'
+  ),
+  'status changes create an immutable audit event'
+);
+select ok(
+  (select reviewed_at is not null from public.mavis_intake_submissions where idempotency_key = '11111111-1111-4111-8111-111111111111'::uuid),
+  'status changes stamp the review timestamp'
+);
 
 select is(
   (select third_party_consent from public.mavis_intake_submissions where idempotency_key = '11111111-1111-4111-8111-111111111111'::uuid),
