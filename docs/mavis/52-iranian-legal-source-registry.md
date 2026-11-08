@@ -58,6 +58,14 @@ Every source and legal record should retain:
 - License/terms and permitted reuse method
 - Reviewer, review timestamp and unresolved conflicts
 
+## Third-party connector exclusion
+
+An unofficial open-source MCP connector for qavanin.ir was discovered during research:
+- https://github.com/sepehr071/qavanin-mcp
+- https://pypi.org/project/qavanin-mcp/
+
+Its own public description states that it is not affiliated with qavanin.ir and describes solving the site's bot-check cookie challenge. MAVIS must not adopt this connector or reproduce that challenge-bypass behavior. It is not an official API, does not establish reuse permission, and cannot upgrade any source's verification state. Reconsider only if the competent source owner publishes an authorized interface or explicitly permits the access method, and after a separate security, terms and provenance review.
+
 ## Ingestion policy
 1. Prefer documented APIs, official feeds, downloadable open data and expressly permitted access.
 2. Do not bypass authentication, CAPTCHA, rate limits or technical restrictions; do not scrape at scale without checking terms and permissions.
