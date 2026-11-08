@@ -98,7 +98,7 @@ export default function MavisIntakeInbox() {
   }
 
   return (
-    <section className={styles.inbox} aria-labelledby="mavis-intake-title">
+    <section id="mavis-intake-inbox" className={styles.inbox} aria-labelledby="mavis-intake-title">
       <div className={styles.heading}>
         <div>
           <span className={styles.eyebrow}>PRIVATE CLIENT INTAKE</span>
