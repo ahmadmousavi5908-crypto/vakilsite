@@ -6703,7 +6703,11 @@
       "official_legislative_research",
       "secondary_legal_database",
       "secondary_translation_archive",
-      "research_guide"
+      "research_guide",
+      "secondary_news_reporting",
+      "secondary_legal_news",
+      "secondary_legal_commentary",
+      "international_secondary_legal_archive"
     ]
   }
 }
