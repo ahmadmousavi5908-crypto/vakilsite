@@ -121,3 +121,18 @@
 - Search queries، Ads terms و گزارش‌های رشد داده بازاریابی‌اند و نباید با محتوای پرونده یا اطلاعات محرمانه موکل مخلوط شوند.
 - داده conversion نباید شامل شرح دعوا، نام طرف مقابل، شماره پرونده، مدارک یا جزئیات حساس باشد.
 - همه credentialها server-side و قابل rotation هستند؛ هیچ secret در Git یا client bundle قرار نمی‌گیرد.
+
+
+## 10. به‌روزرسانی 2026-11-08: قابلیت‌های جدید Search Console و سیاست backup
+- از 2026-08-31، کنترل Search generative AI برای مدیریت حضور سایت در AI Overviews، AI Mode و قابلیت‌های generative AI در Discover به همه سایت‌ها rollout شده است. وضعیت property باید پیش از نتیجه‌گیری بررسی شود.
+- گزارش Generative AI performance در Search Console برای impressions، صفحات و کشورها در دسترس عمومی شده؛ اگر حجم impression کافی نباشد ممکن است گزارش نمایش داده نشود. داده این گزارش باید از خود property خوانده شود، نه با عددسازی.
+- راهنمای رسمی Google برای AI features تأکید می‌کند اصول SEO بنیادی و محتوای اصیل/مفید همچنان پایه‌اند؛ ساخت فایل‌های خاص AI یا ترفندهای مصنوعی مانند chunking اجباری توصیه نمی‌شود.
+- Supabase daily backups شامل اشیای Storage نیستند؛ Storage باید جداگانه backup/restore شود. در restore به نقطه قدیمی، تغییرات بعد از آن از دست می‌روند؛ restore به پروژه جدید برای حفظ production توصیه می‌شود.
+- برای پروژه Free، مستندات Supabase export منظم با CLI را توصیه می‌کنند؛ Pro/Team/Enterprise daily backups و PITR بسته به plan دارند. وضعیت واقعی plan و retention پروژه باید در Dashboard بررسی شود.
+- این اطلاعات به معنی فعال‌سازی کنترل AI Search، اتصال Search Console یا تنظیم backup Supabase نیست؛ فقط الزامات ممیزی و طراحی‌اند.
+
+منابع رسمی افزوده‌شده:
+- https://support.google.com/webmasters/answer/16908024
+- https://support.google.com/webmasters/answer/16984139
+- https://developers.google.com/search/docs/fundamentals/ai-optimization-guide
+- https://supabase.com/docs/guides/platform/backups
