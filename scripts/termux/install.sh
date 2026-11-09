@@ -1,108 +1,113 @@
 #!/data/data/com.termux/files/usr/bin/bash
 set -Eeuo pipefail
 
-readonly REPOSITORY="https://github.com/ahmadmousavi5908-crypto/vakilsite.git"
-readonly SOURCE_REF="feature/mavis-final-verification-20261109"
-readonly APP_DIR="${MAVIS_DIR:-$HOME/downloads/vakilsite-mavis-termux}"
-readonly APP_URL="http://127.0.0.1:3002"
+readonly REPOSITORY="ahmadmousavi5908-crypto/vakilsite"
+readonly RELEASE_TAG="mavis-termux-v1.0.0"
+readonly ARCHIVE_NAME="mavis-termux-arm64.tar.gz"
+readonly CHECKSUM_NAME="${ARCHIVE_NAME}.sha256"
+readonly NODE_VERSION="24.22.2"
+readonly DOWNLOAD_DIR="${MAVIS_DOWNLOAD_DIR:-$HOME/downloads/mavis-termux-v1.0.0}"
 
 log() { printf '\n[MAVIS] %s\n' "$1"; }
 fail() { printf '\n[MAVIS] ERROR: %s\n' "$1" >&2; exit 1; }
 
 case "${PREFIX:-}" in
   */com.termux/files/usr) ;;
-  *) fail "این اسکریپت فقط برای محیط رسمی Termux طراحی شده است." ;;
+  *) fail "این نصب‌کننده فقط برای Termux طراحی شده است." ;;
 esac
 
-for command_name in git curl node npm; do
-  command -v "$command_name" >/dev/null 2>&1 || fail "ابزار $command_name نصب نیست. یک‌بار اجرا کنید: pkg install -y git nodejs-lts npm curl"
-done
-
-node --input-type=commonjs -e '
-const [major, minor] = process.versions.node.split(".").map(Number);
-if (major < 20 || (major === 20 && minor < 9)) {
-  console.error("Next.js 16 requires Node.js >= 20.9.0. Detected: " + process.version);
-  process.exit(1);
-}
-' || fail "نسخه Node.js با Next.js 16 سازگار نیست. در Termux نسخه LTS را نصب و دوباره اجرا کنید."
+case "$(uname -m)" in
+  aarch64|arm64) ;;
+  *) fail "بسته فعلی فقط برای Android/ARM64 ساخته می‌شود." ;;
+esac
 
 available_kb="$(df -Pk "$HOME" | awk 'NR == 2 { print $4 }')"
 [[ "$available_kb" =~ ^[0-9]+$ ]] || fail "فضای خالی حافظه قابل بررسی نیست."
-(( available_kb >= 1500000 )) || fail "حداقل 1.5 گیگابایت فضای خالی لازم است؛ فضای فعلی کمتر است."
+(( available_kb >= 2500000 )) || fail "حداقل 2.5 گیگابایت فضای خالی لازم است."
 
-mkdir -p "$(dirname "$APP_DIR")"
-
-if [[ -e "$APP_DIR" ]]; then
-  [[ -d "$APP_DIR/.git" ]] || fail "مسیر مقصد از قبل وجود دارد و مخزن MAVIS نیست: $APP_DIR"
-  existing_remote="$(git -C "$APP_DIR" remote get-url origin 2>/dev/null || true)"
-  [[ "$existing_remote" == "$REPOSITORY" ]] || fail "مخزن موجود در مسیر مقصد متعلق به این پروژه نیست: $APP_DIR"
-  [[ -z "$(git -C "$APP_DIR" status --porcelain)" ]] || fail "در پوشه پروژه تغییر محلی وجود دارد؛ برای جلوگیری از حذف آن، نصب متوقف شد."
-  log "به‌روزرسانی نسخه دریافت‌شده بدون دست‌کاری تغییرات محلی"
-  git -C "$APP_DIR" fetch --depth=1 origin "$SOURCE_REF"
-  git -C "$APP_DIR" checkout -B "$SOURCE_REF" FETCH_HEAD
-else
-  log "دریافت نسخه تأییدشده پروژه از GitHub"
-  git clone --depth=1 --single-branch --branch "$SOURCE_REF" "$REPOSITORY" "$APP_DIR"
-fi
-
-cd "$APP_DIR"
-
-if [[ ! -f .env.local ]]; then
-  umask 077
-  cat > .env.local <<'ENV'
-NEXT_PUBLIC_SITE_URL=https://vakilahmadmousavi.ir
-NEXT_PUBLIC_WHATSAPP_NUMBER=989169165902
-MAVIS_PUBLIC_ENABLED=false
-MAVIS_INTAKE_ENABLED=false
-MAVIS_PROVIDER=mock
-ENV
-  chmod 600 .env.local
-fi
-
-export NEXT_TELEMETRY_DISABLED=1
-export npm_config_fetch_retries=3
-export npm_config_fetch_timeout=300000
-
-log "نصب دقیق وابستگی‌های قفل‌شده"
-npm ci --no-audit --no-fund
-
-log "ساخت نسخه تولیدی با Webpack"
-npm run build
-
-if curl --silent --fail --max-time 2 "$APP_URL" >/dev/null 2>&1; then
-  fail "پورت 3002 از قبل پاسخ می‌دهد. برای جلوگیری از تداخل، سرور جدید اجرا نشد."
-fi
-
-log "اجرای سرور و بررسی پاسخ HTTP"
-npm run start -- --hostname 127.0.0.1 --port 3002 > .termux-start.log 2>&1 &
-SERVER_PID=$!
-
-cleanup() {
-  if kill -0 "$SERVER_PID" 2>/dev/null; then
-    kill "$SERVER_PID" 2>/dev/null || true
-    wait "$SERVER_PID" 2>/dev/null || true
-  fi
-}
-trap cleanup EXIT INT TERM
-
-ready=0
-for attempt in $(seq 1 30); do
-  if curl --silent --fail --max-time 4 "$APP_URL" >/dev/null 2>&1; then
-    ready=1
+for command_name in pkg curl sha256sum tar proot-distro gh; do
+  if ! command -v "$command_name" >/dev/null 2>&1; then
+    log "نصب ابزار پایه $command_name"
+    pkg install -y proot-distro curl coreutils tar gh
     break
   fi
-  if ! kill -0 "$SERVER_PID" 2>/dev/null; then
-    break
-  fi
-  sleep 2
 done
 
-if [[ "$ready" -ne 1 ]]; then
-  log "راه‌اندازی کامل نشد؛ آخرین گزارش سرور:"
-  tail -n 60 .termux-start.log 2>/dev/null || true
-  fail "آزمون سلامت HTTP ناموفق بود. فایل گزارش در $APP_DIR/.termux-start.log ذخیره شد."
+for command_name in curl sha256sum tar proot-distro gh; do
+  command -v "$command_name" >/dev/null 2>&1 || fail "ابزار لازم نصب نشد: $command_name"
+done
+
+mkdir -p "$DOWNLOAD_DIR"
+chmod 700 "$DOWNLOAD_DIR"
+
+log "دریافت بسته نسخه $RELEASE_TAG"
+if gh auth status >/dev/null 2>&1; then
+  gh release download "$RELEASE_TAG" \
+    --repo "$REPOSITORY" \
+    --pattern "$ARCHIVE_NAME" \
+    --pattern "$CHECKSUM_NAME" \
+    --dir "$DOWNLOAD_DIR"
+else
+  BASE_URL="https://github.com/$REPOSITORY/releases/download/$RELEASE_TAG"
+  curl --fail --location --retry 3 "$BASE_URL/$ARCHIVE_NAME" -o "$DOWNLOAD_DIR/$ARCHIVE_NAME"
+  curl --fail --location --retry 3 "$BASE_URL/$CHECKSUM_NAME" -o "$DOWNLOAD_DIR/$CHECKSUM_NAME"
 fi
 
-log "سرور با موفقیت پاسخ داد: $APP_URL"
-log "برای توقف سرور، در همین نشست Ctrl+C را بزنید."
-wait "$SERVER_PID"
+cd "$DOWNLOAD_DIR"
+sha256sum --check "$CHECKSUM_NAME" || fail "هش بسته با manifest رسمی یکسان نیست."
+
+if ! proot-distro login debian -- /bin/true >/dev/null 2>&1; then
+  log "نصب محیط Debian برای اجرای سازگار ARM64/glibc"
+  proot-distro install debian
+fi
+
+log "آماده‌سازی runtime لینوکسی و نصب نسخه تأییدشده Node.js"
+proot-distro login debian --shared-home -- bash -lc '
+set -Eeuo pipefail
+NODE_VERSION="'"$NODE_VERSION"'"
+ARCHIVE="/root/downloads/mavis-termux-v1.0.0/'"$ARCHIVE_NAME"'"
+NODE_ROOT="/opt/node-v${NODE_VERSION}-linux-arm64"
+APP_ROOT="/opt/mavis/'"$RELEASE_TAG"'"
+
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates curl xz-utils tar
+
+if [[ ! -x "$NODE_ROOT/bin/node" ]]; then
+  cd /tmp
+  NODE_FILE="node-v${NODE_VERSION}-linux-arm64.tar.xz"
+  curl --fail --location --retry 3 "https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt" -o SHASUMS256.txt
+  curl --fail --location --retry 3 "https://nodejs.org/dist/v${NODE_VERSION}/${NODE_FILE}" -o "$NODE_FILE"
+  grep -E "  ${NODE_FILE}$" SHASUMS256.txt | sha256sum --check -
+  mkdir -p "$NODE_ROOT"
+  tar -xJf "$NODE_FILE" --strip-components=1 -C "$NODE_ROOT"
+fi
+
+"$NODE_ROOT/bin/node" -e "const [a,b]=process.versions.node.split(\".\").map(Number); if(a<20 || (a===20 && b<9)) process.exit(1)"
+mkdir -p "$APP_ROOT"
+if [[ ! -f "$APP_ROOT/runtime-manifest.json" ]]; then
+  tar -xzf "$ARCHIVE" -C "$APP_ROOT"
+fi
+[[ -f "$APP_ROOT/runtime-manifest.json" ]] || { echo "Runtime manifest is missing." >&2; exit 1; }
+' || fail "آماده‌سازی محیط Debian یا دریافت Node.js ناموفق بود."
+
+log "آزمون سلامت بسته پیش از اجرا"
+proot-distro login debian --shared-home -- bash -lc '
+set -Eeuo pipefail
+NODE_ROOT="/opt/node-v'"$NODE_VERSION"'-linux-arm64"
+APP_ROOT="/opt/mavis/'"$RELEASE_TAG"'"
+"$NODE_ROOT/bin/node" -e "const p=require(\"$APP_ROOT/package.json\"); if(p.dependencies.next!==\"16.4.3\") process.exit(1)"
+[[ -d "$APP_ROOT/.next" && -d "$APP_ROOT/node_modules/next" && -d "$APP_ROOT/public" ]]
+' || fail "ساختار بسته نهایی کامل نیست."
+
+log "اجرای MAVIS روی پورت 3002"
+proot-distro login debian --shared-home -- bash -lc '
+set -Eeuo pipefail
+export PATH="/opt/node-v'"$NODE_VERSION"'-linux-arm64/bin:$PATH"
+export MAVIS_TERMUX_BUILD=true
+export MAVIS_PUBLIC_ENABLED=false
+export MAVIS_INTAKE_ENABLED=false
+export MAVIS_PROVIDER=mock
+export NEXT_PUBLIC_SITE_URL=https://vakilahmadmousavi.ir
+cd "/opt/mavis/'"$RELEASE_TAG"'"
+exec node node_modules/next/dist/bin/next start --hostname 0.0.0.0 --port 3002
+'
