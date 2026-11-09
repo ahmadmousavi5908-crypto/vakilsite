@@ -1,0 +1,3 @@
+# Optional offline document-ingestion worker only; not part of the Next.js runtime.
+# Python >= 3.10. OCR uses the system Tesseract CLI and fas/eng traineddata.
+docling==2.149.0
