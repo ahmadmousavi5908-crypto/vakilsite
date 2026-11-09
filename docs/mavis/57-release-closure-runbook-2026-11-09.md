@@ -27,6 +27,7 @@ A green CI result is evidence only for the checks actually executed. It is not p
 - Qwen3.5-9B with vLLM is documented only as a candidate for a synthetic-data benchmark. No real model, GPU host, external provider or production integration has been approved.
 - The Civil Code source pilot remains `secondary_source_only`: the official primary document, amendment chain and lawyer sign-off have not been captured.
 - The current candidate merge commit has fresh CI running. Recheck both workflows on the exact current SHA before local verification.
+- Database CI now uses a lightweight change-detection job: it runs the full Supabase stack only when `supabase/**` or the local backup/restore verifier changes (or when manually dispatched). Database jobs share a FIFO concurrency queue; candidate push duplication is removed because the candidate is validated through its pull request. This prevents docs-only PRs and duplicate push/PR events from competing for fixed local Supabase ports and registry pulls.
 
 
 
