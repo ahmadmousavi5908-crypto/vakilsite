@@ -17,13 +17,22 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
-      - name: Validate installer shell syntax
+      - name: Validate Termux installer syntax
         run: bash -n scripts/termux/install.sh
-      - name: Validate installer safety contract
+      - name: Validate download-only safety contract
         run: |
+          set -Eeuo pipefail
+          grep -Fq 'gh release download' scripts/termux/install.sh
+          grep -Fq 'sha256sum --check' scripts/termux/install.sh
+          grep -Fq 'proot-distro login debian' scripts/termux/install.sh
+          grep -Fq 'NODE_VERSION="24.22.2"' scripts/termux/install.sh
           grep -Fq 'MAVIS_PUBLIC_ENABLED=false' scripts/termux/install.sh
           grep -Fq 'MAVIS_INTAKE_ENABLED=false' scripts/termux/install.sh
-          grep -Fq 'npm ci --no-audit --no-fund' scripts/termux/install.sh
-          grep -Fq 'npm run build' scripts/termux/install.sh
           grep -Fq '127.0.0.1 --port 3002' scripts/termux/install.sh
-          ! grep -Eq 'rm -rf|git reset --hard' scripts/termux/install.sh
+          ! grep -Eq 'npm ci|npm install|npm run build|git clone|rm -rf' scripts/termux/install.sh
+      - name: Validate runtime workflow syntax markers
+        run: |
+          grep -Fq 'runs-on: ubuntu-24.04-arm' .github/workflows/termux-arm64-runtime.yml
+          grep -Fq 'npm run build' .github/workflows/termux-arm64-runtime.yml
+          grep -Fq 'npm prune --omit=dev' .github/workflows/termux-arm64-runtime.yml
+          grep -Fq 'mavis-termux-v1.0.0' .github/workflows/termux-arm64-runtime.yml
