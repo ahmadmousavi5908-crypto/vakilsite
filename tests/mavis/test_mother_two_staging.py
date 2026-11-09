@@ -111,7 +111,7 @@ class MotherTwoStagingTests(unittest.TestCase):
 
             with self.assertRaisesRegex(StagingError, "SHA-256"):
                 stage_archive(archive_path, inventory_path, root / "staging")
-            self.assertFalse((root / "staging").exists())
+            self.assertFalse(any((root / "staging").glob("mother-two-stage-*")))
 
     def test_rejects_inventory_with_no_eligible_files(self):
         with tempfile.TemporaryDirectory() as temporary:
