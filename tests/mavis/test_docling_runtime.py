@@ -111,9 +111,9 @@ class DoclingRuntimeSmokeTests(unittest.TestCase):
             manifest = json.loads((root / "parsed" / "parse-manifest.json").read_text("utf-8"))
 
             self.assertEqual(result["status"], "parsed_for_review")
-            self.assertEqual(result["parsed_files"], 2)
             self.assertFalse(result["indexing_allowed"])
             self.assertFalse(result["retrieval_allowed"])
+            self.assertEqual(result["parsed_files"], 2, json.dumps(manifest["files"], ensure_ascii=False))
 
             parsed_by_path = {}
             for record in manifest["files"]:
