@@ -13,6 +13,7 @@ import hmac
 import importlib.metadata
 import json
 import os
+import platform
 import re
 import shutil
 import stat
@@ -33,6 +34,7 @@ SUPPORTED_EXTENSIONS = {
     ".xls",
     ".xlsx",
     ".csv",
+    ".json",
     ".html",
     ".htm",
     ".epub",
@@ -51,6 +53,9 @@ DOCUMENT_TIMEOUT_SECONDS = 120
 MAX_FILE_BYTES = 100 * 1024 * 1024
 MAX_TOTAL_BYTES = 1024 * 1024 * 1024
 MAX_FILES = 5000
+MAX_JSON_BYTES = 20 * 1024 * 1024
+MAX_JSON_POINTERS = 10000
+MAX_JSON_DEPTH = 100
 ALLOWED_CATEGORIES = {
     "books",
     "published_articles",
@@ -266,6 +271,79 @@ def _document_pages(document: Any) -> list[dict[str, Any]]:
             }
         )
     return pages
+
+
+def _unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Duplicate JSON object key.")
+        result[key] = value
+    return result
+
+
+def _reject_json_constant(_value: str) -> None:
+    raise ValueError("Non-standard JSON numeric constants are not accepted.")
+
+
+def _json_pointer_anchors(value: Any) -> tuple[list[dict[str, Any]], bool]:
+    anchors: list[dict[str, Any]] = []
+    truncated = False
+
+    def visit(node: Any, pointer: str, depth: int) -> None:
+        nonlocal truncated
+        if depth > MAX_JSON_DEPTH:
+            raise ValueError("JSON nesting exceeds the configured depth limit.")
+        if len(anchors) >= MAX_JSON_POINTERS:
+            truncated = True
+            return
+
+        if isinstance(node, dict):
+            if not node:
+                anchors.append({"json_pointer": pointer, "value_type": "object"})
+            for key, child in node.items():
+                token = str(key).replace("~", "~0").replace("/", "~1")
+                visit(child, f"{pointer}/{token}", depth + 1)
+                if truncated:
+                    return
+        elif isinstance(node, list):
+            if not node:
+                anchors.append({"json_pointer": pointer, "value_type": "array"})
+            for index, child in enumerate(node):
+                visit(child, f"{pointer}/{index}", depth + 1)
+                if truncated:
+                    return
+        else:
+            value_type = (
+                "null" if node is None
+                else "boolean" if isinstance(node, bool)
+                else "number" if isinstance(node, (int, float))
+                else "string"
+            )
+            anchors.append({"json_pointer": pointer, "value_type": value_type})
+
+    visit(value, "", 0)
+    return anchors, truncated
+
+
+def _parse_json_dataset(source: Path) -> tuple[str, list[dict[str, Any]], bool]:
+    if source.stat().st_size > MAX_JSON_BYTES:
+        raise OverflowError("JSON dataset exceeds the configured size limit.")
+
+    raw = source.read_text(encoding="utf-8")
+    parsed = json.loads(
+        raw,
+        object_pairs_hook=_unique_json_object,
+        parse_constant=_reject_json_constant,
+    )
+    normalized = json.dumps(
+        parsed,
+        ensure_ascii=False,
+        indent=2,
+        allow_nan=False,
+    )
+    anchors, truncated = _json_pointer_anchors(parsed)
+    return normalized, anchors, truncated
 
 
 def create_converter(*, ocr: bool, artifacts_dir: str | Path | None = None) -> Any:
