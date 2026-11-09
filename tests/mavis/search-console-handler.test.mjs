@@ -32,7 +32,7 @@ function dependencies(overrides = {}) {
       supabase: { async rpc() { return { data: { allowed: true } }; } },
     }),
     client: { async querySearchAnalytics() { return successResult; } },
-    isJsonContentType: (value) => /^application\\/json(?:\\s*;|$)/i.test(value || ""),
+    isJsonContentType: (value) => /^application\/json(?:\s*;|$)/i.test(value || ""),
     matchesRequestOrigin: (origin, url) => origin === new URL(url).origin,
     parseKnowledgeSearchRateLimit: () => ({ status: "allowed" }),
     ...overrides,
