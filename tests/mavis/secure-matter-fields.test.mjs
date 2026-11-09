@@ -146,6 +146,12 @@ test("validates Jalali month lengths and Esfand 30 only in leap years", () => {
   });
   assert.equal(invalidThirtyFirst.ok, false);
   assert.ok(invalidThirtyFirst.errors.executionDate);
+
+  const outsideVerifiedRange = validateSecureMatterFields("civil", {
+    executionDate: { calendar: "jalali", value: "1635-01-01" },
+  });
+  assert.equal(outsideVerifiedRange.ok, false);
+  assert.ok(outsideVerifiedRange.errors.executionDate);
 });
 
 test("exposes one immutable versioned post-approval questionnaire contract", () => {
