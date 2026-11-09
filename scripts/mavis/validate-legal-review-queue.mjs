@@ -40,7 +40,13 @@ function isValidDate(value) {
 }
 
 function isValidDateTime(value) {
-  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value)) return false;
+  const match = /^(\\d{4}-\\d{2}-\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.\\d{1,3})?(Z|[+-](\\d{2}):(\\d{2}))$/.exec(value);
+  if (!match || !isValidDate(match[1])) return false;
+
+  const [, , hour, minute, second, zone, offsetHour, offsetMinute] = match;
+  if (Number(hour) > 23 || Number(minute) > 59 || Number(second) > 59) return false;
+  if (zone !== "Z" && (Number(offsetHour) > 14 ||
+      Number(offsetMinute) > 59 || (Number(offsetHour) === 14 && Number(offsetMinute) !== 0))) return false;
   return Number.isFinite(Date.parse(value));
 }
 
@@ -184,6 +190,9 @@ export function validateLegalReviewQueue(source, options = {}) {
     }
 
     if (record.primary_document_retrieved === "true") {
+      if (primarySourceIds && !sourceIds.some((sourceId) => primarySourceIds.has(sourceId))) {
+        errors.push(`Row ${line} claims a retrieved primary document without linking a registered official primary publication.`);
+      }
       for (const fieldName of ["primary_document_identifier", "issuing_authority", "retrieved_at", "content_sha256"]) {
         if (!record[fieldName]) errors.push(`Row ${line} is missing ${fieldName} for a retrieved primary document.`);
       }
