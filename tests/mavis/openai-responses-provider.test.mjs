@@ -92,7 +92,7 @@ test("uses Responses API with strict structured output and server-owned verified
   assert.equal(body.text.format.strict, true);
   assert.deepEqual(body.text.format.schema, PUBLIC_ANSWER_SCHEMA.schema);
   assert.equal(body.input[0].role, "system");
-  assert.match(body.input[0].content, /داده غیرقابل‌اعتماد/);
+  assert.match(body.input[0].content, /متن غیرقابل‌اعتماد/);
   assert.match(body.input[1].content, /verified_primary_only/);
   assert.equal(body.input[2].content, messages[0].content);
 });
