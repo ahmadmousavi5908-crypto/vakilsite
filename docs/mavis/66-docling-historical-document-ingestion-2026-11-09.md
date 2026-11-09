@@ -90,6 +90,15 @@ STAGE_ROOT باید مسیر واقعی workspace جدیدی باشد که stage
 
 مهارت upstream dignified-python از مخزن Docling در مسیر .agents/skills/dignified-python نصب شده است. منبع دقیق: docling-project/docling@1005c8d7d39447ff433ff650fbc49e046ad0aeee و مجوز Apache-2.0 اصلی نیز همراه آن نگهداری شده است. مهارت اختصاصی mavis-docling-ingestion نیز در .agents/skills/mavis-docling-ingestion اضافه شده تا مرز L0/L1/L2 و الزامات امنیتی در تغییرات بعدی رعایت شود.
 
+## منابع upstream و نسخه‌های pin‌شده
+
+- Docling v2.149.0 release: https://github.com/docling-project/docling/releases/tag/v2.149.0
+- Docling installation و slim extras: https://docling-project.github.io/docling/installation/
+- Docling OCR options و Tesseract CLI: https://docling-project.github.io/docling/usage/advanced_options/
+- Tesseract Persian fast traineddata: https://github.com/tesseract-ocr/tessdata_fast/blob/main/fas.traineddata
+- OpenCV headless 5.0.0.93: https://pypi.org/project/opencv-python-headless/5.0.0.93/
+- Upstream Python skill: https://github.com/docling-project/docling/tree/1005c8d7d39447ff433ff650fbc49e046ad0aeee/.agents/skills/dignified-python
+
 ## آزمون‌ها و محدودیت فعلی
 
 - تست‌های قراردادی با converter ساختگی در CI اصلی اجرا می‌شوند؛ workflow جداگانه MAVIS Docling runtime نیز dependency واقعی Docling Slim را نصب و smoke test محلی را اجرا می‌کند.
