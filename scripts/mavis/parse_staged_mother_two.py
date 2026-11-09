@@ -271,7 +271,7 @@ def create_converter(*, ocr: bool, artifacts_dir: str | Path | None = None) -> A
     from docling.datamodel.base_models import InputFormat
     from docling.datamodel.pipeline_options import NativePdfPipelineOptions
 
-    from docling.document_converter import DocumentConverter, PdfFormatOption
+    from docling.document_converter import DocumentConverter, NativePdfFormatOption, PdfFormatOption
 
     if not ocr:
         pipeline_options = NativePdfPipelineOptions(
@@ -279,6 +279,7 @@ def create_converter(*, ocr: bool, artifacts_dir: str | Path | None = None) -> A
             enable_remote_services=False,
             allow_external_plugins=False,
         )
+        pdf_format_option = NativePdfFormatOption(pipeline_options=pipeline_options)
     else:
         if artifacts_dir is None:
             raise ParsingError("OCR requires a pre-fetched Docling artifacts directory.")
@@ -320,12 +321,9 @@ def create_converter(*, ocr: bool, artifacts_dir: str | Path | None = None) -> A
             allow_external_plugins=False,
             artifacts_path=str(artifacts_path.resolve()),
         )
+        pdf_format_option = PdfFormatOption(pipeline_options=pipeline_options)
 
-    return DocumentConverter(
-        format_options={
-            InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
-        }
-    )
+    return DocumentConverter(format_options={InputFormat.PDF: pdf_format_option})
 
 
 def _write_private_json(path: Path, payload: dict[str, Any]) -> str:
