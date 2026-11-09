@@ -37,6 +37,8 @@ jobs:
           grep -Fq '127.0.0.1 --port 3002' scripts/termux/install.sh
           grep -Fq '/dev/tcp/127.0.0.1/3002' scripts/termux/install.sh
           grep -Fq 'Runtime paths must not be symlinks' scripts/termux/install.sh
+          grep -Fq 'ref=206581047f5d96ab2ce69834414a76ad7d62a793' docs/termux/README.md
+          ! grep -Fq 'feature/mavis-final-verification-20261109' docs/termux/README.md
           if grep -En '(^|[[:space:]])(npm[[:space:]]+(ci|install|run[[:space:]]+build)|git[[:space:]]+clone|rm[[:space:]]+-rf|pkg[[:space:]]+upgrade)([[:space:]]|$)' scripts/termux/install.sh; then
             echo 'Forbidden development or destructive command found in the Termux installer.' >&2
             exit 1
