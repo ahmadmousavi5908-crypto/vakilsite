@@ -72,3 +72,19 @@ test("rejects malformed slugs, empty titles, and duplicate article identifiers",
 test("returns an empty list for a non-array input", () => {
   assert.deepEqual(buildPublishedArticleRecords(null), []);
 });
+
+
+import { articles as publishedArticles } from "../../src/data/articles.js";
+
+test("connects the real published site article collection without promoting legal authority", () => {
+  const records = buildPublishedArticleRecords(publishedArticles);
+  assert.equal(records.length, publishedArticles.length);
+  assert.ok(records.length > 0);
+  assert.ok(records.every((record) => record.review_status === "secondary_source_only"));
+  assert.ok(records.every((record) => record.source_verified === false));
+
+  const firstArticle = publishedArticles[0];
+  const results = searchLegalRecords({ query: firstArticle.title, records });
+  assert.equal(results[0].id, "published_article_" + firstArticle.slug);
+  assert.equal(results[0].path, "/articles/" + firstArticle.slug);
+});
