@@ -12,14 +12,12 @@ const verifiedRecord = {
   id: "law-verified",
   title: "قانون نمونه",
   review_status: "verified_primary_source",
-  source_verified: true,
-  validity_status: "in_force",
-  last_verified_at: "2026-11-09",
   article_number: "10",
   definition: "متن رسمی و تأییدشده برای آزمون",
   summary: "خلاصه محدود منبع اولیه",
   evidence: {
     state: "verified_primary",
+    validity: { status: "in_force", lastVerifiedAt: "2026-11-09" },
     citations: [{
       title: "روزنامه رسمی",
       url: "https://rrk.ir/Laws/PrintLaw.aspx?Code=1",
