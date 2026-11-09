@@ -1,6 +1,6 @@
 begin;
 
-select plan(12);
+select plan(27);
 
 select has_column('mavis_intake_private', 'submissions', 'idempotency_key',
   'intake submissions retain a client idempotency key');
@@ -31,6 +31,68 @@ select ok(
   not has_function_privilege('anon',
     'public.submit_mavis_public_intake_idempotent(jsonb,text,text[],boolean,timestamp with time zone,text,uuid,text)', 'EXECUTE'),
   'anonymous callers cannot invoke the idempotent submission RPC directly'
+);
+
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.submissions', 'SELECT'),
+  'service role cannot directly read private intake submissions'
+);
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.submissions', 'INSERT'),
+  'service role cannot directly insert private intake submissions'
+);
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.submissions', 'UPDATE'),
+  'service role cannot directly update private intake submissions'
+);
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.submissions', 'DELETE'),
+  'service role cannot directly delete private intake submissions'
+);
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.audit_events', 'SELECT'),
+  'service role cannot directly read private intake audit events'
+);
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.audit_events', 'INSERT'),
+  'service role cannot directly insert private intake audit events'
+);
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.audit_events', 'UPDATE'),
+  'service role cannot directly update private intake audit events'
+);
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.audit_events', 'DELETE'),
+  'service role cannot directly delete private intake audit events'
+);
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.submissions', 'TRUNCATE'),
+  'service role cannot truncate private intake submissions'
+);
+select ok(
+  not has_table_privilege('service_role', 'mavis_intake_private.audit_events', 'TRUNCATE'),
+  'service role cannot truncate private intake audit events'
+);
+select ok(
+  not has_sequence_privilege('service_role', 'mavis_intake_private.audit_events_id_seq', 'USAGE'),
+  'service role cannot consume private intake audit sequence values'
+);
+select ok(
+  not has_sequence_privilege('service_role', 'mavis_intake_private.audit_events_id_seq', 'SELECT'),
+  'service role cannot inspect private intake audit sequence state'
+);
+select ok(
+  not has_sequence_privilege('service_role', 'mavis_intake_private.audit_events_id_seq', 'UPDATE'),
+  'service role cannot alter private intake audit sequence state'
+);
+select ok(
+  has_schema_privilege('service_role', 'mavis_intake_private', 'USAGE'),
+  'service role retains schema usage required for narrowly scoped RPC execution'
+);
+select ok(
+  has_function_privilege('service_role',
+    'mavis_intake_private.submit_public_intake_idempotent(jsonb,text,text[],boolean,timestamp with time zone,text,uuid,text)', 'EXECUTE'),
+  'service role can invoke the private idempotent function only through its granted execution privilege'
 );
 
 create temporary table mavis_idempotent_first on commit drop as
