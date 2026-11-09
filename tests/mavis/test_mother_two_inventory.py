@@ -21,6 +21,7 @@ class MotherTwoInventoryTests(unittest.TestCase):
                 "library/articles/guide.md": "راهنمای حقوقی".encode("utf-8"),
                 "metadata/manifest.json": b'{"schema":"test"}',
                 "private/.env": b"SUPABASE_SERVICE_ROLE_KEY=must-never-appear",
+                "config/db-password.txt": b"DB_PASSWORD=must-also-never-appear",
                 "../outside.txt": b"unsafe path member",
             }
             for name, content in files.items():
@@ -40,9 +41,9 @@ class MotherTwoInventoryTests(unittest.TestCase):
             archive_path = self.make_archive(root)
             report = inventory_archive(archive_path)
 
-            self.assertEqual(report["summary"]["files"], 6)
+            self.assertEqual(report["summary"]["files"], 7)
             self.assertEqual(report["summary"]["symlinks"], 1)
-            self.assertEqual(report["summary"]["secret_candidate_count"], 1)
+            self.assertEqual(report["summary"]["secret_candidate_count"], 2)
             self.assertEqual(report["summary"]["unsafe_path_count"], 1)
             self.assertEqual(report["summary"]["unsafe_link_target_count"], 1)
             self.assertEqual(report["summary"]["duplicate_content_groups"], 1)
@@ -51,11 +52,13 @@ class MotherTwoInventoryTests(unittest.TestCase):
             self.assertFalse(report["archive"]["extraction_performed"])
 
             secret_entries = [entry for entry in report["files"] if entry["classification"] == "restricted_secret"]
-            self.assertEqual(len(secret_entries), 1)
+            self.assertEqual(len(secret_entries), 2)
             self.assertIsNone(secret_entries[0]["path"])
             self.assertIsNone(secret_entries[0]["sha256"])
             self.assertNotIn("SUPABASE_SERVICE_ROLE_KEY", json.dumps(report))
             self.assertNotIn(".env", json.dumps(report))
+            self.assertNotIn("db-password", json.dumps(report))
+            self.assertNotIn("DB_PASSWORD", json.dumps(report))
             self.assertEqual(sorted(item.name for item in root.iterdir()), ["mother-two-test.tar.gz"])
 
     def test_writes_private_inventory_and_checksum_outside_archive(self):
