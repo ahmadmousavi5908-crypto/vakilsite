@@ -5,7 +5,7 @@
 
 ## Tools selected
 
-- Vercel React Best Practices skill: local agent guidance; no runtime dependency.
+- Official React and Next.js documentation: primary framework guidance; no vendored third-party rulebook.
 - `@next/bundle-analyzer@16.4.3`: exact match to the installed Next.js version, MIT, loaded only when `ANALYZE=true`.
 - Google Lighthouse CLI `13.6.0`: isolated CI-only audit tool, not added to app dependencies.
 - CrUX / Search Console: field measurements only when a verified property or sufficient real-user data is available.
