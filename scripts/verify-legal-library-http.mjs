@@ -3,14 +3,14 @@ import { readFile } from "node:fs/promises";
 const baseUrl = (process.env.SITE_TEST_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
 
 function readCanonical(html) {
-  const tag = html.match(/<link\\b[^>]*rel=[\"']canonical[\"'][^>]*>/i)?.[0];
-  return tag?.match(/\\bhref=[\"']([^\"']+)[\"']/i)?.[1] || null;
+  const tag = html.match(/<link\b[^>]*rel=["']canonical["'][^>]*>/i)?.[0];
+  return tag?.match(/\bhref=["']([^"']+)["']/i)?.[1] || null;
 }
 
 function canonicalPath(value) {
   if (!value) return null;
   try {
-    return new URL(value, baseUrl).pathname.replace(/\\/$/, "") || "/";
+    return new URL(value, baseUrl).pathname.replace(/\/$/, "") || "/";
   } catch {
     return null;
   }
@@ -98,11 +98,11 @@ for (const path of publicCanonicalPaths) {
 const aiAssistantResult = await fetchText("/ai-assistant");
 const aiAssistantRobots = readMeta(aiAssistantResult.body, "robots") || "";
 const aiAssistantCanonical = canonicalPath(readCanonical(aiAssistantResult.body));
-const aiAssistantNoindex = /(^|[,\\s])noindex([,\\s]|$)/.test(aiAssistantRobots);
+const aiAssistantNoindex = /(^|[,\s])noindex([,\s]|$)/.test(aiAssistantRobots);
 
 const homeResult = await fetchText("/");
 const homeSiteName = readMeta(homeResult.body, "og:site_name");
-const jsonLdBlocks = [...homeResult.body.matchAll(/<script[^>]*type=[\"']application\\/ld\\+json[\"'][^>]*>([\\s\\S]*?)<\\/script>/gi)];
+const jsonLdBlocks = [...homeResult.body.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
 let websiteSchemaName = null;
 for (const match of jsonLdBlocks) {
   try {
@@ -207,4 +207,4 @@ if (failed.length || noindexMissing.length || sitemapResult.response.status !== 
   }
   process.exit(1);
 }
-console.log("\nLEGAL LIBRARY HTTP CHECK PASSED");
+console.log("\nPUBLIC SEO AND LEGAL LIBRARY HTTP CHECK PASSED");
