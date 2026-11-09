@@ -2,6 +2,13 @@ name: Site performance and bundle baseline
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/mavis-final-verification-20261109
+    paths:
+      - next.config.mjs
+      - lighthouserc.json
+      - .github/workflows/site-performance-baseline.yml
 
 permissions:
   contents: read
