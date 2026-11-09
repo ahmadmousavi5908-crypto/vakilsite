@@ -192,9 +192,35 @@ export function validateSecureMatterFields(caseType, input) {
   }
 
   if (Object.keys(errors).length > 0) return { ok: false, errors };
-  return { ok: true, value };
+  return {
+    ok: true,
+    value,
+    schemaId: `mavis-matter-${caseType}-v${SECURE_MATTER_QUESTIONNAIRE_VERSION}`,
+    schemaVersion: SECURE_MATTER_QUESTIONNAIRE_VERSION,
+    collectionStage: "post_approval",
+    requiresHumanApproval: true,
+    deadlineCalculated: false,
+  };
 }
+
+export const SECURE_MATTER_QUESTIONNAIRE_VERSION = 1;
 
 export function getSecureMatterFieldSchema(caseType) {
   return secureMatterFieldSchemas[caseType] || null;
+}
+
+export function getSecureMatterQuestionnaireContract(caseType, version = SECURE_MATTER_QUESTIONNAIRE_VERSION) {
+  if (version !== SECURE_MATTER_QUESTIONNAIRE_VERSION) return null;
+  const fields = getSecureMatterFieldSchema(caseType);
+  if (!fields) return null;
+
+  return Object.freeze({
+    id: `mavis-matter-${caseType}-v${version}`,
+    version,
+    caseType,
+    stage: "post_approval",
+    requiresHumanApproval: true,
+    deadlineCalculated: false,
+    fields,
+  });
 }
