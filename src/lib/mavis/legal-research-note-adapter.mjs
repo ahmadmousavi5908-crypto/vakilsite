@@ -1,10 +1,3 @@
-const VALID_REVIEW_STATES = new Set([
-  "verified_primary_source",
-  "secondary_source_only",
-  "needs_legal_review",
-  "draft",
-]);
-
 function cleanText(value, maxLength = 8000) {
   if (typeof value !== "string") return "";
   return value.normalize("NFC").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().slice(0, maxLength);
