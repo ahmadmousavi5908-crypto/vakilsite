@@ -40,7 +40,7 @@ function isValidDate(value) {
 }
 
 function isValidDateTime(value) {
-  const match = /^(\\d{4}-\\d{2}-\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.\\d{1,3})?(Z|[+-](\\d{2}):(\\d{2}))$/.exec(value);
+  const match = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?(Z|[+-](\d{2}):(\d{2}))$/.exec(value);
   if (!match || !isValidDate(match[1])) return false;
 
   const [, , hour, minute, second, zone, offsetHour, offsetMinute] = match;
