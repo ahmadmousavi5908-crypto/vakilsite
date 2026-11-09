@@ -239,21 +239,63 @@ class DoclingIngestionTests(unittest.TestCase):
             self.assertEqual(result["parsed_files"], 1)
             self.assertEqual(len(converter.calls), 1)
 
-    def test_reports_unknown_json_format_without_running_converter(self):
+    def test_parses_json_dataset_with_json_pointer_provenance_without_docling(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            stage_root, _source, _manifest = self.create_stage(root, filename="datasets/records.json")
-            converter = FakeConverter()
-
-            result = self.parse_stage(
-                stage_root,
-                root / "parsed",
-                converter=converter,
-                docling_version="2.149.0",
+            payload = b'{"laws":[{"id":"civil-code","article":1}]}'
+            stage_root, _source, _manifest = self.create_stage(
+                root,
+                filename="datasets/records.json",
+                content=payload,
             )
 
-            self.assertEqual(result["unsupported_files"], 1)
-            self.assertEqual(converter.calls, [])
+            result = self.parse_stage(stage_root, root / "parsed")
+            parse_manifest = json.loads((root / "parsed/parse-manifest.json").read_text("utf-8"))
+            record = parse_manifest["files"][0]
+            document = json.loads((root / "parsed" / record["output_file"]).read_text("utf-8"))
+
+            self.assertEqual(result["parsed_files"], 1)
+            self.assertEqual(record["parser_name"], "python-json")
+            self.assertEqual(document["parser"]["name"], "python-json")
+            self.assertFalse(document["review"]["indexing_allowed"])
+            self.assertFalse(document["review"]["retrieval_allowed"])
+            anchors = document["content"]["pages"][0]["anchors"]
+            self.assertIn("/laws/0/id", [anchor["json_pointer"] for anchor in anchors])
+            self.assertIn('"civil-code"', document["content"]["pages"][0]["markdown"])
+
+    def test_rejects_duplicate_json_keys_without_persisting_dataset_content(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            payload = b'{"token":"first","token":"second"}'
+            stage_root, _source, _manifest = self.create_stage(
+                root,
+                filename="datasets/duplicate.json",
+                content=payload,
+            )
+
+            result = self.parse_stage(stage_root, root / "parsed")
+            parse_manifest = json.loads((root / "parsed/parse-manifest.json").read_text("utf-8"))
+
+            self.assertEqual(result["failed_files"], 1)
+            self.assertEqual(parse_manifest["files"][0]["status"], "conversion_failed")
+            self.assertEqual(parse_manifest["files"][0]["error_type"], "ValueError")
+            self.assertNotIn("first", json.dumps(parse_manifest))
+            self.assertNotIn("second", json.dumps(parse_manifest))
+
+    def test_skips_json_datasets_over_the_configured_size_limit(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            stage_root, _source, _manifest = self.create_stage(
+                root,
+                filename="datasets/large.json",
+                content=b'{"a":123456789}',
+            )
+
+            with patch("parse_staged_mother_two.MAX_JSON_BYTES", 5):
+                result = self.parse_stage(stage_root, root / "parsed")
+
+            self.assertEqual(result["json_size_limit_files"], 1)
+            self.assertEqual(result["parsed_files"], 0)
 
     def test_redacts_parser_exception_details(self):
         with tempfile.TemporaryDirectory() as temporary:
