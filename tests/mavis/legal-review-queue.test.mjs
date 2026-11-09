@@ -47,6 +47,7 @@ test("rejects unterminated quoted fields", () => {
 test("accepts the current review-queue row contract", () => {
   const result = validateLegalReviewQueue(makeCsv(makeRow()), {
     knownSourceIds: ["src_official"],
+    primarySourceIds: ["src_official"],
     expectedRecordIds: ["law_example"],
   });
   assert.deepEqual(result.errors, []);
@@ -95,6 +96,7 @@ test("accepts a verified row only with primary evidence, provenance, dates, hash
   });
   const result = validateLegalReviewQueue(makeCsv(row), {
     knownSourceIds: ["src_official"],
+    primarySourceIds: ["src_official"],
     expectedRecordIds: ["law_example"],
   });
   assert.deepEqual(result.errors, []);
@@ -105,4 +107,44 @@ test("rejects missing canonical records", () => {
     expectedRecordIds: ["law_example", "article_missing"],
   });
   assert.ok(result.errors.some((error) => error.includes("missing canonical legal record")));
+});
+
+test("rejects a verified row linked only to a secondary source", () => {
+  const row = makeRow({
+    review_status: "verified_primary_source",
+    primary_document_retrieved: "true",
+    primary_document_identifier: "Gazette issue 123",
+    issuing_authority: "Official issuing authority",
+    published_at: "2024-01-01",
+    amendment_chain_reviewed: "true",
+    retrieved_at: "2026-11-08T10:00:00Z",
+    content_sha256: "a".repeat(64),
+    reviewer_id: "lawyer-01",
+    reviewed_at: "2026-11-08T11:00:00Z",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row), {
+    knownSourceIds: ["src_secondary"],
+    primarySourceIds: ["src_official_gazette"],
+    expectedRecordIds: ["law_example"],
+  });
+  assert.ok(result.errors.some((error) => error.includes("official primary-publication source")));
+});
+
+test("rejects impossible instrument dates and malformed review timestamps", () => {
+  const row = makeRow({
+    published_at: "2026-02-31",
+    retrieved_at: "not-a-timestamp",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row));
+  assert.ok(result.errors.some((error) => error.includes("invalid calendar date")));
+  assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time")));
+});
+
+test("rejects an effective end date earlier than its start date", () => {
+  const row = makeRow({
+    effective_from: "2025-01-01",
+    effective_until: "2024-12-31",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row));
+  assert.ok(result.errors.some((error) => error.includes("effective_until earlier")));
 });
