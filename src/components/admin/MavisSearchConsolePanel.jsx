@@ -93,6 +93,8 @@ export default function MavisSearchConsolePanel() {
     }
   }
 
+  const displayedDimensions = result?.request?.dimensions || dimensions;
+
   return (
     <section className={styles.panel} dir="rtl" aria-labelledby="mavis-search-console-title">
       <div className={styles.heading}>
@@ -116,15 +118,15 @@ export default function MavisSearchConsolePanel() {
         <fieldset className={styles.dimensions}>
           <legend>ابعاد گزارش</legend>
           <label>
-            <input type="checkbox" checked={dimensions.includes("query")} onChange={() => toggleDimension("query")} />
+            <input type="checkbox" checked={displayedDimensions.includes("query")} onChange={() => toggleDimension("query")} />
             عبارت جست‌وجو
           </label>
           <label>
-            <input type="checkbox" checked={dimensions.includes("page")} onChange={() => toggleDimension("page")} />
+            <input type="checkbox" checked={displayedDimensions.includes("page")} onChange={() => toggleDimension("page")} />
             صفحه
           </label>
           <label>
-            <input type="checkbox" checked={dimensions.includes("date")} onChange={() => toggleDimension("date")} />
+            <input type="checkbox" checked={displayedDimensions.includes("date")} onChange={() => toggleDimension("date")} />
             تاریخ
           </label>
         </fieldset>
@@ -149,9 +151,9 @@ export default function MavisSearchConsolePanel() {
             <table>
               <thead>
                 <tr>
-                  {dimensions.includes("query") ? <th>عبارت جست‌وجو</th> : null}
-                  {dimensions.includes("page") ? <th>صفحه</th> : null}
-                  {dimensions.includes("date") ? <th>تاریخ</th> : null}
+                  {displayedDimensions.includes("query") ? <th>عبارت جست‌وجو</th> : null}
+                  {displayedDimensions.includes("page") ? <th>صفحه</th> : null}
+                  {displayedDimensions.includes("date") ? <th>تاریخ</th> : null}
                   <th>کلیک</th>
                   <th>نمایش</th>
                   <th>نرخ کلیک</th>
@@ -160,12 +162,12 @@ export default function MavisSearchConsolePanel() {
               </thead>
               <tbody>
                 {result.rows.map((row, index) => (
-                  <tr key={index}>
-                    {dimensions.includes("query") ? (
+                  <tr key={JSON.stringify(row.dimensions)}>
+                    {displayedDimensions.includes("query") ? (
                       <td>{row.privacyReviewRequired && row.dimensions.query === null ? "عبارت پنهان‌شده برای حفظ حریم خصوصی" : row.dimensions.query || "—"}</td>
                     ) : null}
-                    {dimensions.includes("page") ? <td className={styles.urlCell}>{row.dimensions.page || "—"}</td> : null}
-                    {dimensions.includes("date") ? <td>{row.dimensions.date || "—"}</td> : null}
+                    {displayedDimensions.includes("page") ? <td className={styles.urlCell}>{row.dimensions.page || "—"}</td> : null}
+                    {displayedDimensions.includes("date") ? <td>{row.dimensions.date || "—"}</td> : null}
                     <td>{numberFormat.format(row.metrics.clicks)}</td>
                     <td>{numberFormat.format(row.metrics.impressions)}</td>
                     <td>{percentFormat.format(row.metrics.ctr)}</td>
