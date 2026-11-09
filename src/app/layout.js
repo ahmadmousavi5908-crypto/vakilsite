@@ -1,4 +1,5 @@
 import "./globals.css";
+import FontResourceHints from "../components/FontResourceHints";
 import SocialContactDock from "../components/SocialContactDock";
 import AttorneyProfileDock from "../components/AttorneyProfileDock";
 import GlobalMobileMenu from "../components/GlobalMobileMenu";
@@ -71,17 +72,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="fa" dir="rtl" data-scroll-behavior="smooth">
-      <head>
-        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
-        <link
-          rel="preload"
-          href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn[wght].woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-      </head>
       <body>
+        <FontResourceHints />
         {children}
         <GlobalMobileMenu />
         <AttorneyProfileDock />
