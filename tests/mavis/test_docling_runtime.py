@@ -24,12 +24,24 @@ class DoclingRuntimeSmokeTests(unittest.TestCase):
             staging_manifest = {
                 "schema_version": "1.0.0",
                 "source_archive": {"filename": "synthetic.tar.gz", "sha256": "b" * 64},
+                "source_inventory": {"filename": "inventory.json", "sha256": "c" * 64},
                 "summary": {
+                    "selected_files": 1,
+                    "secret_content_candidates": 0,
+                    "staged_files": 1,
+                    "staged_bytes": source.stat().st_size,
                     "human_review_required": True,
                     "indexing_allowed": False,
                     "retrieval_allowed": False,
                 },
-                "policy": {"automatic_ingestion_performed": False},
+                "policy": {
+                    "secrets_excluded": True,
+                    "unsafe_paths_and_links_excluded": True,
+                    "original_archive_modified": False,
+                    "extracted_in_place": False,
+                    "automatic_ingestion_performed": False,
+                    "copyright_and_access_rights_verified": False,
+                },
                 "files": [
                     {
                         "path": "library/books/smoke.txt",
@@ -50,7 +62,14 @@ class DoclingRuntimeSmokeTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            result = parse_staged_documents(stage_root, root / "parsed")
+            manifest_hash = hashlib.sha256(
+                (stage_root / "staging-manifest.json").read_bytes()
+            ).hexdigest()
+            result = parse_staged_documents(
+                stage_root,
+                root / "parsed",
+                expected_manifest_sha256=manifest_hash,
+            )
             manifest = json.loads((root / "parsed" / "parse-manifest.json").read_text("utf-8"))
             record = manifest["files"][0]
             parsed = json.loads((root / "parsed" / record["output_file"]).read_text("utf-8"))
