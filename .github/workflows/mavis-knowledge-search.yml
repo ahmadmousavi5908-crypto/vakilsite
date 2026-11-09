@@ -1,0 +1,155 @@
+name: MAVIS deterministic knowledge search
+
+on:
+  push:
+    branches:
+      - feature/mavis-deterministic-legal-search-20261108
+      - feature/mavis-offline-first-public-knowledge-20261108
+      - integration/mavis-mvp-candidate-20261108
+      - feature/mavis-published-article-retrieval-20261109
+      - feature/mavis-final-verification-20261109
+      - integration/mavis-release-gate-20261109
+      - test/mavis-local-backup-restore-20261109
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
+    branches:
+      - integration/mavis-mvp-candidate-20261108
+      - feature/mavis-deterministic-legal-search-20261108
+      - integration/mother-two-research-only-20261106
+      - security/restrict-social-links-grants-20261108
+      - feature/mavis-legal-evidence-contract-20261108
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-knowledge-search-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: https://vakilsite-ci.example
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Validate the existing legal library
+        run: python3 src/data/legal-library/validation/validate_library.py
+
+      - name: Test read-only Mother Two archive inventory
+        run: python3 -m unittest discover -s tests/mavis -p 'test_mother_two_inventory.py'
+
+      - name: Test hash-verified Mother Two quarantine staging
+        run: npm run test:mavis-mother-two-staging
+
+      - name: Test Docling quarantine parser and page provenance contract
+        run: npm run test:mavis-docling-ingestion
+
+      - name: Compile the optional Docling parser worker
+        run: python3 -m py_compile scripts/mavis/parse_staged_mother_two.py tests/mavis/test_docling_ingestion.py
+
+      - name: Test deterministic MAVIS retrieval
+        run: npm run test:mavis-search
+
+      - name: Test read-only article growth audit
+        run: npm run test:mavis-growth-audit
+
+      - name: Test read-only Google Search Console connector
+        run: npm run test:mavis-search-console
+
+      - name: Generate offline published article bundle
+        run: node scripts/mavis/generate-offline-published-articles.mjs
+
+      - name: Validate offline application syntax
+        run: |
+          node --check scripts/mavis/verify-local.mjs
+          node --check scripts/mavis/generate-offline-published-articles.mjs
+          node --check src/lib/mavis/openai-responses-provider.mjs
+          node --check src/lib/mavis/provider-factory.mjs
+          node --check src/lib/mavis/search-console-client.mjs
+          node --check src/lib/mavis/search-console-handler.mjs
+          node --check src/app/api/admin/mavis/search-console/route.js
+          bash -n scripts/mavis/verify-local-backup-restore.sh
+          node --check public/mavis-offline/app.js
+          node --check public/mavis-offline/search.mjs
+          node --check public/mavis-offline/answer.mjs
+          node --check public/mavis-offline/sw.js
+
+      - name: Validate offline knowledge bundle and provenance
+        run: node scripts/mavis/validate-offline-bundle.mjs
+
+      - name: Validate legal source review queue against canonical corpus
+        run: node scripts/mavis/validate-legal-review-queue.mjs
+
+      - name: Test legal source review queue contract
+        run: node --test tests/mavis/legal-review-queue.test.mjs
+
+      - name: Test offline Persian search
+        run: node --test tests/mavis/offline-search.test.mjs
+
+      - name: Test offline shell and cache readiness contract
+        run: node --test tests/mavis/offline-shell.test.mjs
+
+      - name: Test deterministic offline answer composition
+        run: node --test tests/mavis/offline-answer.test.mjs
+
+      - name: Test legal primary-source verification contract
+        run: node --test tests/mavis/legal-provenance-contract.test.mjs
+
+      - name: Test legal evidence provenance and research dossier
+        run: node --test tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
+
+      - name: Test intake admin, request, consent copy, rate limits and Search Console adapters
+        run: node --test tests/mavis/intake-admin.test.mjs tests/mavis/intake-request.test.mjs tests/mavis/rate-limit.test.mjs tests/mavis/public-intake-copy.test.mjs tests/mavis/search-console-adapter.test.mjs
+
+      - name: Lint MAVIS retrieval modules
+        run: npm run lint -- src/lib/mavis/knowledge-search.mjs src/lib/mavis/knowledge-search-handler.mjs src/lib/mavis/knowledge-retrieval.mjs src/lib/mavis/knowledge-registry.js src/lib/mavis/request-guards.mjs src/lib/mavis/rate-limit.mjs src/lib/supabase/admin.js src/app/api/mavis/knowledge-search/route.js src/components/admin/MavisKnowledgeSearch.jsx tests/mavis/knowledge-search-route.test.mjs tests/mavis/knowledge-retrieval.test.mjs src/app/admin/mavis/page.js src/app/admin/page.js src/app/admin/login/page.js src/app/admin/login/actions.js tests/mavis/knowledge-search.test.mjs src/lib/mavis/published-article-adapter.mjs tests/mavis/published-article-adapter.test.mjs src/lib/mavis/legal-research-note-adapter.mjs tests/mavis/legal-research-note-adapter.test.mjs src/lib/mavis/growth-audit.mjs src/lib/mavis/search-console-client.mjs src/lib/mavis/search-console-handler.mjs src/app/api/admin/mavis/search-console/route.js tests/mavis/search-console-client.test.mjs tests/mavis/search-console-handler.test.mjs src/components/admin/MavisArticleInventory.jsx src/components/admin/MavisGrowthAudit.jsx src/components/admin/MavisSearchConsolePanel.jsx src/app/admin/mavis/articles/page.js src/app/admin/mavis/growth/page.js tests/mavis/growth-audit.test.mjs
+
+      - name: Test secure matter-field contract
+        run: npm run test:mavis-matter-fields
+
+      - name: Test provider-independent conversation core
+        run: npm run test:mavis-core
+
+      - name: Lint secure matter-field contract
+        run: npm run lint -- src/lib/mavis/secure-matter-fields.mjs tests/mavis/secure-matter-fields.test.mjs
+
+      - name: Lint provider-independent conversation core
+        run: npm run lint -- src/lib/mavis/errors.mjs src/lib/mavis/contracts.mjs src/lib/mavis/mock-provider.mjs src/lib/mavis/public-policy.mjs src/lib/mavis/public-chat.mjs src/lib/mavis/conversation-state.mjs src/lib/mavis/openai-responses-provider.mjs src/lib/mavis/provider-factory.mjs tests/mavis/openai-responses-provider.test.mjs tests/mavis/public-chat.test.mjs tests/mavis/conversation-state.test.mjs
+
+      - name: Test public intake validation
+        if: ${{ hashFiles('tests/mavis/public-intake-validation.test.mjs') != '' }}
+        run: node --test tests/mavis/public-intake-validation.test.mjs
+
+      - name: Test growth intelligence metrics
+        if: ${{ hashFiles('tests/mavis/growth-metrics.test.mjs') != '' }}
+        run: node --test tests/mavis/growth-metrics.test.mjs
+
+      - name: Test cautious legal intake triage
+        if: ${{ hashFiles('tests/mavis/legal-intake-triage.test.mjs') != '' }}
+        run: node --test tests/mavis/legal-intake-triage.test.mjs
+
+      - name: Lint intake and growth modules
+        if: ${{ hashFiles('src/lib/mavis/public-intake-validation.mjs') != '' }}
+        run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/intake-request.mjs src/lib/mavis/intake-admin.mjs src/lib/mavis/growth-metrics.mjs src/lib/mavis/legal-intake-triage.mjs src/app/api/mavis/intake/route.js src/app/api/admin/mavis/intake/route.js src/app/mavis/intake/page.js src/components/public/MavisPublicIntakeForm.jsx src/components/admin/MavisIntakeInbox.jsx tests/mavis/intake-request.test.mjs tests/mavis/intake-admin.test.mjs tests/mavis/rate-limit.test.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs tests/mavis/legal-intake-triage.test.mjs
+
+      - name: Lint legal evidence and provenance contract modules
+        run: npm run lint -- src/lib/mavis/legal-provenance-contract.mjs tests/mavis/legal-provenance-contract.test.mjs scripts/mavis/generate-offline-published-articles.mjs scripts/mavis/validate-offline-bundle.mjs scripts/mavis/validate-legal-review-queue.mjs tests/mavis/legal-review-queue.test.mjs public/mavis-offline/answer.mjs tests/mavis/offline-answer.test.mjs src/lib/mavis/legal-evidence.mjs src/lib/mavis/legal-research-dossier.mjs tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
+
+      - name: Lint legal evidence and dossier modules
+        run: npm run lint -- src/lib/mavis/legal-evidence.mjs src/lib/mavis/legal-research-dossier.mjs tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
+
+      - name: Build the site
+        run: npm run build

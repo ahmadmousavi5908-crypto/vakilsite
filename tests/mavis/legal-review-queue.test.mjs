@@ -1,0 +1,208 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { LEGAL_QUEUE_HEADERS, parseCsv, validateLegalReviewQueue } from "../../scripts/mavis/validate-legal-review-queue.mjs";
+
+const makeRow = (overrides = {}) => {
+  const record = {
+    record_id: "law_example",
+    record_type: "law",
+    title: "نمونه قانون",
+    review_status: "needs_legal_review",
+    source_ids: "src_official",
+    primary_document_retrieved: "false",
+    primary_document_identifier: "",
+    issuing_authority: "",
+    approved_at: "",
+    notified_at: "",
+    published_at: "",
+    effective_from: "",
+    effective_until: "",
+    amendment_chain_reviewed: "false",
+    retrieved_at: "",
+    content_sha256: "",
+    reviewer_id: "",
+    reviewed_at: "",
+    next_action: "Retrieve the official publication.",
+    ...overrides,
+  };
+  return LEGAL_QUEUE_HEADERS.map((header) => record[header] ?? "");
+};
+
+const makeCsv = (...rows) => [
+  LEGAL_QUEUE_HEADERS.join(","),
+  ...rows.map((row) => row.map((value) => `"${String(value).replaceAll('"', '""')}"`).join(",")),
+].join("\n");
+
+test("parses quoted commas, escaped quotes, and embedded newlines", () => {
+  assert.deepEqual(parseCsv('"title","note"\n"Law, code","He said ""check""\nthis"'), [
+    ["title", "note"],
+    ["Law, code", 'He said "check"\nthis'],
+  ]);
+});
+
+test("rejects unterminated quoted fields", () => {
+  assert.throws(() => parseCsv('"title","note'), /Unterminated/);
+});
+
+test("accepts the current review-queue row contract", () => {
+  const result = validateLegalReviewQueue(makeCsv(makeRow()), {
+    knownSourceIds: ["src_official"],
+    primarySourceIds: ["src_official"],
+    expectedRecordIds: ["law_example"],
+  });
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.recordCount, 1);
+});
+
+test("rejects an unexpected header or column count", () => {
+  const badHeader = validateLegalReviewQueue("record_id,title\na,b");
+  assert.match(badHeader.errors[0], /header/);
+
+  const badRow = validateLegalReviewQueue(makeCsv(makeRow().slice(0, -1)));
+  assert.match(badRow.errors[0], /columns/);
+});
+
+test("rejects duplicate IDs and unknown source references", () => {
+  const row = makeRow();
+  const result = validateLegalReviewQueue(makeCsv(row, row), { knownSourceIds: [] });
+  assert.ok(result.errors.some((error) => error.includes("Duplicate record_id")));
+  assert.ok(result.errors.some((error) => error.includes("unknown source_id")));
+});
+
+test("rejects invalid boolean metadata", () => {
+  const result = validateLegalReviewQueue(makeCsv(makeRow({ primary_document_retrieved: "yes" })));
+  assert.ok(result.errors.some((error) => error.includes("invalid boolean")));
+});
+
+test("does not allow a verified label without complete primary evidence", () => {
+  const result = validateLegalReviewQueue(makeCsv(makeRow({ review_status: "verified_primary_source", source_ids: "" })));
+  assert.ok(result.errors.some((error) => error.includes("without a retrieved primary document")));
+  assert.ok(result.errors.some((error) => error.includes("amendment/repeal review")));
+  assert.ok(result.errors.some((error) => error.includes("without a linked source")));
+});
+
+test("accepts a verified row only with primary evidence, provenance, dates, hash and reviewer", () => {
+  const row = makeRow({
+    review_status: "verified_primary_source",
+    primary_document_retrieved: "true",
+    primary_document_identifier: "Gazette issue 123",
+    issuing_authority: "Official issuing authority",
+    published_at: "2024-01-01",
+    amendment_chain_reviewed: "true",
+    retrieved_at: "2026-11-08T10:00:00Z",
+    content_sha256: "a".repeat(64),
+    reviewer_id: "lawyer-01",
+    reviewed_at: "2026-11-08T11:00:00Z",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row), {
+    knownSourceIds: ["src_official"],
+    primarySourceIds: ["src_official"],
+    expectedRecordIds: ["law_example"],
+  });
+  assert.deepEqual(result.errors, []);
+});
+
+test("rejects missing canonical records", () => {
+  const result = validateLegalReviewQueue(makeCsv(makeRow()), {
+    expectedRecordIds: ["law_example", "article_missing"],
+  });
+  assert.ok(result.errors.some((error) => error.includes("missing canonical legal record")));
+});
+
+test("rejects a verified row linked only to a secondary source", () => {
+  const row = makeRow({
+    review_status: "verified_primary_source",
+    primary_document_retrieved: "true",
+    primary_document_identifier: "Gazette issue 123",
+    issuing_authority: "Official issuing authority",
+    published_at: "2024-01-01",
+    amendment_chain_reviewed: "true",
+    retrieved_at: "2026-11-08T10:00:00Z",
+    content_sha256: "a".repeat(64),
+    reviewer_id: "lawyer-01",
+    reviewed_at: "2026-11-08T11:00:00Z",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row), {
+    knownSourceIds: ["src_secondary"],
+    primarySourceIds: ["src_official_gazette"],
+    expectedRecordIds: ["law_example"],
+  });
+  assert.ok(result.errors.some((error) => error.includes("official primary-publication source")));
+});
+
+test("rejects impossible instrument dates and malformed review timestamps", () => {
+  const row = makeRow({
+    published_at: "2026-02-31",
+    retrieved_at: "not-a-timestamp",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row));
+  assert.ok(result.errors.some((error) => error.includes("invalid calendar date")));
+  assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time")));
+});
+
+test("rejects an effective end date earlier than its start date", () => {
+  const row = makeRow({
+    effective_from: "2025-01-01",
+    effective_until: "2024-12-31",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row));
+  assert.ok(result.errors.some((error) => error.includes("effective_until earlier")));
+});
+
+test("rejects impossible calendar dates and clock values inside evidence timestamps", () => {
+  const row = makeRow({
+    retrieved_at: "2026-02-31T10:00:00Z",
+    reviewed_at: "2026-11-08T25:00:00Z",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row));
+  assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time for retrieved_at")));
+  assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time for reviewed_at")));
+});
+
+test("requires an official publication source when a primary document is marked retrieved", () => {
+  const row = makeRow({
+    primary_document_retrieved: "true",
+    primary_document_identifier: "Gazette issue 123",
+    issuing_authority: "Official issuing authority",
+    retrieved_at: "2026-11-08T10:00:00Z",
+    content_sha256: "a".repeat(64),
+  });
+  const result = validateLegalReviewQueue(makeCsv(row), {
+    knownSourceIds: ["src_secondary"],
+    primarySourceIds: ["src_official_gazette"],
+  });
+  assert.ok(result.errors.some((error) => error.includes("without linking a registered official primary publication")));
+});
+
+test("rejects impossible calendar dates, invalid clock times and excessive timezone offsets", () => {
+  const invalidValues = [
+    "2026-02-31T10:00:00Z",
+    "2026-11-08T25:00:00Z",
+    "2026-11-08T10:00:00+14:30",
+  ];
+  for (const retrievedAt of invalidValues) {
+    const result = validateLegalReviewQueue(makeCsv(makeRow({ retrieved_at: retrievedAt })));
+    assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time")));
+  }
+});
+
+test("fails closed when primary verification is requested without the source registry", () => {
+  const row = makeRow({
+    review_status: "verified_primary_source",
+    primary_document_retrieved: "true",
+    primary_document_identifier: "Gazette issue 123",
+    issuing_authority: "Official issuing authority",
+    published_at: "2024-01-01",
+    amendment_chain_reviewed: "true",
+    retrieved_at: "2026-11-08T10:00:00Z",
+    content_sha256: "a".repeat(64),
+    reviewer_id: "lawyer-01",
+    reviewed_at: "2026-11-08T11:00:00Z",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row), {
+    knownSourceIds: ["src_official"],
+    expectedRecordIds: ["law_example"],
+  });
+  assert.ok(result.errors.some((error) => error.includes("without the primary source registry")));
+  assert.ok(result.errors.some((error) => error.includes("cannot claim a retrieved primary document")));
+});

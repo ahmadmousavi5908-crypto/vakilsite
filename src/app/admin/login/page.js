@@ -6,6 +6,7 @@ const errors = {
   config: "اتصال پایگاه داده تنظیم نشده است.",
   credentials: "ایمیل یا رمز عبور صحیح نیست.",
   unauthorized: "این حساب دسترسی مدیر ندارد.",
+  authorization: "سامانه بررسی سطح دسترسی موقتاً در دسترس نیست. بعداً دوباره تلاش کنید.",
 };
 
 export default async function AdminLogin({ searchParams }) {

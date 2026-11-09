@@ -1,7 +1,7 @@
 # 15 — ارزیابی آمادگی Provider و برنامه توسعه قابل اجرا
 
 **وضعیت:** Draft / برای تصمیم مالک محصول  
-**تاریخ بررسی:** 2026-11-04  
+**تاریخ بررسی:** 2026-11-09  
 **دامنه:** MAVIS در مخزن Vakilsite  
 **قاعده:** این سند صرفاً طراحی و ارزیابی است؛ مجوز انتشار، افزودن secret، تغییر دیتابیس یا فعال‌سازی Provider نیست.
 
@@ -33,6 +33,22 @@
 منبع رسمی بررسی‌شده:
 - https://help.openai.com/en/articles/5347006-openai-api-supported-countries-and-territories
 - https://help.openai.com/en/articles/9131992-chatgpt-and-api-services-in-unsupported-countries-and-territories
+
+### 2.2.1 بررسی مقدماتی جغرافیایی چند Provider (2026-11-09)
+
+- فهرست رسمی OpenAI API، آلمان را در فهرست مناطق پشتیبانی‌شده دارد؛ ایران در فهرست نیست. خود OpenAI هشدار می‌دهد دسترسی یا ارائه دسترسی از مناطق خارج از فهرست می‌تواند به مسدود یا تعلیق حساب منجر شود.
+- فهرست رسمی مناطق پشتیبانی Claude API نیز ایران را در فهرست منتشرشده نشان نمی‌دهد؛ آلمان در فهرست است.
+- فهرست منتشرشده Google AI Studio / Gemini API نیز ایران را در مناطق در دسترس نشان نمی‌دهد. هر مسیر جداگانه Google Cloud / Gemini Enterprise باید مستقلاً از نظر منطقه، حساب و شرایط استفاده بررسی شود؛ از این فهرست نمی‌توان مجوز آن مسیر را نتیجه گرفت.
+- قرار داشتن کشور محل توسعه یا سرور در یک منطقه پشتیبانی‌شده، به‌تنهایی مجوز ارائه دسترسی به کاربران واقع در منطقه پشتیبانی‌نشده نیست. هیچ پراکسی، تغییر دامنه، انتقال IP یا میزبانی در کشور ثالث به‌عنوان راه دورزدن محدودیت طراحی نمی‌شود.
+- **تصمیم موقت:** هیچ‌یک از این سه API به‌عنوان Provider عملیاتی برای کاربران داخل ایران انتخاب یا فعال نشود تا تأیید رسمی و حقوقی مشخص برای همان الگوی استفاده به دست آید.
+- مسیر جایگزین قابل ارزیابی: مدل open-weight خودمیزبان پشت همان Provider Port، با اجرای inference روی زیرساختی که قرارداد و سیاست آن صریحاً خدمت‌رسانی به کاربران هدف را مجاز بداند. این مسیر نیز قبل از اجرا به بررسی تحریم/صادرات، مجوز مدل، شرایط میزبان، محل پردازش، امنیت و هزینه نیاز دارد و فعلاً مجوز اجرا نیست.
+- تا زمان تعیین تکلیف، هسته deterministic retrieval، کتابخانه آفلاین و پاسخ‌های محدود مبتنی بر منابع قابل‌بررسی حفظ شوند؛ داده پرونده‌ای به هیچ Provider خارجی ارزیابی‌نشده ارسال نشود.
+
+منابع رسمی تکمیلی:
+- https://developers.openai.com/api/docs/supported-countries
+- https://platform.claude.com/docs/en/api/supported-regions
+- https://ai.google.dev/gemini-api/docs/available-regions
+
 
 ### 2.3 صورتحساب و نگهداری داده
 
@@ -140,7 +156,32 @@
 - [x] وجود فرم Intake و نبود چت زنده در نسخه بررسی‌شده تأیید شد.
 - [x] معماری و معیارهای امنیت/تست موجود مرور شدند.
 - [x] ریسک صلاحیت جغرافیایی OpenAI API از منبع رسمی ثبت شد.
+- [x] دسترسی جغرافیایی OpenAI، Claude و Gemini API در منابع رسمی بررسی و نبود مجوز عملیاتی برای کاربران ایران به‌عنوان gate ثبت شد.
 - [ ] ماتریس Providerها تکمیل شود.
 - [ ] تصمیم‌های مالک ثبت شود.
 - [ ] طراحی نهایی MVP برای تأیید ارائه شود.
 - [ ] پس از تأیید، شاخه پیاده‌سازی مستقل و تغییرات کد آغاز شود.
+
+### 2.4 Self-hosted open-weight inference: bounded technical evaluation (2026-11-09)
+
+The hosted commercial APIs above remain blocked for the current Iran-facing service design unless a provider gives explicit, applicable authorization. A self-hosted model is a separate option to evaluate, not an automatic legal workaround.
+
+**Initial candidate for a synthetic-data benchmark: Qwen/Qwen3.5-9B.**
+
+- The official model card identifies a 9B-parameter model, Apache-2.0 license, and compatibility with vLLM/SGLang. The Qwen3.5 family language coverage announcement explicitly includes Persian among 201 languages. This is a language-coverage claim, not proof of Iranian legal reasoning quality.
+- The model card describes 262,144 native context, but the first benchmark should cap context at 8K–16K to reduce memory and cost; increase only after measured need.
+- The vLLM release page currently lists v0.33.0 as latest (2026-11-02). vLLM exposes OpenAI-compatible Chat/Responses endpoints, structured outputs and tool calling. The Qwen recipe lists 22 GB minimum VRAM for BF16 on one 24 GB GPU; actual context, concurrency and throughput must be benchmarked on the selected host.
+- Hugging Face's current on-demand pricing lists one NVIDIA L4 24 GB at USD 0.80/hour and one L40S 48 GB at USD 1.80/hour. A continuously allocated 30-day L4 is approximately USD 576/month before storage, CPU, network, taxes and operational overhead. This is a published indicative price, not a quote or a selected host.
+- vLLM's API-key option does not authenticate every endpoint: the documented limitation includes /invocations. The inference server must stay on a private network behind a hardened reverse proxy/firewall; API-key configuration alone is not an adequate security boundary.
+
+**Recommended evaluation sequence:** one temporary 24 GB GPU, synthetic/public legal prompts only, 8K context, no file upload, no persistent conversation state, no tool execution, and a 100–200 question Persian legal benchmark scored by a lawyer for citation fidelity, hallucination, refusal behavior, latency and cost. Delete the temporary instance and data after the test.
+
+**Not approved:** production deployment, use with client data, access from Iran, or a provider/hosting contract. Apache-2.0 model licensing does not settle sanctions/export controls, hosting terms, privacy obligations, data location, or the legality of offering the service to the intended users. Obtain specific legal and hosting approval before any deployment. Until then, deterministic retrieval and human review remain the production-safe path.
+
+Sources checked 2026-11-09:
+- Qwen3.5-9B official model card: https://huggingface.co/Qwen/Qwen3.5-9B
+- Qwen3.5 language coverage (Persian included): https://qwen.ai/blog?id=qwen3.5
+- vLLM releases: https://github.com/vllm-project/vllm/releases
+- vLLM OpenAI-compatible server and API-key limitation: https://docs.vllm.ai/en/latest/serving/openai_compatible_server/
+- vLLM structured outputs: https://docs.vllm.ai/en/latest/features/structured_outputs/
+- Hugging Face hardware pricing: https://huggingface.co/pricing

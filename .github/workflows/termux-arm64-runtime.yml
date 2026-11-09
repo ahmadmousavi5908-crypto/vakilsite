@@ -1,0 +1,185 @@
+name: MAVIS Termux ARM64 runtime package
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - integration/mavis-mvp-candidate-20261108
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-termux-runtime-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-verify:
+    if: github.event.action != 'closed' || github.event.pull_request.merged == true
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the candidate
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.action == 'closed' && github.event.pull_request.merged && github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24.22.2
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build Termux-compatible ARM64 runtime
+        env:
+          MAVIS_TERMUX_BUILD: "true"
+          NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi.ir
+          MAVIS_PUBLIC_ENABLED: "false"
+          MAVIS_INTAKE_ENABLED: "false"
+          MAVIS_PROVIDER: mock
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
+
+      - name: Keep production dependencies only
+        run: npm prune --omit=dev --no-audit --no-fund
+
+      - name: Assemble runtime package
+        id: package
+        env:
+          MAVIS_TERMUX_BUILD: "true"
+          NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi.ir
+          MAVIS_PUBLIC_ENABLED: "false"
+          MAVIS_INTAKE_ENABLED: "false"
+          MAVIS_PROVIDER: mock
+          PACKAGE_DIR: ${{ runner.temp }}/mavis-termux-runtime
+          SOURCE_COMMIT: ${{ github.event.action == 'closed' && github.event.pull_request.merged && github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}
+        run: |
+          set -Eeuo pipefail
+          PACKAGE_DIR="$PACKAGE_DIR"
+          VERIFY_DIR="$RUNNER_TEMP/mavis-termux-verify"
+          ARCHIVE="$RUNNER_TEMP/mavis-termux-arm64.tar.gz"
+          mkdir -p "$PACKAGE_DIR" "$VERIFY_DIR"
+
+          cp -a .next node_modules public src package.json next.config.mjs "$PACKAGE_DIR/"
+          node -e '
+            const fs = require("node:fs");
+            const pkg = require("./package.json");
+            const manifest = {
+              schemaVersion: 1,
+              gitCommit: process.env.SOURCE_COMMIT,
+              platform: "linux-arm64-glibc",
+              nodeVersion: process.version,
+              nextVersion: pkg.dependencies.next,
+              runtimeMode: "termux-proot-debian",
+              imageOptimization: "disabled; original assets are served",
+              mavisPublicEnabled: false,
+              mavisIntakeEnabled: false
+            };
+            fs.writeFileSync(
+              process.env.PACKAGE_DIR + "/runtime-manifest.json",
+              JSON.stringify(manifest, null, 2) + "\n",
+              { mode: 0o600 }
+            );
+          '
+          tar -czf "$ARCHIVE" -C "$PACKAGE_DIR" .
+          sha256sum "$ARCHIVE" | awk '{print $1 "  mavis-termux-arm64.tar.gz"}' > "$ARCHIVE.sha256"
+
+          tar -xzf "$ARCHIVE" -C "$VERIFY_DIR"
+          test -f "$VERIFY_DIR/runtime-manifest.json"
+          node -e 'const m = require(process.argv[1]); if (!process.env.SOURCE_COMMIT || m.gitCommit !== process.env.SOURCE_COMMIT || m.platform !== "linux-arm64-glibc" || m.mavisPublicEnabled !== false || m.mavisIntakeEnabled !== false) process.exit(1)' "$VERIFY_DIR/runtime-manifest.json"
+          test -d "$VERIFY_DIR/.next"
+          test -d "$VERIFY_DIR/node_modules/next"
+
+          echo "archive=$ARCHIVE" >> "$GITHUB_OUTPUT"
+          echo "checksum=$ARCHIVE.sha256" >> "$GITHUB_OUTPUT"
+
+      - name: Smoke test the extracted ARM64 package
+        env:
+          MAVIS_TERMUX_BUILD: "true"
+          NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi.ir
+          MAVIS_PUBLIC_ENABLED: "false"
+          MAVIS_INTAKE_ENABLED: "false"
+          MAVIS_PROVIDER: mock
+        run: |
+          set -Eeuo pipefail
+          VERIFY_DIR="$RUNNER_TEMP/mavis-termux-verify"
+          cd "$VERIFY_DIR"
+          node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3100 > "$RUNNER_TEMP/mavis-termux.log" 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true; wait "$SERVER_PID" 2>/dev/null || true' EXIT
+
+          READY=0
+          for attempt in $(seq 1 40); do
+            if curl --fail --silent --max-time 5 http://127.0.0.1:3100/ > /dev/null; then
+              READY=1
+              break
+            fi
+            if ! kill -0 "$SERVER_PID" 2>/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
+          if [ "$READY" -ne 1 ]; then
+            cat "$RUNNER_TEMP/mavis-termux.log"
+            exit 1
+          fi
+
+          curl --fail --silent --max-time 10 http://127.0.0.1:3100/about > /dev/null
+          curl --fail --silent --max-time 10 http://127.0.0.1:3100/robots.txt > /dev/null
+          curl --fail --silent --max-time 10 http://127.0.0.1:3100/sitemap.xml > /dev/null
+
+      - name: Upload candidate package for review
+        if: github.event.action != 'closed' || github.event.pull_request.merged == true
+        uses: actions/upload-artifact@v4
+        with:
+          name: mavis-termux-arm64-runtime
+          path: |
+            ${{ steps.package.outputs.archive }}
+            ${{ steps.package.outputs.checksum }}
+          if-no-files-found: error
+          retention-days: 7
+
+
+  publish-release:
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Download verified ARM64 package
+        uses: actions/download-artifact@v4
+        with:
+          name: mavis-termux-arm64-runtime
+          path: ./release-assets
+
+      - name: Publish immutable Termux runtime release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: mavis-termux-v1.0.1
+        run: |
+          set -Eeuo pipefail
+          cd release-assets
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            ASSETS="$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+            if ! grep -Fxq 'mavis-termux-arm64.tar.gz' <<< "$ASSETS"; then
+              gh release upload "$RELEASE_TAG" mavis-termux-arm64.tar.gz --repo "$GITHUB_REPOSITORY"
+            fi
+            if ! grep -Fxq 'mavis-termux-arm64.tar.gz.sha256' <<< "$ASSETS"; then
+              gh release upload "$RELEASE_TAG" mavis-termux-arm64.tar.gz.sha256 --repo "$GITHUB_REPOSITORY"
+            fi
+          else
+            gh release create "$RELEASE_TAG" mavis-termux-arm64.tar.gz mavis-termux-arm64.tar.gz.sha256 \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "MAVIS Termux ARM64 Runtime v1.0.1" \
+              --notes "Verified Linux ARM64 runtime for Termux via Debian proot. Build and smoke tests completed on ubuntu-24.04-arm." \
+              --prerelease
+          fi

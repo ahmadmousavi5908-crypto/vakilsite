@@ -92,10 +92,10 @@ export default function Home() {
 
       <header className="site-header">
         <div className="container nav-wrap">
-          <a className="brand" href="#" aria-label="صفحه اصلی">
+          <Link className="brand" href="/">
             <span className="brand-mark"><span>و</span></span>
             <span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز، خوزستان · پذیرش درخواست از سراسر ایران</small></span>
-          </a>
+          </Link>
           <nav className="desktop-nav" aria-label="منوی اصلی">
             <Link href="/services">حوزه‌های فعالیت</Link>
             <Link href="/about">معرفی وکیل</Link>
@@ -136,7 +136,7 @@ export default function Home() {
             <div className="lawyer-photo-card">
               <div className="visual-top"><span>ATTORNEY PROFILE · AHVAZ</span><span className="visual-dot" /></div>
               <div className="lawyer-photo-wrap">
-                <Image src="/images/lawyer.jpg" alt="سید احمد موسوی، وکیل پایه یک دادگستری" width={800} height={1000} priority sizes="(max-width: 700px) 100vw, 390px" quality={82} className="lawyer-photo-image" style={{ objectFit: "cover", objectPosition: "center 25%" }} />
+                <Image src="/images/lawyer.jpg" alt="سید احمد موسوی، وکیل پایه یک دادگستری" width={800} height={1000} fetchPriority="high" loading="eager" sizes="(max-width: 700px) 100vw, 390px" quality={82} className="lawyer-photo-image" style={{ objectFit: "cover", objectPosition: "center 25%" }} />
                 <svg className="photo-justice-mark" viewBox="0 0 100 100" aria-hidden="true">
                   <g fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M50 13v65M35 78h30M41 86h18M50 17L20 31M50 17l30 14M20 31L9 57M20 31l11 26M80 31L69 57M80 31l11 26M9 57q11 10 22 0M69 57q11 10 22 0"/>

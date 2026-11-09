@@ -1,6 +1,6 @@
 begin;
 
-select plan(58);
+select plan(61);
 
 select ok(has_schema_privilege('service_role', 'mavis_intake_private', 'USAGE'),
   'server service role can access the private intake schema');
@@ -19,12 +19,12 @@ select ok((select relrowsecurity from pg_class
   where oid = 'mavis_intake_private.rate_limits'::regclass),
   'intake rate-limit table has RLS enabled');
 
-select ok(has_table_privilege('service_role', 'mavis_intake_private.submissions', 'SELECT'),
-  'server role can read submissions after application authorization');
-select ok(has_table_privilege('service_role', 'mavis_intake_private.submissions', 'INSERT'),
-  'server role can insert validated submissions');
-select ok(has_table_privilege('service_role', 'mavis_intake_private.submissions', 'UPDATE'),
-  'server role can update workflow status');
+select ok(not has_table_privilege('service_role', 'mavis_intake_private.submissions', 'SELECT'),
+  'service role cannot read submissions directly');
+select ok(not has_table_privilege('service_role', 'mavis_intake_private.submissions', 'INSERT'),
+  'service role cannot insert submissions directly');
+select ok(not has_table_privilege('service_role', 'mavis_intake_private.submissions', 'UPDATE'),
+  'service role cannot update submissions directly');
 select ok(not has_table_privilege('service_role', 'mavis_intake_private.submissions', 'DELETE'),
   'server role cannot directly delete submissions');
 select ok(not has_table_privilege('service_role', 'mavis_intake_private.submissions', 'TRUNCATE'),
@@ -38,8 +38,16 @@ select ok(not has_table_privilege('authenticated', 'mavis_intake_private.submiss
 select ok(not has_table_privilege('authenticated', 'mavis_intake_private.submissions', 'INSERT'),
   'authenticated users cannot insert submissions directly');
 
-select ok(has_table_privilege('service_role', 'mavis_intake_private.audit_events', 'INSERT'),
-  'server role can append audit events');
+select ok(not has_table_privilege('service_role', 'mavis_intake_private.audit_events', 'INSERT'),
+  'service role cannot append audit events directly');
+
+select ok(not has_table_privilege('service_role', 'mavis_intake_private.audit_events', 'SELECT'),
+  'service role cannot read audit events directly');
+select ok(not has_sequence_privilege('service_role', 'mavis_intake_private.audit_events_id_seq', 'USAGE'),
+  'service role cannot consume the audit identity sequence directly');
+select ok(not has_sequence_privilege('service_role', 'mavis_intake_private.audit_events_id_seq', 'SELECT'),
+  'service role cannot inspect the audit identity sequence directly');
+
 select ok(not has_table_privilege('anon', 'mavis_intake_private.audit_events', 'SELECT'),
   'anonymous users cannot read audit events');
 select ok(not has_table_privilege('authenticated', 'mavis_intake_private.audit_events', 'SELECT'),
@@ -98,9 +106,9 @@ select ok(not has_function_privilege('authenticated',
   'public.consume_mavis_public_intake_rate_limit(text)', 'EXECUTE'),
   'authenticated users cannot call the public rate-limit wrapper');
 
-select ok(has_function_privilege('service_role',
+select ok(not has_function_privilege('service_role',
   'public.submit_mavis_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)', 'EXECUTE'),
-  'service role can call the public intake invoker wrapper');
+  'service role cannot call the retired non-idempotent intake wrapper');
 select ok(not has_function_privilege('anon',
   'public.submit_mavis_public_intake(jsonb,text,text[],boolean,timestamp with time zone,text)', 'EXECUTE'),
   'anonymous users cannot call the public intake wrapper directly');

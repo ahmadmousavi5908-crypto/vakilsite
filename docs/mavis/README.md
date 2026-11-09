@@ -33,6 +33,11 @@
 - [برنامه اجرایی زنده و ایده‌بانک](./13-operating-plan-and-idea-backlog.md)
 - [طراحی توسعه‌پذیر موتور مکالمه](./14-extensible-conversation-engine-design.md)
 - [برنامه اتصال دانش MAVIS و ارتقای بکاپ مادر دو](./21-knowledge-retrieval-and-mother-two-backup-plan.md)
+- [قرارداد مرحله‌بندی امن دارایی‌های تاریخی Mother Two](./62-mother-two-quarantine-staging-contract-2026-11-09.md) — انتقال هش‌محور به فضای قرنطینه، بدون ingestion خودکار
+- [اتصال اختیاری Docling برای پردازش اسناد تاریخی](./66-docling-historical-document-ingestion-2026-11-09.md) — استخراج محلی صفحه‌محور با provenance؛ خروجی L1 تا تأیید انسانی غیرقابل بازیابی
+- [ممیزی سازگاری REST API ابزارهای Bing Webmaster](./63-bing-webmaster-rest-api-compatibility-audit-2026-11-09.md) — جلوگیری از اتصال به API قدیمی بازنشسته و قرارداد REST تأییدنشده
+- [دروازه دسترسی Google Trends API](./64-google-trends-alpha-access-gate-2026-11-09.md) — API رسمی هنوز Alpha و محدود به پذیرش است؛ اتصال فقط پس از تأیید دسترسی
+- [دروازه مجازبودن جغرافیایی OpenAI API](./65-openai-geographic-eligibility-gate-2026-11-09.md) — مسدودکردن دستیار عمومی برای کاربران در کشورهای پشتیبانی‌نشده
 - [پژوهش روان‌شناسی ارتباط و جذب اخلاقی موکل](./research/02-client-psychology-and-ethical-engagement.md)
 - [پژوهش طراحی Intake و ارتباط اخلاقی](./research/01-client-intake-and-ethical-communication.md)
 

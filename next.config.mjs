@@ -5,6 +5,8 @@ const nextConfig = {
   images: {
     // Keep the existing 82-quality attorney image valid under Next.js 16.
     qualities: [75, 82],
+    // The Termux runtime is prebuilt on Linux ARM64 and serves original image assets.
+    ...(process.env.MAVIS_TERMUX_BUILD === "true" ? { unoptimized: true } : {}),
   },
 
   async headers() {
