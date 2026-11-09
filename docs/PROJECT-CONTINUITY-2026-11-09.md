@@ -9,7 +9,7 @@
 - PR: [#76](https://github.com/ahmadmousavi5908-crypto/vakilsite/pull/76)
 - PR base: `integration/mavis-mvp-candidate-20261108`
 - PR state at checkpoint: open, Draft, not merged.
-- Last verified head before this checkpoint update: `fe0d8292caa7da254e31701416115ce3dd814b97`
+- Code/test head recorded before this docs-only checkpoint update: `817a1cc9b502a0e5a898aed68b837623aac29b55`. The live branch head at this checkpoint is `0627134df6c5933fe9131270cde0e5eefcd071e8`; always query the live branch head before resuming.
 - No production deployment, live database migration, public chat activation, automatic publication, or visual redesign is authorized by this work.
 
 ## Immediate technical status
