@@ -46,14 +46,30 @@
 
 ## فرمان‌های Termux پس از staging
 
-ساخت صف بازبینی:
+پس از اجرای staging، مسیر workspace را مستقیماً از خروجی ابزار بگیر:
+
+~~~bash
+STAGE="$(python3 scripts/mavis/stage_mother_two.py \
+  --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
+  --inventory "$REPORT" \
+  --output-parent "$HOME/downloads/vakilsite-mother-two-staging" \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["stage_path"])')" || exit 1
+test -f "$STAGE/staging-manifest.json" || { echo "Staging manifest not found"; exit 1; }
+~~~
+
+ساخت صف بازبینی و قالب تصمیم واقعی متناسب با فایل‌های همین آرشیو:
 
 ~~~bash
 python3 scripts/mavis/create_historical_review_queue.py \
   --staging-manifest "$STAGE/staging-manifest.json"
+
+cp -n "$STAGE/historical-review-decisions.template.json" \
+  "$STAGE/historical-review-decisions.json"
 ~~~
 
-پس از تکمیل دستی تصمیم‌ها در فایل JSON مستقل:
+فایل historical-review-decisions.json را با اطلاعات واقعی و پس از بررسی انسانی تکمیل کن. برای هر source_id یک تصمیم approve_for_registration، reject یا hold_for_ocr لازم است. هیچ تصمیمی را بر اساس حدس یا نام فایل ثبت نکن.
+
+پس از تکمیل تصمیم‌ها، اعتبارسنجی و تولید کاندیدای رجیستری:
 
 ~~~bash
 python3 scripts/mavis/validate_historical_review_decisions.py \
