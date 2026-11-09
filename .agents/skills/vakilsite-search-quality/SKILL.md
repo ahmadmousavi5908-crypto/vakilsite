@@ -48,9 +48,12 @@ Use this skill before changing search visibility, metadata, structured data, rob
 
 - Maintain one consistent, verifiable attorney and office identity. Use real office address/contact details only after owner confirmation.
 - City coverage must reflect real service availability and distinct useful content. No city-name substitution pages.
+- Follow Google Business Profile real-world naming, address, and service-area policies. Never add keyword-stuffed names, virtual offices, duplicate profiles, fake coordinates, or unverifiable office details.
+- Google LocalBusiness structured data requires a real physical address for eligibility. Do not invent an address or coordinates; wait for owner-confirmed public details.
+- Avoid scaled content abuse and doorway pages. Every city page must answer a distinct local need with real service details and original legal value.
 - Google Business Profile and third-party citations must be accurate, consistent, and not manufactured.
 
 ## Measurement
 
-Track separately: crawl errors, sitemap processing, indexed canonical URLs, branded/non-branded query clicks and impressions, CTR, position, Core Web Vitals, qualified inquiries, and available AI performance data.
+Track separately: crawl errors, sitemap processing, indexed canonical URLs, branded/non-branded query clicks and impressions, CTR, position, Core Web Vitals, qualified inquiries, and available AI performance data. The Search Console generative AI report shows impressions, not citation counts, and its current Search Analytics API reference does not document a dedicated AI report dimension; use the UI export until an official API field is documented.
 Search Console Search Analytics may return top rows rather than a complete dataset and is quota-limited. Cache results, use bounded date ranges, and avoid repeating expensive page+query combinations.
