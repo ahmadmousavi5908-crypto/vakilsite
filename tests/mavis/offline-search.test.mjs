@@ -134,7 +134,7 @@ test("offline search retrieves published article text but labels it as secondary
 test("offline published article citations remain HTTPS secondary references", () => {
   for (const record of publishedBundle.records) {
     for (const source of record.sources) {
-      assert.match(source.url, /^https:\\/\\//);
+      assert.match(source.url, /^https:\/\/\//);
       assert.equal(source.source_type, "secondary");
       assert.equal(source.verification_status, "secondary_source_only");
     }
