@@ -1,0 +1,64 @@
+name: MAVIS Persian OCR runtime verification
+
+on:
+  push:
+    branches:
+      - feature/mavis-final-verification-20261109
+    paths:
+      - scripts/mavis/parse_staged_mother_two.py
+      - tests/mavis/test_docling_ocr_runtime.py
+      - requirements-mavis-docling-ocr.txt
+      - requirements-mavis-docling-ocr-test.txt
+      - .github/workflows/mavis-docling-ocr.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-docling-ocr-runtime
+  cancel-in-progress: true
+
+jobs:
+  persian-ocr-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-mavis-docling-ocr-test.txt
+
+      - name: Install Tesseract Persian and English language data
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            tesseract-ocr tesseract-ocr-fas tesseract-ocr-eng \
+            fonts-noto-core fonts-dejavu-core
+          tesseract --list-langs
+
+      - name: Install optional Docling OCR runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --no-cache-dir -r requirements-mavis-docling-ocr-test.txt
+
+      - name: Download local Docling layout and table models
+        env:
+          HF_HUB_DISABLE_TELEMETRY: "1"
+          DO_NOT_TRACK: "1"
+        run: |
+          docling-tools models download layout tableformer --output-dir "$RUNNER_TEMP/mavis-docling-models"
+
+      - name: Run synthetic Persian OCR through Docling and Tesseract
+        env:
+          HF_HUB_DISABLE_TELEMETRY: "1"
+          DO_NOT_TRACK: "1"
+        run: |
+          MAVIS_DOCLING_OCR=1 \
+          MAVIS_DOCLING_OCR_ARTIFACTS_DIR="$RUNNER_TEMP/mavis-docling-models" \
+          python -m unittest discover -s tests/mavis -p 'test_docling_ocr_runtime.py' -v
