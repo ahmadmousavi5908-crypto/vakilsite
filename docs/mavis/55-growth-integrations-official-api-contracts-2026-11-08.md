@@ -1,6 +1,6 @@
 # MAVIS Growth Intelligence: official integration contracts
 
-**Review date:** 2026-11-08  
+**Review date:** 2026-11-09  
 **Status:** Research and implementation contract only. No OAuth client, API key, token, external fetch, or production integration is configured.
 
 ## 1. Design decisions
@@ -68,7 +68,34 @@ URL Inspection is a separate, quota-limited operation. It should be a targeted p
 
 Initial scope: read-only rank/traffic, keyword, link, and crawl diagnostics. URL/sitemap submission is a separate explicitly approved publishing capability.
 
-## 4. IndexNow publishing notification
+## 4. Google Ads API (read-only reporting first)
+
+### Current access model (reviewed 2026-11-09)
+
+- Google sunset developer tokens on 2026-09-09. API access levels are now associated with the Google Cloud project used for OAuth credentials or service-account authentication.
+- Legacy `developer-token` headers may continue to be sent for compatibility, but Google documents them as optional and ignored by API servers after the sunset. Do not design a new integration around obtaining or rotating a developer token.
+- Current project access levels include Test, Explorer, Basic, and Standard. Explorer permits production access with a documented 2,880 operations/day; Basic permits 15,000 operations/day; Standard has no project-level daily operation limit, while endpoint-specific limits still apply. Confirm the actual project access and permissible-use category in Google Cloud Console before enabling any feature.
+- OAuth 2.0 remains required. The Google Ads API scope is `https://www.googleapis.com/auth/adwords`; service-account access is also documented, subject to explicit account access configuration.
+- Access level and permissible use are separate controls. A project may have an access level but still lack permission for particular feature categories.
+
+### MAVIS implementation boundary
+
+- Begin with reporting-only, read-only operations after explicit owner approval and verified account linkage.
+- Do not create, edit, pause, or spend against campaigns from MAVIS in the initial release.
+- Store OAuth credentials only in a server-side secret/token store with encryption, least privilege, refresh/revocation handling, and an explicit disconnect path.
+- Record customer/account ID, request date range, query/report definition, retrieval time, project access level, quota state, and provider request ID.
+- Keep budget, spend, conversion, and campaign recommendations separate from observed metrics. Never change a campaign or budget automatically.
+- Treat Google Ads account access, billing/spend, and campaign-management capabilities as separate approvals.
+
+## 5. Google Trends API
+
+- Google's official Trends API remains an alpha program with limited tester access as of 2026-11-09; it is not a generally available production dependency.
+- The announced alpha offers a rolling five-year data window, daily/weekly/monthly/yearly aggregation, and country/region/sub-region analysis with consistently scaled data.
+- MAVIS must not assume alpha enrollment, endpoint stability, production quotas, or unrestricted access. Do not build a live connector until access is explicitly granted and the current alpha contract is reviewed.
+- Until then, keep Trends as a manually reviewed research input and use approved Search Console data, the site's own content inventory, and transparent internal metrics as the operational baseline.
+- Do not scrape or automate the public Trends interface as a substitute for an unavailable official API.
+
+## 6. IndexNow publishing notification
 
 IndexNow is a notification protocol, not an indexing or ranking guarantee.
 
@@ -89,7 +116,7 @@ Protocol notes:
 
 Never send drafts, private intake URLs, query strings containing personal data, admin pages, or unapproved URLs.
 
-## 5. Unified provider-neutral result envelope
+## 7. Unified provider-neutral result envelope
 
 Each provider result should retain:
 - provider and adapter version;
@@ -104,7 +131,7 @@ Each provider result should retain:
 
 A provider outage or quota exhaustion must not block public intake validation, deterministic legal-library retrieval, or local growth calculations. Only the affected external data refresh is paused.
 
-## 6. Delivery order
+## 8. Delivery order
 
 1. Keep current Search Console adapter offline and fixture-driven; complete contract tests.
 2. Add server-only Google OAuth read-only connection after explicit owner approval and credentials.
@@ -124,4 +151,8 @@ No external provider is considered connected until an authenticated live request
 - Bing Webmaster API overview and REST transition: https://learn.microsoft.com/en-us/bingwebmaster/
 - Bing Webmaster API access and OAuth/API-key choices: https://learn.microsoft.com/en-us/bingwebmaster/getting-access
 - Bing Webmaster OAuth 2.0: https://learn.microsoft.com/en-us/bingwebmaster/oauth2
+- Google Ads API access levels and permissible use: https://developers.google.com/google-ads/api/docs/api-policy/access-levels
+- Google Ads API authorization and OAuth scope: https://developers.google.com/google-ads/api/rest/auth
+- Google Ads API developer-token sunset: https://developers.google.com/google-ads/api/docs/api-policy/developer-token
+- Google Trends API alpha: https://developers.google.com/search/apis/trends
 - IndexNow protocol: https://www.indexnow.org/documentation
