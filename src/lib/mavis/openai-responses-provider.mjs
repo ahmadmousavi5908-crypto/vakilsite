@@ -52,7 +52,7 @@ function normalizeKnowledgeContext(value) {
         throw new Error("Invalid verified primary citation.");
       }
       const url = new URL(citation.url);
-      const host = url.hostname.toLowerCase().replace(/\\.$/, "");
+      const host = url.hostname.toLowerCase().replace(/\.$/, "");
       const trustedHost = [...TRUSTED_PRIMARY_HOSTS].some((trusted) => host === trusted || host.endsWith("." + trusted));
       if (url.protocol !== "https:" || url.username || url.password || url.port || !trustedHost) {
         throw new Error("Invalid verified primary citation URL.");
@@ -106,7 +106,7 @@ export function createOpenAIResponsesProvider({
     ? timeoutMs
     : DEFAULT_TIMEOUT_MS;
 
-  if (!secret || /[\\u0000-\\u001f\\u007f]/.test(secret) ||
+  if (!secret || /[\u0000-\u001f\u007f]/.test(secret) ||
       !/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,100}$/.test(modelName) ||
       typeof fetchImpl !== "function") {
     throw new Error("OpenAI Responses provider configuration is incomplete.");
