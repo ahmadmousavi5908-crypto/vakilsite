@@ -45,7 +45,6 @@ for (const name of expectedAgents) {
 }
 
 for (const path of [
-  ".agents/skills/vercel-react-best-practices/AGENTS.md",
   ".agents/skills/vercel-react-best-practices/UPSTREAM.md",
   ".agents/skills/vakilsite-search-quality/references/google-search.md",
   "docs/PROJECT-CONTINUITY-2026-11-09.md",
