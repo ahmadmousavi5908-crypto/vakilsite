@@ -115,15 +115,15 @@ function isValidDate(value) {
   const match = DATE_PATTERN.exec(value.value);
   if (!match) return false;
   const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
-  if (year < 1300 || year > 2200) return false;
+  if (year < 1 || year > 9999 || month < 1 || month > 12) return false;
   if (value.calendar === "jalali") {
-    if (month < 1 || month > 12) return false;
     const maxDay = month <= 6 ? 31 : 30;
     return day >= 1 && day <= maxDay;
   }
   if (value.calendar === "gregorian") {
-    const date = new Date(Date.UTC(year, month - 1, day));
-    return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+    const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    const monthDays = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    return day >= 1 && day <= monthDays[month - 1];
   }
   return false;
 }
