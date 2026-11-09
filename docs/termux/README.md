@@ -19,6 +19,7 @@ Termux محل توسعه، ساخت پروژه یا رفع خطا نیست. بس
 پس از ادغام PR شماره 76 و انتشار بسته تأییدشده:
 
 ```bash
+set -Eeuo pipefail
 if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
   gh api "repos/ahmadmousavi5908-crypto/vakilsite/contents/scripts/termux/install.sh?ref=feature/mavis-final-verification-20261109" --jq .content | base64 -d | bash
 else
