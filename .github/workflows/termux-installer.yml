@@ -24,7 +24,8 @@ jobs:
           set -Eeuo pipefail
           grep -Fq 'gh release download' scripts/termux/install.sh
           grep -Fq 'sha256sum --check' scripts/termux/install.sh
-          grep -Fq 'proot-distro login debian' scripts/termux/install.sh
+          grep -Fq 'proot-distro login mavis-debian' scripts/termux/install.sh
+          grep -Fq 'proot-distro install debian:trixie --name mavis-debian' scripts/termux/install.sh
           grep -Fq 'NODE_VERSION="24.22.2"' scripts/termux/install.sh
           grep -Fq 'MAVIS_PUBLIC_ENABLED=false' scripts/termux/install.sh
           grep -Fq 'MAVIS_INTAKE_ENABLED=false' scripts/termux/install.sh
