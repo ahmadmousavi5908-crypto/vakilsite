@@ -1,6 +1,6 @@
 # Secure Matter-Specific Fields — Implementation Contract
 
-**Status:** Pure validation contract only. No client portal, public form, database persistence, upload, authentication, or production endpoint is activated.
+**Status:** Versioned immutable schema v1 and pure validation contract only. No client portal, public form, database persistence, upload, authentication, or production endpoint is activated.
 
 ## Boundary
 
@@ -8,7 +8,9 @@
 - These optional fields are intended only for a future authenticated client workspace after human review and verified matter access.
 - This module validates data shape only. It is not authentication or authorization; every future API must independently verify the session, matter relationship, role, and RLS policy before reading or writing.
 - All fields are optional. An authorized reviewer decides which fields are necessary for a specific matter.
-- Dates retain their original calendar (gregorian or jalali) and are not converted here. Validation checks shape and basic month/day bounds only; it does not prove a real calendar date.
+- Dates retain their original calendar (`gregorian` or `jalali`) and are not converted here. Gregorian dates are checked against actual month lengths and leap years. Jalali dates are validated with the runtime Persian calendar only within years 1179–1634 (Gregorian 1800–2256), where it agrees with the Borkowski Jalaali algorithm; dates outside that verified range are rejected rather than guessed. This does not calculate legal deadlines.
+- The canonical schema is versioned as `mavis-matter-{caseType}-v1`; the existing `secure-matter-fields.mjs` remains the single source of field definitions. No parallel questionnaire schema is introduced.
+- Successful validation explicitly returns `collectionStage: post_approval`, `requiresHumanApproval: true`, and `deadlineCalculated: false`.
 - Amounts remain decimal strings to avoid floating-point rounding. Currency is a three-letter code.
 
 ## Category coverage
