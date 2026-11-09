@@ -4,14 +4,14 @@ set -Eeuo pipefail
 readonly REPOSITORY="ahmadmousavi5908-crypto/vakilsite"
 readonly RELEASE_TAG="mavis-termux-v1.0.0"
 readonly ARCHIVE_NAME="mavis-termux-arm64.tar.gz"
-readonly CHECKSUM_NAME="\${ARCHIVE_NAME}.sha256"
+readonly CHECKSUM_NAME="${ARCHIVE_NAME}.sha256"
 readonly NODE_VERSION="24.22.2"
 readonly DOWNLOAD_DIR="$HOME/downloads/mavis-termux-v1.0.0"
 
 log() { printf '\n[MAVIS] %s\n' "$1"; }
 fail() { printf '\n[MAVIS] ERROR: %s\n' "$1" >&2; exit 1; }
 
-case "\${PREFIX:-}" in
+case "${PREFIX:-}" in
   */com.termux/files/usr) ;;
   *) fail "این نصب‌کننده فقط برای Termux طراحی شده است." ;;
 esac
@@ -77,7 +77,7 @@ proot-distro login --shared-home mavis-debian -- bash -lc '
 set -Eeuo pipefail
 NODE_VERSION="'"$NODE_VERSION"'"
 ARCHIVE="/root/downloads/mavis-termux-v1.0.0/'"$ARCHIVE_NAME"'"
-NODE_ROOT="/opt/node-v\${NODE_VERSION}-linux-arm64"
+NODE_ROOT="/opt/node-v${NODE_VERSION}-linux-arm64"
 APP_ROOT="/opt/mavis/'"$RELEASE_TAG"'"
 
 [[ ! -L /opt/mavis && ! -L "$APP_ROOT" && ! -L "$NODE_ROOT" ]] || { echo "Runtime paths must not be symlinks." >&2; exit 1; }
@@ -86,20 +86,20 @@ if [[ ! -x "$NODE_ROOT/bin/node" ]]; then
   apt-get update
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates curl xz-utils tar
   cd /tmp
-  NODE_FILE="node-v\${NODE_VERSION}-linux-arm64.tar.xz"
-  curl --fail --location --retry 3 "https://nodejs.org/dist/v\${NODE_VERSION}/SHASUMS256.txt" -o SHASUMS256.txt
-  curl --fail --location --retry 3 "https://nodejs.org/dist/v\${NODE_VERSION}/\${NODE_FILE}" -o "$NODE_FILE"
-  grep -E "  \${NODE_FILE}$" SHASUMS256.txt | sha256sum --check -
+  NODE_FILE="node-v${NODE_VERSION}-linux-arm64.tar.xz"
+  curl --fail --location --retry 3 "https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt" -o SHASUMS256.txt
+  curl --fail --location --retry 3 "https://nodejs.org/dist/v${NODE_VERSION}/${NODE_FILE}" -o "$NODE_FILE"
+  grep -E "  ${NODE_FILE}$" SHASUMS256.txt | sha256sum --check -
   mkdir -p "$NODE_ROOT"
   tar -xJf "$NODE_FILE" --strip-components=1 -C "$NODE_ROOT"
 fi
 
-[[ "$("$NODE_ROOT/bin/node" --version)" == "v\${NODE_VERSION}" ]] || { echo "Unexpected Node.js runtime version." >&2; exit 1; }
+[[ "$("$NODE_ROOT/bin/node" --version)" == "v${NODE_VERSION}" ]] || { echo "Unexpected Node.js runtime version." >&2; exit 1; }
 mkdir -p "$(dirname "$APP_ROOT")"
 if [[ -d "$APP_ROOT" ]]; then
   [[ -f "$APP_ROOT/runtime-manifest.json" && -d "$APP_ROOT/.next" && -d "$APP_ROOT/node_modules/next" && -d "$APP_ROOT/public" ]] || { echo "An incomplete runtime directory exists; refusing to overwrite it." >&2; exit 1; }
 else
-  STAGING_DIR="$(mktemp -d "/opt/mavis/.\${RELEASE_TAG}.XXXXXX")"
+  STAGING_DIR="$(mktemp -d "/opt/mavis/.${RELEASE_TAG}.XXXXXX")"
   tar -xzf "$ARCHIVE" -C "$STAGING_DIR"
   [[ -f "$STAGING_DIR/runtime-manifest.json" && -d "$STAGING_DIR/.next" && -d "$STAGING_DIR/node_modules/next" && -d "$STAGING_DIR/public" ]] || { echo "Extracted runtime package is incomplete." >&2; exit 1; }
   EXPECTED_NODE_VERSION="$NODE_VERSION" "$NODE_ROOT/bin/node" -e "const m=require(process.argv[1]); if(m.schemaVersion!==1 || m.platform!==\"linux-arm64-glibc\" || m.nodeVersion!==\"v\"+process.env.EXPECTED_NODE_VERSION || m.nextVersion!==\"16.4.3\" || m.mavisPublicEnabled!==false || m.mavisIntakeEnabled!==false) process.exit(1)" "$STAGING_DIR/runtime-manifest.json" || { echo "Runtime manifest validation failed." >&2; exit 1; }
