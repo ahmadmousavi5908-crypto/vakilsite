@@ -111,3 +111,16 @@ test("rejects malformed records from the search adapter", () => {
 test("requires all retrieval dependencies", () => {
   assert.throws(() => createMavisKnowledgeRetriever({}), TypeError);
 });
+
+
+test("maps published articles and research notes to conservative source classes", () => {
+  const { retrieve, calls } = createRetriever([
+    { id: "published_article_1", record_type: "published_article", title: "مقاله آموزشی" },
+    { id: "research_note_1", record_type: "research_note", title: "یادداشت پژوهشی" },
+  ]);
+
+  retrieve("موضوع پژوهشی");
+
+  assert.equal(calls.dossier.records[0].source_class, "educational_summary");
+  assert.equal(calls.dossier.records[1].source_class, "research_note");
+});
