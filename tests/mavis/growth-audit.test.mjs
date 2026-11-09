@@ -48,3 +48,15 @@ test("detects possible content overlap without treating it as proven cannibaliza
   assert.equal(report.duplicatePairs[0].reviewRequired, true);
   assert.ok(report.limitations.some((item) => item.includes("اثبات هم‌نوع‌خواری")));
 });
+
+
+import { articles as publishedArticles } from "../../src/data/articles.js";
+
+test("audits the real published article collection without external metrics", () => {
+  const report = auditGrowthLibrary(publishedArticles);
+  assert.equal(report.articleCount, publishedArticles.length);
+  assert.ok(report.articleCount > 0);
+  assert.equal(report.mode, "deterministic_local_audit");
+  assert.ok(report.reports.every((item) => typeof item.slug === "string"));
+  assert.ok(report.limitations.some((item) => item.includes("داده زنده")));
+});
