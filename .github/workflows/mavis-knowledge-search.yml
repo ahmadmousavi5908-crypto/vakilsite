@@ -57,7 +57,7 @@ jobs:
           node --check public/mavis-offline/sw.js
 
       - name: Validate offline knowledge bundle and provenance
-        run: node scripts/mavis/validate-offline-bundle.mjs scripts/mavis/validate-legal-review-queue.mjs tests/mavis/legal-review-queue.test.mjs
+        run: node scripts/mavis/validate-offline-bundle.mjs
 
       - name: Validate legal source review queue against canonical corpus
         run: node scripts/mavis/validate-legal-review-queue.mjs
@@ -109,7 +109,7 @@ jobs:
         run: npm run lint -- src/lib/mavis/public-intake-validation.mjs src/lib/mavis/intake-request.mjs src/lib/mavis/intake-admin.mjs src/lib/mavis/growth-metrics.mjs src/lib/mavis/legal-intake-triage.mjs src/app/api/mavis/intake/route.js src/app/api/admin/mavis/intake/route.js src/app/mavis/intake/page.js src/components/public/MavisPublicIntakeForm.jsx src/components/admin/MavisIntakeInbox.jsx tests/mavis/intake-request.test.mjs tests/mavis/intake-admin.test.mjs tests/mavis/rate-limit.test.mjs tests/mavis/public-intake-validation.test.mjs tests/mavis/growth-metrics.test.mjs tests/mavis/legal-intake-triage.test.mjs
 
       - name: Lint legal evidence and provenance contract modules
-        run: npm run lint -- src/lib/mavis/legal-provenance-contract.mjs tests/mavis/legal-provenance-contract.test.mjs scripts/mavis/validate-offline-bundle.mjs src/lib/mavis/legal-evidence.mjs src/lib/mavis/legal-research-dossier.mjs tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
+        run: npm run lint -- src/lib/mavis/legal-provenance-contract.mjs tests/mavis/legal-provenance-contract.test.mjs scripts/mavis/validate-offline-bundle.mjs scripts/mavis/validate-legal-review-queue.mjs tests/mavis/legal-review-queue.test.mjs src/lib/mavis/legal-evidence.mjs src/lib/mavis/legal-research-dossier.mjs tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
 
       - name: Lint legal evidence and dossier modules
         run: npm run lint -- src/lib/mavis/legal-evidence.mjs src/lib/mavis/legal-research-dossier.mjs tests/mavis/legal-evidence.test.mjs tests/mavis/legal-evidence-integration.test.mjs tests/mavis/legal-research-dossier.test.mjs
