@@ -55,7 +55,7 @@ export default function AboutPage() {
               width={800}
               height={1000}
               sizes="(max-width: 760px) 100vw, 380px"
-              priority
+              fetchPriority="high"
             />
             <figcaption className="about-photo-caption">
               <strong>سید احمد موسوی</strong>
