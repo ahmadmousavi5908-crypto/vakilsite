@@ -32,8 +32,8 @@ ALLOWED_CATEGORIES = {
     "project_documentation",
 }
 ALLOWED_EXTENSIONS = {
-    ".pdf", ".docx", ".doc", ".md", ".txt", ".json", ".csv", ".xlsx",
-    ".html", ".htm", ".rtf", ".odt", ".ods", ".pptx", ".epub", ".xml",
+    ".pdf", ".docx", ".doc", ".md", ".txt", ".json", ".csv", ".xlsx", ".xls",
+    ".html", ".htm", ".rtf", ".odt", ".ods", ".pptx", ".ppt", ".epub", ".xml",
 }
 MAX_FILE_BYTES = 100 * 1024 * 1024
 MAX_TOTAL_BYTES = 1024 * 1024 * 1024
