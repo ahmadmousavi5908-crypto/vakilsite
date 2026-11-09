@@ -21,6 +21,7 @@ Adapter در فایل scripts/mavis/parse_staged_mother_two.py:
 - برای PDF، در حالت پیش‌فرض از native text extraction استفاده می‌کند تا نیازی به دانلود مدل یا OCR نباشد.
 - برای هر صفحه، متن Markdown، شماره صفحه و anchorهای Docling شامل self_ref، label، bounding box و character span را نگه می‌دارد.
 - فایل JSON مستقل برای هر سند و یک parse-manifest.json می‌سازد؛ نام خروجی با hash شناسه‌گذاری می‌شود.
+- فایل‌های JSON داده‌ای با parser استاندارد Python، سقف 20 MiB، رد کلیدهای تکراری و NaN/Infinity، محدودیت عمق 100 و حداکثر 10,000 JSON Pointer پردازش می‌شوند؛ برای آن‌ها نیازی به نصب Docling نیست.
 - خروجی‌ها با مجوز فایل محدود و در پوشه جدید ساخته می‌شوند؛ بازنویسی خروجی قبلی ممنوع است.
 - خطاهای parser فقط با نوع خطا ثبت می‌شوند؛ متن exception که ممکن است داده حساس داشته باشد ذخیره نمی‌شود.
 
