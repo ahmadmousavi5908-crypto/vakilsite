@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   getSecureMatterFieldSchema,
+  getSecureMatterQuestionnaireContract,
+  SECURE_MATTER_QUESTIONNAIRE_VERSION,
   secureMatterFieldSchemas,
   validateSecureMatterFields,
 } from "../../src/lib/mavis/secure-matter-fields.mjs";
@@ -144,4 +146,35 @@ test("validates Jalali month lengths and Esfand 30 only in leap years", () => {
   });
   assert.equal(invalidThirtyFirst.ok, false);
   assert.ok(invalidThirtyFirst.errors.executionDate);
+
+  const outsideVerifiedRange = validateSecureMatterFields("civil", {
+    executionDate: { calendar: "jalali", value: "1635-01-01" },
+  });
+  assert.equal(outsideVerifiedRange.ok, false);
+  assert.ok(outsideVerifiedRange.errors.executionDate);
+});
+
+test("exposes one immutable versioned post-approval questionnaire contract", () => {
+  assert.equal(SECURE_MATTER_QUESTIONNAIRE_VERSION, 1);
+  const contract = getSecureMatterQuestionnaireContract("civil");
+  assert.equal(contract.id, "mavis-matter-civil-v1");
+  assert.equal(contract.version, 1);
+  assert.equal(contract.stage, "post_approval");
+  assert.equal(contract.requiresHumanApproval, true);
+  assert.equal(contract.deadlineCalculated, false);
+  assert.ok(Object.isFrozen(contract));
+  assert.ok(Object.isFrozen(contract.fields));
+  assert.equal(getSecureMatterQuestionnaireContract("civil", 2), null);
+  assert.equal(getSecureMatterQuestionnaireContract("unknown"), null);
+});
+
+test("marks validated supplementary answers as post-approval and never calculates deadlines", () => {
+  const result = validateSecureMatterFields("civil", {});
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.value, {});
+  assert.equal(result.schemaId, "mavis-matter-civil-v1");
+  assert.equal(result.schemaVersion, 1);
+  assert.equal(result.collectionStage, "post_approval");
+  assert.equal(result.requiresHumanApproval, true);
+  assert.equal(result.deadlineCalculated, false);
 });

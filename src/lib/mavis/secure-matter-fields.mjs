@@ -128,6 +128,9 @@ function isValidDate(value) {
     return isValidGregorianDate(year, month, day);
   }
 
+  // Intl and the Iranian civil Jalali calendar agree in Gregorian years 1800–2256.
+  // Reject dates outside that supported interval rather than guessing leap-year rules.
+  if (year < 1179 || year > 1634) return false;
   if (month <= 6) return day <= 31;
   if (month <= 11) return day <= 30;
   return day <= 29 || (day === 30 && isJalaliLeapYear(year));
@@ -192,9 +195,35 @@ export function validateSecureMatterFields(caseType, input) {
   }
 
   if (Object.keys(errors).length > 0) return { ok: false, errors };
-  return { ok: true, value };
+  return {
+    ok: true,
+    value,
+    schemaId: `mavis-matter-${caseType}-v${SECURE_MATTER_QUESTIONNAIRE_VERSION}`,
+    schemaVersion: SECURE_MATTER_QUESTIONNAIRE_VERSION,
+    collectionStage: "post_approval",
+    requiresHumanApproval: true,
+    deadlineCalculated: false,
+  };
 }
+
+export const SECURE_MATTER_QUESTIONNAIRE_VERSION = 1;
 
 export function getSecureMatterFieldSchema(caseType) {
   return secureMatterFieldSchemas[caseType] || null;
+}
+
+export function getSecureMatterQuestionnaireContract(caseType, version = SECURE_MATTER_QUESTIONNAIRE_VERSION) {
+  if (version !== SECURE_MATTER_QUESTIONNAIRE_VERSION) return null;
+  const fields = getSecureMatterFieldSchema(caseType);
+  if (!fields) return null;
+
+  return Object.freeze({
+    id: `mavis-matter-${caseType}-v${version}`,
+    version,
+    caseType,
+    stage: "post_approval",
+    requiresHumanApproval: true,
+    deadlineCalculated: false,
+    fields,
+  });
 }
