@@ -61,6 +61,8 @@ jobs:
         run: |
           node --check scripts/mavis/verify-local.mjs
           node --check scripts/mavis/generate-offline-published-articles.mjs
+          node --check src/lib/mavis/openai-responses-provider.mjs
+          node --check src/lib/mavis/provider-factory.mjs
           bash -n scripts/mavis/verify-local-backup-restore.sh
           node --check public/mavis-offline/app.js
           node --check public/mavis-offline/search.mjs
@@ -107,7 +109,7 @@ jobs:
         run: npm run lint -- src/lib/mavis/secure-matter-fields.mjs tests/mavis/secure-matter-fields.test.mjs
 
       - name: Lint provider-independent conversation core
-        run: npm run lint -- src/lib/mavis/errors.mjs src/lib/mavis/contracts.mjs src/lib/mavis/mock-provider.mjs src/lib/mavis/public-policy.mjs src/lib/mavis/public-chat.mjs src/lib/mavis/conversation-state.mjs tests/mavis/public-chat.test.mjs tests/mavis/conversation-state.test.mjs
+        run: npm run lint -- src/lib/mavis/errors.mjs src/lib/mavis/contracts.mjs src/lib/mavis/mock-provider.mjs src/lib/mavis/public-policy.mjs src/lib/mavis/public-chat.mjs src/lib/mavis/conversation-state.mjs src/lib/mavis/openai-responses-provider.mjs src/lib/mavis/provider-factory.mjs tests/mavis/openai-responses-provider.test.mjs tests/mavis/public-chat.test.mjs tests/mavis/conversation-state.test.mjs
 
       - name: Test public intake validation
         if: ${{ hashFiles('tests/mavis/public-intake-validation.test.mjs') != '' }}
