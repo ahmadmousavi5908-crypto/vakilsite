@@ -19,6 +19,8 @@ class MotherTwoInventoryTests(unittest.TestCase):
                 "library/books/book-one.pdf": b"same-public-book-bytes",
                 "backup/books/book-copy.pdf": b"same-public-book-bytes",
                 "library/articles/guide.md": "راهنمای حقوقی".encode("utf-8"),
+                "misc/کتاب-قانون-مدنی.pdf": b"book identified from filename",
+                "misc/مقاله-تحلیلی.md": b"article identified from filename",
                 "metadata/manifest.json": b'{"schema":"test"}',
                 "private/.env": b"SUPABASE_SERVICE_ROLE_KEY=must-never-appear",
                 "config/db-password.txt": b"DB_PASSWORD=must-also-never-appear",
@@ -41,13 +43,16 @@ class MotherTwoInventoryTests(unittest.TestCase):
             archive_path = self.make_archive(root)
             report = inventory_archive(archive_path)
 
-            self.assertEqual(report["summary"]["files"], 7)
+            self.assertEqual(report["summary"]["files"], 9)
             self.assertEqual(report["summary"]["symlinks"], 1)
             self.assertEqual(report["summary"]["secret_candidate_count"], 2)
             self.assertEqual(report["summary"]["unsafe_path_count"], 1)
             self.assertEqual(report["summary"]["unsafe_link_target_count"], 1)
             self.assertEqual(report["summary"]["duplicate_content_groups"], 1)
             self.assertEqual(report["manifest_candidates"], ["metadata/manifest.json"])
+            classified_by_path = {entry.get("path"): entry["classification"] for entry in report["files"]}
+            self.assertEqual(classified_by_path["misc/کتاب-قانون-مدنی.pdf"], "books")
+            self.assertEqual(classified_by_path["misc/مقاله-تحلیلی.md"], "published_articles")
             self.assertEqual(report["archive"]["sha256"], hashlib.sha256(archive_path.read_bytes()).hexdigest())
             self.assertFalse(report["archive"]["extraction_performed"])
 
