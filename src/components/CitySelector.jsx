@@ -8,7 +8,7 @@ export default function CitySelector({ cities }) {
           key={city}
           type="button"
           className={index === 0 ? "city-chip city-featured" : "city-chip"}
-          aria-label={`انتخاب شهر ${city} و رفتن به فرم درخواست`}
+          aria-label={`${city}${index === 0 ? "، مرکز" : ""}، انتخاب شهر و رفتن به فرم درخواست`}
           onClick={() => {
             window.dispatchEvent(
               new CustomEvent("vakilsite:city-selected", { detail: city })
