@@ -302,6 +302,7 @@ test("rejects forged verified evidence from an untrusted host or impossible acce
       ...verifiedRecord,
       evidence: {
         state: "verified_primary",
+        validity: verifiedRecord.evidence.validity,
         citations: [{
           ...verifiedRecord.evidence.citations[0],
           url: "https://untrusted.example/law",
@@ -312,6 +313,7 @@ test("rejects forged verified evidence from an untrusted host or impossible acce
       ...verifiedRecord,
       evidence: {
         state: "verified_primary",
+        validity: verifiedRecord.evidence.validity,
         citations: [{
           ...verifiedRecord.evidence.citations[0],
           accessedAt: "2026-02-31",
