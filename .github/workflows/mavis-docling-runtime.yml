@@ -1,0 +1,53 @@
+name: MAVIS Docling runtime verification
+
+on:
+  push:
+    branches:
+      - feature/mavis-final-verification-20261109
+    paths:
+      - scripts/mavis/parse_staged_mother_two.py
+      - tests/mavis/test_docling_runtime.py
+      - requirements-mavis-docling.txt
+      - .github/workflows/mavis-docling-runtime.yml
+  pull_request:
+    branches:
+      - integration/mavis-mvp-candidate-20261108
+    paths:
+      - scripts/mavis/parse_staged_mother_two.py
+      - tests/mavis/test_docling_runtime.py
+      - requirements-mavis-docling.txt
+      - .github/workflows/mavis-docling-runtime.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-docling-runtime
+  cancel-in-progress: true
+
+jobs:
+  runtime-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-mavis-docling.txt
+
+      - name: Install pinned optional Docling runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --no-cache-dir -r requirements-mavis-docling.txt
+
+      - name: Run real local Docling parser smoke test
+        run: python -m unittest discover -s tests/mavis -p 'test_docling_runtime.py' -v
+
+      - name: Compile parser and runtime test
+        run: python -m py_compile scripts/mavis/parse_staged_mother_two.py tests/mavis/test_docling_runtime.py
