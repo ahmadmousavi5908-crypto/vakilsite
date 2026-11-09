@@ -1,3 +1,7 @@
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
@@ -24,4 +28,12 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+const withBundleAnalyzer =
+  process.env.ANALYZE === 'true'
+    ? require('@next/bundle-analyzer')({
+        enabled: true,
+        openAnalyzer: false,
+      })
+    : (config) => config;
+
+export default withBundleAnalyzer(nextConfig);

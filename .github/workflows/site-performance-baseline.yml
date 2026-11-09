@@ -1,0 +1,50 @@
+name: Site performance and bundle baseline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-performance-baseline
+  cancel-in-progress: true
+
+jobs:
+  production-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install locked application dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install isolated audit tools without changing project manifests
+        run: npm install --no-save --no-package-lock --no-audit --no-fund @next/bundle-analyzer@16.4.3 @lhci/cli@0.16.0
+
+      - name: Build production bundles and emit analyzer reports
+        env:
+          ANALYZE: "true"
+        run: npm run build
+
+      - name: Run three-pass mobile Lighthouse baseline
+        run: npx lhci autorun --config=lighthouserc.json
+
+      - name: Upload bundle and Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vakilsite-performance-baseline-${{ github.sha }}
+          path: |
+            .next/analyze/
+            .lighthouseci/
+          if-no-files-found: warn
+          retention-days: 14
