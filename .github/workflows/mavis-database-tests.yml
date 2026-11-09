@@ -89,9 +89,9 @@ jobs:
           while [ "$attempt" -le 3 ]; do
             if supabase start -x imgproxy,logflare,vector,mailpit > /tmp/mavis-supabase-start.log 2>&1; then
               exit 0
+            else
+              status=$?
             fi
-
-            status=$?
             if [ "$attempt" -lt 3 ] && grep -Eqi 'rate exceeded|port is already allocated|address already in use|connection reset|unexpected EOF' /tmp/mavis-supabase-start.log; then
               echo "Supabase startup hit a transient registry/port condition; cleaning partial stack and retrying."
               timeout 60s supabase stop >/dev/null 2>&1 || true
