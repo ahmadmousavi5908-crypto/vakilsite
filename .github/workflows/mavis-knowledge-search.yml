@@ -7,6 +7,7 @@ on:
       - feature/mavis-offline-first-public-knowledge-20261108
       - integration/mavis-mvp-candidate-20261108
       - feature/mavis-published-article-retrieval-20261109
+      - feature/mavis-final-verification-20261109
       - integration/mavis-release-gate-20261109
       - test/mavis-local-backup-restore-20261109
   workflow_dispatch:
@@ -52,6 +53,12 @@ jobs:
 
       - name: Test hash-verified Mother Two quarantine staging
         run: npm run test:mavis-mother-two-staging
+
+      - name: Test Docling quarantine parser and page provenance contract
+        run: npm run test:mavis-docling-ingestion
+
+      - name: Compile the optional Docling parser worker
+        run: python3 -m py_compile scripts/mavis/parse_staged_mother_two.py tests/mavis/test_docling_ingestion.py
 
       - name: Test deterministic MAVIS retrieval
         run: npm run test:mavis-search

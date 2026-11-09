@@ -1,0 +1,5 @@
+# Optional offline document-ingestion worker only; not part of the Next.js runtime.
+# Python >= 3.10. Tesseract CLI and traineddata are system dependencies for OCR.
+# The slim extras omit unused RapidOCR and keep the parser worker smaller.
+docling-slim[format-pdf,format-office,format-opendocument,format-web,cli]==2.149.0
+opencv-python-headless==5.0.0.93

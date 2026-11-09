@@ -1,0 +1,52 @@
+name: Termux installer verification
+
+on:
+  pull_request:
+    branches:
+      - integration/mavis-mvp-candidate-20261108
+  push:
+    branches:
+      - feature/mavis-final-verification-20261109
+
+permissions:
+  contents: read
+
+jobs:
+  installer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Validate Termux installer syntax
+        run: bash -n scripts/termux/install.sh
+      - name: Validate download-only safety contract
+        run: |
+          set -Eeuo pipefail
+          grep -Fq 'gh release download' scripts/termux/install.sh
+          grep -Fq 'sha256sum --check' scripts/termux/install.sh
+          grep -Fq 'proot-distro login mavis-debian' scripts/termux/install.sh
+          grep -Fq 'proot-distro install debian:trixie --name mavis-debian' scripts/termux/install.sh
+          grep -Fq 'NODE_VERSION="24.22.2"' scripts/termux/install.sh
+          grep -Fq 'checksum_line_count' scripts/termux/install.sh
+          grep -Fq 'length($1) == 64' scripts/termux/install.sh
+          grep -Fq 'Unexpected Node.js runtime version' scripts/termux/install.sh
+          grep -Fq 'Runtime manifest validation failed' scripts/termux/install.sh
+          test "$(grep -n '/dev/tcp/127.0.0.1/3002' scripts/termux/install.sh | cut -d: -f1)" -lt "$(grep -n 'pkg install -y proot-distro' scripts/termux/install.sh | cut -d: -f1)"
+          grep -Fq 'MAVIS_PUBLIC_ENABLED=false' scripts/termux/install.sh
+          grep -Fq 'MAVIS_INTAKE_ENABLED=false' scripts/termux/install.sh
+          grep -Fq '127.0.0.1 --port 3002' scripts/termux/install.sh
+          grep -Fq '/dev/tcp/127.0.0.1/3002' scripts/termux/install.sh
+          grep -Fq 'Runtime paths must not be symlinks' scripts/termux/install.sh
+          grep -Eq 'ref=[0-9a-f]{40}' docs/termux/README.md
+          grep -Eq 'vakilsite/[0-9a-f]{40}/scripts/termux/install.sh' docs/termux/README.md
+          ! grep -Fq 'feature/mavis-final-verification-20261109' docs/termux/README.md
+          if grep -En '(^|[[:space:]])(npm[[:space:]]+(ci|install|run[[:space:]]+build)|git[[:space:]]+clone|rm[[:space:]]+-rf|pkg[[:space:]]+upgrade)([[:space:]]|$)' scripts/termux/install.sh; then
+            echo 'Forbidden development or destructive command found in the Termux installer.' >&2
+            exit 1
+          fi
+      - name: Validate runtime workflow syntax markers
+        run: |
+          grep -Fq 'runs-on: ubuntu-24.04-arm' .github/workflows/termux-arm64-runtime.yml
+          grep -Fq 'npm run build' .github/workflows/termux-arm64-runtime.yml
+          grep -Fq 'npm prune --omit=dev' .github/workflows/termux-arm64-runtime.yml
+          grep -Fq 'mavis-termux-v1.0.0' .github/workflows/termux-arm64-runtime.yml

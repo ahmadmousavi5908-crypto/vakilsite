@@ -2,12 +2,13 @@ name: Site quality checks
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, integration/mavis-mvp-candidate-20261108]
   push:
     branches:
       - main
       - redesign/persian-ux-typography
       - feat/legal-library-discovery-20261102
+      - feature/mavis-final-verification-20261109
 
 permissions:
   contents: read
@@ -15,6 +16,8 @@ permissions:
 jobs:
   lint-and-build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: https://vakilsite-ci.example
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -27,6 +30,20 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
+      - name: Validate installed agent skills and specialist profiles
+        run: node scripts/verify-agent-skills.mjs
+
+      - name: Run MAVIS security and regression suites
+        run: |
+          npm run test:mavis-search
+          npm run test:mavis-core
+          npm run test:mavis-growth-audit
+          npm run test:mavis-search-console
+          npm run test:mavis-mother-two-staging
+          npm run test:mavis-legal-review-queue
+          npm run test:mavis-docling-ingestion
+          npm run test:mavis-matter-fields
+
       - name: Validate legal library SEO data
         run: npm run validate:legal-library-seo
       - name: Run ESLint

@@ -1,0 +1,100 @@
+name: Site performance and bundle baseline
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/mavis-final-verification-20261109
+    paths:
+      - next.config.mjs
+      - src/app/layout.js
+      - src/app/page.js
+      - src/app/about/page.js
+      - src/components/FontResourceHints.jsx
+      - src/app/globals.css
+      - public/fonts/**
+      - .github/workflows/site-performance-baseline.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-performance-baseline
+  cancel-in-progress: true
+
+jobs:
+  production-baseline:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+    timeout-minutes: 45
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install locked application dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install isolated audit tools without changing project manifests
+        run: npm install --no-save --no-package-lock --no-audit --no-fund @next/bundle-analyzer@16.4.3 lighthouse@13.6.0
+
+      - name: Build production bundles and emit analyzer reports
+        env:
+          ANALYZE: "true"
+        run: npm run build
+
+      - name: Run three-pass mobile Lighthouse baseline
+        run: |
+          set -euo pipefail
+          mkdir -p lighthouse-reports
+          npm run start -- --hostname 127.0.0.1 --port 3000 > /tmp/vakilsite-performance.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true; wait "$SERVER_PID" 2>/dev/null || true' EXIT
+
+          READY=0
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:3000/ > /dev/null; then
+              READY=1
+              break
+            fi
+            sleep 2
+          done
+
+          if [ "$READY" -ne 1 ]; then
+            cat /tmp/vakilsite-performance.log
+            exit 1
+          fi
+
+          for route in / /about /articles /legal-library; do
+            slug="$(printf '%s' "$route" | sed 's#^/##; s#/#-#g')"
+            [ -n "$slug" ] || slug="home"
+            for run in 1 2 3; do
+              npx --no-install lighthouse "http://127.0.0.1:3000$route" \
+                --output=json --output=html \
+                --output-path="lighthouse-reports/$slug-$run" \
+                --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+                --max-wait-for-load=60000 --locale=fa --quiet
+            done
+          done
+
+          REPORT_COUNT="$(find lighthouse-reports -maxdepth 1 -type f | wc -l)"
+          echo "Lighthouse report files: $REPORT_COUNT"
+          find lighthouse-reports -maxdepth 1 -type f -printf '%f\\n' | sort
+          test "$REPORT_COUNT" -ge 24
+
+      - name: Upload bundle and Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vakilsite-performance-baseline-${{ github.sha }}
+          path: |
+            .next/analyze/
+            lighthouse-reports/
+          if-no-files-found: warn
+          retention-days: 14

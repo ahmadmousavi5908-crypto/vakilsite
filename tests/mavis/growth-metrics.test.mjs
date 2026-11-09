@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { analyzeSearchPerformance, rankContentOpportunities } from "../../src/lib/mavis/growth-metrics.mjs";
+import {
+  aggregateSearchPerformanceRows,
+  analyzeSearchPerformance,
+  rankContentOpportunities,
+} from "../../src/lib/mavis/growth-metrics.mjs";
 
 test("calculates transparent deterministic opportunity and visibility metrics", () => {
   const result = analyzeSearchPerformance({ impressions: 10000, clicks: 100, averagePosition: 8, qualifiedLeads: 5 });
@@ -31,4 +35,33 @@ test("ranks only valid rows and orders higher opportunities first", () => {
     { id: "invalid", impressions: 10, clicks: 11 },
   ]);
   assert.deepEqual(rows.map((row) => row.id), ["high", "low"]);
+});
+
+
+test("aggregates daily Search Console rows before ranking a query and page", () => {
+  const rows = aggregateSearchPerformanceRows([
+    { page: "https://example.org/law", query: "قانون مدنی", clicks: 5, impressions: 100, averagePosition: 10 },
+    { page: "https://example.org/law", query: "قانون مدنی", clicks: 7, impressions: 200, averagePosition: 5 },
+  ]);
+
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].clicks, 12);
+  assert.equal(rows[0].impressions, 300);
+  assert.equal(rows[0].averagePosition, 20 / 3);
+  assert.equal(analyzeSearchPerformance(rows[0]).ctr, 0.04);
+});
+
+test("keeps redacted query rows grouped by safe page and ignores invalid metrics", () => {
+  const rows = aggregateSearchPerformanceRows([
+    { page: "https://example.org/contact", query: null, clicks: 1, impressions: 20, averagePosition: 4 },
+    { page: "https://example.org/contact", query: null, clicks: 2, impressions: 30, averagePosition: 6 },
+    { page: null, query: null, clicks: 10, impressions: 100, averagePosition: 2 },
+    { page: "https://example.org/bad", query: "bad", clicks: 11, impressions: 10, averagePosition: 1 },
+  ]);
+
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].query, null);
+  assert.equal(rows[0].clicks, 3);
+  assert.equal(rows[0].impressions, 50);
+  assert.equal(rows[0].averagePosition, 5.2);
 });

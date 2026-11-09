@@ -32,8 +32,8 @@ ALLOWED_CATEGORIES = {
     "project_documentation",
 }
 ALLOWED_EXTENSIONS = {
-    ".pdf", ".docx", ".doc", ".md", ".txt", ".json", ".csv", ".xlsx",
-    ".html", ".htm", ".rtf", ".odt", ".ods", ".pptx", ".epub", ".xml",
+    ".pdf", ".docx", ".doc", ".md", ".txt", ".json", ".csv", ".xlsx", ".xls",
+    ".html", ".htm", ".rtf", ".odt", ".ods", ".pptx", ".ppt", ".epub", ".xml",
 }
 MAX_FILE_BYTES = 100 * 1024 * 1024
 MAX_TOTAL_BYTES = 1024 * 1024 * 1024
@@ -197,6 +197,8 @@ def stage_archive(
         raise StagingError("No eligible files were found in the inventory.")
 
     secret_content_paths = scan_selected_content(archive, selected)
+    if sha256_file(archive) != actual_archive_hash:
+        raise StagingError("Archive changed during the content scan; staging stopped.")
     safe_selected = {
         member_path: entry
         for member_path, entry in selected.items()
@@ -297,6 +299,8 @@ def stage_archive(
         missing = sorted(set(safe_selected) - seen)
         if missing:
             raise StagingError("Inventory contains eligible paths missing from the archive.")
+        if sha256_file(archive) != actual_archive_hash:
+            raise StagingError("Archive changed during staging; quarantine workspace rolled back.")
 
         manifest = {
             "schema_version": "1.0.0",

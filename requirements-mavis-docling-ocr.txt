@@ -1,0 +1,3 @@
+# Additional local ML models required only for OCR processing.
+-r requirements-mavis-docling.txt
+docling-slim[models-local,convert-core]==2.149.0

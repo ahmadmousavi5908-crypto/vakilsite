@@ -1,0 +1,2 @@
+# Test-only shaping dependencies for the synthetic Persian OCR fixture.
+-r requirements-mavis-docling-ocr.txt

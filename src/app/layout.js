@@ -1,4 +1,5 @@
 import "./globals.css";
+import FontResourceHints from "../components/FontResourceHints";
 import SocialContactDock from "../components/SocialContactDock";
 import AttorneyProfileDock from "../components/AttorneyProfileDock";
 import GlobalMobileMenu from "../components/GlobalMobileMenu";
@@ -64,7 +65,7 @@ export const metadata = {
     ...(siteUrl ? { url: siteUrl } : {}),
     title: "خدمات حقوقی در سراسر ایران | دفتر اهواز",
     description: "مسئله حقوقی خود را ساده مطرح کنید و مسیر بررسی را بشناسید.",
-    siteName: "خدمات حقوقی اهواز",
+    siteName: "خدمات حقوقی سید احمد موسوی",
   },
 };
 
@@ -72,6 +73,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fa" dir="rtl" data-scroll-behavior="smooth">
       <body>
+        <FontResourceHints />
         {children}
         <GlobalMobileMenu />
         <AttorneyProfileDock />

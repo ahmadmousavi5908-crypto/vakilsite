@@ -39,6 +39,16 @@ const steps = [
     args: ["run", "test:mavis-mother-two-staging"],
   },
   {
+    label: "Test Docling quarantine parser and page provenance contract",
+    command: "npm",
+    args: ["run", "test:mavis-docling-ingestion"],
+  },
+  {
+    label: "Smoke test optional real Docling runtime when installed",
+    command: "npm",
+    args: ["run", "test:mavis-docling-runtime"],
+  },
+  {
     label: "Run all MAVIS Node.js tests",
     command: process.execPath,
     args: ["--test", ...testFiles],

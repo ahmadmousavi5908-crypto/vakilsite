@@ -21,7 +21,9 @@
     "mavis:verify": "node scripts/mavis/verify-local.mjs",
     "test:mavis-matter-fields": "node --test tests/mavis/secure-matter-fields.test.mjs",
     "validate:mavis-legal-review-queue": "node scripts/mavis/validate-legal-review-queue.mjs",
-    "test:mavis-legal-review-queue": "node --test tests/mavis/legal-review-queue.test.mjs"
+    "test:mavis-legal-review-queue": "node --test tests/mavis/legal-review-queue.test.mjs",
+    "test:mavis-docling-ingestion": "python3 -m unittest discover -s tests/mavis -p 'test_docling_ingestion.py'",
+    "test:mavis-docling-runtime": "python3 -m unittest discover -s tests/mavis -p 'test_docling_runtime.py'"
   },
   "dependencies": {
     "next": "16.4.3",

@@ -2,10 +2,24 @@ import { readFile } from "node:fs/promises";
 
 const baseUrl = (process.env.SITE_TEST_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
 
+function readCanonical(html) {
+  const tag = html.match(/<link\b[^>]*rel=["']canonical["'][^>]*>/i)?.[0];
+  return tag?.match(/\bhref=["']([^"']+)["']/i)?.[1] || null;
+}
+
+function canonicalPath(value) {
+  if (!value) return null;
+  try {
+    return new URL(value, baseUrl).pathname.replace(/\/$/, "") || "/";
+  } catch {
+    return null;
+  }
+}
+
 function readMeta(html, key) {
   const tags = html.match(/<meta\b[^>]*>/gi) || [];
   for (const tag of tags) {
-    const name = tag.match(/\bname\s*=\s*["']([^"']+)["']/i)?.[1]?.toLowerCase();
+    const name = tag.match(/\b(?:name|property)\s*=\s*["']([^"']+)["']/i)?.[1]?.toLowerCase();
     if (name !== key.toLowerCase()) continue;
     return tag.match(/\bcontent\s*=\s*["']([^"']*)["']/i)?.[1]?.toLowerCase() || "";
   }
@@ -65,6 +79,61 @@ const indexable = new Set(
 );
 const detailRoutes = new Set(allRecords.map((record) => record.path).filter(Boolean));
 
+const publicCanonicalPaths = [
+  "/", "/about", "/articles", "/services", "/lawyer-cooperation",
+  "/privacy", "/legal-library", "/legal-glossary", "/locations/khuzestan",
+];
+const canonicalResults = [];
+for (const path of publicCanonicalPaths) {
+  try {
+    const { response, body } = await fetchText(path);
+    const canonical = readCanonical(body);
+    const actualPath = canonicalPath(canonical);
+    canonicalResults.push({ path, status: response.status, canonical, actualPath });
+  } catch (error) {
+    canonicalResults.push({ path, status: "ERROR", error: error.message });
+  }
+}
+
+const aiAssistantResult = await fetchText("/ai-assistant");
+const aiAssistantRobots = readMeta(aiAssistantResult.body, "robots") || "";
+const aiAssistantCanonical = canonicalPath(readCanonical(aiAssistantResult.body));
+const aiAssistantNoindex = /(^|[,\s])noindex([,\s]|$)/.test(aiAssistantRobots);
+
+const homeResult = await fetchText("/");
+const homeSiteName = readMeta(homeResult.body, "og:site_name");
+const homeLcpImageTag = homeResult.body.match(/<img\b[^>]*class=[\"']lawyer-photo-image[\"'][^>]*>/i)?.[0] || "";
+const homeLcpHighPriority = /fetchpriority=[\"']high[\"']/i.test(homeLcpImageTag);
+const homeLcpEager = /loading=["\']eager["\']/i.test(homeLcpImageTag);
+const aboutResult = await fetchText("/about");
+const aboutLcpImageTag = aboutResult.body.match(/<img\b[^>]*alt=[\"']تصویر سید احمد موسوی[^>]*>/i)?.[0] || "";
+const aboutLcpHighPriority = /fetchpriority=[\"']high[\"']/i.test(aboutLcpImageTag);
+const aboutLcpEager = /loading=["\']eager["\']/i.test(aboutLcpImageTag);
+const cityChipAccessible = /aria-label=[\"']اهواز، مرکز، انتخاب شهر و رفتن به فرم درخواست[\"']/i.test(homeResult.body);
+const homeLinkTags = homeResult.body.match(/<link\b[^>]*>/gi) || [];
+const fontPreconnect = homeLinkTags.some((tag) =>
+  /\brel=["']preconnect["']/i.test(tag) &&
+  /\bhref=["']https:\/\/cdn\.jsdelivr\.net["']/i.test(tag)
+);
+const fontPreload = homeLinkTags.some((tag) =>
+  /\brel=["']preload["']/i.test(tag) &&
+  /\bas=["']font["']/i.test(tag) &&
+  /\btype=["']font\/woff2["']/i.test(tag) &&
+  /Vazirmatn(?:%5B|\[)wght(?:%5D|\])\.woff2/i.test(tag)
+);
+
+const jsonLdBlocks = [...homeResult.body.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
+let websiteSchemaName = null;
+for (const match of jsonLdBlocks) {
+  try {
+    const data = JSON.parse(match[1]);
+    const nodes = Array.isArray(data["@graph"]) ? data["@graph"] : [data];
+    websiteSchemaName = nodes.find((node) => node["@type"] === "WebSite")?.name || websiteSchemaName;
+  } catch {
+    // Ignore unrelated or malformed blocks here; schema validation is handled separately.
+  }
+}
+
 const results = [];
 let cursor = 0;
 async function worker() {
@@ -87,6 +156,21 @@ async function worker() {
     }
   }
 }
+
+console.log("\\n===== PUBLIC CANONICALS =====");
+console.log("CHECKED:", canonicalResults.length);
+console.log("CANONICAL MISMATCHES:", canonicalResults.filter((item) => item.status !== 200 || item.actualPath !== item.path).length);
+console.log("AI ASSISTANT NOINDEX:", aiAssistantNoindex);
+console.log("AI ASSISTANT CANONICAL:", aiAssistantCanonical);
+console.log("HOME OG SITE NAME:", homeSiteName);
+console.log("HOME WEB SITE SCHEMA NAME:", websiteSchemaName);
+console.log("HOME LCP IMAGE PRIORITY:", homeLcpHighPriority);
+console.log("ABOUT LCP IMAGE PRIORITY:", aboutLcpHighPriority);
+console.log("FEATURED CITY ACCESSIBLE LABEL:", cityChipAccessible);
+console.log("FONT CDN PRECONNECT:", fontPreconnect);
+console.log("FONT RESOURCE PRELOAD:", fontPreload);
+console.log("HOME LCP EAGER:", homeLcpEager);
+console.log("ABOUT LCP EAGER:", aboutLcpEager);
 
 console.log("BASE URL:", baseUrl);
 console.log("LEGAL LIBRARY ROUTES IN BUILD:", routes.length);
@@ -132,11 +216,25 @@ console.log("HTTP:", robotsResult.response.status);
 console.log("OAI-SearchBot POLICY PRESENT:", /OAI-SearchBot/i.test(robotsResult.body));
 console.log("GPTBot POLICY PRESENT:", /GPTBot/i.test(robotsResult.body));
 
+const canonicalMismatches = canonicalResults.filter((item) =>
+  item.status !== 200 || item.actualPath !== item.path
+);
+const aiAssistantInSitemap = sitemapUrls.some((url) => {
+  try { return new URL(url).pathname === "/ai-assistant"; } catch { return false; }
+});
+const siteNameMismatch = !homeSiteName || !websiteSchemaName || homeSiteName !== websiteSchemaName;
+
 if (failed.length || noindexMissing.length || sitemapResult.response.status !== 200 ||
-    unverifiedInSitemap.length || robotsResult.response.status !== 200) {
+    unverifiedInSitemap.length || robotsResult.response.status !== 200 ||
+    canonicalMismatches.length || aiAssistantResult.response.status !== 200 ||
+    !aiAssistantNoindex || aiAssistantCanonical !== "/ai-assistant" ||
+    aiAssistantInSitemap || siteNameMismatch ||
+    !homeLcpHighPriority || !aboutLcpHighPriority || !homeLcpEager ||
+    !aboutLcpEager || !cityChipAccessible ||
+    !fontPreconnect || !fontPreload) {
   if (failed.length && routes.length) {
     console.log("\nPOSSIBLE STALE SERVER BUILD: the build manifest contains these routes, but the running server does not serve them. Stop the old Next.js server, build the current branch, then start the production server again.");
   }
   process.exit(1);
 }
-console.log("\nLEGAL LIBRARY HTTP CHECK PASSED");
+console.log("\nPUBLIC SEO AND LEGAL LIBRARY HTTP CHECK PASSED");
