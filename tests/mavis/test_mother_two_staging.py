@@ -98,7 +98,7 @@ class MotherTwoStagingTests(unittest.TestCase):
             result = stage_archive(archive_path, inventory_path, output_parent, dry_run=True)
 
             self.assertEqual(result["status"], "dry_run_verified")
-            self.assertEqual(result["selected_files"], 4)
+            self.assertEqual(result["selected_files"], 6)
             self.assertEqual(result["secret_content_candidates"], 1)
             self.assertEqual(result["eligible_after_content_scan"], 5)
             self.assertEqual(result["staged_files"], 0)
