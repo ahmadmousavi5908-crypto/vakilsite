@@ -1,6 +1,7 @@
 const API_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_TIMEOUT_MS = 30000;
 const MAX_TIMEOUT_MS = 60000;
+const TRUSTED_PRIMARY_HOSTS = new Set(["rrk.ir", "qavanin.ir", "rc.majlis.ir"]);
 
 function isPlainObject(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
@@ -51,7 +52,9 @@ function normalizeKnowledgeContext(value) {
         throw new Error("Invalid verified primary citation.");
       }
       const url = new URL(citation.url);
-      if (url.protocol !== "https:" || url.username || url.password || url.port) {
+      const host = url.hostname.toLowerCase().replace(/\\.$/, "");
+      const trustedHost = [...TRUSTED_PRIMARY_HOSTS].some((trusted) => host === trusted || host.endsWith("." + trusted));
+      if (url.protocol !== "https:" || url.username || url.password || url.port || !trustedHost) {
         throw new Error("Invalid verified primary citation URL.");
       }
       return {
@@ -103,7 +106,9 @@ export function createOpenAIResponsesProvider({
     ? timeoutMs
     : DEFAULT_TIMEOUT_MS;
 
-  if (!secret || !modelName || typeof fetchImpl !== "function") {
+  if (!secret || /[\\u0000-\\u001f\\u007f]/.test(secret) ||
+      !/^[a-zA-Z0-9][a-zA-Z0-9._-]{0,100}$/.test(modelName) ||
+      typeof fetchImpl !== "function") {
     throw new Error("OpenAI Responses provider configuration is incomplete.");
   }
 
@@ -119,6 +124,7 @@ export function createOpenAIResponsesProvider({
       if (typeof instructions !== "string" || !instructions.trim() ||
           !isPlainObject(responseSchema) ||
           typeof responseSchema.name !== "string" ||
+          !/^[a-z][a-z0-9_]{0,63}$/.test(responseSchema.name) ||
           !isPlainObject(responseSchema.schema)) {
         throw new Error("Invalid MAVIS provider contract.");
       }
