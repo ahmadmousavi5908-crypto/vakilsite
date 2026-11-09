@@ -13,6 +13,8 @@ Research snapshot: 2026-11-09. Re-check official documentation before implementa
 - Sitemap guidelines: https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
 - News sitemap: https://developers.google.com/search/docs/crawling-indexing/sitemaps/news-sitemap
 - Search Console Search Analytics API: https://developers.google.com/webmaster-tools/v1/searchanalytics/query
+- Generative AI performance report (Search Console UI): https://support.google.com/webmasters/answer/16984139
+- Official announcement (worldwide rollout from 2026-08-31): https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports
 - Search Console quotas: https://developers.google.com/webmaster-tools/limits
 - Core Web Vitals: https://web.dev/articles/vitals
 
