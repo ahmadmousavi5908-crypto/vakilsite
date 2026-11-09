@@ -60,6 +60,22 @@ export function isSourceRegistryReferenceConsistent(source, sourceRegistry) {
   return sourceHost === registryHost || sourceHost.endsWith(`.${registryHost}`);
 }
 
+export function isLiveAccessEvidenceComplete(source) {
+  if (!source || source.live_access_checked === false) return !source?.access_check;
+  if (source.live_access_checked !== true) return false;
+
+  const evidence = source.access_check;
+  return Boolean(
+    evidence &&
+    evidence.result === "reachable" &&
+    evidence.scope === "landing_page_only" &&
+    isValidCalendarDate(evidence.checked_on) &&
+    evidence.evidence_url === source.url &&
+    hasText(evidence.notes) &&
+    /^https:\/\//i.test(evidence.evidence_url)
+  );
+}
+
 export function isPrimaryVerificationComplete(record, sourceRegistry) {
   if (!record || record.review_status !== "verified_primary_source") return false;
 

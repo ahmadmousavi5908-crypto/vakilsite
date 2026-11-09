@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0.0",
   "library_version": "1.3.2",
-  "offline_bundle_version": "1.0.0",
-  "generated_at": "2026-11-08",
+  "offline_bundle_version": "1.0.1",
+  "generated_at": "2026-11-09",
   "jurisdiction": "IR",
   "language": "fa-IR",
   "source_review_date": "2026-11-01",
@@ -6646,24 +6646,31 @@
     {
       "id": "src_official_judiciary_gateway",
       "name": "درگاه ملی قوه قضاییه (عدلیه)",
-      "url": "https://eadil.com/",
+      "url": "https://eadl.ir/",
       "class": "official_judiciary_gateway",
       "authority": "درگاه رسمی معرفی ساختار و سامانه‌های قوه قضاییه",
-      "use": "کشف درگاه‌های رسمی قوانین، نظریات مشورتی، آرای وحدت رویه، آرای هیأت عمومی دیوان عدالت اداری و سامانه ملی آرای قضایی؛ صفحه تجمیعی جایگزین سند اصلی نیست",
+      "use": "کشف درگاه‌ها و سامانه‌های رسمی از طریق پیوندهای نهادی سامانه ملی آرا؛ صفحه تجمیعی جایگزین سند اصلی نیست و دسترسی مستقیم به این درگاه در بررسی 2026-11-09 تأیید نشد.",
       "priority": 1,
       "live_access_checked": false,
-      "evidence_url": "https://eadil.com/"
+      "evidence_url": "https://ara.jri.ac.ir/"
     },
     {
       "id": "src_national_judicial_decisions",
       "name": "سامانه ملی آرای قضایی",
       "url": "https://ara.jri.ac.ir/",
       "class": "official_judicial_decisions_portal",
-      "authority": "سامانه ملی آرای قضایی معرفی‌شده از طریق درگاه ملی قوه قضاییه",
+      "authority": "سامانه ملی آرای قضایی با هویت نهادی پژوهشگاه قوه قضاییه؛ پیوندهای نهادی و نشان حقوقی در صفحه اصلی قابل مشاهده است",
       "use": "کشف و بررسی آرای منتشرشده؛ نوع رأی، مرجع، تاریخ، قطعیت و اثر حقوقی باید برای هر سند جداگانه ثبت شود",
       "priority": 1,
-      "live_access_checked": false,
-      "evidence_url": "https://eadil.com/"
+      "live_access_checked": true,
+      "evidence_url": "https://ara.jri.ac.ir/",
+      "access_check": {
+        "result": "reachable",
+        "scope": "landing_page_only",
+        "checked_on": "2026-11-09",
+        "evidence_url": "https://ara.jri.ac.ir/",
+        "notes": "صفحه اصلی و رابط جست‌وجو، دسته‌بندی مراجع، تاریخ آخرین انتشار و پیوندهای نهادی مشاهده شد؛ متن هیچ رأی منفرد، قطعیت یا اثر حقوقی آن در این بررسی تأیید نشد."
+      }
     },
     {
       "id": "src_tasnim_news",
@@ -6716,7 +6723,7 @@
       "live_access_checked": false
     }
   ],
-  "registry_review_date": "2026-11-08",
+  "registry_review_date": "2026-11-09",
   "provenance_policy": {
     "version": "1.0.0",
     "jurisdiction": "IR",

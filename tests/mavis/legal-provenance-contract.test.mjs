@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  isLiveAccessEvidenceComplete,
   isPrimaryVerificationComplete,
   isSourceRegistryReferenceConsistent,
 } from "../../src/lib/mavis/legal-provenance-contract.mjs";
@@ -117,4 +118,38 @@ test("rejects unverified records without treating them as failures", () => {
   const record = validRecord();
   record.review_status = "needs_legal_review";
   assert.equal(isPrimaryVerificationComplete(record, validRegistry()), false);
+});
+
+test("accepts a dated landing-page reachability check without implying legal verification", () => {
+  const source = {
+    id: "src_judicial",
+    url: "https://ara.jri.ac.ir/",
+    live_access_checked: true,
+    access_check: {
+      result: "reachable",
+      scope: "landing_page_only",
+      checked_on: "2026-11-09",
+      evidence_url: "https://ara.jri.ac.ir/",
+      notes: "Search interface and institutional footer were visible; individual judgments were not verified.",
+    },
+  };
+  assert.equal(isLiveAccessEvidenceComplete(source), true);
+});
+
+test("rejects live-access flags without complete or matching evidence", () => {
+  const missing = { id: "src", url: "https://example.com/", live_access_checked: true };
+  assert.equal(isLiveAccessEvidenceComplete(missing), false);
+  const wrongUrl = {
+    id: "src", url: "https://example.com/", live_access_checked: true,
+    access_check: {
+      result: "reachable", scope: "landing_page_only", checked_on: "2026-11-09",
+      evidence_url: "https://other.example/", notes: "A page was visible.",
+    },
+  };
+  assert.equal(isLiveAccessEvidenceComplete(wrongUrl), false);
+});
+
+test("requires explicit false when no live access check has been performed", () => {
+  assert.equal(isLiveAccessEvidenceComplete({ id: "src", url: "https://example.com/", live_access_checked: false }), true);
+  assert.equal(isLiveAccessEvidenceComplete({ id: "src", url: "https://example.com/" }), false);
 });

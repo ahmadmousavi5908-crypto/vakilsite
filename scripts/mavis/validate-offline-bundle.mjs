@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import {
+  isLiveAccessEvidenceComplete,
   isPrimaryVerificationComplete,
   isSourceRegistryReferenceConsistent,
 } from "../../src/lib/mavis/legal-provenance-contract.mjs";
@@ -57,7 +58,7 @@ for (const record of bundle.records) {
 
 for (const source of bundle.source_registry) {
   if (!/^https:\/\//i.test(source.url || "")) fail("Non-HTTPS registry URL: " + source.id);
-  if (source.live_access_checked !== false) fail("Live access state must remain explicit: " + source.id);
+  if (!isLiveAccessEvidenceComplete(source)) fail("Live access status lacks a valid, scoped evidence record: " + source.id);
 }
 
 if (bundle.counts.source_registry !== bundle.source_registry.length) fail("Source registry count mismatch.");
