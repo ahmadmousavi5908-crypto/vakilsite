@@ -1,4 +1,4 @@
-# Legal Source Review Pilot — Civil Code — 2026-11-09
+# Legal Source Review Pilot — Civil Code — 2026-11-08
 
 **Record:** `law_civil_code`  
 **Related records:** `art_civil_code_1284`, `term_official_document`, `term_ordinary_document`  
@@ -16,11 +16,7 @@ The existing offline corpus includes the Civil Code and article-level concepts a
 4. Adlio and other legal publishers reproduce the text of Articles 1284–1293, but these are secondary copies. They can help identify the target provisions, not prove the current official text or amendment history.
 5. The available public secondary pages are not sufficient to establish the full current validity of the Civil Code, all amendments, repeals, constitutional review effects, or transitional rules.
 
-## 3. Access recheck — 2026-11-09
-
-The direct Qavanin law-tree and print-text URLs discovered through the secondary index did not return a retrievable instrument in this research environment. The official Gazette URL likewise did not provide a document response. This is an access limitation, not evidence that the statute or portal is unavailable generally. No official text, amendment chain, or legal validity was verified in this recheck.
-
-## 4. Evidence status
+## 3. Evidence status
 
 | Evidence item | Result |
 |---|---|
@@ -32,7 +28,7 @@ The direct Qavanin law-tree and print-text URLs discovered through the secondary
 | Named legal reviewer sign-off | Pending |
 | Corpus verification status | Remains `secondary_source_only` |
 
-## 5. Required next action
+## 4. Required next action
 
 - Retry the official Majlis Research Center link through a human browser or obtain an official Gazette scan/record.
 - Capture the exact original publication and every relevant amending instrument, with publication identifiers and effective dates.
@@ -40,13 +36,13 @@ The direct Qavanin law-tree and print-text URLs discovered through the secondary
 - Hash the retrieved files and attach immutable provenance metadata to the existing law/article records.
 - Obtain named lawyer review before any record is marked verified or made eligible for authoritative answer retrieval.
 
-## 6. Safety decision
+## 5. Safety decision
 
 Do not copy the secondary text into the corpus as verified law. Do not change `exact_primary_document_verified` or `current_validity_verified` to true. Keep the record excluded from authoritative retrieval until the required evidence exists.
 
 ## Sources checked
 
-- Lawlex index and its displayed official-source discovery link: https://lawlex.ir/laws/madani
+- Lawlex index and its displayed official-source link: https://lawlex.ir/laws/madani
 - Official Majlis Research Center target (timed out during this review): https://rc.majlis.ir/fa/law/show/97937
 - Official National Laws and Regulations portal (redirect only in this review environment): https://qavanin.ir/
 - Official Gazette homepage (timed out during this review): https://www.rrk.ir/
