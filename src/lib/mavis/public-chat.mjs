@@ -7,6 +7,7 @@ import {
 } from "./public-policy.mjs";
 import { triageLegalIntake } from "./legal-intake-triage.mjs";
 import { transitionPublicConversation } from "./conversation-state.mjs";
+import { createConfiguredMavisProvider } from "./provider-factory.mjs";
 
 const TRUSTED_PRIMARY_HOSTS = new Set(["rrk.ir", "qavanin.ir", "rc.majlis.ir"]);
 const URGENT_REVIEW_MESSAGE = "شرح شما نشانه‌ای دارد که ممکن است نیازمند بررسی فوری وکیل باشد. اگر ابلاغیه، جلسه، بازداشت یا خطر جانی مطرح است، بدون انتظار برای پاسخ سامانه با وکیل یا مرجع امدادی/قضایی صالح تماس بگیرید. ماویس مهلت قانونی را محاسبه نمی‌کند و این پیام جایگزین اقدام فوری نیست.";
@@ -201,17 +202,18 @@ export async function runPublicChat({
     return needsHumanReview("NO_VERIFIED_PRIMARY_EVIDENCE", NO_VERIFIED_EVIDENCE_MESSAGE);
   }
 
-  if (config.provider === "unavailable" || !provider || typeof provider.generate !== "function") {
+  const activeProvider = provider || createConfiguredMavisProvider(env);
+  if (config.provider === "unavailable" || !activeProvider || typeof activeProvider.generate !== "function") {
     throw new MavisError("SERVICE_UNAVAILABLE", "ارائه‌دهنده دستیار آماده نیست.", 503);
   }
-  if (provider.name !== config.provider) {
+  if (activeProvider.name !== config.provider) {
     throw new MavisError("PROVIDER_MISMATCH", "ارائه‌دهنده پیکربندی‌شده در دسترس نیست.", 503);
   }
 
   const trustedHistory = normalizeTrustedConversationHistory(history);
   let result;
   try {
-    result = await provider.generate({
+    result = await activeProvider.generate({
       instructions: PUBLIC_ASSISTANT_INSTRUCTIONS,
       messages: [...trustedHistory, { role: "user", content: request.message }],
       knowledgeContext,
@@ -240,7 +242,7 @@ export async function runPublicChat({
     }),
     answer,
     citations,
-    provider: provider.name,
+    provider: activeProvider.name,
     evidenceMode: "verified_primary_only",
     requiresHumanReview: true,
     deadlineCalculated: false,

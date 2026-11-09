@@ -5,6 +5,7 @@ import { readFile } from "node:fs/promises";
 const root = new URL("../../public/mavis-offline/", import.meta.url);
 const connectivityRoute = await readFile(new URL("../../src/app/api/mavis/connectivity/route.js", import.meta.url), "utf8");
 const knowledge = JSON.parse(await readFile(new URL("../../public/mavis-offline/knowledge.json", import.meta.url), "utf8"));
+const publishedArticles = JSON.parse(await readFile(new URL("../../public/mavis-offline/published-articles.json", import.meta.url), "utf8"));
 
 const [html, app, worker] = await Promise.all([
   readFile(new URL("index.html", root), "utf8"),
@@ -33,7 +34,7 @@ test("network status changes are announced to assistive technology", () => {
 });
 
 test("offline service worker precaches every runtime dependency", () => {
-  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json"]) {
+  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "published-articles.json"]) {
     assert.ok(worker.includes("/mavis-offline/" + asset), "missing precache asset: " + asset);
   }
   assert.match(worker, /cache\.addAll\(ASSETS\)/);
@@ -41,7 +42,7 @@ test("offline service worker precaches every runtime dependency", () => {
 });
 
 test("offline cache reads stay inside the versioned MAVIS cache", () => {
-  assert.match(worker, /const CACHE_NAME = "mavis-offline-v1\.1\.0-/);
+  assert.match(worker, /const CACHE_NAME = "mavis-offline-v1\.2\.0-/);
   assert.match(worker, /caches\.open\(CACHE_NAME\)[\s\S]*?cache\.match\(request\)/);
   assert.doesNotMatch(worker, /caches\.match\(/);
 });
@@ -76,6 +77,7 @@ test("offline public bundle contains no client credentials or intake identity fi
     }
   };
   visit(knowledge);
+  visit(publishedArticles);
 });
 
 test("offline service worker is scoped to the public knowledge route and does not cache private APIs", () => {
@@ -88,4 +90,22 @@ test("offline page clearly limits the guarantee to the cached route and download
   assert.match(html, /یک‌بار با اینترنت باز کنید/);
   assert.match(html, /ثبت درخواست و ارسال مدارک بدون اتصال انجام نمی‌شود/);
   assert.match(html, /noindex,follow/);
+});
+
+
+test("offline public assistant merges generated published articles into the local corpus", () => {
+  assert.match(app, /PUBLISHED_ARTICLES_URL/);
+  assert.match(app, /publishedBundle\.records/);
+  assert.match(app, /record\.review_status!=="secondary_source_only"/);
+  assert.match(app, /published_article:"مقاله آموزشی سایت/);
+  assert.equal(publishedArticles.records.length, publishedArticles.counts.published_articles);
+  assert.ok(publishedArticles.records.every((record) => record.review_status === "secondary_source_only"));
+});
+
+
+test("offline published article results expose the full educational text accessibly", () => {
+  assert.match(app, /article-fulltext/);
+  assert.match(app, /مطالعه متن کامل آموزشی/);
+  assert.match(app, /item\.record_type==="published_article"&&item\.definition/);
+  assert.match(app, /if\(item\.warning\)/);
 });

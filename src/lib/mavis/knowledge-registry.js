@@ -1,10 +1,17 @@
 import "server-only";
 
+import { articles as publishedArticles } from "../../data/articles.js";
+import sourceReviewReport from "../../data/legal-library/reports/source-review.json";
 import {
   getLegalRecordTitle,
   legalLibraryCollections,
 } from "../legal-library.js";
 import { searchLegalRecords } from "./knowledge-search.mjs";
+import { buildPublishedArticleRecords } from "./published-article-adapter.mjs";
+import { buildLegalResearchNoteRecords } from "./legal-research-note-adapter.mjs";
+
+const publishedArticleRecords = buildPublishedArticleRecords(publishedArticles);
+const legalResearchNoteRecords = buildLegalResearchNoteRecords(sourceReviewReport);
 
 const searchableRecords = [
   ...legalLibraryCollections.terms.map((record) => ({
@@ -22,12 +29,13 @@ const searchableRecords = [
     record_type: "article",
     title: getLegalRecordTitle("articles", record),
   })),
+  ...publishedArticleRecords,
+  ...legalResearchNoteRecords,
 ].filter((record) => record.review_status !== "draft");
 
 /**
- * Searches the existing public legal library without creating a second corpus.
- * Results retain review status and source metadata; they are retrieval results,
- * not legal opinions or confirmation that a source is currently in force.
+ * Searches the existing legal library, published site articles and canonical
+ * source-review notes. Articles and research notes remain secondary material.
  */
 export function searchMavisKnowledge(query, limit = 10) {
   return searchLegalRecords({
@@ -41,8 +49,10 @@ export function getMavisKnowledgeInventory() {
   return {
     terms: legalLibraryCollections.terms.length,
     laws: legalLibraryCollections.laws.length,
-    articles: legalLibraryCollections.articles.length,
+    legalArticles: legalLibraryCollections.articles.length,
+    publishedArticles: publishedArticleRecords.length,
+    researchNotes: legalResearchNoteRecords.length,
     searchable: searchableRecords.length,
-    source: "src/data/legal-library",
+    sources: ["src/data/legal-library", "src/data/legal-library/reports/source-review.json", "src/data/articles.js"],
   };
 }

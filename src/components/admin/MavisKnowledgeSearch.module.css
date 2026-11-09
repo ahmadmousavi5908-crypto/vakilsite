@@ -24,6 +24,7 @@
 .review{font-size:9px;color:#687785}
 .result h3{font-size:14px;color:#1a344b;margin:10px 0 6px;line-height:1.9}
 .excerpt{font-size:11px;color:#566675;line-height:2.15;margin:0}
+.noteCaution{margin:10px 0 0;padding:9px 11px;border-right:3px solid #b99a63;background:#faf8f2;color:#705b3b;font-size:10px;line-height:2}.noteCaution strong{color:#5b482b}
 .meta{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px;color:#89939d;font-size:9px}
 .sources{border-top:1px solid #edf0f3;margin-top:13px;padding-top:10px}
 .sources>strong{font-size:10px;color:#43566a}

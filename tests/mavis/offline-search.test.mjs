@@ -107,3 +107,36 @@ test("research notes retain secondary-only status and conservative provenance", 
   assert.ok(notes.every((record) => record.provenance.current_validity_verified === false));
   assert.ok(notes.every((record) => record.sources.length > 0));
 });
+
+
+import { buildOfflineAnswer } from "../../public/mavis-offline/answer.mjs";
+const publishedBundle = JSON.parse(await readFile(new URL("../../public/mavis-offline/published-articles.json", import.meta.url), "utf8"));
+
+test("offline published article bundle matches its canonical generated collection", () => {
+  assert.ok(publishedBundle.records.length > 0);
+  assert.equal(publishedBundle.counts.published_articles, publishedBundle.records.length);
+  assert.ok(publishedBundle.records.every((record) => record.record_type === "published_article"));
+  assert.ok(publishedBundle.records.every((record) => record.review_status === "secondary_source_only"));
+  assert.ok(publishedBundle.records.every((record) => record.source_verified === false));
+  assert.ok(publishedBundle.records.every((record) => record.provenance.current_validity_verified === false));
+});
+
+test("offline search retrieves published article text but labels it as secondary material", () => {
+  const article = publishedBundle.records[0];
+  const results = rankOfflineRecords(article.title, publishedBundle.records);
+  assert.equal(results[0].id, article.id);
+  const answer = buildOfflineAnswer(article.title, results);
+  assert.equal(answer.reviewStatus, "secondary_source_only");
+  assert.match(answer.sourceStatus, /منابع ثانویه/);
+  assert.equal(answer.caution, article.warning);
+});
+
+test("offline published article citations remain HTTPS secondary references", () => {
+  for (const record of publishedBundle.records) {
+    for (const source of record.sources) {
+      assert.match(source.url, /^https:\/\//);
+      assert.equal(source.source_type, "secondary");
+      assert.equal(source.verification_status, "secondary_source_only");
+    }
+  }
+});

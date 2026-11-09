@@ -18,7 +18,8 @@ function resolveSourceClass(record) {
   }
 
   if (record.record_type === "law") return "statute";
-  if (record.record_type === "article") return "educational_summary";
+  if (record.record_type === "article" || record.record_type === "published_article") return "educational_summary";
+  if (record.record_type === "research_note") return "research_note";
   if (record.record_type === "term") return "legal_term";
   return "unclassified";
 }

@@ -14,6 +14,7 @@ const SOURCE_CLASSES = new Set([
   "official_guidance",
   "legal_term",
   "educational_summary",
+  "research_note",
 ]);
 
 const REQUIRED_FIELDS = Object.freeze({
@@ -30,6 +31,7 @@ const REQUIRED_FIELDS = Object.freeze({
   official_guidance: ["issuing_authority", "document_number", "publication_date", "exact_citation"],
   legal_term: ["canonical", "definition"],
   educational_summary: ["law_id", "article_number", "summary", "exact_citation"],
+  research_note: ["review_date", "notes"],
 });
 
 const LABELS = Object.freeze({
@@ -46,6 +48,7 @@ const LABELS = Object.freeze({
   official_guidance: "دستورالعمل‌ها و راهنمای رسمی",
   legal_term: "اصطلاحات حقوقی",
   educational_summary: "خلاصه‌های آموزشی مواد قانونی",
+  research_note: "یادداشت‌های پژوهش و کشف منبع",
 });
 
 function hasValue(record, key) {

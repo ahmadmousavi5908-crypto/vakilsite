@@ -18,6 +18,8 @@ const typeLabels = {
   term: "اصطلاح حقوقی",
   law: "قانون",
   article: "خلاصه ماده",
+  published_article: "مقاله آموزشی سایت",
+  research_note: "یادداشت پژوهشی ثانویه",
 };
 
 const matchedFieldLabels = {
@@ -66,6 +68,7 @@ const dossierSectionLabels = {
   official_guidance: "راهنمای رسمی",
   legal_term: "اصطلاحات",
   educational_summary: "خلاصه مواد",
+  research_note: "یادداشت پژوهشی",
   unclassified: "دسته‌بندی‌نشده",
 };
 
@@ -138,7 +141,7 @@ export default function MavisKnowledgeSearch() {
         <div>
           <span className={styles.eyebrow}>FIRST-PARTY KNOWLEDGE RETRIEVAL</span>
           <h2 id="mavis-search-title">جست‌وجوی کتابخانه حقوقی</h2>
-          <p>جست‌وجوی قطعی در اصطلاحات، قوانین و خلاصه مواد موجود؛ بدون وابستگی به توکن یا سرویس هوش مصنوعی خارجی.</p>
+          <p>جست‌وجوی قطعی در اصطلاحات، قوانین، خلاصه مواد، مقالات منتشرشده و یادداشت‌های پژوهشی ثانویه؛ بدون وابستگی به توکن یا سرویس هوش مصنوعی خارجی.</p>
         </div>
         <span className={styles.mark} aria-hidden="true">م</span>
       </div>
@@ -214,6 +217,9 @@ export default function MavisKnowledgeSearch() {
                 </div>
                 <h3>{record.title || record.canonical || "مدخل بدون عنوان"}</h3>
                 {excerpt && <p className={styles.excerpt}>{excerpt}</p>}
+                {record.record_type === "research_note" && record.notes && (
+                  <p className={styles.noteCaution}><strong>محدودیت منبع:</strong> {record.notes}</p>
+                )}
                 <div className={styles.evidencePanel}>
                   <div className={styles.evidenceHeader}>
                     <strong>وضعیت مستندات و اعتبار</strong>

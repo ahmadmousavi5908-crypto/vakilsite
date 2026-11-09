@@ -355,3 +355,25 @@ test("does not trust an evidence state without record-level verification flags",
   assert.equal(result.reasonCode, "NO_VERIFIED_PRIMARY_EVIDENCE");
   assert.equal(providerCalled, false);
 });
+
+
+test("resolves the configured mock provider on the server when no provider is injected", async () => {
+  const result = await runPublicChat({
+    input: { message: "برای تنظیم قرارداد مشارکت راهنمایی عمومی می‌خواهم." },
+    retrieve: verifiedRetriever(),
+    env: enabledEnv,
+  });
+  assert.equal(result.status, "needs_human_review");
+  assert.equal(result.reasonCode, "UNVERIFIED_ANSWER");
+});
+
+test("fails closed when OpenAI is selected but server credentials are missing", async () => {
+  await assert.rejects(
+    () => runPublicChat({
+      input: { message: "برای تنظیم قرارداد مشارکت راهنمایی عمومی می‌خواهم." },
+      retrieve: verifiedRetriever(),
+      env: { MAVIS_PUBLIC_ENABLED: "true", MAVIS_PROVIDER: "openai" },
+    }),
+    (error) => error.code === "SERVICE_UNAVAILABLE" && error.status === 503,
+  );
+});

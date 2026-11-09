@@ -16,6 +16,7 @@ const lintTargets = [
   "src/app/admin/mavis",
   "src/components/admin/MavisIntakeInbox.jsx",
   "src/components/admin/MavisKnowledgeSearch.jsx",
+  "src/components/admin/MavisSearchConsolePanel.jsx",
   "src/components/public/MavisPublicIntakeForm.jsx",
   "scripts/mavis",
   ...testFiles,
@@ -23,9 +24,19 @@ const lintTargets = [
 
 const steps = [
   {
+    label: "Generate the offline published article bundle",
+    command: process.execPath,
+    args: ["scripts/mavis/generate-offline-published-articles.mjs"],
+  },
+  {
     label: "Validate the canonical legal library",
     command: "python3",
     args: ["src/data/legal-library/validation/validate_library.py"],
+  },
+  {
+    label: "Test read-only Mother Two inventory and quarantine staging",
+    command: "npm",
+    args: ["run", "test:mavis-mother-two-staging"],
   },
   {
     label: "Run all MAVIS Node.js tests",

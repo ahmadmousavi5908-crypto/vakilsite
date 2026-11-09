@@ -31,6 +31,8 @@ export default async function MavisAdminPage() {
         <nav className="admin-nav" aria-label="منوی مدیریت">
           <Link href="/admin">داشبورد</Link>
           <Link className="active" href="/admin/mavis">مرکز دانش MAVIS</Link>
+          <Link href="/admin/mavis/growth">هوشمندی رشد و محتوا</Link>
+          <Link href="/admin/mavis/articles">فهرست مقالات</Link>
           <a href="#mavis-intake-inbox">صندوق درخواست‌های اولیه</a>
           <a href="#knowledge-search">پژوهش حقوقی</a>
         </nav>
@@ -57,7 +59,7 @@ export default async function MavisAdminPage() {
           <section className="admin-stats">
             <article><span>اصطلاحات حقوقی</span><strong>{inventory.terms.toLocaleString("fa-IR")}</strong><small>از کتابخانه موجود</small></article>
             <article><span>قوانین ثبت‌شده</span><strong>{inventory.laws.toLocaleString("fa-IR")}</strong><small>همراه با وضعیت بررسی</small></article>
-            <article><span>خلاصه مواد</span><strong>{inventory.articles.toLocaleString("fa-IR")}</strong><small>مرتبط با قانون مادر</small></article>
+            <article><span>مقالات و خلاصه‌ها</span><strong>{(inventory.legalArticles + inventory.publishedArticles + inventory.researchNotes).toLocaleString("fa-IR")}</strong><small>{inventory.legalArticles.toLocaleString("fa-IR")} خلاصه ماده · {inventory.publishedArticles.toLocaleString("fa-IR")} مقاله سایت · {inventory.researchNotes.toLocaleString("fa-IR")} یادداشت پژوهشی</small></article>
           </section>
 
           <MavisIntakeInbox />
