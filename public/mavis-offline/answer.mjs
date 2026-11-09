@@ -21,9 +21,25 @@ const FOLLOW_UPS = [
   }
 ];
 
+function hasValidReviewDate(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(value + "T00:00:00Z");
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+function currentValidityVerified(record) {
+  return record?.review_status === "verified_primary_source"
+    && record?.provenance?.exact_primary_document_verified === true
+    && record?.provenance?.current_validity_verified === true
+    && hasValidReviewDate(record?.provenance?.last_primary_source_check);
+}
+
 function sourceStatus(record) {
   if (record?.review_status === "verified_primary_source" && record?.provenance?.exact_primary_document_verified === true) {
-    return "این مدخل با سند اولیه تطبیق و تأیید شده است.";
+    if (currentValidityVerified(record)) {
+      return "سند اولیه بررسی شده و وضعیت اعتبار فعلی نیز در تاریخ ثبت‌شده کنترل شده است.";
+    }
+    return "سند اولیه بررسی شده است؛ اما وضعیت اعتبار فعلی و اصلاحات بعدی هنوز به‌طور مستقل تأیید نشده است.";
   }
   if (record?.review_status === "secondary_source_only") {
     return "این مدخل فعلاً بر منابع ثانویه متکی است؛ متن رسمی و وضعیت روز باید جداگانه بررسی شود.";
@@ -61,7 +77,7 @@ export function buildOfflineAnswer(query, rankedRecords) {
     caution: String(best.notes || best.warning || "این خروجی بازیابی اطلاعات عمومی است؛ تفسیر قانون و انطباق آن با پرونده باید توسط وکیل انجام شود."),
     recordId: best.id,
     reviewStatus: best.review_status || "unknown",
-    currentValidityVerified: best?.provenance?.current_validity_verified === true,
+    currentValidityVerified: currentValidityVerified(best),
     sources: (Array.isArray(best.sources) ? best.sources : []).filter((source) => typeof source?.url === "string" && /^https:\/\//i.test(source.url)),
   };
 }
