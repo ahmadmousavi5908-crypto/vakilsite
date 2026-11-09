@@ -37,6 +37,10 @@ for command_name in curl sha256sum tar proot-distro gh; do
   command -v "$command_name" >/dev/null 2>&1 || fail "ابزار لازم نصب نشد: $command_name"
 done
 
+if (echo > /dev/tcp/127.0.0.1/3002) >/dev/null 2>&1; then
+  fail "پورت 3002 از قبل در حال استفاده است؛ ابتدا سرویس قبلی را متوقف کنید."
+fi
+
 mkdir -p "$DOWNLOAD_DIR"
 chmod 700 "$DOWNLOAD_DIR"
 
@@ -88,6 +92,7 @@ fi
 
 "$NODE_ROOT/bin/node" -e "const [a,b]=process.versions.node.split(\".\").map(Number); if(a<20 || (a===20 && b<9)) process.exit(1)"
 mkdir -p "$(dirname "$APP_ROOT")"
+[[ ! -L /opt/mavis && ! -L "$APP_ROOT" ]] || { echo "Runtime path must not be a symlink." >&2; exit 1; }
 if [[ -d "$APP_ROOT" ]]; then
   [[ -f "$APP_ROOT/runtime-manifest.json" && -d "$APP_ROOT/.next" && -d "$APP_ROOT/node_modules/next" && -d "$APP_ROOT/public" ]] || { echo "An incomplete runtime directory exists; refusing to overwrite it." >&2; exit 1; }
 else
