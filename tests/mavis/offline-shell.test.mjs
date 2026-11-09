@@ -91,3 +91,13 @@ test("offline page clearly limits the guarantee to the cached route and download
   assert.match(html, /ثبت درخواست و ارسال مدارک بدون اتصال انجام نمی‌شود/);
   assert.match(html, /noindex,follow/);
 });
+
+
+test("offline public assistant merges generated published articles into the local corpus", () => {
+  assert.match(app, /PUBLISHED_ARTICLES_URL/);
+  assert.match(app, /publishedBundle\.records/);
+  assert.match(app, /record\.review_status!=="secondary_source_only"/);
+  assert.match(app, /published_article:"مقاله آموزشی سایت/);
+  assert.equal(publishedArticles.records.length, publishedArticles.counts.published_articles);
+  assert.ok(publishedArticles.records.every((record) => record.review_status === "secondary_source_only"));
+});
