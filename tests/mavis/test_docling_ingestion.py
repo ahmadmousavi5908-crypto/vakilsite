@@ -173,7 +173,7 @@ class DoclingIngestionTests(unittest.TestCase):
             (stage_root / "staging-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
 
             with self.assertRaisesRegex(ParsingError, "L0 review-only"):
-                parse_staged_documents(stage_root, root / "parsed", converter=FakeConverter())
+                self.parse_stage(stage_root, root / "parsed", converter=FakeConverter())
 
     def test_rejects_path_traversal_and_output_inside_quarantine(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -183,11 +183,11 @@ class DoclingIngestionTests(unittest.TestCase):
             (stage_root / "staging-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
 
             with self.assertRaisesRegex(ParsingError, "unsafe relative path"):
-                parse_staged_documents(stage_root, root / "parsed", converter=FakeConverter())
+                self.parse_stage(stage_root, root / "parsed", converter=FakeConverter())
 
             stage_root, _source, _manifest = self.create_stage(root / "second")
             with self.assertRaisesRegex(ParsingError, "outside the source quarantine"):
-                parse_staged_documents(stage_root, stage_root / "parsed", converter=FakeConverter())
+                self.parse_stage(stage_root, stage_root / "parsed", converter=FakeConverter())
 
     def test_rejects_symlink_sources(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -200,7 +200,7 @@ class DoclingIngestionTests(unittest.TestCase):
             (stage_root / "staging-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
 
             with self.assertRaisesRegex(ParsingError, "symlink"):
-                parse_staged_documents(stage_root, root / "parsed", converter=FakeConverter())
+                self.parse_stage(stage_root, root / "parsed", converter=FakeConverter())
 
     def test_skips_unsupported_legacy_word_format_without_running_converter(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -226,7 +226,7 @@ class DoclingIngestionTests(unittest.TestCase):
             stage_root, _source, _manifest = self.create_stage(root)
             converter = FakeConverter(error="DB_PASSWORD=must-not-be-written")
 
-            result = parse_staged_documents(
+            result = self.parse_stage(
                 stage_root,
                 root / "parsed",
                 converter=converter,
@@ -272,7 +272,7 @@ class DoclingIngestionTests(unittest.TestCase):
             marker.write_text("keep", encoding="utf-8")
 
             with self.assertRaisesRegex(ParsingError, "must be new"):
-                parse_staged_documents(stage_root, output, converter=FakeConverter())
+                self.parse_stage(stage_root, output, converter=FakeConverter())
 
             self.assertEqual(marker.read_text("utf-8"), "keep")
 
