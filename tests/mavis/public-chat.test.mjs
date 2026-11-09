@@ -130,3 +130,45 @@ test("does not expose internal errors in public error payloads", () => {
   assert.doesNotMatch(result.body.error.message, /secret/);
   assert.equal(result.body.error.requestId, "req_test");
 });
+
+test("routes urgent legal signals to human escalation without calling the provider", async () => {
+  let providerCalled = false;
+  const result = await runPublicChat({
+    input: { message: "امروز ابلاغیه تجدیدنظر دریافت کردم و مهلت اعتراض نزدیک است." },
+    provider: {
+      name: "mock",
+      generate: async () => {
+        providerCalled = true;
+        return { text: "نباید اجرا شود" };
+      },
+    },
+    env: { MAVIS_PUBLIC_ENABLED: "true", MAVIS_PROVIDER: "mock" },
+  });
+
+  assert.equal(result.status, "escalate");
+  assert.equal(result.reasonCode, "URGENT_HUMAN_REVIEW");
+  assert.equal(result.provider, "policy");
+  assert.equal(result.deadlineCalculated, false);
+  assert.equal(providerCalled, false);
+  assert.match(result.message.content, /مهلت قانونی را محاسبه نمی‌کند/);
+});
+
+test("routes priority property matters to human review without generating legal advice", async () => {
+  let providerCalled = false;
+  const result = await runPublicChat({
+    input: { message: "برای تخلیه ملک به راهنمایی نیاز دارم." },
+    provider: {
+      name: "mock",
+      generate: async () => {
+        providerCalled = true;
+        return { text: "نباید اجرا شود" };
+      },
+    },
+    env: { MAVIS_PUBLIC_ENABLED: "true", MAVIS_PROVIDER: "mock" },
+  });
+
+  assert.equal(result.status, "needs_human_review");
+  assert.equal(result.reasonCode, "PRIORITY_HUMAN_REVIEW");
+  assert.equal(result.deadlineCalculated, false);
+  assert.equal(providerCalled, false);
+});
