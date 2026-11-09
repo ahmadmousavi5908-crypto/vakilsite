@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "mavis-offline-v1.1.0-20261109";
+const CACHE_NAME = "mavis-offline-v1.2.0-20261109";
 const OFFLINE_INDEX = "/mavis-offline/index.html";
 const ASSETS = [
   OFFLINE_INDEX,
@@ -8,6 +8,7 @@ const ASSETS = [
   "/mavis-offline/search.mjs",
   "/mavis-offline/answer.mjs",
   "/mavis-offline/knowledge.json",
+  "/mavis-offline/published-articles.json",
 ];
 
 self.addEventListener("install", (event) => {
