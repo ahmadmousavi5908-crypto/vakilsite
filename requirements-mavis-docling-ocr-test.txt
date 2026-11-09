@@ -1,0 +1,4 @@
+# Test-only shaping dependencies for the synthetic Persian OCR fixture.
+-r requirements-mavis-docling-ocr.txt
+arabic-reshaper==3.1.0
+python-bidi==0.6.12
