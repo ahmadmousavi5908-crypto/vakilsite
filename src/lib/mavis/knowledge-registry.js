@@ -1,10 +1,14 @@
 import "server-only";
 
+import publishedArticles from "../../data/articles.js";
 import {
   getLegalRecordTitle,
   legalLibraryCollections,
 } from "../legal-library.js";
 import { searchLegalRecords } from "./knowledge-search.mjs";
+import { buildPublishedArticleRecords } from "./published-article-adapter.mjs";
+
+const publishedArticleRecords = buildPublishedArticleRecords(publishedArticles);
 
 const searchableRecords = [
   ...legalLibraryCollections.terms.map((record) => ({
@@ -22,12 +26,13 @@ const searchableRecords = [
     record_type: "article",
     title: getLegalRecordTitle("articles", record),
   })),
+  ...publishedArticleRecords,
 ].filter((record) => record.review_status !== "draft");
 
 /**
- * Searches the existing public legal library without creating a second corpus.
- * Results retain review status and source metadata; they are retrieval results,
- * not legal opinions or confirmation that a source is currently in force.
+ * Searches the existing legal library and published site articles.
+ * Published articles remain secondary educational material and can never
+ * satisfy the verified-primary-source gate for public legal answers.
  */
 export function searchMavisKnowledge(query, limit = 10) {
   return searchLegalRecords({
@@ -41,8 +46,9 @@ export function getMavisKnowledgeInventory() {
   return {
     terms: legalLibraryCollections.terms.length,
     laws: legalLibraryCollections.laws.length,
-    articles: legalLibraryCollections.articles.length,
+    legalArticles: legalLibraryCollections.articles.length,
+    publishedArticles: publishedArticleRecords.length,
     searchable: searchableRecords.length,
-    source: "src/data/legal-library",
+    sources: ["src/data/legal-library", "src/data/articles.js"],
   };
 }
