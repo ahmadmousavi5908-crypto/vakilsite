@@ -162,10 +162,10 @@ jobs:
           if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release upload "$RELEASE_TAG" mavis-termux-arm64.tar.gz mavis-termux-arm64.tar.gz.sha256 --repo "$GITHUB_REPOSITORY" --clobber
           else
-            gh release create "$RELEASE_TAG" mavis-termux-arm64.tar.gz mavis-termux-arm64.tar.gz.sha256 \\
-              --repo "$GITHUB_REPOSITORY" \\
-              --target "$GITHUB_SHA" \\
-              --title "MAVIS Termux ARM64 Runtime v1.0.0" \\
-              --notes "Verified Linux ARM64 runtime for Termux via Debian proot. Build and smoke tests completed on ubuntu-24.04-arm." \\
+            gh release create "$RELEASE_TAG" mavis-termux-arm64.tar.gz mavis-termux-arm64.tar.gz.sha256 \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "MAVIS Termux ARM64 Runtime v1.0.0" \
+              --notes "Verified Linux ARM64 runtime for Termux via Debian proot. Build and smoke tests completed on ubuntu-24.04-arm." \
               --prerelease
           fi
