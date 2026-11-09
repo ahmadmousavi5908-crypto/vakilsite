@@ -10,9 +10,9 @@ DB_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres"
 
 cleanup() {
   if [[ -f "$RESTORE_DIR/supabase/config.toml" ]]; then
-    (cd "$RESTORE_DIR" && supabase stop >/dev/null 2>&1) || true
+    (cd "$RESTORE_DIR" && timeout 60s supabase stop >/dev/null 2>&1) || true
   fi
-  (cd "$PROJECT_ROOT" && supabase stop >/dev/null 2>&1) || true
+  (cd "$PROJECT_ROOT" && timeout 60s supabase stop >/dev/null 2>&1) || true
   rm -rf "$WORK_DIR"
 }
 trap cleanup EXIT
@@ -58,7 +58,7 @@ done
 psql --no-psqlrc --set ON_ERROR_STOP=1 --dbname "$DB_URL" \
   --command 'DROP TABLE mavis_intake_private.ci_backup_restore_probe;'
 
-supabase stop >/dev/null
+timeout 60s supabase stop >/dev/null
 
 echo "Starting a clean local Supabase restore target..."
 mkdir -p "$RESTORE_DIR"

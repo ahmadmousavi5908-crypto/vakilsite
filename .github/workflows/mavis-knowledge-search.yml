@@ -51,6 +51,7 @@ jobs:
       - name: Validate offline application syntax
         run: |
           node --check scripts/mavis/verify-local.mjs
+          bash -n scripts/mavis/verify-local-backup-restore.sh
           node --check public/mavis-offline/app.js
           node --check public/mavis-offline/search.mjs
           node --check public/mavis-offline/answer.mjs
