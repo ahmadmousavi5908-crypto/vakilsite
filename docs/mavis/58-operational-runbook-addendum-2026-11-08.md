@@ -1,4 +1,4 @@
-# MAVIS Operational Runbook Addendum — 2026-11-09
+# MAVIS Operational Runbook Addendum — 2026-11-08
 
 **Status:** Operational design; no secrets, provider credentials, cron jobs, or production settings are changed by this document.
 
