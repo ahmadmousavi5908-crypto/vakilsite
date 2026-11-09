@@ -38,10 +38,11 @@ OCR فقط با گزینه صریح --ocr فعال می‌شود:
 
 ### دریافت مدل‌های Docling برای OCR آفلاین
 
-روی میزبان محلی پشتیبانی‌شده و قبل از اجرای worker، مدل‌های موردنیاز را دریافت کنید:
+روی میزبان محلی پشتیبانی‌شده، ابتدا بسته OCR را در همان virtualenv نصب کنید و سپس مدل‌های موردنیاز را دریافت کنید:
 
 ~~~bash
-docling-tools models download layout tableformer --output-dir "$HOME/.cache/mavis-docling-models"
+"$HOME/.venvs/mavis-docling/bin/pip" install -r requirements-mavis-docling-ocr.txt
+"$HOME/.venvs/mavis-docling/bin/docling-tools" models download layout tableformer --output-dir "$HOME/.cache/mavis-docling-models"
 ~~~
 
 سپس worker با --ocr --artifacts-dir "$HOME/.cache/mavis-docling-models" اجرا می‌شود. دریافت مدل‌ها مرحله آماده‌سازی محیط است؛ اسناد Mother Two در این مرحله به هیچ سرویس ابری ارسال نمی‌شوند. بعد از prefetch، اجرای parser باید در محیط فاقد خروجی شبکه و با mount فقط‌خواندنی برای quarantine انجام شود.
@@ -62,7 +63,6 @@ python3 -m venv "$HOME/.venvs/mavis-docling"
 برای OCR، ابتدا وابستگی‌های مدل محلی را به همان virtualenv اضافه کنید، سپس Tesseract و مدل‌های fas و eng را تأیید کنید:
 
 ~~~bash
-"$HOME/.venvs/mavis-docling/bin/pip" install -r requirements-mavis-docling-ocr.txt
 "$HOME/.venvs/mavis-docling/bin/python" scripts/mavis/parse_staged_mother_two.py \
   --stage-root "$STAGE_ROOT" \
   --output-dir "$HOME/downloads/mavis-docling-ocr-review-20261109" \
