@@ -8,6 +8,8 @@
 
 هسته مستقل Provider در مسیرهای `src/lib/mavis/{contracts,errors,mock-provider,public-chat,public-policy}.mjs` ایجاد شده است. این هسته فقط یک use case قابل آزمون است؛ هنوز endpoint، UI، session store، retrieval-to-answer pipeline یا ارسال داده به مدل ندارد. `MAVIS_PUBLIC_ENABLED=false` پیش‌فرض است. فعال‌کردن flag به‌تنهایی هیچ Route یا قابلیت عمومی ایجاد نمی‌کند.
 
+در use case مکالمه، غربالگری قطعی فوریت پیش از Provider اجرا می‌شود: سیگنال فوری به وضعیت ESCALATED می‌رود و Provider فراخوانی نمی‌شود؛ موضوعات دارای اولویت بررسی انسانی نیز پاسخ مولد دریافت نمی‌کنند. این غربالگری مهلت را محاسبه نمی‌کند و تشخیص حقوقی نیست.
+
 ## 1. تصمیم معماری پیشنهادی
 
 الگوی منتخب: Modular Monolith + Ports and Adapters مطابق سند معماری 02. موتور مکالمه درون همین ساختار به ماژول‌های مستقل تقسیم می‌شود. در MVP سرویس جداگانه یا microservice ساخته نمی‌شود.
