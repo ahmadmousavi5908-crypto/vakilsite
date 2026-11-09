@@ -4,10 +4,12 @@ import sys
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts" / "mavis"))
 from inventory_mother_two import inventory_archive, write_inventory
+import stage_mother_two
 from stage_mother_two import StagingError, stage_archive
 
 
@@ -120,6 +122,26 @@ class MotherTwoStagingTests(unittest.TestCase):
             with self.assertRaisesRegex(StagingError, "SHA-256"):
                 stage_archive(archive_path, inventory_path, root / "staging")
             self.assertFalse(any((root / "staging").glob("mother-two-stage-*")))
+
+    def test_rejects_archive_replacement_after_content_scan_before_staging(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            archive_path = self.make_archive(root)
+            inventory_path = self.create_inventory(archive_path, root)
+            output_parent = root / "staging"
+            original_scan = stage_mother_two.scan_selected_content
+
+            def scan_then_modify(archive, selected):
+                flagged = original_scan(archive, selected)
+                with archive.open("ab") as stream:
+                    stream.write(b"changed after initial verification")
+                return flagged
+
+            with patch("stage_mother_two.scan_selected_content", side_effect=scan_then_modify):
+                with self.assertRaisesRegex(StagingError, "changed during the content scan"):
+                    stage_archive(archive_path, inventory_path, output_parent)
+
+            self.assertFalse(output_parent.exists())
 
     def test_rejects_inventory_with_no_eligible_files(self):
         with tempfile.TemporaryDirectory() as temporary:
