@@ -8,6 +8,7 @@ on:
       - scripts/mavis/parse_staged_mother_two.py
       - tests/mavis/test_docling_runtime.py
       - requirements-mavis-docling.txt
+      - requirements-mavis-docling-ocr.txt
       - .github/workflows/mavis-docling-runtime.yml
   pull_request:
     branches:
