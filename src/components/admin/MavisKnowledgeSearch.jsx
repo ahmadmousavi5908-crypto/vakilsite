@@ -141,7 +141,7 @@ export default function MavisKnowledgeSearch() {
         <div>
           <span className={styles.eyebrow}>FIRST-PARTY KNOWLEDGE RETRIEVAL</span>
           <h2 id="mavis-search-title">جست‌وجوی کتابخانه حقوقی</h2>
-          <p>جست‌وجوی قطعی در اصطلاحات، قوانین و خلاصه مواد موجود؛ بدون وابستگی به توکن یا سرویس هوش مصنوعی خارجی.</p>
+          <p>جست‌وجوی قطعی در اصطلاحات، قوانین، خلاصه مواد، مقالات منتشرشده و یادداشت‌های پژوهشی ثانویه؛ بدون وابستگی به توکن یا سرویس هوش مصنوعی خارجی.</p>
         </div>
         <span className={styles.mark} aria-hidden="true">م</span>
       </div>
