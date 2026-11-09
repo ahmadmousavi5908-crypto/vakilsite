@@ -15,7 +15,7 @@
     "test:legal-library-http": "node scripts/verify-legal-library-http.mjs",
     "test:mavis-search": "node --test tests/mavis/knowledge-search.test.mjs tests/mavis/knowledge-search-route.test.mjs tests/mavis/knowledge-retrieval.test.mjs tests/mavis/published-article-adapter.test.mjs",
     "test:mavis-growth-audit": "node --test tests/mavis/growth-audit.test.mjs",
-    "test:mavis-core": "node --test tests/mavis/public-chat.test.mjs tests/mavis/conversation-state.test.mjs",
+    "test:mavis-core": "node --test tests/mavis/public-chat.test.mjs tests/mavis/conversation-state.test.mjs tests/mavis/openai-responses-provider.test.mjs",
     "mavis:verify": "node scripts/mavis/verify-local.mjs",
     "test:mavis-matter-fields": "node --test tests/mavis/secure-matter-fields.test.mjs",
     "validate:mavis-legal-review-queue": "node scripts/mavis/validate-legal-review-queue.mjs",
