@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0.0",
+  "bundle_id": "MAVIS-DOCS-2026-11-08-R2",
+  "purpose": "Pinned, documentation-only transfer manifest for the MAVIS Termux preparation phase.",
+  "repository": "ahmadmousavi5908-crypto/vakilsite",
+  "pinned_commit": "4c3b0dfa69a0dc24633de1aebba3d97ae7e924c7",
+  "verification": {
+    "algorithm": "git-blob-sha1",
+    "command": "git hash-object --stdin",
+    "note": "Verify exact raw file bytes against each Git blob SHA before writing to the workspace. This manifest is not a substitute for the Mother Two archive SHA-256 check."
+  },
+  "files": [
+    {
+      "path": "docs/mavis/22-master-project-charter-v1.1.md",
+      "blob_sha": "426dfb024aea5cc77b8e5d668a16b31ca93e0513"
+    },
+    {
+      "path": "docs/mavis/22-master-project-charter-v1.2.md",
+      "blob_sha": "63a2675ee0ab6ecaab20ec094ec0cf0d732b8003"
+    },
+    {
+      "path": "docs/mavis/23-initial-repository-audit-2026-11-08.md",
+      "blob_sha": "4bd62f3745bec42eafda7179333f1fed623d84a7"
+    },
+    {
+      "path": "docs/mavis/24-termux-single-pass-delivery-protocol.md",
+      "blob_sha": "2731c65a75a55f261a639686dfc863b1c749554e"
+    },
+    {
+      "path": "docs/mavis/25-official-search-and-ads-api-research-2026-11-08.md",
+      "blob_sha": "1a7892ab775ef9eca9d4b48f81b81461ac9eb344"
+    },
+    {
+      "path": "docs/mavis/26-admin-and-article-management-ux-specification.md",
+      "blob_sha": "e6d4e035544fc59f9a07f0623bc68549a6107be1"
+    },
+    {
+      "path": "docs/mavis/27-project-knowledge-access-and-mother-two-recovery-plan.md",
+      "blob_sha": "89ad2fa01c243983bae93a6df80d19f63f212398"
+    },
+    {
+      "path": "docs/mavis/28-execution-blueprint-and-integration-acceptance.md",
+      "blob_sha": "b11ca2b1b163c4eddb75db3d0b8040802c243de4"
+    },
+    {
+      "path": "docs/mavis/README.md",
+      "blob_sha": "5f9927eddec78c7cb2260f9f9d11aaedf7d9f2f0"
+    }
+  ],
+  "safety": {
+    "includes_runtime_code": false,
+    "includes_credentials": false,
+    "includes_database_dump": false,
+    "includes_client_data": false,
+    "includes_mother_two_archive": false,
+    "merge_or_deploy_authorized": false
+  }
+}

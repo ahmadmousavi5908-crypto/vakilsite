@@ -25,14 +25,43 @@
 14. [نقشه منابع حقوق ایران و سیاست ورود دانش](./16-iran-legal-source-map-and-ingestion-policy.md)
 15. [وضعیت اجرای هسته MAVIS و گزارش تحویل](./17-core-foundation-status.md)
 16. [طراحی داک شخصیت MAVIS](./18-character-dock-design.md)
-18. [تطبیق شاخه‌ها و اعتبارسنجی یکپارچه](./20-integration-reconciliation.md)
 17. [مبنای امنیت و دروازه‌های انتشار](./19-security-baseline-and-release-gates.md)
+18. [تطبیق شاخه‌ها و اعتبارسنجی یکپارچه](./20-integration-reconciliation.md)
+
+## اسناد مرجع و وضعیت پروژه
+
+- [سند مادر پروژه MAVIS و Vakilsite نسخه ۱.۲](./22-master-project-charter-v1.2.md)
+- [گزارش ممیزی اولیه مخزن و شواهد GitHub](./23-initial-repository-audit-2026-11-08.md)
+- [پروتکل تحویل یک‌مرحله‌ای و idempotent برای Termux](./24-termux-single-pass-delivery-protocol.md)
+- [پژوهش رسمی APIهای جست‌وجو و Google Ads](./25-official-search-and-ads-api-research-2026-11-08.md)
+- [مشخصات UX پنل MAVIS و مدیریت فشرده مقالات](./26-admin-and-article-management-ux-specification.md)
+- [نقشه جامع دسترسی دانش MAVIS و بازیابی بکاپ مادر دو](./27-project-knowledge-access-and-mother-two-recovery-plan.md)
+- [نقشه اجرایی یکپارچه، ماتریس اتصال‌ها و معیارهای پذیرش MAVIS](./28-execution-blueprint-and-integration-acceptance.md)
+- [تجربه دسکتاپ، اتصال به پنل مدیریت و امتیازنامه UX MAVIS](./31-admin-desktop-experience-and-ux-scorecard.md) — طراحی و ممیزی شواهد؛ نه تأیید Mother Two
+- [پروتکل پژوهش حقوقی، اعتبارسنجی استناد و اولویت‌بندی موضوعات](./33-legal-research-quality-and-prioritization-protocol.md)
+- [امتیازنامه سه بازوی MAVIS و پروتکل سنجش سرعت و کارایی](./37-three-arm-scorecard-and-performance-benchmark.md)
+- [استاندارد دانش زنده، تحویل بدون آرشیو و دسترسی سه بازو](./39-live-knowledge-workspace-and-three-arm-access-standard.md)
+- [سیاست تجمیع دانش تاریخی و استفاده از کتابخانه‌های قبلی](./41-historical-knowledge-reconciliation-and-library-reuse.md)
+- [ممیزی آمادگی SEO، AEO، GEO و کشف‌پذیری در سامانه‌های هوش مصنوعی](./43-seo-aeo-geo-ai-discovery-readiness-audit-2026-11-08.md) — یافته‌های مستقیم remote، اولویت‌بندی اصلاحات کم‌هزینه و معیارهای پذیرش
+- [ممیزی سخت‌گیرانه، امتیازدهی و برنامه بستن شکاف‌های MAVIS](./44-mavis-critical-gap-closure-and-scorecard-2026-11-08.md) — امتیاز تفکیکی، P0/P1/P2، دروازه‌های پذیرش و مرزبندی شواهد طراحی با اجرای واقعی
+- [ممیزی کد شاخه اجرایی MAVIS و برنامه اصلاح](./45-runtime-branch-code-audit-and-remediation-2026-11-08.md) — بررسی هسته، Intake، Admin، CI، محدودیت‌های Provider و یافته‌های P0/P1/P2؛ فقط remote و بدون ادعای تست محلی
+- [تطبیق شاخه‌های GitHub و شواهد ساختار اجرایی MAVIS](./46-github-branch-reconciliation-and-runtime-evidence-2026-11-08.md) — نقشه ahead/behind، APIها، migrations، کتابخانه حقوقی موجود و دروازه امن انتقال به Termux
+- [تداوم خدمت مستقل از توکن و امنیت اعتبارنامه‌ها](./47-provider-independent-continuity-and-secure-credentials-2026-11-08.md) — ادامه Intake، دانش، جست‌وجو و گردش‌کار بدون LLM؛ صف بازیابی؛ کنترل هزینه؛ تفکیک اختلال‌ها و سیاست سخت‌گیرانه گذرواژه/secret
+- [دروازه‌های سنجش آمادگی انتشار MVP و تعریف تکمیل ۱۰۰٪](./57-mavis-mvp-release-readiness-gates-2026-11-08.md) — معیارهای قابل آزمون برای یکپارچه‌سازی، دیتابیس، پذیرش، پژوهش حقوقی، رشد، آفلاین و عملیات تولید
+- [معماری مرحله اول: اولویت دارایی‌های داخلی، موتور جست‌وجو و پذیرش مستقل](./48-first-party-first-stage-one-search-and-intake-architecture-2026-11-08.md) — اصل First-Party First، مرز مرحله اول و دوم، اهداف benchmark و معیار واقعی امتیاز ۹/۱۰
+- [ماتریس مجوزها و مرزبندی داده سه بازوی MAVIS](./49-three-arm-authorization-and-data-boundary-matrix-2026-11-08.md) — طبقه‌بندی داده، نقش‌ها، مرز بازوها، enforcement و آزمون‌های منفی
+
+## مانیفست‌های دریافت و تطبیق
+
+- [مانیفست R8 بسته فایل‌های مستقل و استاندارد دانش زنده](./40-termux-docs-download-manifest-2026-11-08-r8.json)
+- [مانیفست R9 بسته مستندات MAVIS برای Termux](./42-termux-docs-download-manifest-2026-11-08-r9.json) — ۱۴ فایل مستندات پین‌شده؛ فاقد runtime و داده واقعی حقوقی
 
 ## اسناد تکمیلی محصول و اجرا
 
 - [برنامه اجرایی زنده و ایده‌بانک](./13-operating-plan-and-idea-backlog.md)
 - [طراحی توسعه‌پذیر موتور مکالمه](./14-extensible-conversation-engine-design.md)
 - [برنامه اتصال دانش MAVIS و ارتقای بکاپ مادر دو](./21-knowledge-retrieval-and-mother-two-backup-plan.md)
+- [قرارداد دسترسی به کتابخانه‌های تاریخی و محتوای Mother Two](./51-mother-two-historical-library-activation-contract-2026-11-09.md)
 - [پژوهش روان‌شناسی ارتباط و جذب اخلاقی موکل](./research/02-client-psychology-and-ethical-engagement.md)
 - [پژوهش طراحی Intake و ارتباط اخلاقی](./research/01-client-intake-and-ethical-communication.md)
 
