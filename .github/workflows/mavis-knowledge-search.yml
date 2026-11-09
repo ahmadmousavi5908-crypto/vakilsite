@@ -11,6 +11,7 @@ on:
       - test/mavis-local-backup-restore-20261109
   workflow_dispatch:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
     branches:
       - integration/mavis-mvp-candidate-20261108
       - feature/mavis-deterministic-legal-search-20261108
