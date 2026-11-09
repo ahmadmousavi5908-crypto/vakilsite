@@ -24,6 +24,9 @@ const expectedAgents = [
   "performance-engineer",
   "mavis-legal-evidence-reviewer",
   "continuity-keeper",
+  "mavis-retrieval-engineer",
+  "security-privacy-reviewer",
+  "site-design-guard",
 ];
 
 for (const name of expectedAgents) {
