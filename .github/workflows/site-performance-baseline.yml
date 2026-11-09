@@ -44,7 +44,7 @@ jobs:
       - name: Run three-pass mobile Lighthouse baseline
         run: |
           set -euo pipefail
-          mkdir -p .lighthouseci
+          mkdir -p lighthouse-reports
           npm run start -- --hostname 127.0.0.1 --port 3000 > /tmp/vakilsite-performance.log 2>&1 &
           SERVER_PID=$!
           trap 'kill "$SERVER_PID" 2>/dev/null || true; wait "$SERVER_PID" 2>/dev/null || true' EXIT
@@ -69,11 +69,16 @@ jobs:
             for run in 1 2 3; do
               npx --no-install lighthouse "http://127.0.0.1:3000$route" \
                 --output=json --output=html \
-                --output-path=".lighthouseci/$slug-$run" \
+                --output-path="lighthouse-reports/$slug-$run" \
                 --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
                 --max-wait-for-load=60000 --locale=fa --quiet
             done
           done
+
+          REPORT_COUNT="$(find lighthouse-reports -maxdepth 1 -type f | wc -l)"
+          echo "Lighthouse report files: $REPORT_COUNT"
+          find lighthouse-reports -maxdepth 1 -type f -printf '%f\\n' | sort
+          test "$REPORT_COUNT" -ge 24
 
       - name: Upload bundle and Lighthouse reports
         if: always()
@@ -82,6 +87,6 @@ jobs:
           name: vakilsite-performance-baseline-${{ github.sha }}
           path: |
             .next/analyze/
-            .lighthouseci/
+            lighthouse-reports/
           if-no-files-found: warn
           retention-days: 14
