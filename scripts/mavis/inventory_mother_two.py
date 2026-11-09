@@ -19,6 +19,22 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 
+CHUNK_SIZE = 1024 * 1024
+
+SECRET_PATH_PATTERN = re.compile(
+    r"(^|/)(?:\.env(?:\.[^/]*)?|[^/]*(?:secret|credential|password|token)[^/]*|"
+    r"service[-_ ]?account(?:s)?|id_rsa|id_ed25519)(?:/|$)|"
+    r"(?:private[-_ ]?key|access[-_ ]?token|refresh[-_ ]?token)",
+    re.IGNORECASE,
+)
+SECRET_SUFFIXES = {".pem", ".key", ".p12", ".pfx", ".jks", ".keystore"}
+RESTRICTED_PERSONAL_PATH_PATTERN = re.compile(
+    r"(^|/)(?:clients?|client[-_ ]?(?:files?|matters?|records?)|"
+    r"confidential|personal[-_ ]?data|identity|medical|financial|"
+    r"موکل(?:ان|ین)?|پرونده[-_ ]?موکل|اطلاعات[-_ ]?شخصی|محرمانه|هویتی|بانکی)(?=$|[/_ .-])",
+    re.IGNORECASE,
+)
+
 CATEGORY_PATTERNS = [
     ("books", re.compile(r"(^|[/_\s.-])(?:books?|کتاب(?:‌ها|ها|خانه)?|کتب)(?=$|[/_\s.-])", re.IGNORECASE)),
     ("published_articles", re.compile(r"(^|[/_\s.-])(?:articles?|مقالات?|مقاله(?:‌ها|ها)?)(?=$|[/_\s.-])", re.IGNORECASE)),
