@@ -39,6 +39,9 @@ jobs:
         env:
           MAVIS_TERMUX_BUILD: "true"
           NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi.ir
+          MAVIS_PUBLIC_ENABLED: "false"
+          MAVIS_INTAKE_ENABLED: "false"
+          MAVIS_PROVIDER: mock
           NEXT_TELEMETRY_DISABLED: "1"
         run: npm run build
 
@@ -50,6 +53,9 @@ jobs:
         env:
           MAVIS_TERMUX_BUILD: "true"
           NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi.ir
+          MAVIS_PUBLIC_ENABLED: "false"
+          MAVIS_INTAKE_ENABLED: "false"
+          MAVIS_PROVIDER: mock
           PACKAGE_DIR: ${{ runner.temp }}/mavis-termux-runtime
         run: |
           set -Eeuo pipefail
