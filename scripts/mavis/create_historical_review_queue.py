@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from inventory_mother_two import _is_unsafe_path
+from inventory_mother_two import _classification, _is_unsafe_path
 from stage_mother_two import sha256_file
 
 
@@ -30,10 +30,13 @@ def create_review_queue(staging_manifest_path: str | Path, output_path: str | Pa
 
     if manifest.get("schema_version") != "1.0.0" or not isinstance(manifest.get("files"), list):
         raise ReviewQueueError("Unsupported staging manifest schema.")
-    if manifest.get("summary", {}).get("indexing_allowed") is not False or \
-       manifest.get("summary", {}).get("retrieval_allowed") is not False:
+    summary = manifest.get("summary")
+    policy = manifest.get("policy")
+    if not isinstance(summary, dict) or not isinstance(policy, dict):
+        raise ReviewQueueError("Staging manifest summary and policy are required.")
+    if summary.get("indexing_allowed") is not False or summary.get("retrieval_allowed") is not False:
         raise ReviewQueueError("Staging manifest must keep indexing and retrieval disabled.")
-    if manifest.get("policy", {}).get("automatic_ingestion_performed") is not False:
+    if policy.get("automatic_ingestion_performed") is not False:
         raise ReviewQueueError("Automatic ingestion is not allowed.")
 
     root = manifest_path.parent.resolve()
@@ -58,6 +61,8 @@ def create_review_queue(staging_manifest_path: str | Path, output_path: str | Pa
         if not isinstance(size, int) or size < 0:
             raise ReviewQueueError("Staging manifest contains an invalid file size.")
 
+        if item.get("classification") != _classification(relative_path):
+            raise ReviewQueueError("Staging category does not match the archive path classification.")
         relative = PurePosixPath(relative_path)
         file_path = root.joinpath(*relative.parts)
         if file_path.is_symlink() or not file_path.is_file():
