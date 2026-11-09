@@ -1,6 +1,8 @@
 import hashlib
 import json
 import os
+import subprocess
+import unicodedata
 import re
 import tempfile
 import unittest
@@ -13,6 +15,17 @@ from PIL import Image, ImageDraw, ImageFont
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts" / "mavis"))
 from parse_staged_mother_two import parse_staged_documents
+
+
+def normalize_persian(value):
+    normalized = unicodedata.normalize("NFKC", value)
+    normalized = re.sub(r"[\u064B-\u065F\u0670\u200c\u200d\u200e\u200f]", "", normalized)
+    normalized = (
+        normalized.replace("ي", "ی")
+        .replace("ى", "ی")
+        .replace("ك", "ک")
+    )
+    return " ".join(normalized.split())
 
 
 def build_image_pdf(jpeg_bytes, image_width, image_height):
@@ -71,17 +84,17 @@ class DoclingOcrRuntimeTests(unittest.TestCase):
         self.assertTrue(artifacts_dir and Path(artifacts_dir).is_dir())
 
         font_candidates = [
-            Path("/usr/share/fonts/truetype/noto/NotoNaskhArabic-Regular.ttf"),
             Path("/usr/share/fonts/truetype/noto/NotoSansArabic-Regular.ttf"),
+            Path("/usr/share/fonts/truetype/noto/NotoNaskhArabic-Regular.ttf"),
         ]
         font_path = next((candidate for candidate in font_candidates if candidate.is_file()), None)
         self.assertIsNotNone(font_path, "Noto Arabic font is required for deterministic Persian OCR fixture.")
 
         image = Image.new("RGB", (1800, 520), "white")
         draw = ImageDraw.Draw(image)
-        font = ImageFont.truetype(str(font_path), 108)
+        font = ImageFont.truetype(str(font_path), 132)
         persian_text = get_display(arabic_reshaper.reshape("قانون آزمایشی ماویس"))
-        draw.text((120, 110), persian_text, font=font, fill="black")
+        draw.text((100, 95), persian_text, font=font, fill="black", stroke_width=1)
         english_font = ImageFont.truetype(
             "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
             72,
@@ -91,7 +104,17 @@ class DoclingOcrRuntimeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             image_path = root / "scan.jpg"
-            image.save(image_path, format="JPEG", quality=96)
+            image.save(image_path, format="JPEG", quality=98)
+            direct_ocr = subprocess.run(
+                ["tesseract", str(image_path), "stdout", "-l", "fas+eng", "--psm", "6"],
+                check=True,
+                capture_output=True,
+                text=True,
+                timeout=60,
+            ).stdout
+            normalized_direct = normalize_persian(direct_ocr)
+            self.assertIn("قانون", normalized_direct, f"Direct Tesseract output: {direct_ocr!r}")
+            self.assertIn("ماویس", normalized_direct, f"Direct Tesseract output: {direct_ocr!r}")
             with Image.open(image_path) as rendered:
                 image_width, image_height = rendered.size
             pdf_bytes = build_image_pdf(image_path.read_bytes(), image_width, image_height)
@@ -166,15 +189,9 @@ class DoclingOcrRuntimeTests(unittest.TestCase):
             self.assertFalse(document["review"]["indexing_allowed"])
             self.assertFalse(document["review"]["retrieval_allowed"])
             self.assertIn("MAVIS", extracted.upper())
-            normalized_persian = re.sub(r"[\u064B-\u065F\u0670]", "", extracted)
-            normalized_persian = (
-                normalized_persian.replace("ي", "ی")
-                .replace("ى", "ی")
-                .replace("ك", "ک")
-            )
-            normalized_persian = " ".join(normalized_persian.split())
-            self.assertIn("قانون", normalized_persian, f"Persian OCR output: {normalized_persian!r}")
-            self.assertIn("ماویس", normalized_persian, f"Persian OCR output: {normalized_persian!r}")
+            normalized_persian = normalize_persian(extracted)
+            self.assertIn("قانون", normalized_persian, f"Docling OCR output: {extracted!r}")
+            self.assertIn("ماویس", normalized_persian, f"Docling OCR output: {extracted!r}")
 
 
 if __name__ == "__main__":

@@ -391,12 +391,14 @@ def create_converter(*, ocr: bool, artifacts_dir: str | Path | None = None) -> A
         if not set(OCR_LANGUAGES).issubset(installed_languages):
             raise ParsingError("Tesseract must have both fas and eng traineddata installed.")
 
-        from docling.datamodel.pipeline_options import PdfPipelineOptions, TesseractCliOcrOptions
+        from docling.datamodel.pipeline_options import OcrMode, PdfPipelineOptions, TesseractCliOcrOptions
 
         pipeline_options = PdfPipelineOptions(
             do_ocr=True,
             ocr_options=TesseractCliOcrOptions(
                 lang=OCR_LANGUAGES,
+                mode=OcrMode.FULL_PAGE,
+                psm=6,
                 replace_broken_text_layer=True,
             ),
             document_timeout=DOCUMENT_TIMEOUT_SECONDS,
