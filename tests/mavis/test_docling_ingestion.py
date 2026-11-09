@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts" / "mavis"))
 from parse_staged_mother_two import ParsingError, parse_staged_documents
@@ -202,10 +202,47 @@ class DoclingIngestionTests(unittest.TestCase):
             with self.assertRaisesRegex(ParsingError, "symlink"):
                 self.parse_stage(stage_root, root / "parsed", converter=FakeConverter())
 
-    def test_skips_unsupported_legacy_word_format_without_running_converter(self):
+    def test_skips_legacy_word_format_when_libreoffice_is_unavailable(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             stage_root, _source, _manifest = self.create_stage(root, filename="books/legacy.doc")
+            converter = FakeConverter()
+
+            with patch("parse_staged_mother_two.shutil.which", return_value=None):
+                result = self.parse_stage(
+                    stage_root,
+                    root / "parsed",
+                    converter=converter,
+                    docling_version="2.149.0",
+                )
+
+            self.assertEqual(result["skipped_files"], 1)
+            self.assertEqual(result["missing_dependency_files"], 1)
+            self.assertEqual(converter.calls, [])
+            parse_manifest = json.loads((root / "parsed/parse-manifest.json").read_text("utf-8"))
+            self.assertEqual(parse_manifest["files"][0]["status"], "skipped_missing_libreoffice")
+
+    def test_uses_legacy_office_converter_only_when_libreoffice_is_available(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            stage_root, _source, _manifest = self.create_stage(root, filename="books/legacy.doc")
+            converter = FakeConverter()
+
+            with patch("parse_staged_mother_two.shutil.which", return_value="/usr/bin/soffice"):
+                result = self.parse_stage(
+                    stage_root,
+                    root / "parsed",
+                    converter=converter,
+                    docling_version="2.149.0",
+                )
+
+            self.assertEqual(result["parsed_files"], 1)
+            self.assertEqual(len(converter.calls), 1)
+
+    def test_reports_unknown_json_format_without_running_converter(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            stage_root, _source, _manifest = self.create_stage(root, filename="datasets/records.json")
             converter = FakeConverter()
 
             result = self.parse_stage(
@@ -215,10 +252,8 @@ class DoclingIngestionTests(unittest.TestCase):
                 docling_version="2.149.0",
             )
 
-            self.assertEqual(result["skipped_files"], 1)
+            self.assertEqual(result["unsupported_files"], 1)
             self.assertEqual(converter.calls, [])
-            parse_manifest = json.loads((root / "parsed/parse-manifest.json").read_text("utf-8"))
-            self.assertEqual(parse_manifest["files"][0]["status"], "skipped_unsupported_format")
 
     def test_redacts_parser_exception_details(self):
         with tempfile.TemporaryDirectory() as temporary:
