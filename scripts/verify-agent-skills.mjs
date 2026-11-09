@@ -10,7 +10,7 @@ for (const [name, description] of Object.entries(router)) {
   const skillPath = join(root, ".agents/skills", name, "SKILL.md");
   try {
     const content = await readFile(skillPath, "utf8");
-    if (!content.startsWith("---\\n") || !content.includes(`name: ${name}`)) {
+    if (!content.startsWith("---\n") || !content.includes(`name: ${name}`)) {
       failures.push(`Skill frontmatter is missing or mismatched: ${name}`);
     }
     if (!description.trim()) failures.push(`Skill description is empty: ${name}`);
@@ -30,7 +30,7 @@ for (const name of expectedAgents) {
   const path = join(root, ".github/agents", `${name}.agent.md`);
   try {
     const content = await readFile(path, "utf8");
-    if (!content.startsWith("---\\n") || !content.includes(`name: ${name}`)) {
+    if (!content.startsWith("---\n") || !content.includes(`name: ${name}`)) {
       failures.push(`Agent profile frontmatter is missing or mismatched: ${name}`);
     }
     if (!content.includes("description:") || !content.includes("target: github-copilot")) {
