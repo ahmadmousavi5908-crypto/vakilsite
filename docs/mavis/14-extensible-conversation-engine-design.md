@@ -166,7 +166,7 @@ Policyهای Public و Private جدا هستند. Policy عمومی هرگز ب�
 - [x] Provider Port مبتنی بر dependency injection و Mock شفاف با خروجی ثابت و بدون بازتاب متن کاربر.
 - [x] feature flag خاموش به‌صورت پیش‌فرض، کنترل نام Provider و سقف خروجی.
 - [x] تست واحد و lint در CI.
-- [ ] State Machine کامل و تست انتقال‌ها.
+- [x] State Machine عمومی با مسیر فوریت غیرقابل override، حالت پایانی و preview handoff نیازمند رضایت صریح و خلاصه محدود، همراه تست انتقال‌ها.
 - بدون اتصال Provider واقعی یا Route عمومی.
 
 ### فاز 2 — Public Policy MVP
