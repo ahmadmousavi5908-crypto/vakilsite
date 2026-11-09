@@ -30,6 +30,19 @@ const ALLOWED_REVIEW_STATUSES = new Set([
   "verified_primary_source",
 ]);
 const BOOLEAN_COLUMNS = new Set(["primary_document_retrieved", "amendment_chain_reviewed"]);
+const DATE_COLUMNS = new Set(["approved_at", "notified_at", "published_at", "effective_from", "effective_until"]);
+const DATETIME_COLUMNS = new Set(["retrieved_at", "reviewed_at"]);
+
+function isValidDate(value) {
+  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;
+  const date = new Date(value + "T00:00:00.000Z");
+  return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+
+function isValidDateTime(value) {
+  if (!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,3})?(?:Z|[+-]\\d{2}:\\d{2})$/.test(value)) return false;
+  return Number.isFinite(Date.parse(value));
+}
 
 export function parseCsv(source) {
   const rows = [];
@@ -116,6 +129,7 @@ export function validateLegalReviewQueue(source, options = {}) {
   const ids = new Set();
   const statusCounts = {};
   const knownSourceIds = options.knownSourceIds ? new Set(options.knownSourceIds) : null;
+  const primarySourceIds = options.primarySourceIds ? new Set(options.primarySourceIds) : null;
 
   records.forEach((values, index) => {
     const line = index + 2;
@@ -142,6 +156,21 @@ export function validateLegalReviewQueue(source, options = {}) {
       if (record[column] !== "true" && record[column] !== "false") {
         errors.push(`Row ${line} has invalid boolean value for ${column}.`);
       }
+    }
+    for (const column of DATE_COLUMNS) {
+      if (record[column] && !isValidDate(record[column])) {
+        errors.push(`Row ${line} has invalid calendar date for ${column}.`);
+      }
+    }
+    for (const column of DATETIME_COLUMNS) {
+      if (record[column] && !isValidDateTime(record[column])) {
+        errors.push(`Row ${line} has invalid ISO date-time for ${column}.`);
+      }
+    }
+    if (record.effective_from && record.effective_until &&
+        isValidDate(record.effective_from) && isValidDate(record.effective_until) &&
+        record.effective_until < record.effective_from) {
+      errors.push(`Row ${line} has effective_until earlier than effective_from.`);
     }
 
     const sourceIds = record.source_ids ? record.source_ids.split(";").map((value) => value.trim()).filter(Boolean) : [];
@@ -189,6 +218,9 @@ export function validateLegalReviewQueue(source, options = {}) {
         errors.push(`Row ${line} is marked verified without any instrument date.`);
       }
       if (sourceIds.length === 0) errors.push(`Row ${line} is marked verified without a linked source.`);
+      if (primarySourceIds && !sourceIds.some((sourceId) => primarySourceIds.has(sourceId))) {
+        errors.push(`Row ${line} is marked verified without an official primary-publication source.`);
+      }
       if (record.content_sha256 && !/^[a-f0-9]{64}$/i.test(record.content_sha256)) {
         errors.push(`Row ${line} has an invalid SHA-256 digest.`);
       }
@@ -216,6 +248,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     .map((record) => record.id);
   const result = validateLegalReviewQueue(queue, {
     knownSourceIds: bundle.source_registry.map((source) => source.id),
+    primarySourceIds: bundle.source_registry
+      .filter((source) => source.class === "primary_publication")
+      .map((source) => source.id),
     expectedRecordIds,
   });
   
