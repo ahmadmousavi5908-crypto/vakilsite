@@ -19,7 +19,7 @@ class MotherTwoStagingTests(unittest.TestCase):
                 "library/books/book-one.pdf": b"licensed status unknown",
                 "library/articles/guide.md": "راهنمای حقوقی".encode("utf-8"),
                 "library/research/data.csv": b"id,value\n1,2\n",
-                "library/research/credentials.txt": b"OPENAI_API_KEY=sk-abcdefghijklmnopqrstuvwxyz1234567890\n",
+                "library/research/notes.txt": b"OPENAI_API_KEY=sk-abcdefghijklmnopqrstuvwxyz1234567890\n",
                 "misc/unknown.pdf": b"unclassified file",
                 "private/.env": b"SECRET_TOKEN=never-stage",
                 "../outside.pdf": b"unsafe path",
@@ -71,7 +71,7 @@ class MotherTwoStagingTests(unittest.TestCase):
                 "library/articles/guide.md",
                 "library/research/data.csv",
             })
-            self.assertFalse(any("credentials" in path for path in staged_paths))
+            self.assertNotIn("library/research/notes.txt", staged_paths)
             self.assertNotIn("misc/unknown.pdf", staged_paths)
             self.assertTrue((stage_root / "library/books/book-one.pdf").is_file())
             self.assertFalse((stage_root / "private/.env").exists())
