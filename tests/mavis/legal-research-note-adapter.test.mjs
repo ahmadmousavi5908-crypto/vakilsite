@@ -80,3 +80,19 @@ test("connects every canonical source-review note without upgrading its review s
     source.verification_status === "secondary_source_only"
   )));
 });
+
+
+import { searchLegalRecords } from "../../src/lib/mavis/knowledge-search.mjs";
+
+test("finds real source-review notes through deterministic Persian retrieval", () => {
+  const records = buildLegalResearchNoteRecords(canonicalReport);
+  const results = searchLegalRecords({
+    query: "سامانه ثبت ادعا",
+    records,
+    limit: 10,
+  });
+  assert.ok(results.length > 0);
+  assert.ok(results.some((record) => record.record_type === "research_note"));
+  assert.ok(results.every((record) => record.review_status === "secondary_source_only"));
+  assert.ok(results.every((record) => record.source_verified === false));
+});
