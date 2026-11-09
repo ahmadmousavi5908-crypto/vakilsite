@@ -3,7 +3,7 @@ const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function cleanText(value, maxLength = MAX_ARTICLE_TEXT_LENGTH) {
   if (typeof value !== "string") return "";
-  return value.normalize("NFC").replace(/[\\u0000-\\u001f\\u007f]/g, " ").replace(/\\s+/g, " ").trim().slice(0, maxLength);
+  return value.normalize("NFC").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/\s+/g, " ").trim().slice(0, maxLength);
 }
 
 function normalizeSources(sources) {
@@ -46,7 +46,7 @@ export function buildPublishedArticleRecords(articles) {
       ? article.sections.flatMap((section) => {
           const heading = cleanText(section?.heading, 300);
           const body = cleanText(section?.body, 2400);
-          return heading || body ? [`${heading} ${body}`.trim()] : [];
+          return heading || body ? [(heading + " " + body).trim()] : [];
         })
       : [];
     const checklist = Array.isArray(article.checklist)
@@ -59,7 +59,7 @@ export function buildPublishedArticleRecords(articles) {
       .slice(0, MAX_ARTICLE_TEXT_LENGTH);
 
     records.push({
-      id: `published_article_${slug}`,
+      id: "published_article_" + slug,
       record_type: "published_article",
       source_class: "educational_summary",
       title,
@@ -69,8 +69,8 @@ export function buildPublishedArticleRecords(articles) {
       definition: searchableText,
       category: cleanText(article.category, 160),
       read_time: cleanText(article.readTime, 40),
-      path: `/articles/${slug}`,
-      source_url: `/articles/${slug}`,
+      path: "/articles/" + slug,
+      source_url: "/articles/" + slug,
       sources: normalizeSources(article.sources),
       review_status: "secondary_source_only",
       source_verified: false,
