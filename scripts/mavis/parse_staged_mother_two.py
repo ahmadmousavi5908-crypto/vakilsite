@@ -428,11 +428,13 @@ def parse_staged_documents(
                 )
                 continue
 
+            operation = "convert"
             try:
                 result = active_converter.convert(str(source))
                 if sha256_file(source) != source_hash:
                     raise ParsingError("Source changed while Docling was processing it.")
 
+                operation = "extract_page_content"
                 document = result.document
                 pages = _document_pages(document)
                 combined_text = "\n\n".join(page["markdown"] for page in pages).strip()
@@ -483,6 +485,7 @@ def parse_staged_documents(
                     },
                 }
 
+                operation = "write_output"
                 output_name = f"{document_id}.json"
                 output_sha256 = _write_private_json(requested_output / output_name, payload)
                 records.append(
@@ -511,6 +514,7 @@ def parse_staged_documents(
                         "source_sha256": source_hash,
                         "status": "conversion_failed",
                         "error_type": type(error).__name__,
+                        "error_stage": operation,
                         "error_details_redacted": True,
                         "indexing_allowed": False,
                         "retrieval_allowed": False,
