@@ -61,8 +61,8 @@
 
 - Existing `.agents/skills/dignified-python` upstream Python standards.
 - Existing `.agents/skills/mavis-docling-ingestion` quarantine/parser workflow.
-- Added `.agents/skills/vercel-react-best-practices` from `vercel-labs/agent-skills`, upstream commit `1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62`; upstream skill declares MIT. Includes the skill, complete AGENTS rulebook, README, metadata, and selected critical rule references.
-- Four skills are routed in `.agents/skills/skill-router.json`: `dignified-python`, `mavis-docling-ingestion`, `vercel-react-best-practices`, and `vakilsite-search-quality`.
+- The Vercel React Best Practices vendor copy was removed on 2026-11-10 because the pinned upstream repository lacks a standalone LICENSE file and clear copyright-holder notice. Only `.agents/skills/vercel-react-best-practices/UPSTREAM.md` remains as a licensing audit record; the skill is not registered or used.
+- Three skills are routed in `.agents/skills/skill-router.json`: `dignified-python`, `mavis-docling-ingestion`, and `vakilsite-search-quality`.
 - Seven repository-level Copilot agent profiles exist under `.github/agents`: search growth, performance, legal evidence, continuity, retrieval, security/privacy, and design guard.
 - Read-only reviewers are explicitly restricted to `read` and `search`; the continuity agent is limited to documentation-oriented tools. These are repository definitions, not proof that Copilot seats, CLI, or cloud-agent execution are enabled for the account.
 - Do not install a large SEO desktop application into the Next.js runtime. Scrawly crawler is a separate MIT desktop project and should be evaluated in an isolated audit environment before adoption.
