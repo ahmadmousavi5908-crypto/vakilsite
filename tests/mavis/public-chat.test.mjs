@@ -293,3 +293,44 @@ test("does not expose internal errors in public error payloads", () => {
   assert.doesNotMatch(result.body.error.message, /secret/);
   assert.equal(result.body.error.requestId, "req_test");
 });
+
+test("rejects forged verified evidence from an untrusted host or impossible access date", async () => {
+  const invalidRecords = [
+    {
+      ...verifiedRecord,
+      evidence: {
+        state: "verified_primary",
+        citations: [{
+          ...verifiedRecord.evidence.citations[0],
+          url: "https://untrusted.example/law",
+        }],
+      },
+    },
+    {
+      ...verifiedRecord,
+      evidence: {
+        state: "verified_primary",
+        citations: [{
+          ...verifiedRecord.evidence.citations[0],
+          accessedAt: "2026-02-31",
+        }],
+      },
+    },
+  ];
+
+  for (const record of invalidRecords) {
+    let providerCalled = false;
+    const result = await runPublicChat({
+      input: { message: "برای تنظیم قرارداد مشارکت راهنمایی عمومی می‌خواهم." },
+      retrieve: verifiedRetriever([record]),
+      provider: testProvider(async () => {
+        providerCalled = true;
+        return { claims: [{ text: "پاسخ", sourceRecordIds: ["law-verified"] }] };
+      }),
+      env: enabledEnv,
+    });
+    assert.equal(result.status, "needs_human_review");
+    assert.equal(result.reasonCode, "NO_VERIFIED_PRIMARY_EVIDENCE");
+    assert.equal(providerCalled, false);
+  }
+});
