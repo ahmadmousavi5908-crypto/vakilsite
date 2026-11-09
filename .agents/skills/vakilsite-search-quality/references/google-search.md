@@ -17,5 +17,9 @@ Research snapshot: 2026-11-09. Re-check official documentation before implementa
 - Official announcement (worldwide rollout from 2026-08-31): https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports
 - Search Console quotas: https://developers.google.com/webmaster-tools/limits
 - Core Web Vitals: https://web.dev/articles/vitals
+- Google Business Profile guidelines: https://support.google.com/business/answer/3038177
+- LocalBusiness structured data: https://developers.google.com/search/docs/appearance/structured-data/local-business
+- Organization structured data: https://developers.google.com/search/docs/appearance/structured-data/organization
+- Search spam policies: https://developers.google.com/search/docs/essentials/spam-policies
 
 Important current Google guidance: AI Overviews and AI Mode have no extra technical requirements or special schema beyond Search eligibility and existing best practices. Google says llms.txt, artificial chunking, special GEO markup, and inauthentic mentions are not ranking requirements. Use the AI optimization guide to evaluate third-party claims.
