@@ -106,3 +106,42 @@ test("normalizes text but rejects overlong values rather than truncating them", 
   assert.equal(oversized.ok, false);
   assert.ok(oversized.errors.issuingBody);
 });
+
+test("validates actual Gregorian month lengths and leap days", () => {
+  const validLeapDay = validateSecureMatterFields("property", {
+    transactionDate: { calendar: "gregorian", value: "2024-02-29" },
+  });
+  assert.equal(validLeapDay.ok, true);
+
+  for (const value of ["2023-02-29", "2026-04-31", "2026-02-30"]) {
+    const invalid = validateSecureMatterFields("property", {
+      transactionDate: { calendar: "gregorian", value },
+    });
+    assert.equal(invalid.ok, false, value);
+    assert.ok(invalid.errors.transactionDate, value);
+  }
+});
+
+test("validates Jalali month lengths and Esfand 30 only in leap years", () => {
+  const leapYearEnd = validateSecureMatterFields("civil", {
+    executionDate: { calendar: "jalali", value: "1403-12-30" },
+  });
+  assert.equal(leapYearEnd.ok, true);
+
+  const ordinaryYearEnd = validateSecureMatterFields("civil", {
+    executionDate: { calendar: "jalali", value: "1404-12-30" },
+  });
+  assert.equal(ordinaryYearEnd.ok, false);
+  assert.ok(ordinaryYearEnd.errors.executionDate);
+
+  const validOrdinaryYearEnd = validateSecureMatterFields("civil", {
+    executionDate: { calendar: "jalali", value: "1404-12-29" },
+  });
+  assert.equal(validOrdinaryYearEnd.ok, true);
+
+  const invalidThirtyFirst = validateSecureMatterFields("civil", {
+    executionDate: { calendar: "jalali", value: "1404-07-31" },
+  });
+  assert.equal(invalidThirtyFirst.ok, false);
+  assert.ok(invalidThirtyFirst.errors.executionDate);
+});
