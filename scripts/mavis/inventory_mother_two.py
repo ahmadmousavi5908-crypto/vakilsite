@@ -318,22 +318,8 @@ def main() -> int:
 
     report = inventory_archive(args.archive)
     output_path, report_hash = write_inventory(report, args.output_dir)
-    summary = report["summary"]
-    print(json.dumps({
-        "status": "inventory_created",
-        "archive_sha256": report["archive"]["sha256"],
-        "report_path": str(output_path),
-        "report_sha256": report_hash,
-        "files": summary["files"],
-        "directories": summary["directories"],
-        "symlinks": summary["symlinks"],
-        "hardlinks": summary["hardlinks"],
-        "secret_candidates_redacted": summary["secret_candidate_count"],
-        "confidential_paths_redacted": summary["confidential_candidate_count"],
-        "unsafe_paths_quarantined": summary["unsafe_path_count"] + summary["unsafe_link_target_count"],
-        "duplicate_content_groups": summary["duplicate_content_groups"],
-        "extraction_performed": False,
-    }, ensure_ascii=False, indent=2))
+    # Keep archive-derived metadata out of terminal logs; the private report is the audit artifact.
+    print("Inventory created. Detailed metadata remains in the private report.")
     return 0
 
 
