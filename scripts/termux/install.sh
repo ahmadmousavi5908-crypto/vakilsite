@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 readonly REPOSITORY="https://github.com/ahmadmousavi5908-crypto/vakilsite.git"
-readonly SOURCE_REF="feature/mavis-termux-one-command-20261109"
+readonly SOURCE_REF="feature/mavis-final-verification-20261109"
 readonly APP_DIR="${MAVIS_DIR:-$HOME/downloads/vakilsite-mavis-termux}"
 readonly APP_URL="http://127.0.0.1:3002"
 
