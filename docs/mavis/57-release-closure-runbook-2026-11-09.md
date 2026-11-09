@@ -95,7 +95,7 @@ Use this order for each high-priority record:
 6. Only then update the canonical record and regenerate/validate the bundle. A secondary database or search result is discovery evidence, not primary verification.
 
 Official discovery starting points:
-- Official Judiciary gateway (its menu links to laws/regulations, Legal Department advisory opinions, Supreme Court unifying opinions, Administrative Justice Court decisions, and the National Judicial Decisions System): https://eadil.com/
+- Official Judiciary gateway linked by the National Judicial Decisions System: https://eadl.ir/ (direct gateway reachability was not confirmed in the 2026-11-09 check; the gateway is not the underlying law or judgment).
 - Official Gazette: https://www.rrk.ir/
 - National Laws and Regulations portal: https://qavanin.ir/
 
