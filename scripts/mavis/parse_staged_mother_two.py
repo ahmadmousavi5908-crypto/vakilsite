@@ -648,6 +648,20 @@ def parse_staged_documents(
                 )
             except ParsingError:
                 raise
+            except (ModuleNotFoundError, importlib.metadata.PackageNotFoundError):
+                if sha256_file(source) != source_hash:
+                    raise ParsingError("Source integrity changed while checking parser dependencies.")
+                records.append(
+                    {
+                        "document_id": document_id,
+                        "source_path": relative.as_posix(),
+                        "source_sha256": source_hash,
+                        "status": "skipped_missing_docling",
+                        "required_dependency": "docling-slim",
+                        "indexing_allowed": False,
+                        "retrieval_allowed": False,
+                    }
+                )
             except Exception as error:
                 if sha256_file(source) != source_hash:
                     raise ParsingError("Source integrity changed during a failed conversion.") from error
@@ -670,7 +684,9 @@ def parse_staged_documents(
             "parsed_files": sum(record["status"].startswith(("parsed_", "empty_output_")) for record in records),
             "skipped_files": sum(record["status"].startswith("skipped_") for record in records),
             "unsupported_files": sum(record["status"] == "skipped_unsupported_format" for record in records),
-            "missing_dependency_files": sum(record["status"] == "skipped_missing_libreoffice" for record in records),
+            "missing_dependency_files": sum(record["status"].startswith("skipped_missing_") for record in records),
+            "missing_libreoffice_files": sum(record["status"] == "skipped_missing_libreoffice" for record in records),
+            "missing_docling_files": sum(record["status"] == "skipped_missing_docling" for record in records),
             "json_size_limit_files": sum(record["status"] == "skipped_json_size_limit" for record in records),
             "failed_files": sum(record["status"] == "conversion_failed" for record in records),
             "human_review_required": True,
