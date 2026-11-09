@@ -19,6 +19,8 @@ concurrency:
 jobs:
   production-baseline:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
     timeout-minutes: 45
     steps:
       - name: Check out repository
