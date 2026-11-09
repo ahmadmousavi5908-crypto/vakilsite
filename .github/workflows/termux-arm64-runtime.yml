@@ -127,7 +127,7 @@ jobs:
           curl --fail --silent --max-time 10 http://127.0.0.1:3100/sitemap.xml > /dev/null
 
       - name: Upload candidate package for review
-        if: github.event.action != 'closed'
+        if: github.event.action != 'closed' || github.event.pull_request.merged == true
         uses: actions/upload-artifact@v4
         with:
           name: mavis-termux-arm64-runtime
@@ -137,22 +137,35 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+
+  publish-release:
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Download verified ARM64 package
+        uses: actions/download-artifact@v4
+        with:
+          name: mavis-termux-arm64-runtime
+          path: ./release-assets
+
       - name: Publish immutable Termux runtime release
-        if: github.event.action == 'closed' && github.event.pull_request.merged == true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: mavis-termux-v1.0.0
-          ARCHIVE: ${{ steps.package.outputs.archive }}
-          CHECKSUM: ${{ steps.package.outputs.checksum }}
         run: |
           set -Eeuo pipefail
+          cd release-assets
           if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$RELEASE_TAG" "$ARCHIVE" "$CHECKSUM" --repo "$GITHUB_REPOSITORY" --clobber
+            gh release upload "$RELEASE_TAG" mavis-termux-arm64.tar.gz mavis-termux-arm64.tar.gz.sha256 --repo "$GITHUB_REPOSITORY" --clobber
           else
-            gh release create "$RELEASE_TAG" "$ARCHIVE" "$CHECKSUM" \
-              --repo "$GITHUB_REPOSITORY" \
-              --target "$GITHUB_SHA" \
-              --title "MAVIS Termux ARM64 Runtime v1.0.0" \
-              --notes "Verified Linux ARM64 runtime for Termux via Debian proot. Build and smoke tests completed on ubuntu-24.04-arm." \
+            gh release create "$RELEASE_TAG" mavis-termux-arm64.tar.gz mavis-termux-arm64.tar.gz.sha256 \\
+              --repo "$GITHUB_REPOSITORY" \\
+              --target "$GITHUB_SHA" \\
+              --title "MAVIS Termux ARM64 Runtime v1.0.0" \\
+              --notes "Verified Linux ARM64 runtime for Termux via Debian proot. Build and smoke tests completed on ubuntu-24.04-arm." \\
               --prerelease
           fi
