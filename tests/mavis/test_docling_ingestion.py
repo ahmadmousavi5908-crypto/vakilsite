@@ -66,12 +66,24 @@ class DoclingIngestionTests(unittest.TestCase):
         manifest = {
             "schema_version": "1.0.0",
             "source_archive": {"filename": "mother-two.tar.gz", "sha256": "a" * 64},
+            "source_inventory": {"filename": "inventory.json", "sha256": "c" * 64},
             "summary": {
+                "selected_files": 1,
+                "secret_content_candidates": 0,
+                "staged_files": 1,
+                "staged_bytes": len(content),
                 "human_review_required": True,
                 "indexing_allowed": False,
                 "retrieval_allowed": False,
             },
-            "policy": {"automatic_ingestion_performed": False},
+            "policy": {
+                "secrets_excluded": True,
+                "unsafe_paths_and_links_excluded": True,
+                "original_archive_modified": False,
+                "extracted_in_place": False,
+                "automatic_ingestion_performed": False,
+                "copyright_and_access_rights_verified": False,
+            },
             "files": [
                 {
                     "path": filename,
@@ -93,6 +105,17 @@ class DoclingIngestionTests(unittest.TestCase):
         )
         return stage_root, source, manifest
 
+    def parse_stage(self, stage_root, output_dir, **kwargs):
+        manifest_hash = hashlib.sha256(
+            (stage_root / "staging-manifest.json").read_bytes()
+        ).hexdigest()
+        return parse_staged_documents(
+            stage_root,
+            output_dir,
+            expected_manifest_sha256=manifest_hash,
+            **kwargs,
+        )
+
     def test_parses_verified_pdf_to_page_anchored_review_only_output(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -100,7 +123,7 @@ class DoclingIngestionTests(unittest.TestCase):
             converter = FakeConverter()
             output = root / "parsed"
 
-            result = parse_staged_documents(
+            result = self.parse_stage(
                 stage_root,
                 output,
                 converter=converter,
@@ -138,7 +161,7 @@ class DoclingIngestionTests(unittest.TestCase):
             output = root / "parsed"
 
             with self.assertRaisesRegex(ParsingError, "SHA-256"):
-                parse_staged_documents(stage_root, output, converter=FakeConverter())
+                self.parse_stage(stage_root, output, converter=FakeConverter())
 
             self.assertFalse(output.exists())
 
@@ -185,7 +208,7 @@ class DoclingIngestionTests(unittest.TestCase):
             stage_root, _source, _manifest = self.create_stage(root, filename="books/legacy.doc")
             converter = FakeConverter()
 
-            result = parse_staged_documents(
+            result = self.parse_stage(
                 stage_root,
                 root / "parsed",
                 converter=converter,
@@ -217,6 +240,27 @@ class DoclingIngestionTests(unittest.TestCase):
             self.assertNotIn("must-not-be-written", serialized)
             self.assertEqual(parse_manifest["files"][0]["error_type"], "RuntimeError")
             self.assertTrue(parse_manifest["files"][0]["error_details_redacted"])
+
+
+    def test_rejects_manifest_tampering_against_external_staging_digest(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            stage_root, _source, manifest = self.create_stage(root)
+            trusted_hash = hashlib.sha256(
+                (stage_root / "staging-manifest.json").read_bytes()
+            ).hexdigest()
+            manifest["files"][0]["rights_status"] = "approved"
+            (stage_root / "staging-manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+
+            with self.assertRaisesRegex(ParsingError, "trusted staging result"):
+                parse_staged_documents(
+                    stage_root,
+                    root / "parsed",
+                    expected_manifest_sha256=trusted_hash,
+                    converter=FakeConverter(),
+                )
+
+            self.assertFalse((root / "parsed").exists())
 
     def test_never_overwrites_existing_output_directory(self):
         with tempfile.TemporaryDirectory() as temporary:
