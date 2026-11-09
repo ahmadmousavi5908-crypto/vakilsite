@@ -42,6 +42,16 @@ ALLOWED_CLASSES = PRIMARY_CLASSES | {
 ALLOWED_ACCESS = {"public", "internal", "confidential", "restricted_secret"}
 ALLOWED_RIGHTS = {"public_domain", "permission_confirmed", "licensed", "internal_only", "unknown", "restricted"}
 SEARCHABLE_RIGHTS = {"public_domain", "permission_confirmed", "licensed", "internal_only"}
+LAWYER_CLASSES = PRIMARY_CLASSES | {
+    "academic_commentary",
+    "official_guidance",
+    "legal_term",
+    "educational_summary",
+    "research_note",
+    "book",
+    "published_article",
+    "dataset",
+}
 TRUSTED_PRIMARY_HOSTS = {"rrk.ir", "qavanin.ir", "rc.majlis.ir"}
 SOURCE_ID_PATTERN = re.compile(r"^hist_[a-f0-9]{24}$")
 
@@ -178,6 +188,8 @@ def normalize_approved_decision(decision: dict[str, Any], queue_record: dict[str
     publication_date = decision.get("publication_date")
     if publication_date is not None and not valid_date(publication_date):
         raise ReviewDecisionError(f"{source_id}: publication_date must be YYYY-MM-DD.")
+    if source_url and not safe_https_url(source_url):
+        raise ReviewDecisionError(f"{source_id}: source_url must be a safe HTTPS URL.")
 
     human_approved = decision.get("human_approved_searchable")
     primary_verified = decision.get("primary_source_verified")
@@ -211,6 +223,8 @@ def normalize_approved_decision(decision: dict[str, Any], queue_record: dict[str
 
     rights_allow_search = rights_status in SEARCHABLE_RIGHTS
     access_allow_search = access_class in {"public", "internal"}
+    if human_approved and not (rights_allow_search and access_allow_search):
+        raise ReviewDecisionError(f"{source_id}: searchable approval conflicts with rights or access class.")
     search_eligible = human_approved and rights_allow_search and access_allow_search
 
     return {
@@ -244,7 +258,7 @@ def normalize_approved_decision(decision: dict[str, Any], queue_record: dict[str
         "retrieval_allowed": search_eligible,
         "eligibility": {
             "public_legal_chat": bool(primary_verified and primary_verified_eligible),
-            "lawyer_copilot": bool(search_eligible),
+            "lawyer_copilot": bool(search_eligible and source_class in LAWYER_CLASSES),
             "growth": bool(search_eligible and access_class == "public" and source_class in {"seo_document", "published_article", "project_documentation"}),
         },
     }
