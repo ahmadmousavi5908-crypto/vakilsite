@@ -33,31 +33,66 @@
 
 ## فرمان‌های نهایی Termux
 
-ابتدا مسیر دقیق آرشیو و گزارش inventory تأیید شود. آرشیو اصلی نباید جابه‌جا یا بازنویسی شود.
+ابتدا مسیر دقیق آرشیو واقعی را از فهرست فایل‌های محلی تأیید کنید. نام فایل را حدس نزنید و آرشیو اصلی را جابه‌جا یا بازنویسی نکنید. این اسکریپت عمداً مسیر گزارش را در stdout چاپ نمی‌کند؛ بنابراین گزارش باید از پوشه خروجی پیدا و checksum آن جداگانه کنترل شود.
 
 ~~~bash
-REPORT="$(python3 scripts/mavis/inventory_mother_two.py \
-  --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
-  --output-dir "$HOME/downloads/vakilsite-mother-two-audit" \
-  | python3 -c 'import json,sys; print(json.load(sys.stdin)["report_path"])')" || exit 1
-test -f "$REPORT" || { echo "Inventory report not found"; exit 1; }
-~~~
+ARCHIVE="${MOTHER_TWO_ARCHIVE:?Set MOTHER_TWO_ARCHIVE to the exact approved archive path}"
+OUTPUT_DIR="$HOME/downloads/vakilsite-mother-two-audit"
 
-پس از بررسی خروجی و checksum گزارش:
+test -f "$ARCHIVE" || { echo "Approved archive not found"; exit 1; }
+
+python3 scripts/mavis/inventory_mother_two.py \
+  --archive "$ARCHIVE" \
+  --output-dir "$OUTPUT_DIR" || exit 1
+
+REPORT="$(python3 - "$OUTPUT_DIR" <<'PY'
+from pathlib import Path
+import sys
+
+directory = Path(sys.argv[1])
+reports = sorted(
+    directory.glob("mother-two-inventory-*.json"),
+    key=lambda item: item.stat().st_mtime_ns,
+    reverse=True,
+)
+if not reports:
+    raise SystemExit("No inventory report was created.")
+print(reports[0])
+PY
+)" || exit 1
+
+test -f "$REPORT" || { echo "Inventory report not found"; exit 1; }
+
+python3 - "$REPORT" <<'PY'
+import hashlib
+from pathlib import Path
+import sys
+
+report = Path(sys.argv[1])
+checksum_file = report.with_suffix(report.suffix + ".sha256")
+expected = checksum_file.read_text(encoding="ascii").split()[0]
+actual = hashlib.sha256(report.read_bytes()).hexdigest()
+if actual != expected:
+    raise SystemExit("Inventory checksum verification failed.")
+print("Inventory checksum verified.")
+PY
+~~~ 
+
+پس از بررسی گزارش خصوصی و checksum آن، ابتدا فقط dry-run اجرا شود:
 
 ~~~bash
 python3 scripts/mavis/stage_mother_two.py \
-  --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
+  --archive "$ARCHIVE" \
   --inventory "$REPORT" \
   --output-parent "$HOME/downloads/vakilsite-mother-two-staging" \
   --dry-run
 ~~~
 
-فقط پس از بررسی تعداد، حجم، هش آرشیو و گزارش:
+فقط پس از بررسی تعداد، حجم، هش آرشیو، فایل‌های منتخب و موارد مشکوک، مرحله‌بندی واقعی اجرا شود:
 
 ~~~bash
 python3 scripts/mavis/stage_mother_two.py \
-  --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
+  --archive "$ARCHIVE" \
   --inventory "$REPORT" \
   --output-parent "$HOME/downloads/vakilsite-mother-two-staging"
 ~~~
