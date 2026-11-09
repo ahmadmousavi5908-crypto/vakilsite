@@ -6,7 +6,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
@@ -150,7 +149,7 @@ def create_review_queue(staging_manifest_path: str | Path, output_path: str | Pa
         },
     }
 
-    destination = Path(output_path).expanduser() if output_path else manifest_path.parent / "historical-review-queue.json"
+    destination = Path(output_path).expanduser() if output_path else root / "historical-review-queue.json"
     destination.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     if destination.exists() or destination.is_symlink():
         raise ReviewQueueError("Review queue output already exists; refusing to overwrite.")
