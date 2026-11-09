@@ -112,3 +112,29 @@ test("returns explicit not-found and rejects oversized or invalid requests", () 
   assert.equal(buildLegalResearchDossier({ topic: "سند", records: null }).ok, false);
   assert.equal(empty.deadlineCalculation, null);
 });
+
+
+test("keeps source-discovery notes in their own secondary research section", () => {
+  const dossier = buildLegalResearchDossier({
+    topic: "ثبت ادعا",
+    records: [{
+      id: "research-note-1",
+      title: "یادداشت پژوهشی ثبت ادعا",
+      source_class: "research_note",
+      review_date: "2026-11-01",
+      notes: "گزارش ثانویه است و باید با متن رسمی تطبیق شود.",
+      review_status: "secondary_source_only",
+      sources: [{
+        title: "منبع ثانویه",
+        url: "https://example.org/research",
+        source_type: "secondary",
+      }],
+    }],
+  });
+
+  assert.equal(dossier.sections.research_note.length, 1);
+  assert.equal(dossier.sections.statute.length, 0);
+  assert.equal(dossier.verifiedPrimaryCount, 0);
+  assert.equal(dossier.answerReadiness, "blocked_missing_verified_primary_sources");
+  assert.ok(dossier.items[0].missingFields.includes("verified_primary_source_verification"));
+});
