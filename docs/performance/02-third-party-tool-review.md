@@ -20,7 +20,7 @@ Scrawly advertises 250 technical SEO, GEO, and AI crawler checks, JavaScript ren
 
 ## Adopted alternatives
 
-- Vercel React Best Practices skill for Next.js/React engineering guidance, vendored under .agents/skills/vercel-react-best-practices.
+- Use official React and Next.js documentation for framework guidance. The Vercel React Best Practices material is not vendored because its pinned upstream repository lacks a standalone LICENSE file and clear copyright-holder notice; retain only the source/commit audit note until licensing is clarified.
 - First-party Vakilsite Search Quality skill and four focused GitHub Copilot agent profiles.
 - Google Lighthouse CLI 13.6.0 and @next/bundle-analyzer 16.4.3 installed only inside an isolated GitHub Actions baseline job. Neither is added to application runtime dependencies.
 - Existing Search Console read-only adapter and deterministic growth metrics remain the supported data path.
