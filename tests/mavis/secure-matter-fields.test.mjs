@@ -29,6 +29,19 @@ test("accepts allowlisted civil fields and preserves calendar metadata", () => {
   });
 });
 
+test("treats blank optional fields as absent and requires amount/currency together", () => {
+  const blank = validateSecureMatterFields("civil", { documentType: "   ", executionDate: "" });
+  assert.equal(blank.ok, true);
+  assert.deepEqual(blank.value, {});
+
+  const missingCurrency = validateSecureMatterFields("civil", { claimedAmount: "2500" });
+  assert.equal(missingCurrency.ok, false);
+  assert.ok(missingCurrency.errors.currency);
+
+  const complete = validateSecureMatterFields("civil", { claimedAmount: "2500", currency: "IRR" });
+  assert.equal(complete.ok, true);
+});
+
 test("validates category enums and rejects fields belonging to another matter type", () => {
   const invalidEnum = validateSecureMatterFields("criminal", { personRole: "judge" });
   assert.equal(invalidEnum.ok, false);
