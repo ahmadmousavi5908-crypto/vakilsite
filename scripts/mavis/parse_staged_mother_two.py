@@ -61,6 +61,15 @@ class ParsingError(RuntimeError):
     """Raised when a staged source fails an integrity or policy check."""
 
 
+def installed_docling_version() -> str:
+    for distribution in ("docling", "docling-slim"):
+        try:
+            return importlib.metadata.version(distribution)
+        except importlib.metadata.PackageNotFoundError:
+            continue
+    raise importlib.metadata.PackageNotFoundError("Neither docling nor docling-slim is installed.")
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -359,7 +368,7 @@ def parse_staged_documents(
         raise ParsingError("Parser output must be outside the source quarantine directory.")
 
     active_converter = converter or create_converter(ocr=ocr, artifacts_dir=artifacts_dir)
-    active_version = docling_version or importlib.metadata.version("docling")
+    active_version = docling_version or installed_docling_version()
     requested_output.mkdir(mode=0o700)
 
     records: list[dict[str, Any]] = []
