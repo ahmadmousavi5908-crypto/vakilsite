@@ -215,7 +215,11 @@ class DoclingIngestionTests(unittest.TestCase):
             parse_manifest = json.loads((root / "parsed/parse-manifest.json").read_text("utf-8"))
             self.assertEqual(result["missing_docling_files"], 1)
             self.assertEqual(parse_manifest["files"][0]["status"], "skipped_missing_docling")
-            self.assertFalse((root / "parsed" / parse_manifest["files"][0].get("output_file", "")).exists())
+            self.assertNotIn("output_file", parse_manifest["files"][0])
+            self.assertEqual(
+                {item.name for item in (root / "parsed").iterdir()},
+                {"parse-manifest.json"},
+            )
 
     def test_skips_legacy_word_format_when_libreoffice_is_unavailable(self):
         with tempfile.TemporaryDirectory() as temporary:
