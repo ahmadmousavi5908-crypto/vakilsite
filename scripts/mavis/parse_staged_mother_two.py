@@ -25,8 +25,12 @@ from typing import Any
 SHA256_PATTERN = re.compile(r"^[a-f0-9]{64}$")
 SUPPORTED_EXTENSIONS = {
     ".pdf",
+    ".doc",
     ".docx",
+    ".rtf",
+    ".ppt",
     ".pptx",
+    ".xls",
     ".xlsx",
     ".csv",
     ".html",
@@ -41,6 +45,7 @@ SUPPORTED_EXTENSIONS = {
     ".odp",
     ".xml",
 }
+LEGACY_OFFICE_EXTENSIONS = {".doc", ".rtf", ".ppt", ".xls"}
 OCR_LANGUAGES = ["fas", "eng"]
 DOCUMENT_TIMEOUT_SECONDS = 120
 MAX_FILE_BYTES = 100 * 1024 * 1024
@@ -426,6 +431,20 @@ def parse_staged_documents(
                 )
                 continue
 
+            if extension in LEGACY_OFFICE_EXTENSIONS and shutil.which("soffice") is None:
+                records.append(
+                    {
+                        "document_id": document_id,
+                        "source_path": relative.as_posix(),
+                        "source_sha256": source_hash,
+                        "status": "skipped_missing_libreoffice",
+                        "required_dependency": "libreoffice",
+                        "indexing_allowed": False,
+                        "retrieval_allowed": False,
+                    }
+                )
+                continue
+
             operation = "convert"
             try:
                 result = active_converter.convert(str(source))
@@ -522,7 +541,9 @@ def parse_staged_documents(
         summary = {
             "total_files": len(records),
             "parsed_files": sum(record["status"].startswith(("parsed_", "empty_output_")) for record in records),
-            "skipped_files": sum(record["status"] == "skipped_unsupported_format" for record in records),
+            "skipped_files": sum(record["status"].startswith("skipped_") for record in records),
+            "unsupported_files": sum(record["status"] == "skipped_unsupported_format" for record in records),
+            "missing_dependency_files": sum(record["status"] == "skipped_missing_libreoffice" for record in records),
             "failed_files": sum(record["status"] == "conversion_failed" for record in records),
             "human_review_required": True,
             "indexing_allowed": False,
