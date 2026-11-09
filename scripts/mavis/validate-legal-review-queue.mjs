@@ -35,13 +35,13 @@ const TIMESTAMP_COLUMNS = new Set(["retrieved_at", "reviewed_at"]);
 const PRIMARY_SOURCE_CLASSES = new Set(["primary_publication", "official_law_portal"]);
 
 function isValidDateOnly(value) {
-  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const date = new Date(value + "T00:00:00.000Z");
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
 function isValidTimestamp(value) {
-  const match = /^(\\d{4}-\\d{2}-\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.\\d{1,3})?(Z|[+-](\\d{2}):(\\d{2}))$/.exec(value);
+  const match = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?(Z|[+-](\d{2}):(\d{2}))$/.exec(value);
   if (!match || !isValidDateOnly(match[1])) return false;
 
   const [, , hour, minute, second, zone, offsetHour, offsetMinute] = match;
