@@ -217,6 +217,9 @@ export default function MavisKnowledgeSearch() {
                 </div>
                 <h3>{record.title || record.canonical || "مدخل بدون عنوان"}</h3>
                 {excerpt && <p className={styles.excerpt}>{excerpt}</p>}
+                {record.record_type === "research_note" && record.notes && (
+                  <p className={styles.noteCaution}><strong>محدودیت منبع:</strong> {record.notes}</p>
+                )}
                 <div className={styles.evidencePanel}>
                   <div className={styles.evidenceHeader}>
                     <strong>وضعیت مستندات و اعتبار</strong>
