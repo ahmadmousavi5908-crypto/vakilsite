@@ -11,7 +11,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import os
 import re
 import shutil
 import tarfile
@@ -40,6 +39,12 @@ MAX_FILE_BYTES = 100 * 1024 * 1024
 MAX_TOTAL_BYTES = 1024 * 1024 * 1024
 MAX_FILES = 5000
 SHA256_PATTERN = re.compile(r"^[a-f0-9]{64}$")
+SECRET_CONTENT_PATTERNS = (
+    re.compile(rb"-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----"),
+    re.compile(rb"(?i)\\b(?:password|passwd|client_secret|api[_-]?key|secret_access_key|access_token|refresh_token|service_role_key|database_url)\\s*[:=]\\s*['\\\"]?[A-Za-z0-9_./+=:-]{8,}"),
+    re.compile(rb"\\b(?:gh[pousr]_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{20,})\\b"),
+    re.compile(rb"\\beyJ[A-Za-z0-9_-]{20,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\b"),
+)
 
 
 class StagingError(RuntimeError):
@@ -121,6 +126,55 @@ def select_inventory_entries(report: dict[str, Any]) -> dict[str, dict[str, Any]
     return selected
 
 
+def contains_secret_content(stream: Any) -> bool:
+    """Detect common credential markers without returning or persisting file content."""
+    overlap = b""
+    found = False
+    while True:
+        chunk = stream.read(1024 * 1024)
+        if not chunk:
+            break
+        candidate = overlap + chunk
+        if not found and any(pattern.search(candidate) for pattern in SECRET_CONTENT_PATTERNS):
+            found = True
+        overlap = candidate[-512:]
+    return found
+
+
+def scan_selected_content(
+    archive_path: Path,
+    selected: dict[str, dict[str, Any]],
+) -> set[str]:
+    """First pass: stream selected members and exclude content-level secret candidates."""
+    flagged: set[str] = set()
+    seen: set[str] = set()
+
+    with tarfile.open(archive_path, mode="r|gz") as tar:
+        for member in tar:
+            member_path = _normalized_member_name(member.name)
+            expected = selected.get(member_path)
+            if expected is None:
+                continue
+            if member_path in seen:
+                raise StagingError("Duplicate member path found in archive.")
+            if not member.isfile() or _is_unsafe_path(member_path):
+                raise StagingError("An eligible inventory path is not a safe regular file.")
+            if int(member.size) != expected["size_bytes"]:
+                raise StagingError("Archive member size changed after inventory.")
+            source = tar.extractfile(member)
+            if source is None:
+                raise StagingError("Could not read an eligible archive member.")
+            with source:
+                if contains_secret_content(source):
+                    flagged.add(member_path)
+            seen.add(member_path)
+
+    missing = sorted(set(selected) - seen)
+    if missing:
+        raise StagingError("Inventory contains eligible paths missing from the archive.")
+    return flagged
+
+
 def stage_archive(
     archive_path: str | Path,
     inventory_path: str | Path,
@@ -142,6 +196,13 @@ def stage_archive(
     if not selected:
         raise StagingError("No eligible files were found in the inventory.")
 
+    secret_content_paths = scan_selected_content(archive, selected)
+    safe_selected = {
+        member_path: entry
+        for member_path, entry in selected.items()
+        if member_path not in secret_content_paths
+    }
+
     if dry_run:
         return {
             "status": "dry_run_verified",
@@ -149,6 +210,8 @@ def stage_archive(
             "inventory_sha256": inventory_sha256,
             "selected_files": len(selected),
             "selected_bytes": sum(item["size_bytes"] for item in selected.values()),
+            "secret_content_candidates": len(secret_content_paths),
+            "eligible_after_content_scan": len(safe_selected),
             "staged_files": 0,
             "extraction_performed": False,
         }
@@ -172,7 +235,7 @@ def stage_archive(
         with tarfile.open(archive, mode="r|gz") as tar:
             for member in tar:
                 member_path = _normalized_member_name(member.name)
-                expected = selected.get(member_path)
+                expected = safe_selected.get(member_path)
                 if expected is None:
                     continue
                 if member_path in seen:
@@ -231,7 +294,7 @@ def stage_archive(
                     "retrieval_allowed": False,
                 })
 
-        missing = sorted(set(selected) - seen)
+        missing = sorted(set(safe_selected) - seen)
         if missing:
             raise StagingError("Inventory contains eligible paths missing from the archive.")
 
@@ -247,6 +310,8 @@ def stage_archive(
                 "sha256": inventory_sha256,
             },
             "summary": {
+                "selected_files": len(selected),
+                "secret_content_candidates": len(secret_content_paths),
                 "staged_files": len(staged),
                 "staged_bytes": total_written,
                 "human_review_required": True,
@@ -279,6 +344,8 @@ def stage_archive(
             "manifest_sha256": hashlib.sha256(payload).hexdigest(),
             "archive_sha256": actual_archive_hash,
             "inventory_sha256": inventory_sha256,
+            "selected_files": len(selected),
+            "secret_content_candidates": len(secret_content_paths),
             "staged_files": len(staged),
             "staged_bytes": total_written,
             "indexing_allowed": False,
