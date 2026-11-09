@@ -92,7 +92,7 @@ export default function Home() {
 
       <header className="site-header">
         <div className="container nav-wrap">
-          <a className="brand" href="/">
+          <Link className="brand" href="/">
             <span className="brand-mark"><span>و</span></span>
             <span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز، خوزستان · پذیرش درخواست از سراسر ایران</small></span>
           </a>
