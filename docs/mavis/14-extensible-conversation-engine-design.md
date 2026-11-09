@@ -1,8 +1,12 @@
 # 14 — طراحی توسعه‌پذیر موتور مکالمه و سیاست‌های MAVIS
 
-**وضعیت:** Proposed Design v1.0 — مبنای پیاده‌سازی پس از همگام‌سازی معماری  
+**وضعیت:** Design v1.0؛ فاز قراردادها و Mock Core پیاده‌سازی و آزمون شده (2026-11-09). Route عمومی، UI، ذخیره تاریخچه و Provider واقعی عمداً فعال نیستند.  
 **قلمرو:** Public MAVIS در فاز اول؛ قابلیت استفاده مجدد در Private با policy و مجوز مستقل  
 **اصل طراحی:** توسعه‌پذیری از طریق قراردادهای کوچک و پایدار؛ نه ساخت abstractionهای بی‌مصرف.
+
+## وضعیت پیاده‌سازی 2026-11-09
+
+هسته مستقل Provider در مسیرهای `src/lib/mavis/{contracts,errors,mock-provider,public-chat,public-policy}.mjs` ایجاد شده است. این هسته فقط یک use case قابل آزمون است؛ هنوز endpoint، UI، session store، retrieval-to-answer pipeline یا ارسال داده به مدل ندارد. `MAVIS_PUBLIC_ENABLED=false` پیش‌فرض است. فعال‌کردن flag به‌تنهایی هیچ Route یا قابلیت عمومی ایجاد نمی‌کند.
 
 ## 1. تصمیم معماری پیشنهادی
 
@@ -156,10 +160,14 @@ Policyهای Public و Private جدا هستند. Policy عمومی هرگز ب�
 - ثبت تست baseline.
 
 ### فاز 1 — قراردادها و تست
-- تعریف TypeScript/JSDoc types متناسب با convention موجود پروژه.
-- تعریف schema ورودی/خروجی و کدهای خطا.
-- ساخت تست قرارداد و تست State Machine.
-- بدون اتصال Provider واقعی.
+- [x] اعتبارسنجی پیام ورودی با allowlist و ردکردن prompt، role، scope و history ارسالی کلاینت.
+- [x] تاریخچه محدود فقط از ورودی trusted سمت سرور پذیرفته می‌شود؛ persistence هنوز وجود ندارد.
+- [x] خطاهای استاندارد و پاسخ عمومی بدون افشای جزئیات داخلی.
+- [x] Provider Port مبتنی بر dependency injection و Mock شفاف با خروجی ثابت و بدون بازتاب متن کاربر.
+- [x] feature flag خاموش به‌صورت پیش‌فرض، کنترل نام Provider و سقف خروجی.
+- [x] تست واحد و lint در CI.
+- [ ] State Machine کامل و تست انتقال‌ها.
+- بدون اتصال Provider واقعی یا Route عمومی.
 
 ### فاز 2 — Public Policy MVP
 - triage محدود فوریت.
