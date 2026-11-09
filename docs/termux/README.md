@@ -16,14 +16,14 @@ Termux محل توسعه، ساخت پروژه یا رفع خطا نیست. بس
 
 ## اجرای یک‌مرحله‌ای
 
-پس از ادغام PR شماره 76 و انتشار بسته تأییدشده، نصب‌کننده از commit ثابت `cfd992761d40993c6f4dcde71b4895bae507b1e5` دریافت می‌شود؛ بنابراین تغییرات بعدی شاخه توسعه، نصب گوشی را ناخواسته عوض نمی‌کند:
+پس از ادغام PR شماره 76 و انتشار بسته تأییدشده، نصب‌کننده از commit ثابت `e11b9a4dc7cb25ddf7d07629d52f7db26338341d` دریافت می‌شود؛ بنابراین تغییرات بعدی شاخه توسعه، نصب گوشی را ناخواسته عوض نمی‌کند:
 
 ```bash
 set -Eeuo pipefail
 if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
-  gh api "repos/ahmadmousavi5908-crypto/vakilsite/contents/scripts/termux/install.sh?ref=cfd992761d40993c6f4dcde71b4895bae507b1e5" --jq .content | base64 -d | bash
+  gh api "repos/ahmadmousavi5908-crypto/vakilsite/contents/scripts/termux/install.sh?ref=e11b9a4dc7cb25ddf7d07629d52f7db26338341d" --jq .content | base64 -d | bash
 else
-  bash -c "$(curl -fsSL https://raw.githubusercontent.com/ahmadmousavi5908-crypto/vakilsite/cfd992761d40993c6f4dcde71b4895bae507b1e5/scripts/termux/install.sh)"
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/ahmadmousavi5908-crypto/vakilsite/e11b9a4dc7cb25ddf7d07629d52f7db26338341d/scripts/termux/install.sh)"
 fi
 ```
 
