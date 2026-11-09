@@ -24,7 +24,7 @@ It performs three mobile Lighthouse runs per route, verifies at least 24 JSON/HT
 
 - Lighthouse is a lab simulation. Do not present its score as real-user Core Web Vitals or a Google ranking.
 - Compare the same commit class, runner, route list, and Lighthouse version.
-- Use CrUX 28-day field data and Search Console Core Web Vitals for real-user trends when data exists.
+- Use CrUX 28-day field data and Search Console Core Web Vitals for real-user trends when data exists. Evaluate the 75th percentile separately on mobile and desktop: LCP ≤ 2.5 s, INP ≤ 200 ms, CLS ≤ 0.1.
 - Do not optimize only for aggregate score. Inspect LCP element, INP/TBT, CLS, image/font payload, client JS, hydration, long tasks, server response time, and accessibility.
 - Keep primary legal content server-rendered and immediately discoverable. Do not defer critical content merely to improve lab metrics.
 - Any optimization must preserve the approved visual design, RTL behavior, accessibility, and all existing page content.
@@ -40,6 +40,7 @@ The analyzer plugin and Lighthouse CLI are installed only inside the isolated wo
 - Lighthouse CLI: https://github.com/GoogleChrome/lighthouse
 - CrUX tools and data cadence: https://developer.chrome.com/docs/crux/methodology/tools
 - Core Web Vitals: https://web.dev/articles/vitals
+- Threshold methodology: https://web.dev/articles/defining-core-web-vitals-thresholds
 
 ## Exit criteria for blocking budgets
 
