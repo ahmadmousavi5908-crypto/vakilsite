@@ -29,6 +29,16 @@
 - معرفی رسمی گزارش: https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports
 - راهنمای گزارش Search: https://support.google.com/webmasters/answer/16984139
 
+## Local SEO و نمایه کسب‌وکار
+
+Google Business Profile باید نام واقعی و ثابت کسب‌وکار را مطابق تابلو، اسناد و وب‌سایت نشان دهد؛ افزودن کلیدواژه یا شعار به نام مجاز نیست. آدرس و محدوده خدمت باید دقیق و واقعی باشد. دفتر مجازی، نشانی غیرواقعی یا چند نمایه برای یک محل ایجاد نمی‌شود. اگر دفتر برای مراجعه موکلان فعال است، اطلاعات مکانی و تلفن باید با وضعیت واقعی تطبیق داده شود.
+
+LocalBusiness schema گوگل برای rich result به نام و آدرس فیزیکی نیاز دارد. تا زمانی که آدرس دقیق عمومی دفتر و تطابق آن با صفحه تماس/پروفایل تأیید نشده، نباید نشانی یا مختصات تخمینی به JSON-LD اضافه شود. داده سازمانی باید در صفحه اصلی یا صفحه معرفی کسب‌وکار متمرکز باشد، نه اینکه بی‌دلیل در تمام صفحات تکرار شود.
+
+## سیاست محتوای ضداسپم
+
+Google تولید انبوه صفحات کم‌ارزش، بازنویسی ماشینی یا جایگزینی نام شهرها در صفحات مشابه را مصداق بالقوه scaled content abuse و doorway abuse می‌داند. پوشش شهرهای خوزستان باید از راه محتوای واقعاً متمایز و اطلاعات خدمت واقعی انجام شود، نه تولید ده‌ها صفحه تقریباً یکسان. مقاله حقوقی باید ارزش افزوده، تحلیل مستقل و استناد اولیه داشته باشد.
+
 ## Google News
 
 Google News ناشر خبری را صرفاً بر اساس تعداد مقاله یا NewsArticle schema انتخاب نمی‌کند. الزامات فنی شامل URL یکتا و پایدار، HTML قابل خزش، لینک متنی از صفحات بخش، عنوان و تاریخ آشکار و محتوای مقاله قابل خواندن است. سیاست‌های News بر شفافیت نویسنده/ناشر، تاریخ، اطلاعات سازمان و تماس، عدم گمراه‌سازی و افشای محتوای حمایت‌شده تأکید دارند.
@@ -47,6 +57,10 @@ News sitemap برای ناشر واقعی مفید است و فقط URLهای م
 - News sitemap: https://developers.google.com/search/docs/crawling-indexing/sitemaps/news-sitemap
 - Google News technical guidelines: https://support.google.com/news/publisher-center/answer/9606708
 - Google News policies: https://support.google.com/news/publisher-center/answer/6204050
+- Google Business Profile representation guidelines: https://support.google.com/business/answer/3038177
+- LocalBusiness structured data: https://developers.google.com/search/docs/appearance/structured-data/local-business
+- Organization structured data: https://developers.google.com/search/docs/appearance/structured-data/organization
+- Google Search spam policies: https://developers.google.com/search/docs/essentials/spam-policies
 - Search Console Search Analytics: https://developers.google.com/webmaster-tools/v1/searchanalytics/query
 - Search Console quotas: https://developers.google.com/webmaster-tools/limits
 
