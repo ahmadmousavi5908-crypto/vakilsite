@@ -17,6 +17,19 @@
 
 A green CI result is evidence only for the checks actually executed. It is not proof of legal validity, real-device offline behavior, production configuration, or successful restore.
 
+### Latest integration status — 2026-11-09
+
+- Candidate head at this runbook refresh: `6ec2b8f7a461c02e0cad1b26fe101aa6cb96c4ee`. PRs #51–#58 have been merged into `integration/mavis-mvp-candidate-20261108`; integration PR #25 remains Draft and unmerged. The candidate has not been merged to main.
+- The latest fully green PR CI before the current merge commit was PR #58 head `e3fcad9f9a787cbf911cf263750d9b29f2d009cf`: application and database workflows passed, including 182 pgTAP assertions and the synthetic local database backup/restore check.
+- The legal review queue validator reports 175/175 canonical records and 0 validation errors: 144 `needs_legal_review`, 31 `secondary_source_only`, and 0 `verified_primary_source`. This validates queue structure and coverage, not legal correctness.
+- The public conversation core now has a disabled-by-default Mock Provider, a guarded state machine, deterministic urgent/priority human-review routing, and a verified-primary-only answer gate. Since the current corpus has zero verified primary records, ordinary legal questions are deliberately prevented from reaching a model.
+- The post-approval matter questionnaire has an immutable v1 contract, but no client portal, authentication, persistence, upload, or public activation.
+- Qwen3.5-9B with vLLM is documented only as a candidate for a synthetic-data benchmark. No real model, GPU host, external provider or production integration has been approved.
+- The Civil Code source pilot remains `secondary_source_only`: the official primary document, amendment chain and lawyer sign-off have not been captured.
+- The current candidate merge commit has fresh CI running. Recheck both workflows on the exact current SHA before local verification.
+
+
+
 ## 2. Final local verification (Termux — execute last)
 
 **Do not run this step yet.** It is deliberately the final operator-side verification after remote code review, exact-SHA CI, legal/owner decisions, staging tests, and backup/restore checks are complete. Use a fresh directory. Do not reuse or overwrite the existing site workspace or any Mother Two backup.
@@ -38,7 +51,7 @@ npm run mavis:verify
 
 **Pass evidence:** preserve the complete terminal output, command exit code 0, Node/npm versions, commit SHA, and available device/Android details. If any step fails, stop at the first failure, preserve its full output, and fix the root cause before continuing. Do not report a local pass until this output is reviewed.
 
-The helper covers Python legal-library validation, all MAVIS Node tests, offline bundle/syntax validation, MAVIS lint, and a Webpack production build. It intentionally does not run pgTAP, staging failure injection, or physical-device offline tests.
+The helper covers Python legal-library validation, canonical legal-review-queue validation, all MAVIS Node tests, offline bundle/syntax validation, MAVIS lint, and a Webpack production build. It intentionally does not run pgTAP, staging failure injection, or physical-device offline tests.
 
 ## 3. Database and privacy acceptance in disposable staging
 
@@ -83,7 +96,7 @@ Generate a high-entropy value locally with `openssl rand -hex 32` and place it d
 
 ## 6. Legal source verification: no shortcuts that counterfeit certainty
 
-The offline corpus currently contains 175 legal records: 0 are fully verified against an exact primary document; 144 need legal review and 31 are secondary-source-only. These statuses must remain unchanged until evidence is actually collected and reviewed.
+The offline corpus contains 175 legal records. The queue validator currently confirms 144 need legal review, 31 are secondary-source-only, and 0 are fully verified against an exact primary document. These statuses must remain unchanged until evidence is actually collected and reviewed.
 
 Use this order for each high-priority record:
 
@@ -130,7 +143,8 @@ The client intake and identity contract is in `docs/mavis/58-client-intake-and-i
 - If a password is enabled, the client chooses it after verified activation; the office never sees it. Apply NIST SP 800-63B-4: 15-character minimum for single-factor passwords, compromised-password blocklist, no composition rules, and no arbitrary periodic rotation.
 - Phone OTP is passwordless but phone-number recycling and SIM-swap risks mean it must not be the only protection for sensitive case access. Require a second factor or stronger approved authenticator.
 - Supabase passkeys are documented as experimental in the current 2026 docs; do not make them the sole production authentication path.
-- Public offline knowledge search may run without network. Private client records, case uploads, messages, login, and account changes remain online-only. An offline page or cached browser session must never bypass server-side authentication or revocation.
+- Public offline knowledge search may run without network. Private client records, case uploads, messages, login, and account changes remain online-only.
+- The public chat core remains disabled and has no active public route. It must not be enabled until a lawful provider/host, verified-source coverage, rate limits, AI disclosure/consent, privacy review and human handoff are all tested. An offline page or cached browser session must never bypass server-side authentication or revocation.
 - Offline status now uses an uncached same-origin connectivity probe with a 1.8-second timeout, separate from `navigator.onLine`. A failed probe must not disable local search.
 
 ## 10. Final release gate
@@ -147,6 +161,7 @@ Release readiness is **not achieved** until all applicable items below have evid
 - [ ] Disposable staging backup/restore and rollback drill passes, including Storage objects.
 - [ ] Provider integrations individually approved and tested, or explicitly deferred.
 - [ ] Both application and database CI workflows pass on the exact release candidate SHA.
+- [ ] Branch protection is enabled for main and the release integration branch, requiring the relevant application/database checks and review before merge.
 - [ ] Owner explicitly approves merge, production migration, activation, and deployment as separate decisions.
 
 **Do not convert pending human, legal, provider, or device gates into a percentage-based pass.** A defensible 100% means every agreed acceptance gate has evidence or an explicitly accepted deferral, not that every checklist box has been cosmetically changed to green.
