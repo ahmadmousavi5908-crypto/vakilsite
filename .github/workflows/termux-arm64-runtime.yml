@@ -163,7 +163,7 @@ jobs:
       - name: Publish immutable Termux runtime release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: mavis-termux-v1.0.0
+          RELEASE_TAG: mavis-termux-v1.0.1
         run: |
           set -Eeuo pipefail
           cd release-assets
@@ -179,7 +179,7 @@ jobs:
             gh release create "$RELEASE_TAG" mavis-termux-arm64.tar.gz mavis-termux-arm64.tar.gz.sha256 \
               --repo "$GITHUB_REPOSITORY" \
               --target "$GITHUB_SHA" \
-              --title "MAVIS Termux ARM64 Runtime v1.0.0" \
+              --title "MAVIS Termux ARM64 Runtime v1.0.1" \
               --notes "Verified Linux ARM64 runtime for Termux via Debian proot. Build and smoke tests completed on ubuntu-24.04-arm." \
               --prerelease
           fi
