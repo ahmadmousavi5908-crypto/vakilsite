@@ -116,7 +116,7 @@ function isValidDate(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   if (Object.keys(value).sort().join(",") !== "calendar,value") return false;
   if (!DATE_CALENDARS.has(value.calendar) || typeof value.value !== "string") return false;
-  const match = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(value.value);
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.value);
   if (!match) return false;
 
   const year = Number(match[1]);
