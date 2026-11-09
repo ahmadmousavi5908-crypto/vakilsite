@@ -61,6 +61,7 @@
 - [برنامه اجرایی زنده و ایده‌بانک](./13-operating-plan-and-idea-backlog.md)
 - [طراحی توسعه‌پذیر موتور مکالمه](./14-extensible-conversation-engine-design.md)
 - [برنامه اتصال دانش MAVIS و ارتقای بکاپ مادر دو](./21-knowledge-retrieval-and-mother-two-backup-plan.md)
+- [قرارداد دسترسی به کتابخانه‌های تاریخی و محتوای Mother Two](./51-mother-two-historical-library-activation-contract-2026-11-09.md)
 - [پژوهش روان‌شناسی ارتباط و جذب اخلاقی موکل](./research/02-client-psychology-and-ethical-engagement.md)
 - [پژوهش طراحی Intake و ارتباط اخلاقی](./research/01-client-intake-and-ethical-communication.md)
 
