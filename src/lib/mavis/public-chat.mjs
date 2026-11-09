@@ -59,9 +59,8 @@ function buildVerifiedKnowledgeContext(retrieval) {
     if (!record || typeof record.id !== "string" || !record.id.trim() || seen.has(record.id) ||
         record.evidence?.state !== "verified_primary" ||
         record.review_status !== "verified_primary_source" ||
-        record.source_verified !== true ||
-        record.validity_status !== "in_force" ||
-        !isValidCalendarDate(record.last_verified_at)) continue;
+        record.evidence.validity?.status !== "in_force" ||
+        !isValidCalendarDate(record.evidence.validity?.lastVerifiedAt)) continue;
 
     const citations = Array.isArray(record.evidence.citations)
       ? record.evidence.citations.filter(isTrustedPrimaryCitation).slice(0, 2)
