@@ -30,7 +30,15 @@
 - Corrective commit: `8900316788cc015cb183bc3c71397eb6336eea62` (requirements) and `b72e0b5d691e0bc1a0058d1d8abc2e3b11b730cb` (test).
 - Next action: inspect the newest OCR workflow on the current branch. Do not claim OCR works until a green end-to-end run proves Persian and English text extraction from the synthetic image-only PDF.
 
-### Existing CI evidence
+### Latest verification work — 2026-11-09
+
+- Commit `f6283dae71f84410916d222bdf566980d2880b66` changed the Mother Two inventory CLI to emit only a fixed completion message, keeping archive-derived metadata in the private report. This addresses terminal-log exposure; it does not establish archive content safety by itself.
+- Added a CLI regression test in commit `9638fe06e1c9dd6b3bc81a3dc4b91b1c939c4225`.
+- That test run failed because its expected output encoded a literal `\\n` rather than a newline. The failure was isolated to the test assertion, not the inventory implementation.
+- Corrected the assertion in commit `817a1cc9b502a0e5a898aed68b837623aac29b55`. Latest check runs for this exact SHA were queued when this checkpoint was written; do not report them as passed until completed.
+- On parent commit `9638fe06e1c9dd6b3bc81a3dc4b91b1c939c4225`, Site Quality and CodeQL completed successfully; MAVIS Knowledge Search failed at the CLI regression test. These are historical results for the parent SHA, not current-head validation.
+
+## Existing CI evidence
 
 - Deterministic knowledge search workflow run `42657899417` on `9a59d4b8`: success.
 - Main verification workflow run `42657422693` on `0013bdad`: success.
@@ -42,7 +50,9 @@
 - Existing `.agents/skills/dignified-python` upstream Python standards.
 - Existing `.agents/skills/mavis-docling-ingestion` quarantine/parser workflow.
 - Added `.agents/skills/vercel-react-best-practices` from `vercel-labs/agent-skills`, upstream commit `1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62`; upstream skill declares MIT. Includes the skill, complete AGENTS rulebook, README, metadata, and selected critical rule references.
-- Search quality skill and specialist Copilot agents are being added in this milestone; verify exact paths and commit after this checkpoint commit.
+- Four skills are routed in `.agents/skills/skill-router.json`: `dignified-python`, `mavis-docling-ingestion`, `vercel-react-best-practices`, and `vakilsite-search-quality`.
+- Seven repository-level Copilot agent profiles exist under `.github/agents`: search growth, performance, legal evidence, continuity, retrieval, security/privacy, and design guard.
+- Read-only reviewers are explicitly restricted to `read` and `search`; the continuity agent is limited to documentation-oriented tools. These are repository definitions, not proof that Copilot seats, CLI, or cloud-agent execution are enabled for the account.
 - Do not install a large SEO desktop application into the Next.js runtime. Scrawly crawler is a separate MIT desktop project and should be evaluated in an isolated audit environment before adoption.
 
 ## Search / SEO research decisions
@@ -64,15 +74,14 @@
 
 ## Next exact actions
 
-1. Verify current branch head, PR #76 head/base/draft state, and newest GitHub Actions runs.
-2. Resolve the OCR workflow failure; require a green Persian OCR end-to-end test.
-3. Run full workflow on exact current head; inspect all failed/cancelled jobs and logs.
-4. Install and validate the project-specific SEO and performance agent instructions; ensure skill router references all active skills.
-5. Audit current site metadata, sitemap, robots, JSON-LD, page templates, and route performance before changing application code.
-6. Establish Lighthouse and bundle baselines on production build; only then select optimizations.
-7. Inspect Scrawly source/license/security/dependencies and determine whether its crawl engine can be run safely as an isolated audit tool. Do not install its desktop UI as a runtime dependency.
-8. Prepare the single safe Termux Mother Two inventory/staging procedure; user runs it locally because the archive is not accessible in this environment.
-9. Update this checkpoint after every milestone with exact commit and CI evidence.
+1. Inspect all checks for exact head `817a1cc9b502a0e5a898aed68b837623aac29b55`; resolve any new failure from logs before proceeding.
+2. Re-run only failed jobs when appropriate; do not rerun successful jobs unnecessarily.
+3. Resolve the OCR workflow failure; require a green Persian OCR end-to-end test.
+4. Audit current site metadata, sitemap, robots, JSON-LD, page templates, and route performance before changing application code.
+5. Establish Lighthouse and bundle baselines on production build; only then select optimizations.
+6. Inspect Scrawly source/license/security/dependencies and determine whether its crawl engine can be run safely as an isolated audit tool. Do not install its desktop UI as a runtime dependency.
+7. Prepare the single safe Termux Mother Two inventory/staging procedure; user runs it locally because the archive is not accessible in this environment.
+8. Update this checkpoint after every milestone with exact commit and CI evidence.
 
 ## Status reporting contract
 
