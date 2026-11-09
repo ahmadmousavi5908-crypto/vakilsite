@@ -80,6 +80,12 @@ jobs:
       - name: Lint MAVIS retrieval modules
         run: npm run lint -- src/lib/mavis/knowledge-search.mjs src/lib/mavis/knowledge-search-handler.mjs src/lib/mavis/knowledge-retrieval.mjs src/lib/mavis/knowledge-registry.js src/lib/mavis/request-guards.mjs src/lib/mavis/rate-limit.mjs src/lib/supabase/admin.js src/app/api/mavis/knowledge-search/route.js src/components/admin/MavisKnowledgeSearch.jsx tests/mavis/knowledge-search-route.test.mjs tests/mavis/knowledge-retrieval.test.mjs src/app/admin/mavis/page.js src/app/admin/page.js src/app/admin/login/page.js src/app/admin/login/actions.js tests/mavis/knowledge-search.test.mjs
 
+      - name: Test secure matter-field contract
+        run: npm run test:mavis-matter-fields
+
+      - name: Lint secure matter-field contract
+        run: npm run lint -- src/lib/mavis/secure-matter-fields.mjs tests/mavis/secure-matter-fields.test.mjs
+
       - name: Test public intake validation
         if: ${{ hashFiles('tests/mavis/public-intake-validation.test.mjs') != '' }}
         run: node --test tests/mavis/public-intake-validation.test.mjs
