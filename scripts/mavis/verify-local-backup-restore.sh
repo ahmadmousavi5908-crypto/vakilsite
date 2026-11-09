@@ -58,7 +58,7 @@ done
 psql --no-psqlrc --set ON_ERROR_STOP=1 --dbname "$DB_URL" \
   --command 'DROP TABLE mavis_intake_private.ci_backup_restore_probe;'
 
-supabase stop >/dev/null
+timeout 60s supabase stop >/dev/null
 
 echo "Starting a clean local Supabase restore target..."
 mkdir -p "$RESTORE_DIR"
