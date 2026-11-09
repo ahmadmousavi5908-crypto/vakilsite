@@ -1,5 +1,5 @@
 import hashlib
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 import io
 import json
 import sys
@@ -89,6 +89,32 @@ class MotherTwoInventoryTests(unittest.TestCase):
             self.assertEqual(json.loads(output_path.read_text("utf-8"))["archive"]["sha256"], report["archive"]["sha256"])
             self.assertTrue(output_path.stat().st_mode & 0o600)
 
+
+    def test_rejects_symlink_output_directory_without_touching_target(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            target = root / "private-target"
+            target.mkdir()
+            target.chmod(0o755)
+            link = root / "audit-link"
+            link.symlink_to(target, target_is_directory=True)
+            original_mode = target.stat().st_mode
+
+            with self.assertRaisesRegex(ValueError, "must not be a symlink"):
+                write_inventory({}, link)
+
+            self.assertEqual(list(target.iterdir()), [])
+            self.assertEqual(target.stat().st_mode, original_mode)
+
+    def test_cli_requires_an_explicit_archive_path(self):
+        captured = io.StringIO()
+        with patch.object(sys, "argv", ["inventory_mother_two.py"]):
+            with redirect_stderr(captured):
+                with self.assertRaises(SystemExit) as result:
+                    main()
+
+        self.assertEqual(result.exception.code, 2)
+        self.assertIn("--archive", captured.getvalue())
 
     def test_cli_does_not_log_archive_derived_metadata(self):
         with tempfile.TemporaryDirectory() as temporary:

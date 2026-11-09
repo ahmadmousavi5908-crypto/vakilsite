@@ -8,6 +8,8 @@ on:
     paths:
       - next.config.mjs
       - src/app/layout.js
+      - src/app/page.js
+      - src/app/about/page.js
       - src/components/FontResourceHints.jsx
       - src/app/globals.css
       - public/fonts/**

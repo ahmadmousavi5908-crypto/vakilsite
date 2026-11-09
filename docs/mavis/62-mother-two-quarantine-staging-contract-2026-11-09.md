@@ -33,10 +33,10 @@
 
 ## فرمان‌های نهایی Termux
 
-ابتدا مسیر دقیق آرشیو واقعی را از فهرست فایل‌های محلی تأیید کنید. نام فایل را حدس نزنید و آرشیو اصلی را جابه‌جا یا بازنویسی نکنید. این اسکریپت عمداً مسیر گزارش را در stdout چاپ نمی‌کند؛ بنابراین گزارش باید از پوشه خروجی پیدا و checksum آن جداگانه کنترل شود.
+ابتدا مسیر دقیق آرشیو واقعی را از فهرست فایل‌های محلی تأیید کنید. نام فایل را حدس نزنید و آرشیو اصلی را جابه‌جا یا بازنویسی نکنید. مسیر پیش‌فرض، آرشیو کامل ثبت‌شده در برنامه پروژه است؛ اگر وجود نداشت، فقط پس از بررسی نام فایل، متغیر `MOTHER_TWO_ARCHIVE` را override کنید. از جایگزینی خودکار با آرشیو `payload` خودداری کنید. این اسکریپت عمداً مسیر گزارش را در stdout چاپ نمی‌کند؛ بنابراین گزارش باید از پوشه خروجی پیدا و checksum آن جداگانه کنترل شود.
 
 ~~~bash
-ARCHIVE="${MOTHER_TWO_ARCHIVE:?Set MOTHER_TWO_ARCHIVE to the exact approved archive path}"
+ARCHIVE="${MOTHER_TWO_ARCHIVE:-$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-full.tar.gz}"
 OUTPUT_DIR="$HOME/downloads/vakilsite-mother-two-audit"
 
 test -f "$ARCHIVE" || { echo "Approved archive not found"; exit 1; }

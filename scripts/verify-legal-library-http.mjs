@@ -104,9 +104,11 @@ const homeResult = await fetchText("/");
 const homeSiteName = readMeta(homeResult.body, "og:site_name");
 const homeLcpImageTag = homeResult.body.match(/<img\b[^>]*class=[\"']lawyer-photo-image[\"'][^>]*>/i)?.[0] || "";
 const homeLcpHighPriority = /fetchpriority=[\"']high[\"']/i.test(homeLcpImageTag);
+const homeLcpEager = /loading=["\']eager["\']/i.test(homeLcpImageTag);
 const aboutResult = await fetchText("/about");
 const aboutLcpImageTag = aboutResult.body.match(/<img\b[^>]*alt=[\"']تصویر سید احمد موسوی[^>]*>/i)?.[0] || "";
 const aboutLcpHighPriority = /fetchpriority=[\"']high[\"']/i.test(aboutLcpImageTag);
+const aboutLcpEager = /loading=["\']eager["\']/i.test(aboutLcpImageTag);
 const cityChipAccessible = /aria-label=[\"']اهواز، مرکز، انتخاب شهر و رفتن به فرم درخواست[\"']/i.test(homeResult.body);
 const homeLinkTags = homeResult.body.match(/<link\b[^>]*>/gi) || [];
 const fontPreconnect = homeLinkTags.some((tag) =>
@@ -167,6 +169,8 @@ console.log("ABOUT LCP IMAGE PRIORITY:", aboutLcpHighPriority);
 console.log("FEATURED CITY ACCESSIBLE LABEL:", cityChipAccessible);
 console.log("FONT CDN PRECONNECT:", fontPreconnect);
 console.log("FONT RESOURCE PRELOAD:", fontPreload);
+console.log("HOME LCP EAGER:", homeLcpEager);
+console.log("ABOUT LCP EAGER:", aboutLcpEager);
 
 console.log("BASE URL:", baseUrl);
 console.log("LEGAL LIBRARY ROUTES IN BUILD:", routes.length);
@@ -225,7 +229,8 @@ if (failed.length || noindexMissing.length || sitemapResult.response.status !== 
     canonicalMismatches.length || aiAssistantResult.response.status !== 200 ||
     !aiAssistantNoindex || aiAssistantCanonical !== "/ai-assistant" ||
     aiAssistantInSitemap || siteNameMismatch ||
-    !homeLcpHighPriority || !aboutLcpHighPriority || !cityChipAccessible ||
+    !homeLcpHighPriority || !aboutLcpHighPriority || !homeLcpEager ||
+    !aboutLcpEager || !cityChipAccessible ||
     !fontPreconnect || !fontPreload) {
   if (failed.length && routes.length) {
     console.log("\nPOSSIBLE STALE SERVER BUILD: the build manifest contains these routes, but the running server does not serve them. Stop the old Next.js server, build the current branch, then start the production server again.");

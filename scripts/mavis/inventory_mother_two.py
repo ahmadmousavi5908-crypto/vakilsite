@@ -19,28 +19,6 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 
-DEFAULT_ARCHIVE = (
-    Path.home()
-    / "downloads"
-    / "vakilsite-backups"
-    / "VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz"
-)
-CHUNK_SIZE = 1024 * 1024
-
-SECRET_PATH_PATTERN = re.compile(
-    r"(^|/)(?:\.env(?:\.[^/]*)?|[^/]*(?:secret|credential|password|token)[^/]*|"
-    r"service[-_ ]?account(?:s)?|id_rsa|id_ed25519)(?:/|$)|"
-    r"(?:private[-_ ]?key|access[-_ ]?token|refresh[-_ ]?token)",
-    re.IGNORECASE,
-)
-SECRET_SUFFIXES = {".pem", ".key", ".p12", ".pfx", ".jks", ".keystore"}
-RESTRICTED_PERSONAL_PATH_PATTERN = re.compile(
-    r"(^|/)(?:clients?|client[-_ ]?(?:files?|matters?|records?)|"
-    r"confidential|personal[-_ ]?data|identity|medical|financial|"
-    r"موکل(?:ان|ین)?|پرونده[-_ ]?موکل|اطلاعات[-_ ]?شخصی|محرمانه|هویتی|بانکی)(?=$|[/_ .-])",
-    re.IGNORECASE,
-)
-
 CATEGORY_PATTERNS = [
     ("books", re.compile(r"(^|[/_\s.-])(?:books?|کتاب(?:‌ها|ها|خانه)?|کتب)(?=$|[/_\s.-])", re.IGNORECASE)),
     ("published_articles", re.compile(r"(^|[/_\s.-])(?:articles?|مقالات?|مقاله(?:‌ها|ها)?)(?=$|[/_\s.-])", re.IGNORECASE)),
@@ -278,7 +256,11 @@ def inventory_archive(archive_path: str | Path) -> dict[str, Any]:
 
 def write_inventory(report: dict[str, Any], output_dir: str | Path) -> tuple[Path, str]:
     directory = Path(output_dir).expanduser()
+    if directory.is_symlink():
+        raise ValueError("Inventory output directory must not be a symlink.")
     directory.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if directory.is_symlink() or not directory.is_dir():
+        raise ValueError("Inventory output directory is not a safe directory.")
     try:
         directory.chmod(0o700)
     except OSError:
@@ -308,7 +290,7 @@ def write_inventory(report: dict[str, Any], output_dir: str | Path) -> tuple[Pat
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Read-only Mother Two archive inventory")
-    parser.add_argument("--archive", default=str(DEFAULT_ARCHIVE), help="Path to the original .tar.gz archive")
+    parser.add_argument("--archive", required=True, help="Path to the exact approved original .tar.gz archive")
     parser.add_argument(
         "--output-dir",
         default=str(Path.home() / "downloads" / "vakilsite-mother-two-audit"),
@@ -317,7 +299,7 @@ def main() -> int:
     args = parser.parse_args()
 
     report = inventory_archive(args.archive)
-    output_path, report_hash = write_inventory(report, args.output_dir)
+    write_inventory(report, args.output_dir)
     # Keep archive-derived metadata out of terminal logs; the private report is the audit artifact.
     print("Inventory created. Detailed metadata remains in the private report.")
     return 0

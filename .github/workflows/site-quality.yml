@@ -33,6 +33,17 @@ jobs:
       - name: Validate installed agent skills and specialist profiles
         run: node scripts/verify-agent-skills.mjs
 
+      - name: Run MAVIS security and regression suites
+        run: |
+          npm run test:mavis-search
+          npm run test:mavis-core
+          npm run test:mavis-growth-audit
+          npm run test:mavis-search-console
+          npm run test:mavis-mother-two-staging
+          npm run test:mavis-legal-review-queue
+          npm run test:mavis-docling-ingestion
+          npm run test:mavis-matter-fields
+
       - name: Validate legal library SEO data
         run: npm run validate:legal-library-seo
       - name: Run ESLint

@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -165,7 +166,15 @@ class DoclingOcrRuntimeTests(unittest.TestCase):
             self.assertFalse(document["review"]["indexing_allowed"])
             self.assertFalse(document["review"]["retrieval_allowed"])
             self.assertIn("MAVIS", extracted.upper())
-            self.assertRegex(extracted, r"[\u0600-\u06FF]")
+            normalized_persian = re.sub(r"[\u064B-\u065F\u0670]", "", extracted)
+            normalized_persian = (
+                normalized_persian.replace("ي", "ی")
+                .replace("ى", "ی")
+                .replace("ك", "ک")
+            )
+            normalized_persian = " ".join(normalized_persian.split())
+            self.assertIn("قانون", normalized_persian, f"Persian OCR output: {normalized_persian!r}")
+            self.assertIn("ماویس", normalized_persian, f"Persian OCR output: {normalized_persian!r}")
 
 
 if __name__ == "__main__":
