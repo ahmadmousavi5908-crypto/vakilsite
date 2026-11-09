@@ -115,7 +115,12 @@ class HistoricalReviewPipelineTests(unittest.TestCase):
             result = create_review_queue(manifest_path)
             queue_path = Path(result["queue_path"])
             queue = json.loads(queue_path.read_text("utf-8"))
+            template_path = Path(result["decisions_template_path"])
+            decisions_template = json.loads(template_path.read_text("utf-8"))
 
+            self.assertTrue(template_path.is_file())
+            self.assertEqual(len(decisions_template["decisions"]), 4)
+            self.assertTrue(all(item["decision"] is None for item in decisions_template["decisions"]))
             self.assertEqual(result["records"], 4)
             self.assertEqual(result["duplicate_content_records"], 2)
             self.assertFalse(result["indexing_allowed"])
