@@ -218,6 +218,7 @@ def _document_pages(document: Any) -> list[dict[str, Any]]:
         return [
             {
                 "page_no": None,
+                "segment_type": "unpaginated_document",
                 "markdown": str(markdown or ""),
                 "anchors": _page_anchors(document, None),
             }
@@ -232,6 +233,7 @@ def _document_pages(document: Any) -> list[dict[str, Any]]:
         pages.append(
             {
                 "page_no": page_no,
+                "segment_type": "page",
                 "markdown": str(markdown or ""),
                 "anchors": _page_anchors(document, page_no),
             }
@@ -422,6 +424,8 @@ def parse_staged_documents(
                     },
                     "content": {
                         "text_sha256": text_hash,
+                        "page_count": sum(page["page_no"] is not None for page in pages),
+                        "segment_count": len(pages),
                         "pages": pages,
                     },
                     "review": {
@@ -444,7 +448,8 @@ def parse_staged_documents(
                         "source_sha256": source_hash,
                         "output_file": output_name,
                         "output_sha256": output_sha256,
-                        "page_count": len(pages),
+                        "page_count": sum(page["page_no"] is not None for page in pages),
+                        "content_segment_count": len(pages),
                         "status": status,
                         "indexing_allowed": False,
                         "retrieval_allowed": False,
