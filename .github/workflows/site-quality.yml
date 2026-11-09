@@ -30,6 +30,9 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
+      - name: Validate installed agent skills and specialist profiles
+        run: node scripts/verify-agent-skills.mjs
+
       - name: Validate legal library SEO data
         run: npm run validate:legal-library-seo
       - name: Run ESLint
