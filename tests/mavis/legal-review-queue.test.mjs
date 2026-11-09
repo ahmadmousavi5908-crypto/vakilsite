@@ -148,3 +148,13 @@ test("rejects an effective end date earlier than its start date", () => {
   const result = validateLegalReviewQueue(makeCsv(row));
   assert.ok(result.errors.some((error) => error.includes("effective_until earlier")));
 });
+
+test("rejects impossible calendar dates and clock values inside evidence timestamps", () => {
+  const row = makeRow({
+    retrieved_at: "2026-02-31T10:00:00Z",
+    reviewed_at: "2026-11-08T25:00:00Z",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row));
+  assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time for retrieved_at")));
+  assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time for reviewed_at")));
+});
