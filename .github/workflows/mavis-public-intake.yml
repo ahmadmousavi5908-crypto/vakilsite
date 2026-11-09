@@ -1,0 +1,65 @@
+name: MAVIS public intake safeguards
+on:
+  pull_request:
+    branches:
+      - security/restrict-social-links-grants-20261108
+    paths:
+      - "src/app/api/mavis/public-intake/**"
+      - "src/app/mavis-intake/**"
+      - "src/app/admin/mavis-intake/**"
+      - "src/components/mavis/**"
+      - "src/lib/mavis/intake-guards.mjs"
+      - "src/lib/supabase/service.js"
+      - "tests/mavis/intake-guards.test.mjs"
+      - "supabase/migrations/006_mavis_public_intake.sql"
+      - "supabase/tests/006_mavis_public_intake.test.sql"
+      - ".github/workflows/mavis-public-intake.yml"
+  push:
+    branches:
+      - feature/mavis-secure-public-intake-20261108
+    paths:
+      - "src/app/api/mavis/public-intake/**"
+      - "src/app/mavis-intake/**"
+      - "src/app/admin/mavis-intake/**"
+      - "src/components/mavis/**"
+      - "src/lib/mavis/intake-guards.mjs"
+      - "src/lib/supabase/service.js"
+      - "tests/mavis/intake-guards.test.mjs"
+      - "supabase/migrations/006_mavis_public_intake.sql"
+      - "supabase/tests/006_mavis_public_intake.test.sql"
+      - ".github/workflows/mavis-public-intake.yml"
+permissions:
+  contents: read
+jobs:
+  intake-guards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_SITE_URL: https://vakilsite-ci.example
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - uses: supabase/setup-cli@v3
+      - name: Initialize local Supabase configuration
+        run: supabase init --force
+      - name: Start isolated local Supabase stack
+        run: supabase start
+      - name: Apply migrations and execute pgTAP database tests
+        run: |
+          supabase db reset
+          supabase test db
+      - name: Test intake validation and rate-key guards
+        run: npm run test:mavis-intake
+      - name: Lint public intake and admin files
+        run: npm run lint -- src/app/api/mavis/public-intake/route.js src/app/mavis-intake/page.js src/app/mavis-intake/privacy/page.js src/app/admin/mavis-intake/page.js src/app/admin/mavis-intake/actions.js src/components/mavis/MavisIntakeForm.jsx src/lib/mavis/intake-guards.mjs src/lib/mavis/intake-request-guards.mjs src/lib/supabase/service.js tests/mavis/intake-guards.test.mjs
+
+      - name: Build site and protected MAVIS routes
+        run: npm run build
+
+      - name: Stop local Supabase stack
+        if: always()
+        run: supabase stop --no-backup || true
