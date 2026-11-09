@@ -13,7 +13,8 @@
     "indexnow:submit": "node scripts/submit-indexnow.mjs",
     "test:legal-library-http": "node scripts/verify-legal-library-http.mjs",
     "test:mavis-search": "node --test tests/mavis/knowledge-search.test.mjs tests/mavis/knowledge-search-route.test.mjs tests/mavis/knowledge-retrieval.test.mjs",
-    "mavis:verify": "node scripts/mavis/verify-local.mjs"
+    "mavis:verify": "node scripts/mavis/verify-local.mjs",
+    "test:mavis-matter-fields": "node --test tests/mavis/secure-matter-fields.test.mjs"
   },
   "dependencies": {
     "next": "16.4.3",
