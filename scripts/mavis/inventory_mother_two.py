@@ -28,7 +28,7 @@ DEFAULT_ARCHIVE = (
 CHUNK_SIZE = 1024 * 1024
 
 SECRET_PATH_PATTERN = re.compile(
-    r"(^|/)(?:\.env(?:\.[^/]*)?|secrets?|credentials?|passwords?|tokens?|"
+    r"(^|/)(?:\.env(?:\.[^/]*)?|[^/]*(?:secret|credential|password|token)[^/]*|"
     r"service[-_ ]?account(?:s)?|id_rsa|id_ed25519)(?:/|$)|"
     r"(?:private[-_ ]?key|access[-_ ]?token|refresh[-_ ]?token)",
     re.IGNORECASE,
