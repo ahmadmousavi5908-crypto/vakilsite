@@ -1,0 +1,29 @@
+name: Termux installer verification
+
+on:
+  pull_request:
+    branches:
+      - feature/mavis-final-verification-20261109
+  push:
+    branches:
+      - feature/mavis-termux-one-command-20261109
+
+permissions:
+  contents: read
+
+jobs:
+  installer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Validate installer shell syntax
+        run: bash -n scripts/termux/install.sh
+      - name: Validate installer safety contract
+        run: |
+          grep -Fq 'MAVIS_PUBLIC_ENABLED=false' scripts/termux/install.sh
+          grep -Fq 'MAVIS_INTAKE_ENABLED=false' scripts/termux/install.sh
+          grep -Fq 'npm ci --no-audit --no-fund' scripts/termux/install.sh
+          grep -Fq 'npm run build' scripts/termux/install.sh
+          grep -Fq '127.0.0.1 --port 3002' scripts/termux/install.sh
+          ! grep -Eq 'rm -rf|git reset --hard' scripts/termux/install.sh
