@@ -16,7 +16,7 @@
     "test:mavis-search": "node --test tests/mavis/knowledge-search.test.mjs tests/mavis/knowledge-search-route.test.mjs tests/mavis/knowledge-retrieval.test.mjs tests/mavis/published-article-adapter.test.mjs tests/mavis/legal-research-note-adapter.test.mjs",
     "test:mavis-growth-audit": "node --test tests/mavis/growth-audit.test.mjs",
     "test:mavis-search-console": "node --test tests/mavis/search-console-client.test.mjs tests/mavis/search-console-handler.test.mjs",
-    "test:mavis-mother-two-staging": "python3 -m unittest discover -s tests/mavis -p 'test_mother_two_*.py'",
+    "test:mavis-mother-two-staging": "python3 -m unittest discover -s tests/mavis -p 'test_*.py'",
     "test:mavis-core": "node --test tests/mavis/public-chat.test.mjs tests/mavis/conversation-state.test.mjs tests/mavis/openai-responses-provider.test.mjs",
     "mavis:verify": "node scripts/mavis/verify-local.mjs",
     "test:mavis-matter-fields": "node --test tests/mavis/secure-matter-fields.test.mjs",
