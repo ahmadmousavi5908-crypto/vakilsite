@@ -51,9 +51,11 @@ export function buildLegalResearchNoteRecords(report) {
     const caution = cleanText(item.caution, 2400);
     if (findings.length === 0 && !caution) continue;
 
-    const reviewStatus = VALID_REVIEW_STATES.has(item.status)
-      ? item.status
-      : "needs_legal_review";
+    const reviewStatus = item.status === "draft"
+      ? "draft"
+      : item.status === "secondary_source_only"
+        ? "secondary_source_only"
+        : "needs_legal_review";
     const sources = normalizeSources(item.sources);
     const body = [...findings, caution].filter(Boolean).join("\n").slice(0, 8000);
     const id = "research_note_" + records.length.toString(10).padStart(3, "0");
