@@ -19,6 +19,16 @@
 8. عملکرد را با داده میدانی CWV و آزمایشگاه Lighthouse جداگانه بسنج.
 9. Search Console generative AI performance را فقط در صورت دسترسی واقعی property پایش کن؛ عدم مشاهده گزارش را به‌عنوان صفر citation یا جریمه تفسیر نکن.
 
+## Search Console: گزارش عملکرد جست‌وجوی مولد
+
+از ۳۱ اوت ۲۰۲۶ گزارش Generative AI performance برای وب‌سایت‌ها در Search Console به‌صورت جهانی عرضه شده است. گزارش Search، impressionهای AI Overviews و AI Mode را با ابعاد صفحه، کشور، دستگاه و تاریخ نشان می‌دهد؛ گزارش Discover جداگانه است.
+
+این گزارش impression است، نه شمارش citation، کلیک یا سرنخ. نبود گزارش معمولاً می‌تواند ناشی از impression ناکافی یا خارج بودن سایت از شمول تجربه‌های مولد باشد. تا زمانی که Google در Search Analytics API بُعد یا فیلد رسمی برای این داده منتشر نکند، آن را از UI Search Console بررسی می‌کنیم و endpoint یا dimension فرضی نمی‌سازیم. اتصال API موجود پروژه صرفاً Search Analytics استاندارد است.
+
+منابع:
+- معرفی رسمی گزارش: https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports
+- راهنمای گزارش Search: https://support.google.com/webmasters/answer/16984139
+
 ## Google News
 
 Google News ناشر خبری را صرفاً بر اساس تعداد مقاله یا NewsArticle schema انتخاب نمی‌کند. الزامات فنی شامل URL یکتا و پایدار، HTML قابل خزش، لینک متنی از صفحات بخش، عنوان و تاریخ آشکار و محتوای مقاله قابل خواندن است. سیاست‌های News بر شفافیت نویسنده/ناشر، تاریخ، اطلاعات سازمان و تماس، عدم گمراه‌سازی و افشای محتوای حمایت‌شده تأکید دارند.
