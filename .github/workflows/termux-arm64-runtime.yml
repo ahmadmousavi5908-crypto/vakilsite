@@ -57,6 +57,7 @@ jobs:
           MAVIS_INTAKE_ENABLED: "false"
           MAVIS_PROVIDER: mock
           PACKAGE_DIR: ${{ runner.temp }}/mavis-termux-runtime
+          SOURCE_COMMIT: ${{ github.event.action == 'closed' && github.event.pull_request.merged && github.event.pull_request.merge_commit_sha || github.event.pull_request.head.sha }}
         run: |
           set -Eeuo pipefail
           PACKAGE_DIR="$PACKAGE_DIR"
@@ -70,7 +71,7 @@ jobs:
             const pkg = require("./package.json");
             const manifest = {
               schemaVersion: 1,
-              gitCommit: process.env.GITHUB_SHA,
+              gitCommit: process.env.SOURCE_COMMIT,
               platform: "linux-arm64-glibc",
               nodeVersion: process.version,
               nextVersion: pkg.dependencies.next,
@@ -90,6 +91,7 @@ jobs:
 
           tar -xzf "$ARCHIVE" -C "$VERIFY_DIR"
           test -f "$VERIFY_DIR/runtime-manifest.json"
+          node -e 'const m = require(process.argv[1]); if (!process.env.SOURCE_COMMIT || m.gitCommit !== process.env.SOURCE_COMMIT || m.platform !== "linux-arm64-glibc" || m.mavisPublicEnabled !== false || m.mavisIntakeEnabled !== false) process.exit(1)' "$VERIFY_DIR/runtime-manifest.json"
           test -d "$VERIFY_DIR/.next"
           test -d "$VERIFY_DIR/node_modules/next"
 
