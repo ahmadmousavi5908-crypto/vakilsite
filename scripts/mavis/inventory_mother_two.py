@@ -34,6 +34,12 @@ SECRET_PATH_PATTERN = re.compile(
     re.IGNORECASE,
 )
 SECRET_SUFFIXES = {".pem", ".key", ".p12", ".pfx", ".jks", ".keystore"}
+RESTRICTED_PERSONAL_PATH_PATTERN = re.compile(
+    r"(^|/)(?:clients?|client[-_ ]?(?:files?|matters?|records?)|"
+    r"confidential|personal[-_ ]?data|identity|medical|financial|"
+    r"موکل(?:ان|ین)?|پرونده[-_ ]?موکل|اطلاعات[-_ ]?شخصی|محرمانه|هویتی|بانکی)(?=$|[/_ .-])",
+    re.IGNORECASE,
+)
 
 CATEGORY_PATTERNS = [
     ("books", re.compile(r"(^|[/_\s.-])(?:books?|کتاب(?:‌ها|ها|خانه)?|کتب)(?=$|[/_\s.-])", re.IGNORECASE)),
@@ -76,6 +82,8 @@ def _classification(name: str) -> str:
     normalized = _normalized_member_name(name)
     if SECRET_PATH_PATTERN.search(normalized):
         return "restricted_secret"
+    if RESTRICTED_PERSONAL_PATH_PATTERN.search(normalized):
+        return "restricted_personal"
     suffix = PurePosixPath(normalized).suffix.lower()
     if suffix in SECRET_SUFFIXES:
         return "restricted_secret"
@@ -113,6 +121,7 @@ def inventory_archive(archive_path: str | Path) -> dict[str, Any]:
     unsafe_path_count = 0
     unsafe_link_target_count = 0
     secret_candidate_count = 0
+    confidential_candidate_count = 0
     unreadable_file_count = 0
 
     with tarfile.open(path, mode="r|gz") as archive:
@@ -134,8 +143,11 @@ def inventory_archive(archive_path: str | Path) -> dict[str, Any]:
                 unsafe_target = _is_unsafe_path(member.linkname)
                 if unsafe_target:
                     unsafe_link_target_count += 1
-                if classification == "restricted_secret":
-                    secret_candidate_count += 1
+                if classification in {"restricted_secret", "restricted_personal"}:
+                    if classification == "restricted_secret":
+                        secret_candidate_count += 1
+                    else:
+                        confidential_candidate_count += 1
                     entries.append({
                         "path": None,
                         "path_redacted": True,
@@ -164,10 +176,12 @@ def inventory_archive(archive_path: str | Path) -> dict[str, Any]:
             extension_counts[suffix] += 1
             category_counts[classification] += 1
 
-            is_secret = classification == "restricted_secret"
-            if is_secret:
+            is_restricted = classification in {"restricted_secret", "restricted_personal"}
+            if classification == "restricted_secret":
                 secret_candidate_count += 1
-            if MANIFEST_PATTERN.search(PurePosixPath(member_name).name) and not is_secret and not unsafe_path:
+            elif classification == "restricted_personal":
+                confidential_candidate_count += 1
+            if MANIFEST_PATTERN.search(PurePosixPath(member_name).name) and not is_restricted and not unsafe_path:
                 manifest_candidates.append(member_name)
 
             stream = archive.extractfile(member)
@@ -176,9 +190,9 @@ def inventory_archive(archive_path: str | Path) -> dict[str, Any]:
                 file_hash = None
             else:
                 with stream:
-                    file_hash = _consume_member(stream, calculate_hash=not is_secret)
+                    file_hash = _consume_member(stream, calculate_hash=not is_restricted)
 
-            if is_secret:
+            if is_restricted:
                 entries.append({
                     "path": None,
                     "path_redacted": True,
@@ -186,8 +200,8 @@ def inventory_archive(archive_path: str | Path) -> dict[str, Any]:
                     "size_bytes": None,
                     "sha256": None,
                     "extension": suffix,
-                    "classification": "restricted_secret",
-                    "status": "quarantined_secret_path",
+                    "classification": classification,
+                    "status": "quarantined_restricted_path",
                 })
                 continue
 
@@ -239,6 +253,7 @@ def inventory_archive(archive_path: str | Path) -> dict[str, Any]:
             "other_members": counts["other"],
             "total_regular_file_bytes": total_bytes,
             "secret_candidate_count": secret_candidate_count,
+            "confidential_candidate_count": confidential_candidate_count,
             "unsafe_path_count": unsafe_path_count,
             "unsafe_link_target_count": unsafe_link_target_count,
             "unreadable_file_count": unreadable_file_count,
@@ -253,6 +268,7 @@ def inventory_archive(archive_path: str | Path) -> dict[str, Any]:
             "archive_is_read_only": True,
             "members_are_never_extracted": True,
             "secret_paths_and_hashes_are_redacted": True,
+            "confidential_client_paths_and_hashes_are_redacted": True,
             "secret_content_is_never_returned_or_indexed": True,
             "only_L2_human_reviewed_records_may_be_retrieved": True,
             "no_automatic_legal_verification": True,
@@ -313,6 +329,7 @@ def main() -> int:
         "symlinks": summary["symlinks"],
         "hardlinks": summary["hardlinks"],
         "secret_candidates_redacted": summary["secret_candidate_count"],
+        "confidential_paths_redacted": summary["confidential_candidate_count"],
         "unsafe_paths_quarantined": summary["unsafe_path_count"] + summary["unsafe_link_target_count"],
         "duplicate_content_groups": summary["duplicate_content_groups"],
         "extraction_performed": False,
