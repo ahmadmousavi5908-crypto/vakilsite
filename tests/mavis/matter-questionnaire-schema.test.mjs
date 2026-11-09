@@ -39,14 +39,15 @@ test("rejects unknown credential, identity, bank and attachment fields", () => {
   assert.equal(result.ok, false);
   for (const field of ["password", "otp", "nationalId", "bankAccount", "attachments"]) assert.ok(result.errors[field]);
 });
-test("validates calendar-aware dates without converting or calculating deadlines", () => {
+test("validates calendar-tagged date syntax without converting or calculating deadlines", () => {
   assert.equal(validateMatterQuestionnaire("civil", { executionDate: { value: "1405-06-31", calendar: "jalali" } }).ok, true);
   assert.equal(validateMatterQuestionnaire("civil", { executionDate: { value: "1405-07-31", calendar: "jalali" } }).ok, false);
   assert.equal(validateMatterQuestionnaire("civil", { executionDate: { value: "2026-02-30", calendar: "gregorian" } }).ok, false);
-  assert.equal(validateMatterQuestionnaire("civil", { executionDate: { value: "1405-08-18", calendar: "gregorian" } }).ok, false);
+  assert.equal(validateMatterQuestionnaire("civil", { executionDate: { value: "1405-08-18", calendar: "persian" } }).ok, false);
 });
 test("rejects malformed enums, duplicate multi-select values and unsafe money formats", () => {
   assert.equal(validateMatterQuestionnaire("family", { requestType: "criminal_case" }).ok, false);
+  assert.equal(validateMatterQuestionnaire("commercial", { userRole: "accused" }).ok, false);
   assert.equal(validateMatterQuestionnaire("family", { childrenAgeBands: ["under_7", "under_7"] }).ok, false);
   assert.equal(validateMatterQuestionnaire("civil", { amount: { amount: "1e9", currency: "IRR" } }).ok, false);
   assert.equal(validateMatterQuestionnaire("civil", { amount: { amount: "100", currency: "BTC" } }).ok, false);
