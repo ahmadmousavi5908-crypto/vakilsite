@@ -99,7 +99,7 @@ else
   STAGING_DIR="$(mktemp -d "/opt/mavis/.${RELEASE_TAG}.XXXXXX")"
   tar -xzf "$ARCHIVE" -C "$STAGING_DIR"
   [[ -f "$STAGING_DIR/runtime-manifest.json" && -d "$STAGING_DIR/.next" && -d "$STAGING_DIR/node_modules/next" && -d "$STAGING_DIR/public" ]] || { echo "Extracted runtime package is incomplete." >&2; exit 1; }
-  EXPECTED_NODE_VERSION="$NODE_VERSION" "$NODE_ROOT/bin/node" -e 'const m=require(process.argv[1]); if(m.schemaVersion!==1 || m.platform!=="linux-arm64-glibc" || m.nodeVersion!=="v"+process.env.EXPECTED_NODE_VERSION || m.nextVersion!=="16.4.3" || m.mavisPublicEnabled!==false || m.mavisIntakeEnabled!==false) process.exit(1)' "$STAGING_DIR/runtime-manifest.json" || { echo "Runtime manifest validation failed." >&2; exit 1; }
+  EXPECTED_NODE_VERSION="$NODE_VERSION" "$NODE_ROOT/bin/node" -e "const m=require(process.argv[1]); if(m.schemaVersion!==1 || m.platform!==\"linux-arm64-glibc\" || m.nodeVersion!==\"v\"+process.env.EXPECTED_NODE_VERSION || m.nextVersion!==\"16.4.3\" || m.mavisPublicEnabled!==false || m.mavisIntakeEnabled!==false) process.exit(1)" "$STAGING_DIR/runtime-manifest.json" || { echo "Runtime manifest validation failed." >&2; exit 1; }
   mv "$STAGING_DIR" "$APP_ROOT"
 fi
 ' || fail "آماده‌سازی محیط Debian یا دریافت Node.js ناموفق بود."
@@ -109,7 +109,7 @@ proot-distro login --shared-home mavis-debian -- bash -lc '
 set -Eeuo pipefail
 NODE_ROOT="/opt/node-v'"$NODE_VERSION"'-linux-arm64"
 APP_ROOT="/opt/mavis/'"$RELEASE_TAG"'"
-EXPECTED_NODE_VERSION="$NODE_VERSION" "$NODE_ROOT/bin/node" -e 'const p=require(process.argv[1]); const m=require(process.argv[2]); if(p.dependencies.next!=="16.4.3" || m.schemaVersion!==1 || m.platform!=="linux-arm64-glibc" || m.nodeVersion!=="v"+process.env.EXPECTED_NODE_VERSION || m.nextVersion!=="16.4.3" || m.mavisPublicEnabled!==false || m.mavisIntakeEnabled!==false) process.exit(1)' "$APP_ROOT/package.json" "$APP_ROOT/runtime-manifest.json"
+EXPECTED_NODE_VERSION="$NODE_VERSION" "$NODE_ROOT/bin/node" -e "const p=require(process.argv[1]); const m=require(process.argv[2]); if(p.dependencies.next!==\"16.4.3\" || m.schemaVersion!==1 || m.platform!==\"linux-arm64-glibc\" || m.nodeVersion!==\"v\"+process.env.EXPECTED_NODE_VERSION || m.nextVersion!==\"16.4.3\" || m.mavisPublicEnabled!==false || m.mavisIntakeEnabled!==false) process.exit(1)" "$APP_ROOT/package.json" "$APP_ROOT/runtime-manifest.json"
 [[ -d "$APP_ROOT/.next" && -d "$APP_ROOT/node_modules/next" && -d "$APP_ROOT/public" ]]
 ' || fail "ساختار بسته نهایی کامل نیست."
 
