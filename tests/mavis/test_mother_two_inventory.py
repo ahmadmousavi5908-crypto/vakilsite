@@ -114,7 +114,7 @@ class MotherTwoInventoryTests(unittest.TestCase):
             output = captured.getvalue()
             self.assertEqual(
                 output,
-                "Inventory created. Detailed metadata remains in the private report.\\n",
+                "Inventory created. Detailed metadata remains in the private report.\n",
             )
             self.assertNotIn(str(archive_path), output)
             self.assertNotIn(hashlib.sha256(archive_path.read_bytes()).hexdigest(), output)
