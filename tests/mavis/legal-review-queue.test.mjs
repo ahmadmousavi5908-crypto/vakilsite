@@ -47,6 +47,7 @@ test("rejects unterminated quoted fields", () => {
 test("accepts the current review-queue row contract", () => {
   const result = validateLegalReviewQueue(makeCsv(makeRow()), {
     knownSourceIds: ["src_official"],
+    primarySourceIds: ["src_official"],
     expectedRecordIds: ["law_example"],
   });
   assert.deepEqual(result.errors, []);
@@ -105,4 +106,53 @@ test("rejects missing canonical records", () => {
     expectedRecordIds: ["law_example", "article_missing"],
   });
   assert.ok(result.errors.some((error) => error.includes("missing canonical legal record")));
+});
+
+test("rejects impossible instrument dates and timestamps", () => {
+  const result = validateLegalReviewQueue(makeCsv(makeRow({
+    published_at: "2026-02-31",
+    retrieved_at: "2026-11-08T10:00:00",
+    reviewed_at: "not-a-date",
+  })));
+  assert.ok(result.errors.some((error) => error.includes("invalid calendar date for published_at")));
+  assert.ok(result.errors.some((error) => error.includes("invalid ISO timestamp for retrieved_at")));
+  assert.ok(result.errors.some((error) => error.includes("invalid ISO timestamp for reviewed_at")));
+});
+
+test("requires a registered primary publication source before accepting a verified record", () => {
+  const row = makeRow({
+    review_status: "verified_primary_source",
+    source_ids: "src_secondary",
+    primary_document_retrieved: "true",
+    primary_document_identifier: "Gazette issue 123",
+    issuing_authority: "Official issuing authority",
+    published_at: "2024-01-01",
+    amendment_chain_reviewed: "true",
+    retrieved_at: "2026-11-08T10:00:00Z",
+    content_sha256: "a".repeat(64),
+    reviewer_id: "lawyer-01",
+    reviewed_at: "2026-11-08T11:00:00Z",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row), {
+    knownSourceIds: ["src_secondary"],
+    primarySourceIds: ["src_official"],
+    expectedRecordIds: ["law_example"],
+  });
+  assert.ok(result.errors.some((error) => error.includes("without linking a registered primary source")));
+  assert.ok(result.errors.some((error) => error.includes("without a registered primary publication/law source")));
+});
+
+test("requires a registered primary source when a primary document is marked retrieved", () => {
+  const row = makeRow({
+    primary_document_retrieved: "true",
+    primary_document_identifier: "Gazette issue 123",
+    issuing_authority: "Official issuing authority",
+    retrieved_at: "2026-11-08T10:00:00Z",
+    content_sha256: "a".repeat(64),
+  });
+  const result = validateLegalReviewQueue(makeCsv(row), {
+    knownSourceIds: ["src_secondary"],
+    primarySourceIds: ["src_official"],
+  });
+  assert.ok(result.errors.some((error) => error.includes("without linking a registered primary source")));
 });
