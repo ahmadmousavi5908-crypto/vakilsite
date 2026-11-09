@@ -41,16 +41,19 @@ mkdir -p "$DOWNLOAD_DIR"
 chmod 700 "$DOWNLOAD_DIR"
 
 log "دریافت بسته نسخه $RELEASE_TAG"
-if gh auth status >/dev/null 2>&1; then
-  gh release download "$RELEASE_TAG" \
-    --repo "$REPOSITORY" \
-    --pattern "$ARCHIVE_NAME" \
-    --pattern "$CHECKSUM_NAME" \
-    --dir "$DOWNLOAD_DIR"
-else
-  BASE_URL="https://github.com/$REPOSITORY/releases/download/$RELEASE_TAG"
-  curl --fail --location --retry 3 "$BASE_URL/$ARCHIVE_NAME" -o "$DOWNLOAD_DIR/$ARCHIVE_NAME"
-  curl --fail --location --retry 3 "$BASE_URL/$CHECKSUM_NAME" -o "$DOWNLOAD_DIR/$CHECKSUM_NAME"
+if [[ ! -f "$DOWNLOAD_DIR/$ARCHIVE_NAME" || ! -f "$DOWNLOAD_DIR/$CHECKSUM_NAME" ]] || ! (cd "$DOWNLOAD_DIR" && sha256sum --check "$CHECKSUM_NAME" >/dev/null 2>&1); then
+  rm -f "$DOWNLOAD_DIR/$ARCHIVE_NAME" "$DOWNLOAD_DIR/$CHECKSUM_NAME"
+  if gh auth status >/dev/null 2>&1; then
+    gh release download "$RELEASE_TAG" \
+      --repo "$REPOSITORY" \
+      --pattern "$ARCHIVE_NAME" \
+      --pattern "$CHECKSUM_NAME" \
+      --dir "$DOWNLOAD_DIR"
+  else
+    BASE_URL="https://github.com/$REPOSITORY/releases/download/$RELEASE_TAG"
+    curl --fail --location --retry 3 "$BASE_URL/$ARCHIVE_NAME" -o "$DOWNLOAD_DIR/$ARCHIVE_NAME" || fail "دریافت بسته ناموفق بود؛ اگر مخزن خصوصی است gh auth login را یک‌بار اجرا کنید."
+    curl --fail --location --retry 3 "$BASE_URL/$CHECKSUM_NAME" -o "$DOWNLOAD_DIR/$CHECKSUM_NAME" || fail "دریافت checksum ناموفق بود."
+  fi
 fi
 
 cd "$DOWNLOAD_DIR"
@@ -71,10 +74,9 @@ ARCHIVE="/root/downloads/mavis-termux-v1.0.0/'"$ARCHIVE_NAME"'"
 NODE_ROOT="/opt/node-v${NODE_VERSION}-linux-arm64"
 APP_ROOT="/opt/mavis/'"$RELEASE_TAG"'"
 
-apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates curl xz-utils tar
-
 if [[ ! -x "$NODE_ROOT/bin/node" ]]; then
+  apt-get update
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates curl xz-utils tar
   cd /tmp
   NODE_FILE="node-v${NODE_VERSION}-linux-arm64.tar.xz"
   curl --fail --location --retry 3 "https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt" -o SHASUMS256.txt
@@ -85,11 +87,15 @@ if [[ ! -x "$NODE_ROOT/bin/node" ]]; then
 fi
 
 "$NODE_ROOT/bin/node" -e "const [a,b]=process.versions.node.split(\".\").map(Number); if(a<20 || (a===20 && b<9)) process.exit(1)"
-mkdir -p "$APP_ROOT"
-if [[ ! -f "$APP_ROOT/runtime-manifest.json" ]]; then
-  tar -xzf "$ARCHIVE" -C "$APP_ROOT"
+mkdir -p "$(dirname "$APP_ROOT")"
+if [[ -d "$APP_ROOT" ]]; then
+  [[ -f "$APP_ROOT/runtime-manifest.json" && -d "$APP_ROOT/.next" && -d "$APP_ROOT/node_modules/next" && -d "$APP_ROOT/public" ]] || { echo "An incomplete runtime directory exists; refusing to overwrite it." >&2; exit 1; }
+else
+  STAGING_DIR="$(mktemp -d "/opt/mavis/.${RELEASE_TAG}.XXXXXX")"
+  tar -xzf "$ARCHIVE" -C "$STAGING_DIR"
+  [[ -f "$STAGING_DIR/runtime-manifest.json" && -d "$STAGING_DIR/.next" && -d "$STAGING_DIR/node_modules/next" && -d "$STAGING_DIR/public" ]] || { echo "Extracted runtime package is incomplete." >&2; exit 1; }
+  mv "$STAGING_DIR" "$APP_ROOT"
 fi
-[[ -f "$APP_ROOT/runtime-manifest.json" ]] || { echo "Runtime manifest is missing." >&2; exit 1; }
 ' || fail "آماده‌سازی محیط Debian یا دریافت Node.js ناموفق بود."
 
 log "آزمون سلامت بسته پیش از اجرا"
