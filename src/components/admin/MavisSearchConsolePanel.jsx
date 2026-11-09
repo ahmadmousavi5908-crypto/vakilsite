@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { rankContentOpportunities } from "../../lib/mavis/growth-metrics.mjs";
 import styles from "./MavisSearchConsolePanel.module.css";
 
 function localDate(date) {
@@ -94,6 +95,18 @@ export default function MavisSearchConsolePanel() {
   }
 
   const displayedDimensions = result?.request?.dimensions || dimensions;
+  const opportunities = useMemo(() => {
+    if (!result) return [];
+    const rows = result.rows.map((row) => ({
+      page: row.dimensions.page,
+      query: row.dimensions.query,
+      date: row.dimensions.date,
+      clicks: row.metrics.clicks,
+      impressions: row.metrics.impressions,
+      averagePosition: row.metrics.averagePosition,
+    })).filter((row) => row.page || row.query);
+    return rankContentOpportunities(rows).slice(0, 10);
+  }, [result]);
 
   return (
     <section className={styles.panel} dir="rtl" aria-labelledby="mavis-search-console-title">
@@ -101,7 +114,7 @@ export default function MavisSearchConsolePanel() {
         <div>
           <span className={styles.eyebrow}>اتصال داده بیرونی · فقط خواندنی</span>
           <h2 id="mavis-search-console-title">گزارش عملکرد Google Search Console</h2>
-          <p>داده‌ها فقط با درخواست مدیر دریافت می‌شوند؛ عبارت‌های دارای احتمال اطلاعات شخصی پیش از نمایش پنهان خواهند شد.</p>
+          <p>داده‌ها فقط با درخواست مدیر دریافت می‌شوند؛ الگوهای شناخته‌شده مانند شماره تماس، ایمیل و شناسه‌های عددی پیش از نمایش پالایش می‌شوند.</p>
         </div>
         <span className={styles.scope}>webmasters.readonly</span>
       </div>
@@ -178,6 +191,40 @@ export default function MavisSearchConsolePanel() {
               </tbody>
             </table>
           </div>
+          <section className={styles.opportunities} aria-labelledby="mavis-search-console-opportunities">
+            <div className={styles.opportunityHeading}>
+              <div>
+                <h3 id="mavis-search-console-opportunities">فرصت‌های قابل بررسی برای بهبود محتوا</h3>
+                <p>رتبه‌بندی داخلی بر اساس حجم نمایش و نرخ کلیک؛ نه پیش‌بینی رتبه و نه دستور ویرایش خودکار.</p>
+              </div>
+              <span>{numberFormat.format(opportunities.length)} مورد</span>
+            </div>
+            {opportunities.length ? (
+              <div className={styles.tableWrap}>
+                <table>
+                  <thead><tr><th>عبارت یا صفحه</th><th>کلیک</th><th>نمایش</th><th>CTR</th><th>جایگاه</th><th>امتیاز فرصت</th></tr></thead>
+                  <tbody>
+                    {opportunities.map((item, index) => (
+                      <tr key={item.page || item.query || String(index)}>
+                        <td className={styles.opportunityTarget}>
+                          {item.page ? <span className={styles.urlCell}>{item.page}</span> : null}
+                          {item.query ? <span>{item.query}</span> : null}
+                        </td>
+                        <td>{numberFormat.format(item.analysis.clicks)}</td>
+                        <td>{numberFormat.format(item.analysis.impressions)}</td>
+                        <td>{percentFormat.format(item.analysis.ctr ?? 0)}</td>
+                        <td>{item.analysis.averagePosition === null ? "—" : numberFormat.format(item.analysis.averagePosition)}</td>
+                        <td><strong>{numberFormat.format(item.analysis.opportunityScore)} / ۱۰۰</strong></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className={styles.noOpportunities}>برای تحلیل فرصت، گزارش باید شامل بُعد عبارت جست‌وجو یا صفحه باشد.</p>
+            )}
+            <p className={styles.disclaimer}>این امتیاز شاخص اولویت‌بندی داخلی بر پایه نمایش و CTR است؛ جایگاه، قصد جست‌وجو، کیفیت حقوقی و تبدیل به موکل باید جداگانه بررسی شوند. داده‌های Search Analytics ممکن است همه ردیف‌ها را پوشش ندهند.</p>
+          </section>
           <p className={styles.disclaimer}>{result.disclaimer} منطقه زمانی تاریخ‌ها در Search Console برابر America/Los_Angeles است.</p>
         </div>
       ) : null}
