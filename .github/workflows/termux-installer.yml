@@ -49,4 +49,4 @@ jobs:
           grep -Fq 'runs-on: ubuntu-24.04-arm' .github/workflows/termux-arm64-runtime.yml
           grep -Fq 'npm run build' .github/workflows/termux-arm64-runtime.yml
           grep -Fq 'npm prune --omit=dev' .github/workflows/termux-arm64-runtime.yml
-          grep -Fq 'mavis-termux-v1.0.0' .github/workflows/termux-arm64-runtime.yml
+          grep -Fq 'mavis-termux-v1.0.1' .github/workflows/termux-arm64-runtime.yml
