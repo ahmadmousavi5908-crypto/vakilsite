@@ -19,10 +19,10 @@ pkg install -y git nodejs-lts npm curl
 
 ## اجرای یک‌مرحله‌ای
 
-پس از انتشار نسخه تأییدشده، دستور دریافت اسکریپت از شاخه انتشار در این بخش قرار می‌گیرد. در مرحله نامزد فعلی، اجرای مستقیم فقط برای آزمون پذیرش است:
+تا پیش از ادغام PR نهایی، این دستور صرفاً برای آزمون پذیرش شاخه نامزد است؛ پس از ادغام، ref اسکریپت به شاخه انتشار منتقل می‌شود:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/ahmadmousavi5908-crypto/vakilsite/feature/mavis-termux-one-command-20261109/scripts/termux/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ahmadmousavi5908-crypto/vakilsite/feature/mavis-final-verification-20261109/scripts/termux/install.sh | bash
 ```
 
 اسکریپت:
