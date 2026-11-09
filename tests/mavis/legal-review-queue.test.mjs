@@ -158,3 +158,30 @@ test("rejects impossible calendar dates and clock values inside evidence timesta
   assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time for retrieved_at")));
   assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time for reviewed_at")));
 });
+
+test("requires an official publication source when a primary document is marked retrieved", () => {
+  const row = makeRow({
+    primary_document_retrieved: "true",
+    primary_document_identifier: "Gazette issue 123",
+    issuing_authority: "Official issuing authority",
+    retrieved_at: "2026-11-08T10:00:00Z",
+    content_sha256: "a".repeat(64),
+  });
+  const result = validateLegalReviewQueue(makeCsv(row), {
+    knownSourceIds: ["src_secondary"],
+    primarySourceIds: ["src_official_gazette"],
+  });
+  assert.ok(result.errors.some((error) => error.includes("without linking a registered official primary publication")));
+});
+
+test("rejects impossible calendar dates, invalid clock times and excessive timezone offsets", () => {
+  const invalidValues = [
+    "2026-02-31T10:00:00Z",
+    "2026-11-08T25:00:00Z",
+    "2026-11-08T10:00:00+14:30",
+  ];
+  for (const retrievedAt of invalidValues) {
+    const result = validateLegalReviewQueue(makeCsv(makeRow({ retrieved_at: retrievedAt })));
+    assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time")));
+  }
+});
