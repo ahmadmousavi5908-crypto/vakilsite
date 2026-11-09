@@ -41,9 +41,9 @@ MAX_FILES = 5000
 SHA256_PATTERN = re.compile(r"^[a-f0-9]{64}$")
 SECRET_CONTENT_PATTERNS = (
     re.compile(rb"-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----"),
-    re.compile(rb"(?i)\\b(?:password|passwd|client_secret|api[_-]?key|secret_access_key|access_token|refresh_token|service_role_key|database_url)\\s*[:=]\\s*['\\\"]?[A-Za-z0-9_./+=:-]{8,}"),
-    re.compile(rb"\\b(?:gh[pousr]_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{20,})\\b"),
-    re.compile(rb"\\beyJ[A-Za-z0-9_-]{20,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\b"),
+    re.compile(rb"(?i)\b(?:password|passwd|client_secret|api[_-]?key|secret_access_key|access_token|refresh_token|service_role_key|database_url)\s*[:=]\s*['\\\"]?[A-Za-z0-9_./+=:-]{8,}"),
+    re.compile(rb"\b(?:gh[pousr]_[A-Za-z0-9]{20,}|sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{20,})\b"),
+    re.compile(rb"\beyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b"),
 )
 
 
