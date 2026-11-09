@@ -1,14 +1,16 @@
 import hashlib
+from contextlib import redirect_stdout
 import io
 import json
 import sys
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts" / "mavis"))
-from inventory_mother_two import inventory_archive, write_inventory
+from inventory_mother_two import inventory_archive, main, write_inventory
 
 
 class MotherTwoInventoryTests(unittest.TestCase):
@@ -86,6 +88,38 @@ class MotherTwoInventoryTests(unittest.TestCase):
             self.assertEqual(digest, hashlib.sha256(output_path.read_bytes()).hexdigest())
             self.assertEqual(json.loads(output_path.read_text("utf-8"))["archive"]["sha256"], report["archive"]["sha256"])
             self.assertTrue(output_path.stat().st_mode & 0o600)
+
+
+    def test_cli_does_not_log_archive_derived_metadata(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            archive_path = self.make_archive(root)
+            output_dir = root / "private-audit"
+            captured = io.StringIO()
+
+            with patch.object(
+                sys,
+                "argv",
+                [
+                    "inventory_mother_two.py",
+                    "--archive",
+                    str(archive_path),
+                    "--output-dir",
+                    str(output_dir),
+                ],
+            ):
+                with redirect_stdout(captured):
+                    self.assertEqual(main(), 0)
+
+            output = captured.getvalue()
+            self.assertEqual(
+                output,
+                "Inventory created. Detailed metadata remains in the private report.\\n",
+            )
+            self.assertNotIn(str(archive_path), output)
+            self.assertNotIn(hashlib.sha256(archive_path.read_bytes()).hexdigest(), output)
+            self.assertNotIn("SUPABASE_SERVICE_ROLE_KEY", output)
+            self.assertNotIn("Private Client", output)
 
 
 if __name__ == "__main__":
