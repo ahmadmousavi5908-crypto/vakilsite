@@ -95,7 +95,7 @@ export default function Home() {
           <Link className="brand" href="/">
             <span className="brand-mark"><span>و</span></span>
             <span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز، خوزستان · پذیرش درخواست از سراسر ایران</small></span>
-          </a>
+          </Link>
           <nav className="desktop-nav" aria-label="منوی اصلی">
             <Link href="/services">حوزه‌های فعالیت</Link>
             <Link href="/about">معرفی وکیل</Link>
