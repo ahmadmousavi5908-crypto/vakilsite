@@ -45,6 +45,9 @@ jobs:
       - name: Validate the existing legal library
         run: python3 src/data/legal-library/validation/validate_library.py
 
+      - name: Test read-only Mother Two archive inventory
+        run: python3 -m unittest discover -s tests/mavis -p 'test_mother_two_inventory.py'
+
       - name: Test deterministic MAVIS retrieval
         run: npm run test:mavis-search
 
