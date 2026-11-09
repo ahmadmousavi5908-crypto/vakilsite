@@ -16,6 +16,7 @@ const lintTargets = [
   "src/app/admin/mavis",
   "src/components/admin/MavisIntakeInbox.jsx",
   "src/components/admin/MavisKnowledgeSearch.jsx",
+  "src/components/admin/MavisSearchConsolePanel.jsx",
   "src/components/public/MavisPublicIntakeForm.jsx",
   "scripts/mavis",
   ...testFiles,
