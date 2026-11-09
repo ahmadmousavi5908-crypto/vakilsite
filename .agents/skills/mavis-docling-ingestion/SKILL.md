@@ -11,8 +11,8 @@ Use this skill only for the optional local document parser at **scripts/mavis/pa
 
 ## Mandatory workflow
 
-1. Read the Mother Two staging manifest and verify the archive and staged-file SHA-256 values before parsing.
-2. Parse only regular files explicitly listed in staging-manifest.json. Reject symlinks, hardlinks, traversal paths, changed hashes, and files outside the quarantine root.
+1. Capture the staging command's manifest SHA-256 outside the manifest itself, then verify that digest plus the archive and staged-file SHA-256 values before parsing.
+2. Pass the separately captured digest with --expected-manifest-sha256. Parse only regular files explicitly listed in staging-manifest.json. Reject symlinks, hardlinks, traversal paths, changed hashes, and files outside the quarantine root.
 3. Keep the source quarantine immutable. Write results only to a new, private output directory outside the quarantine. Never overwrite existing output.
 4. Use the pinned optional dependency **docling-slim==2.149.0** with the explicit format extras in requirements-mavis-docling.txt; install requirements-mavis-docling-ocr.txt only for OCR. Do not add either dependency set to the Next.js runtime.
 5. Default PDF mode is native text extraction. Enable OCR only when explicitly requested and when Tesseract fas and eng data plus pre-fetched Docling model artifacts are verified.
