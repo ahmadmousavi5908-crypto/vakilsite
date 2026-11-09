@@ -3,10 +3,10 @@ name: Termux installer verification
 on:
   pull_request:
     branches:
-      - feature/mavis-final-verification-20261109
+      - integration/mavis-mvp-candidate-20261108
   push:
     branches:
-      - feature/mavis-termux-one-command-20261109
+      - feature/mavis-final-verification-20261109
 
 permissions:
   contents: read
