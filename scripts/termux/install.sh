@@ -61,7 +61,7 @@ if [[ ! -f "$DOWNLOAD_DIR/$ARCHIVE_NAME" || ! -f "$DOWNLOAD_DIR/$CHECKSUM_NAME" 
 fi
 
 cd "$DOWNLOAD_DIR"
-checksum_line_count="$(grep -Ec '^[a-f0-9]{64}  mavis-termux-arm64\.tar\.gz
+checksum_line_count="$(awk 'NF == 2 && length($1) == 64 && $2 == "mavis-termux-arm64.tar.gz" { count++ } END { print count+0 }' "$CHECKSUM_NAME")"
 
 if proot-distro login mavis-debian -- /bin/true >/dev/null 2>&1; then
   proot-distro login mavis-debian -- bash -lc 'grep -q "^VERSION_CODENAME=trixie$" /etc/os-release' || fail "محیط mavis-debian موجود است اما Debian Trixie نیست؛ برای جلوگیری از حذف داده‌ها متوقف شد."
