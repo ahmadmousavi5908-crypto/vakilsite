@@ -64,7 +64,7 @@ else
 fi
 
 log "آماده‌سازی runtime لینوکسی و نصب نسخه تأییدشده Node.js"
-proot-distro login mavis-debian --shared-home -- bash -lc '
+proot-distro login --shared-home mavis-debian -- bash -lc '
 set -Eeuo pipefail
 NODE_VERSION="'"$NODE_VERSION"'"
 ARCHIVE="/root/downloads/mavis-termux-v1.0.0/'"$ARCHIVE_NAME"'"
@@ -93,7 +93,7 @@ fi
 ' || fail "آماده‌سازی محیط Debian یا دریافت Node.js ناموفق بود."
 
 log "آزمون سلامت بسته پیش از اجرا"
-proot-distro login mavis-debian --shared-home -- bash -lc '
+proot-distro login --shared-home mavis-debian -- bash -lc '
 set -Eeuo pipefail
 NODE_ROOT="/opt/node-v'"$NODE_VERSION"'-linux-arm64"
 APP_ROOT="/opt/mavis/'"$RELEASE_TAG"'"
@@ -102,7 +102,7 @@ APP_ROOT="/opt/mavis/'"$RELEASE_TAG"'"
 ' || fail "ساختار بسته نهایی کامل نیست."
 
 log "اجرای MAVIS روی پورت 3002"
-proot-distro login mavis-debian --shared-home -- bash -lc '
+proot-distro login --shared-home mavis-debian -- bash -lc '
 set -Eeuo pipefail
 export PATH="/opt/node-v'"$NODE_VERSION"'-linux-arm64/bin:$PATH"
 export MAVIS_TERMUX_BUILD=true
