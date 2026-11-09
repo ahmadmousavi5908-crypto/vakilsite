@@ -2,6 +2,20 @@ import { readFile } from "node:fs/promises";
 
 const baseUrl = (process.env.SITE_TEST_URL || "http://127.0.0.1:3000").replace(/\/$/, "");
 
+function readCanonical(html) {
+  const tag = html.match(/<link\\b[^>]*rel=[\"']canonical[\"'][^>]*>/i)?.[0];
+  return tag?.match(/\\bhref=[\"']([^\"']+)[\"']/i)?.[1] || null;
+}
+
+function canonicalPath(value) {
+  if (!value) return null;
+  try {
+    return new URL(value, baseUrl).pathname.replace(/\\/$/, "") || "/";
+  } catch {
+    return null;
+  }
+}
+
 function readMeta(html, key) {
   const tags = html.match(/<meta\b[^>]*>/gi) || [];
   for (const tag of tags) {
@@ -65,6 +79,41 @@ const indexable = new Set(
 );
 const detailRoutes = new Set(allRecords.map((record) => record.path).filter(Boolean));
 
+const publicCanonicalPaths = [
+  "/", "/about", "/articles", "/services", "/lawyer-cooperation",
+  "/privacy", "/legal-library", "/legal-glossary", "/locations/khuzestan",
+];
+const canonicalResults = [];
+for (const path of publicCanonicalPaths) {
+  try {
+    const { response, body } = await fetchText(path);
+    const canonical = readCanonical(body);
+    const actualPath = canonicalPath(canonical);
+    canonicalResults.push({ path, status: response.status, canonical, actualPath });
+  } catch (error) {
+    canonicalResults.push({ path, status: "ERROR", error: error.message });
+  }
+}
+
+const aiAssistantResult = await fetchText("/ai-assistant");
+const aiAssistantRobots = readMeta(aiAssistantResult.body, "robots") || "";
+const aiAssistantCanonical = canonicalPath(readCanonical(aiAssistantResult.body));
+const aiAssistantNoindex = /(^|[,\\s])noindex([,\\s]|$)/.test(aiAssistantRobots);
+
+const homeResult = await fetchText("/");
+const homeSiteName = readMeta(homeResult.body, "og:site_name");
+const jsonLdBlocks = [...homeResult.body.matchAll(/<script[^>]*type=[\"']application\\/ld\\+json[\"'][^>]*>([\\s\\S]*?)<\\/script>/gi)];
+let websiteSchemaName = null;
+for (const match of jsonLdBlocks) {
+  try {
+    const data = JSON.parse(match[1]);
+    const nodes = Array.isArray(data["@graph"]) ? data["@graph"] : [data];
+    websiteSchemaName = nodes.find((node) => node["@type"] === "WebSite")?.name || websiteSchemaName;
+  } catch {
+    // Ignore unrelated or malformed blocks here; schema validation is handled separately.
+  }
+}
+
 const results = [];
 let cursor = 0;
 async function worker() {
@@ -87,6 +136,14 @@ async function worker() {
     }
   }
 }
+
+console.log("\\n===== PUBLIC CANONICALS =====");
+console.log("CHECKED:", canonicalResults.length);
+console.log("CANONICAL MISMATCHES:", canonicalResults.filter((item) => item.status !== 200 || item.actualPath !== item.path).length);
+console.log("AI ASSISTANT NOINDEX:", aiAssistantNoindex);
+console.log("AI ASSISTANT CANONICAL:", aiAssistantCanonical);
+console.log("HOME OG SITE NAME:", homeSiteName);
+console.log("HOME WEB SITE SCHEMA NAME:", websiteSchemaName);
 
 console.log("BASE URL:", baseUrl);
 console.log("LEGAL LIBRARY ROUTES IN BUILD:", routes.length);
@@ -132,8 +189,19 @@ console.log("HTTP:", robotsResult.response.status);
 console.log("OAI-SearchBot POLICY PRESENT:", /OAI-SearchBot/i.test(robotsResult.body));
 console.log("GPTBot POLICY PRESENT:", /GPTBot/i.test(robotsResult.body));
 
+const canonicalMismatches = canonicalResults.filter((item) =>
+  item.status !== 200 || item.actualPath !== item.path
+);
+const aiAssistantInSitemap = sitemapUrls.some((url) => {
+  try { return new URL(url).pathname === "/ai-assistant"; } catch { return false; }
+});
+const siteNameMismatch = !homeSiteName || !websiteSchemaName || homeSiteName !== websiteSchemaName;
+
 if (failed.length || noindexMissing.length || sitemapResult.response.status !== 200 ||
-    unverifiedInSitemap.length || robotsResult.response.status !== 200) {
+    unverifiedInSitemap.length || robotsResult.response.status !== 200 ||
+    canonicalMismatches.length || aiAssistantResult.response.status !== 200 ||
+    !aiAssistantNoindex || aiAssistantCanonical !== "/ai-assistant" ||
+    aiAssistantInSitemap || siteNameMismatch) {
   if (failed.length && routes.length) {
     console.log("\nPOSSIBLE STALE SERVER BUILD: the build manifest contains these routes, but the running server does not serve them. Stop the old Next.js server, build the current branch, then start the production server again.");
   }

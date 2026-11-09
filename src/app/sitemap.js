@@ -14,11 +14,6 @@ export default function sitemap() {
       priority: 1,
     },
     {
-      url: base + "/ai-assistant",
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
       url: base + "/lawyer-cooperation",
       changeFrequency: "monthly",
       priority: 0.6,
