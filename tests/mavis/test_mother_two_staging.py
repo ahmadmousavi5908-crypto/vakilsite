@@ -24,6 +24,7 @@ class MotherTwoStagingTests(unittest.TestCase):
                 "library/research/notes.txt": b"OPENAI_API_KEY=sk-abcdefghijklmnopqrstuvwxyz1234567890\n",
                 "misc/unknown.pdf": b"unclassified file",
                 "private/.env": b"SECRET_TOKEN=never-stage",
+                "private/clients/client-case.pdf": b"confidential client matter must never stage",
                 "../outside.pdf": b"unsafe path",
             }
             for name, content in files.items():
@@ -80,6 +81,8 @@ class MotherTwoStagingTests(unittest.TestCase):
             self.assertFalse((stage_root / "../outside.pdf").exists())
             self.assertFalse((stage_root / "library/books/book-link.pdf").exists())
             self.assertNotIn("SECRET_TOKEN", json.dumps(manifest))
+            self.assertNotIn("client-case.pdf", json.dumps(manifest))
+            self.assertFalse((stage_root / "private/clients/client-case.pdf").exists())
 
     def test_dry_run_verifies_archive_and_inventory_without_creating_staging(self):
         with tempfile.TemporaryDirectory() as temporary:
