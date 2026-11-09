@@ -54,9 +54,13 @@ jobs:
       - name: Test read-only article growth audit
         run: npm run test:mavis-growth-audit
 
+      - name: Generate offline published article bundle
+        run: node scripts/mavis/generate-offline-published-articles.mjs
+
       - name: Validate offline application syntax
         run: |
           node --check scripts/mavis/verify-local.mjs
+          node --check scripts/mavis/generate-offline-published-articles.mjs
           bash -n scripts/mavis/verify-local-backup-restore.sh
           node --check public/mavis-offline/app.js
           node --check public/mavis-offline/search.mjs
