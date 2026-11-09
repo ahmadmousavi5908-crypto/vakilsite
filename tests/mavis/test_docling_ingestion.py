@@ -134,7 +134,7 @@ class DoclingIngestionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             stage_root, source, _manifest = self.create_stage(root)
-            source.write_bytes(b"tampered")
+            source.write_bytes(b"x" * len(b"synthetic pdf bytes"))
             output = root / "parsed"
 
             with self.assertRaisesRegex(ParsingError, "SHA-256"):
