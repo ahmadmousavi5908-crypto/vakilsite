@@ -147,3 +147,14 @@ test("does not silently accept unknown aggregation semantics", () => {
   assert.equal(result.ok, false);
   assert.equal(result.reason, "unknown_aggregation_type");
 });
+
+
+test("masks personal identifiers embedded in page URL paths", () => {
+  const result = normalizeSearchAnalyticsResponse({
+    rows: [{ keys: ["راهنمای حقوقی", "https://vakilahmadmousavi.ir/cases/09123456789"], clicks: 1, impressions: 2, ctr: 0.5, position: 4 }],
+  }, request);
+
+  assert.equal(result.ok, true);
+  assert.equal(result.rows[0].dimensions.page, null);
+  assert.equal(result.rows[0].privacyReviewRequired, true);
+});
