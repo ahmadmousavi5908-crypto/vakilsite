@@ -9,7 +9,7 @@
 - PR: [#76](https://github.com/ahmadmousavi5908-crypto/vakilsite/pull/76)
 - PR base: `integration/mavis-mvp-candidate-20261108`
 - PR state at checkpoint: open, Draft, not merged.
-- Code/test head recorded before this docs-only checkpoint update: `817a1cc9b502a0e5a898aed68b837623aac29b55`. The live branch head at this checkpoint is `0627134df6c5933fe9131270cde0e5eefcd071e8`; always query the live branch head before resuming.
+- Latest code/test commit: `817a1cc9b502a0e5a898aed68b837623aac29b55`. Docs-only checkpoint commits followed (`0627134...`, `a2ecf19...`, `5673b8e...`); always query the live branch head before resuming.
 - No production deployment, live database migration, public chat activation, automatic publication, or visual redesign is authorized by this work.
 
 ## Immediate technical status
@@ -44,6 +44,17 @@
 - Main verification workflow run `42657422693` on `0013bdad`: success.
 - Docling native runtime run `42657138833` on `1abc07a4`: success.
 - The above are historical run IDs; always inspect current head and newest run before citing them as current validation.
+
+## Follow-up verification and operational handoff — 2026-11-09
+
+- Latest branch head before this checkpoint refresh: `5673b8e238e9f8d1df54e811cbb1adcc944c60c2`; the Termux handoff in `docs/mavis/62-mother-two-quarantine-staging-contract-2026-11-09.md` was corrected because the CLI intentionally emits a fixed non-sensitive line, not JSON or a report path. The updated procedure now discovers the newest private report and verifies its SHA-256 without printing the report path.
+- OCR synthetic image-only PDF test passed in run `42659774023`, including Persian-script and English-text assertions. Docling native runtime smoke test passed in run `42659763701`. Neither run proves OCR quality on real Mother Two documents.
+- Site performance baseline run `42663947951` passed and uploaded 24 Lighthouse report files for home, about, articles and legal-library routes. Per-route scores and budget thresholds still need extraction and review.
+- CodeQL meta-check on commit `9638fe06e1c9dd6b3bc81a3dc4b91b1c939c4225` passed with “No new alerts in code changed by this pull request”; the earlier high alert on `e80a33f...` was not reproduced as a new alert on that later commit. This does not prove there are no open repository alerts; the code-scanning alerts collection could not be read through the available connector.
+- On commit `817a1cc...`, Site Quality passed; MAVIS and CodeQL runs were cancelled by later pushes before completion. On docs-only commit `a2ecf19...`, workflow runs ended with failure but exposed zero jobs/check-runs, so treat that SHA as unvalidated. Latest runs for `5673b8e...` were queued at checkpoint time; poll them before claiming success.
+- PR #76 is open and Draft, not merged. Live API reports base `integration/mavis-mvp-candidate-20261108`, 260 commits ahead, 1 behind, 128 changed files, +15,518/-67 lines, and mergeable=false / dirty. Do not retarget or merge without reviewing the intended base and full diff.
+- Both PR base branch `integration/mavis-mvp-candidate-20261108` and `main` currently report branch protection disabled with no required status checks. Do not treat green CI as an enforced merge gate; protection policy needs owner approval and configuration.
+- Local Termux and the actual Mother Two archive remain inaccessible from this environment. The exact local archive path must be confirmed before inventory; no local inventory, staging, restore or real-document OCR has been performed.
 
 ## Agent and skill inventory
 
