@@ -19,14 +19,14 @@ A green CI result is evidence only for the checks actually executed. It is not p
 
 ### Latest integration status — 2026-11-09
 
-- Candidate head before the PR #60 CI refactor: `07216e98853ec0696e99108b79e9f896807d746f`. PRs #51–#59 have been merged into `integration/mavis-mvp-candidate-20261108`; integration PR #25 remains Draft and unmerged. The candidate has not been merged to main.
-- The latest fully green PR CI is PR #59 head `9286b23e9849e3b38d6528dbb29fe82565e83b69`; the candidate merge commit `07216e9` also passed its pull-request and push application/database workflows. The database workflow passed all 182 pgTAP assertions and the synthetic local database backup/restore check.
+- Candidate head after PR #60: `ecda884777e41723bee8e3b25006f27011c7a637`. PRs #51–#60 have been merged into `integration/mavis-mvp-candidate-20261108`; integration PR #25 remains Draft and unmerged. The candidate has not been merged to main.
+- The latest fully green PR CI is PR #60 head `0b97c8af57079f23fb8da366c16ac2fb9fefe3da`: application and database workflows passed, including 182 pgTAP assertions and the synthetic local database backup/restore check. The database workflow refactor passed its first run without port conflicts; the new candidate head `ecda884` is now being checked through PR #25.
 - The legal review queue validator reports 175/175 canonical records and 0 validation errors: 144 `needs_legal_review`, 31 `secondary_source_only`, and 0 `verified_primary_source`. This validates queue structure and coverage, not legal correctness.
 - The public conversation core now has a disabled-by-default Mock Provider, a guarded state machine, deterministic urgent/priority human-review routing, and a verified-primary-only answer gate. Since the current corpus has zero verified primary records, ordinary legal questions are deliberately prevented from reaching a model.
 - The post-approval matter questionnaire has an immutable v1 contract, but no client portal, authentication, persistence, upload, or public activation.
 - Qwen3.5-9B with vLLM is documented only as a candidate for a synthetic-data benchmark. No real model, GPU host, external provider or production integration has been approved.
 - The Civil Code source pilot remains `secondary_source_only`: the official primary document, amendment chain and lawyer sign-off have not been captured.
-- PR #60 is validating the new serialized database workflow and bounded cleanup behavior. Recheck the exact candidate SHA and its pull-request workflows after that PR merges, before local verification.
+- PR #60 is merged. The database workflow now runs only when the change set affects Supabase schema/tests or the local backup/restore verifier; its database job is serialized in a repository-wide FIFO queue. The candidate push duplicate is removed. The current candidate PR #25 workflow must finish green on `ecda884` before local verification.
 - Database CI now uses a lightweight change-detection job: it runs the full Supabase stack only when `supabase/**` or the local backup/restore verifier changes (or when manually dispatched). Database jobs share a FIFO concurrency queue; candidate push duplication is removed because the candidate is validated through its pull request. This prevents docs-only PRs and duplicate push/PR events from competing for fixed local Supabase ports and registry pulls.
 
 
