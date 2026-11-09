@@ -34,6 +34,11 @@ const steps = [
     args: ["src/data/legal-library/validation/validate_library.py"],
   },
   {
+    label: "Test read-only Mother Two inventory and quarantine staging",
+    command: "npm",
+    args: ["run", "test:mavis-mother-two-staging"],
+  },
+  {
     label: "Run all MAVIS Node.js tests",
     command: process.execPath,
     args: ["--test", ...testFiles],
