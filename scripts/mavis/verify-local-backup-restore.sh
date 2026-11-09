@@ -10,7 +10,7 @@ DB_URL="postgresql://postgres:postgres@127.0.0.1:54322/postgres"
 
 cleanup() {
   if [[ -f "$RESTORE_DIR/supabase/config.toml" ]]; then
-    (cd "$RESTORE_DIR" && timeout 60s timeout 60s supabase stop >/dev/null 2>&1) || true
+    (cd "$RESTORE_DIR" && timeout 60s supabase stop >/dev/null 2>&1) || true
   fi
   (cd "$PROJECT_ROOT" && timeout 60s supabase stop >/dev/null 2>&1) || true
   rm -rf "$WORK_DIR"
