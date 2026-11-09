@@ -16,7 +16,6 @@ const PRIMARY_SOURCE_CLASSES = new Set([
   "primary_publication",
   "official_law_portal",
   "official_judicial_decisions_portal",
-  "official_judiciary_gateway",
   "official_issuing_authority"
 ]);
 
@@ -34,7 +33,34 @@ function isValidTimestamp(value) {
     !Number.isNaN(Date.parse(value));
 }
 
-export function isPrimaryVerificationComplete(record) {
+function normalizedHost(value) {
+  if (!hasText(value)) return null;
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== "https:" || parsed.username || parsed.password || parsed.port) return null;
+    return parsed.hostname.toLowerCase().replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Ensures a record-level source cannot claim a different source class or host
+ * than the canonical source registry entry it references.
+ */
+export function isSourceRegistryReferenceConsistent(source, sourceRegistry) {
+  if (!source || !Array.isArray(sourceRegistry)) return false;
+  const entry = sourceRegistry.find((candidate) => candidate?.id === source.source_id);
+  if (!entry || source.source_class !== entry.class) return false;
+
+  const sourceHost = normalizedHost(source.url);
+  const registryHost = normalizedHost(entry.url);
+  if (!sourceHost || !registryHost) return false;
+
+  return sourceHost === registryHost || sourceHost.endsWith(`.${registryHost}`);
+}
+
+export function isPrimaryVerificationComplete(record, sourceRegistry) {
   if (!record || record.review_status !== "verified_primary_source") return false;
 
   const provenance = record.provenance;
@@ -53,6 +79,7 @@ export function isPrimaryVerificationComplete(record) {
   return (record.sources || []).some((source) =>
     source.verification_status === "verified_primary_source" &&
     PRIMARY_SOURCE_CLASSES.has(source.source_class) &&
-    source.url === provenance.exact_document_url
+    source.url === provenance.exact_document_url &&
+    isSourceRegistryReferenceConsistent(source, sourceRegistry)
   );
 }

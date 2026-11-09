@@ -1,5 +1,8 @@
 import { readFile } from "node:fs/promises";
-import { isPrimaryVerificationComplete } from "../../src/lib/mavis/legal-provenance-contract.mjs";
+import {
+  isPrimaryVerificationComplete,
+  isSourceRegistryReferenceConsistent,
+} from "../../src/lib/mavis/legal-provenance-contract.mjs";
 
 const bundle = JSON.parse(await readFile(new URL("../../public/mavis-offline/knowledge.json", import.meta.url), "utf8"));
 let failures = 0;
@@ -9,7 +12,11 @@ const fail = (message) => {
 };
 const expectedTypes = { term: "terms", law: "laws", article: "articles", faq: "faqs", research_note: "research_notes" };
 const ids = new Set();
-const sourceIds = new Set(bundle.source_registry.map((source) => source.id));
+const sourceRegistryById = new Map();
+for (const source of bundle.source_registry) {
+  if (!source.id || sourceRegistryById.has(source.id)) fail("Missing or duplicate source registry id: " + source.id);
+  sourceRegistryById.set(source.id, source);
+}
 
 if (bundle.jurisdiction !== "IR" || bundle.language !== "fa-IR") fail("Unexpected jurisdiction or language.");
 if (!Array.isArray(bundle.records) || bundle.records.length === 0) fail("Records array is empty.");
@@ -27,7 +34,7 @@ for (const record of bundle.records) {
     if (!record.provenance) {
       fail("Legal record lacks provenance metadata: " + record.id);
     } else if (record.review_status === "verified_primary_source") {
-      if (!isPrimaryVerificationComplete(record)) {
+      if (!isPrimaryVerificationComplete(record, bundle.source_registry)) {
         fail("Primary verified label lacks complete primary-source evidence: " + record.id);
       }
     } else if (
@@ -39,8 +46,11 @@ for (const record of bundle.records) {
   }
 
   for (const source of record.sources || []) {
-    if (!sourceIds.has(source.source_id)) fail("Unknown source id " + source.source_id + " in " + record.id);
+    if (!sourceRegistryById.has(source.source_id)) fail("Unknown source id " + source.source_id + " in " + record.id);
     if (!/^https:\/\//i.test(source.url || "")) fail("Non-HTTPS source URL in " + record.id);
+    if (!isSourceRegistryReferenceConsistent(source, bundle.source_registry)) {
+      fail("Source class or host does not match the canonical registry for " + record.id + ": " + source.source_id);
+    }
   }
 
 }

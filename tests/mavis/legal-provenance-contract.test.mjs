@@ -1,6 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { isPrimaryVerificationComplete } from "../../src/lib/mavis/legal-provenance-contract.mjs";
+import {
+  isPrimaryVerificationComplete,
+  isSourceRegistryReferenceConsistent,
+} from "../../src/lib/mavis/legal-provenance-contract.mjs";
+
+const validRegistry = () => [{
+  id: "src_official",
+  url: "https://www.official.example/",
+  class: "primary_publication",
+}];
 
 const validRecord = () => ({
   review_status: "verified_primary_source",
@@ -20,54 +29,92 @@ const validRecord = () => ({
     reviewed_at: "2026-11-08T11:00:00.000Z"
   },
   sources: [{
+    source_id: "src_official",
     url: "https://official.example/law/123",
     source_class: "primary_publication",
     verification_status: "verified_primary_source"
   }]
 });
 
-test("accepts a complete primary-source verification record", () => {
-  assert.equal(isPrimaryVerificationComplete(validRecord()), true);
+test("accepts a complete primary-source record tied to its canonical registry host", () => {
+  assert.equal(isPrimaryVerificationComplete(validRecord(), validRegistry()), true);
+});
+
+test("accepts a documented subdomain while requiring the registry class to match", () => {
+  const registry = [{ id: "src_official", url: "https://www.official.example/", class: "primary_publication" }];
+  const source = { source_id: "src_official", url: "https://archive.official.example/law/123", source_class: "primary_publication" };
+  assert.equal(isSourceRegistryReferenceConsistent(source, registry), true);
+});
+
+test("rejects a record source that points to an unrelated HTTPS host", () => {
+  const record = validRecord();
+  record.sources[0].url = "https://fake.example/law/123";
+  record.provenance.exact_document_url = "https://fake.example/law/123";
+  assert.equal(isPrimaryVerificationComplete(record, validRegistry()), false);
+});
+
+test("rejects a source class that differs from the canonical registry", () => {
+  const record = validRecord();
+  record.sources[0].source_class = "official_law_portal";
+  assert.equal(isPrimaryVerificationComplete(record, validRegistry()), false);
+});
+
+test("does not treat the judiciary discovery gateway as the primary legal document", () => {
+  const record = validRecord();
+  const registry = [{ id: "src_official", url: "https://eadil.com/", class: "official_judiciary_gateway" }];
+  record.sources[0].url = "https://eadil.com/";
+  record.sources[0].source_class = "official_judiciary_gateway";
+  record.provenance.exact_document_url = "https://eadil.com/";
+  assert.equal(isPrimaryVerificationComplete(record, registry), false);
+});
+
+test("rejects insecure, credential-bearing and port-qualified registry URLs", () => {
+  const source = { source_id: "src_official", url: "http://official.example/law/123", source_class: "primary_publication" };
+  assert.equal(isSourceRegistryReferenceConsistent(source, validRegistry()), false);
+  const credentials = { ...source, url: "https://user:pass@official.example/law/123" };
+  assert.equal(isSourceRegistryReferenceConsistent(credentials, validRegistry()), false);
+  const port = { ...source, url: "https://official.example:8443/law/123" };
+  assert.equal(isSourceRegistryReferenceConsistent(port, validRegistry()), false);
 });
 
 test("rejects a verified label with missing review evidence", () => {
   const record = validRecord();
   delete record.provenance.amendment_and_repeal_review;
-  assert.equal(isPrimaryVerificationComplete(record), false);
+  assert.equal(isPrimaryVerificationComplete(record, validRegistry()), false);
 });
 
 test("rejects a secondary source even when all metadata is present", () => {
   const record = validRecord();
   record.sources[0].source_class = "secondary_legal_database";
-  assert.equal(isPrimaryVerificationComplete(record), false);
+  assert.equal(isPrimaryVerificationComplete(record, validRegistry()), false);
 });
 
 test("rejects a source URL that differs from the exact verified document URL", () => {
   const record = validRecord();
   record.sources[0].url = "https://official.example/law/456";
-  assert.equal(isPrimaryVerificationComplete(record), false);
+  assert.equal(isPrimaryVerificationComplete(record, validRegistry()), false);
 });
 
 test("rejects malformed content hashes", () => {
   const record = validRecord();
   record.provenance.content_sha256 = "not-a-hash";
-  assert.equal(isPrimaryVerificationComplete(record), false);
+  assert.equal(isPrimaryVerificationComplete(record, validRegistry()), false);
 });
 
 test("rejects impossible publication calendar dates", () => {
   const record = validRecord();
   record.provenance.publication_date = "2024-02-31";
-  assert.equal(isPrimaryVerificationComplete(record), false);
+  assert.equal(isPrimaryVerificationComplete(record, validRegistry()), false);
 });
 
 test("rejects timestamps without an explicit timezone", () => {
   const record = validRecord();
   record.provenance.reviewed_at = "2026-11-08T11:00:00";
-  assert.equal(isPrimaryVerificationComplete(record), false);
+  assert.equal(isPrimaryVerificationComplete(record, validRegistry()), false);
 });
 
 test("rejects unverified records without treating them as failures", () => {
   const record = validRecord();
   record.review_status = "needs_legal_review";
-  assert.equal(isPrimaryVerificationComplete(record), false);
+  assert.equal(isPrimaryVerificationComplete(record, validRegistry()), false);
 });
