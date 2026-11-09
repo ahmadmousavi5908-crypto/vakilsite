@@ -4,6 +4,7 @@ import { requireAdmin } from "../../../../lib/supabase/admin";
 import { articles } from "../../../../data/articles";
 import { auditGrowthLibrary } from "../../../../lib/mavis/growth-audit.mjs";
 import MavisGrowthAudit from "../../../../components/admin/MavisGrowthAudit";
+import MavisSearchConsolePanel from "../../../../components/admin/MavisSearchConsolePanel";
 import { signOut } from "../../../admin/actions";
 
 export const metadata = {
@@ -37,7 +38,8 @@ export default async function MavisGrowthPage() {
         <main className="admin-content">
           <section className="admin-welcome"><div><span className="admin-eyebrow">GROWTH INTELLIGENCE · LOCAL AUDIT</span><h1>ممیزی کتابخانه محتوا</h1><p>تحلیل ساختاری محلی روی مقالات فعلی سایت، بدون ادعای داده زنده موتورهای جست‌وجو.</p></div><div className="admin-status"><i /> دسترسی مدیر تأیید شده</div></section>
           <MavisGrowthAudit audit={audit} />
-          <section className="admin-help"><strong>مرحله بعدی این بازو</strong><p>اتصال درخواست‌محور به Search Console و Bing Webmaster پس از تأیید دسترسی OAuth و محدودیت API؛ هیچ داده جست‌وجو یا رتبه‌ای در این نسخه جعل یا شبیه‌سازی نمی‌شود.</p></section>
+          <MavisSearchConsolePanel />
+          <section className="admin-help"><strong>مرزهای اتصال داده</strong><p>اتصال Google فقط‌خواندنی است و با OAuth دارای دامنه webmasters.readonly کار می‌کند. هیچ داده‌ای بدون درخواست مدیر دریافت نمی‌شود؛ عبارت‌های جست‌وجوی دارای احتمال اطلاعات شخصی پیش از نمایش حذف می‌شوند. اتصال Bing تا زمان بررسی جداگانه API و مجوز آن فعال نیست.</p></section>
           <span className="admin-user-note">حساب مدیر: {user.email || "حساب تأییدشده"}</span>
         </main>
       </div>
