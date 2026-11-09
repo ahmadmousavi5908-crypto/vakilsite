@@ -5,7 +5,7 @@
 
 ## تصمیم معماری
 
-از Docling نسخه دقیق **2.149.0** به‌عنوان parser اختیاری و مستقل استفاده می‌کنیم. این ابزار در dependencyهای Next.js یا سرویس عمومی سایت نصب نمی‌شود. وابستگی در فایل requirements-mavis-docling.txt pin شده است. Docling تحت MIT منتشر شده و Python نسخه 3.10 یا بالاتر می‌خواهد.
+از Docling Slim نسخه دقیق **2.149.0** با extraهای لازم PDF، Office، OpenDocument، Web و CLI استفاده می‌کنیم. این انتخاب مطابق راهنمای رسمی برای حذف RapidOCR غیرضروری و استفاده از Tesseract CLI است. OpenCV headless نیز روی نسخه دقیق **5.0.0.93** pin شده است. این ابزار در dependencyهای Next.js یا سرویس عمومی سایت نصب نمی‌شود. وابستگی پایه در requirements-mavis-docling.txt و مدل‌های ML فقط برای OCR در requirements-mavis-docling-ocr.txt pin شده‌اند. Docling تحت MIT منتشر شده و Python نسخه 3.10 یا بالاتر می‌خواهد.
 
 دو مسیر:
 - افزودن parser سنگین به runtime سایت: رد شد؛ سطح حمله، زمان build، مصرف RAM/CPU و وابستگی عملیاتی سایت را بی‌دلیل بالا می‌برد.
@@ -59,9 +59,10 @@ python3 -m venv "$HOME/.venvs/mavis-docling"
   --output-dir "$HOME/downloads/mavis-docling-review-20261109"
 ~~~
 
-برای OCR، فقط پس از نصب Tesseract و تأیید مدل‌های fas و eng:
+برای OCR، ابتدا وابستگی‌های مدل محلی را به همان virtualenv اضافه کنید، سپس Tesseract و مدل‌های fas و eng را تأیید کنید:
 
 ~~~bash
+"$HOME/.venvs/mavis-docling/bin/pip" install -r requirements-mavis-docling-ocr.txt
 "$HOME/.venvs/mavis-docling/bin/python" scripts/mavis/parse_staged_mother_two.py \
   --stage-root "$STAGE_ROOT" \
   --output-dir "$HOME/downloads/mavis-docling-ocr-review-20261109" \
@@ -85,11 +86,11 @@ STAGE_ROOT باید مسیر واقعی workspace جدیدی باشد که stage
 
 ## مهارت‌های توسعه
 
-مهارت upstream dignified-python از مخزن Docling در مسیر .agents/skills/dignified-python نصب شده است. منبع دقیق: docling-project/docling@1005c8d7d39447ff433ff650fbc49e046ad0aeee و فایل LICENSE اصلی نیز همراه آن نگهداری شده است. مهارت اختصاصی mavis-docling-ingestion نیز در .agents/skills/mavis-docling-ingestion اضافه شده تا مرز L0/L1/L2 و الزامات امنیتی در تغییرات بعدی رعایت شود.
+مهارت upstream dignified-python از مخزن Docling در مسیر .agents/skills/dignified-python نصب شده است. منبع دقیق: docling-project/docling@1005c8d7d39447ff433ff650fbc49e046ad0aeee و مجوز Apache-2.0 اصلی نیز همراه آن نگهداری شده است. مهارت اختصاصی mavis-docling-ingestion نیز در .agents/skills/mavis-docling-ingestion اضافه شده تا مرز L0/L1/L2 و الزامات امنیتی در تغییرات بعدی رعایت شود.
 
 ## آزمون‌ها و محدودیت فعلی
 
-- تست‌های قراردادی با converter ساختگی اجرا می‌شوند و به نصب سنگین Docling در CI نیاز ندارند.
+- تست‌های قراردادی با converter ساختگی در CI اصلی اجرا می‌شوند؛ workflow جداگانه MAVIS Docling runtime نیز dependency واقعی Docling Slim را نصب و smoke test محلی را اجرا می‌کند.
 - CI باید hash validation، رد path traversal و symlink، page provenance، redaction خطا، عدم overwrite و ممنوعیت indexing/retrieval را آزمایش کند.
 - این تست‌ها اتصال واقعی Docling، کیفیت OCR فارسی یا سازگاری Android را اثبات نمی‌کنند.
 - معیار پذیرش نهایی: نمونه‌های واقعی و مجاز PDF متنی، PDF اسکن‌شده، DOCX، XLSX و اسناد چندصفحه‌ای با دقت OCR، ترتیب خواندن، جدول‌ها، page anchors، latency و مصرف RAM مقایسه شوند.
