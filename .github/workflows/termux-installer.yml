@@ -28,6 +28,7 @@ jobs:
           grep -Fq 'proot-distro install debian:trixie --name mavis-debian' scripts/termux/install.sh
           grep -Fq 'NODE_VERSION="24.22.2"' scripts/termux/install.sh
           grep -Fq 'checksum_line_count' scripts/termux/install.sh
+          grep -Fq 'length($1) == 64' scripts/termux/install.sh
           grep -Fq 'Unexpected Node.js runtime version' scripts/termux/install.sh
           grep -Fq 'Runtime manifest validation failed' scripts/termux/install.sh
           test "$(grep -n '/dev/tcp/127.0.0.1/3002' scripts/termux/install.sh | cut -d: -f1)" -lt "$(grep -n 'pkg install -y proot-distro' scripts/termux/install.sh | cut -d: -f1)"
