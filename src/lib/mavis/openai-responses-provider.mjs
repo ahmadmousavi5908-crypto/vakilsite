@@ -154,10 +154,10 @@ export function createOpenAIResponsesProvider({
 
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), timeout);
-      let response;
+      let payload;
 
       try {
-        response = await fetchImpl(API_URL, {
+        const response = await fetchImpl(API_URL, {
           method: "POST",
           redirect: "error",
           cache: "no-store",
@@ -182,19 +182,18 @@ export function createOpenAIResponsesProvider({
           }),
           signal: controller.signal,
         });
+
+        if (!response?.ok) {
+          throw new Error("OpenAI Responses request failed.");
+        }
+
+        try {
+          payload = await response.json();
+        } catch {
+          return null;
+        }
       } finally {
         clearTimeout(timer);
-      }
-
-      if (!response?.ok) {
-        throw new Error("OpenAI Responses request failed.");
-      }
-
-      let payload;
-      try {
-        payload = await response.json();
-      } catch {
-        return null;
       }
 
       if (payload?.status !== "completed" || payload?.error) return null;
