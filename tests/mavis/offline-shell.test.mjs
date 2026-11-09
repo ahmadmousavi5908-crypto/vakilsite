@@ -42,7 +42,7 @@ test("offline service worker precaches every runtime dependency", () => {
 });
 
 test("offline cache reads stay inside the versioned MAVIS cache", () => {
-  assert.match(worker, /const CACHE_NAME = "mavis-offline-v1\\.2\\.0-/);
+  assert.match(worker, /const CACHE_NAME = "mavis-offline-v1\.2\.0-/);
   assert.match(worker, /caches\.open\(CACHE_NAME\)[\s\S]*?cache\.match\(request\)/);
   assert.doesNotMatch(worker, /caches\.match\(/);
 });
