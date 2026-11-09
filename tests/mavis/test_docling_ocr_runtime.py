@@ -150,6 +150,12 @@ class DoclingOcrRuntimeTests(unittest.TestCase):
             )
             parse_manifest = json.loads((root / "parsed" / "parse-manifest.json").read_text("utf-8"))
             record = parse_manifest["files"][0]
+            self.assertIn(
+                "output_file",
+                record,
+                f"Docling OCR did not produce an artifact: {record.get('status')} "
+                f"(error stage: {record.get('error_stage')})",
+            )
             document = json.loads((root / "parsed" / record["output_file"]).read_text("utf-8"))
             extracted = "\n".join(page["markdown"] for page in document["content"]["pages"])
 
