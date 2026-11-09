@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import hmac
 import importlib.metadata
 import json
 import os
@@ -117,6 +118,15 @@ def load_staging_manifest(stage_root: str | Path) -> tuple[Path, dict[str, Any],
     policy = manifest.get("policy")
     entries = manifest.get("files")
     source_archive = manifest.get("source_archive")
+    source_inventory = manifest.get("source_inventory")
+    required_policy = {
+        "secrets_excluded": True,
+        "unsafe_paths_and_links_excluded": True,
+        "original_archive_modified": False,
+        "extracted_in_place": False,
+        "automatic_ingestion_performed": False,
+        "copyright_and_access_rights_verified": False,
+    }
 
     if (
         not isinstance(summary, dict)
@@ -124,9 +134,11 @@ def load_staging_manifest(stage_root: str | Path) -> tuple[Path, dict[str, Any],
         or summary.get("retrieval_allowed") is not False
         or summary.get("human_review_required") is not True
         or not isinstance(policy, dict)
-        or policy.get("automatic_ingestion_performed") is not False
+        or any(policy.get(key) is not expected for key, expected in required_policy.items())
         or not isinstance(source_archive, dict)
         or not SHA256_PATTERN.fullmatch(str(source_archive.get("sha256", "")))
+        or not isinstance(source_inventory, dict)
+        or not SHA256_PATTERN.fullmatch(str(source_inventory.get("sha256", "")))
         or not isinstance(entries, list)
     ):
         raise ParsingError("Staging manifest does not satisfy the quarantine policy.")
@@ -330,12 +342,19 @@ def parse_staged_documents(
     stage_root: str | Path,
     output_dir: str | Path,
     *,
+    expected_manifest_sha256: str,
     converter: Any | None = None,
     docling_version: str | None = None,
     ocr: bool = False,
     artifacts_dir: str | Path | None = None,
 ) -> dict[str, Any]:
     root, staging_manifest, staging_manifest_sha256 = load_staging_manifest(stage_root)
+    if (
+        not SHA256_PATTERN.fullmatch(expected_manifest_sha256)
+        or not hmac.compare_digest(expected_manifest_sha256, staging_manifest_sha256)
+    ):
+        raise ParsingError("Staging manifest SHA-256 does not match the trusted staging result.")
+
     entries = staging_manifest["files"]
 
     if len(entries) > MAX_FILES:
@@ -355,6 +374,15 @@ def parse_staged_documents(
         if total_bytes > MAX_TOTAL_BYTES:
             raise ParsingError("Staging manifest exceeds the configured total-size limit.")
         validated.append((entry, source, relative))
+
+    summary = staging_manifest["summary"]
+    if (
+        summary.get("staged_files") != len(validated)
+        or summary.get("staged_bytes") != total_bytes
+        or not isinstance(summary.get("selected_files"), int)
+        or summary.get("selected_files") < len(validated)
+    ):
+        raise ParsingError("Staging manifest counts do not match the validated quarantine files.")
 
     requested_output = Path(output_dir).expanduser()
     if requested_output.exists() or requested_output.is_symlink():
@@ -532,6 +560,7 @@ def main() -> int:
     )
     parser.add_argument("--stage-root", required=True, help="Existing Mother Two quarantine workspace")
     parser.add_argument("--output-dir", required=True, help="New private output directory outside the quarantine")
+    parser.add_argument("--expected-manifest-sha256", required=True, help="SHA-256 returned by the trusted staging command")
     parser.add_argument("--ocr", action="store_true", help="Enable local Persian/English Tesseract OCR for PDFs")
     parser.add_argument("--artifacts-dir", help="Pre-fetched Docling model artifacts directory required with --ocr")
     args = parser.parse_args()
@@ -540,6 +569,7 @@ def main() -> int:
         result = parse_staged_documents(
             args.stage_root,
             args.output_dir,
+            expected_manifest_sha256=args.expected_manifest_sha256,
             ocr=args.ocr,
             artifacts_dir=args.artifacts_dir,
         )
