@@ -49,7 +49,7 @@ OCR فقط با گزینه صریح --ocr فعال می‌شود:
 
 ## اجرای آزمایشی روی quarantine
 
-پس از inventory و staging واقعی و بازبینی manifest:
+پس از inventory و staging واقعی و بازبینی manifest، مقدار manifest_sha256 را از خروجی خود دستور staging در متغیر جداگانه STAGING_MANIFEST_SHA256 نگه دارید؛ hash داخل همان manifest به‌تنهایی مرجع اعتماد نیست:
 
 ~~~bash
 python3 -m venv "$HOME/.venvs/mavis-docling"
@@ -57,7 +57,8 @@ python3 -m venv "$HOME/.venvs/mavis-docling"
 
 "$HOME/.venvs/mavis-docling/bin/python" scripts/mavis/parse_staged_mother_two.py \
   --stage-root "$STAGE_ROOT" \
-  --output-dir "$HOME/downloads/mavis-docling-review-20261109"
+  --output-dir "$HOME/downloads/mavis-docling-review-20261109" \
+  --expected-manifest-sha256 "$STAGING_MANIFEST_SHA256"
 ~~~
 
 برای OCR، ابتدا وابستگی‌های مدل محلی را به همان virtualenv اضافه کنید، سپس Tesseract و مدل‌های fas و eng را تأیید کنید:
@@ -66,6 +67,7 @@ python3 -m venv "$HOME/.venvs/mavis-docling"
 "$HOME/.venvs/mavis-docling/bin/python" scripts/mavis/parse_staged_mother_two.py \
   --stage-root "$STAGE_ROOT" \
   --output-dir "$HOME/downloads/mavis-docling-ocr-review-20261109" \
+  --expected-manifest-sha256 "$STAGING_MANIFEST_SHA256" \
   --ocr \
   --artifacts-dir "$HOME/.cache/mavis-docling-models"
 ~~~
