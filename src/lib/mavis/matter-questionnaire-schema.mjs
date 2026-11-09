@@ -1,6 +1,7 @@
 const COMMON = { stage: "post_approval", required: false };
 const ENUMS = {
   userRole: ["claimant", "respondent", "complainant", "accused", "witness", "representative", "other"],
+  commercialRole: ["shareholder", "director", "company", "buyer", "seller", "creditor", "debtor", "contractor", "other"],
   courtStage: ["not_filed", "preliminary", "first_instance", "appeal", "enforcement", "unknown"],
   authority: ["court", "prosecutor", "police", "registry", "labor_board", "administrative_body", "other", "unknown"],
   documentType: ["contract", "receipt", "notice", "judgment", "official_deed", "other"],
@@ -24,7 +25,7 @@ const FIELD = {
   text: (label, maxLength = 160) => ({ ...COMMON, type: "text", label, maxLength }),
   enum: (label, options) => ({ ...COMMON, type: "enum", label, options }),
   boolean: (label) => ({ ...COMMON, type: "boolean", label }),
-  date: (label) => ({ ...COMMON, type: "date", label, calendarRequired: true }),
+  date: (label) => ({ ...COMMON, type: "date", label, calendarRequired: true, calendarValidation: "format_and_month_bounds_only" }),
   money: (label) => ({ ...COMMON, type: "money", label, currencies: ["IRR", "USD", "EUR"] }),
   multiEnum: (label, options, maxItems = 5) => ({ ...COMMON, type: "multi_enum", label, options, maxItems }),
 };
@@ -67,7 +68,7 @@ const definitions = {
   }},
   commercial: { title: "تجاری و شرکت‌ها", fields: {
     organizationType: FIELD.enum("نوع شخصیت یا کسب‌وکار", ENUMS.organizationType),
-    userRole: FIELD.enum("سمت یا نقش شما", ENUMS.userRole),
+    userRole: FIELD.enum("سمت یا نقش شما", ENUMS.commercialRole),
     instrumentType: FIELD.enum("نوع قرارداد یا سند تجاری", ENUMS.instrumentType),
     executionDate: FIELD.date("تاریخ تنظیم سند"),
     amount: FIELD.money("مبلغ مورد اختلاف"),
