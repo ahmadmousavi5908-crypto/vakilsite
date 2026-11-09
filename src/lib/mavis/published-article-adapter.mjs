@@ -17,7 +17,7 @@ function normalizeSources(sources) {
     try {
       const url = new URL(rawUrl);
       if (url.protocol !== "https:" || !url.hostname || url.username || url.password) return [];
-      return [{ title, url: url.toString(), source_type: "secondary" }];
+      return [{ title, url: url.toString(), source_type: "secondary", verification_status: "secondary_source_only" }];
     } catch {
       return [];
     }
@@ -67,6 +67,7 @@ export function buildPublishedArticleRecords(articles) {
       search_title: title,
       summary: excerpt,
       definition: searchableText,
+      warning: cleanText(article.warning, 1200),
       category: cleanText(article.category, 160),
       read_time: cleanText(article.readTime, 40),
       path: "/articles/" + slug,
