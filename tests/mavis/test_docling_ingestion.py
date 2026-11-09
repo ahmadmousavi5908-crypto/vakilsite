@@ -202,6 +202,21 @@ class DoclingIngestionTests(unittest.TestCase):
             with self.assertRaisesRegex(ParsingError, "symlink"):
                 self.parse_stage(stage_root, root / "parsed", converter=FakeConverter())
 
+    def test_skips_docling_documents_when_optional_dependency_is_missing(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            stage_root, _source, _manifest = self.create_stage(root)
+            with patch(
+                "parse_staged_mother_two.create_converter",
+                side_effect=ModuleNotFoundError("docling package not installed"),
+            ):
+                result = self.parse_stage(stage_root, root / "parsed")
+
+            parse_manifest = json.loads((root / "parsed/parse-manifest.json").read_text("utf-8"))
+            self.assertEqual(result["missing_docling_files"], 1)
+            self.assertEqual(parse_manifest["files"][0]["status"], "skipped_missing_docling")
+            self.assertFalse((root / "parsed" / parse_manifest["files"][0].get("output_file", "")).exists())
+
     def test_skips_legacy_word_format_when_libreoffice_is_unavailable(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
