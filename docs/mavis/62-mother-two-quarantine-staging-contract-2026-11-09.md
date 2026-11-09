@@ -43,23 +43,27 @@ python3 scripts/mavis/inventory_mother_two.py \
 پس از بررسی خروجی و checksum گزارش:
 
 ~~~bash
+REPORT="$(python3 scripts/mavis/inventory_mother_two.py \
+  --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
+  --output-dir "$HOME/downloads/vakilsite-mother-two-audit" \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["report_path"])')" || exit 1
+test -f "$REPORT" || { echo "Inventory report not found"; exit 1; }
+
 python3 scripts/mavis/stage_mother_two.py \
   --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
-  --inventory "/absolute/path/to/verified-inventory.json" \
+  --inventory "$REPORT" \
   --output-parent "$HOME/downloads/vakilsite-mother-two-staging" \
   --dry-run
 ~~~
 
-فقط پس از تطبیق dry-run:
+فقط پس از بررسی تعداد، حجم، هش آرشیو و گزارش:
 
 ~~~bash
 python3 scripts/mavis/stage_mother_two.py \
   --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
-  --inventory "/absolute/path/to/verified-inventory.json" \
+  --inventory "$REPORT" \
   --output-parent "$HOME/downloads/vakilsite-mother-two-staging"
 ~~~
-
-مسیر /absolute/path/to/verified-inventory.json باید با مسیر واقعی گزارش تولیدشده جایگزین شود؛ این placeholder در سند است، نه فرمان قابل اجرای بدون اصلاح.
 
 ## معیار پذیرش
 
