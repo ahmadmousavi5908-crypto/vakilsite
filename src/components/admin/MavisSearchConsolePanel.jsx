@@ -145,6 +145,7 @@ export default function MavisSearchConsolePanel() {
             <span>تعداد ردیف: <strong>{numberFormat.format(result.coverage.rowCount)}</strong></span>
             <span>کلیک: <strong>{numberFormat.format(result.rows.reduce((sum, row) => sum + row.metrics.clicks, 0))}</strong></span>
             <span>نمایش: <strong>{numberFormat.format(result.rows.reduce((sum, row) => sum + row.metrics.impressions, 0))}</strong></span>
+            <span>ردیف‌های پالایش‌شده: <strong>{numberFormat.format(result.rows.filter((row) => row.privacyReviewRequired).length)}</strong></span>
             {result.coverage.mayBeTruncated ? <strong className={styles.warning}>احتمال ناقص‌بودن نتایج</strong> : null}
           </div>
           <div className={styles.tableWrap}>
@@ -166,7 +167,7 @@ export default function MavisSearchConsolePanel() {
                     {displayedDimensions.includes("query") ? (
                       <td>{row.privacyReviewRequired && row.dimensions.query === null ? "عبارت پنهان‌شده برای حفظ حریم خصوصی" : row.dimensions.query || "—"}</td>
                     ) : null}
-                    {displayedDimensions.includes("page") ? <td className={styles.urlCell}>{row.dimensions.page || "—"}</td> : null}
+                    {displayedDimensions.includes("page") ? <td className={styles.urlCell}>{row.privacyReviewRequired && row.dimensions.page === null ? "نشانی پنهان‌شده برای حفظ حریم خصوصی" : row.dimensions.page || "—"}</td> : null}
                     {displayedDimensions.includes("date") ? <td>{row.dimensions.date || "—"}</td> : null}
                     <td>{numberFormat.format(row.metrics.clicks)}</td>
                     <td>{numberFormat.format(row.metrics.impressions)}</td>
