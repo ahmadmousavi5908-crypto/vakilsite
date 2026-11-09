@@ -42,6 +42,19 @@ SUPPORTED_EXTENSIONS = {
 }
 OCR_LANGUAGES = ["fas", "eng"]
 DOCUMENT_TIMEOUT_SECONDS = 120
+MAX_FILE_BYTES = 100 * 1024 * 1024
+MAX_TOTAL_BYTES = 1024 * 1024 * 1024
+MAX_FILES = 5000
+ALLOWED_CATEGORIES = {
+    "books",
+    "published_articles",
+    "judicial_decisions",
+    "advisory_opinions",
+    "legal_sources",
+    "research_and_datasets",
+    "seo_and_growth",
+    "project_documentation",
+}
 
 
 class ParsingError(RuntimeError):
@@ -117,7 +130,8 @@ def validate_staged_entry(root: Path, entry: dict[str, Any]) -> tuple[Path, Pure
     extension = relative.suffix.lower()
 
     if (
-        entry.get("knowledge_stage") != "L0_staged_unreviewed"
+        entry.get("classification") not in ALLOWED_CATEGORIES
+        or entry.get("knowledge_stage") != "L0_staged_unreviewed"
         or entry.get("access_class") != "unclassified_pending_review"
         or entry.get("rights_status") != "unknown_pending_review"
         or entry.get("indexing_allowed") is not False
@@ -126,6 +140,7 @@ def validate_staged_entry(root: Path, entry: dict[str, Any]) -> tuple[Path, Pure
         or not SHA256_PATTERN.fullmatch(str(entry.get("sha256", "")))
         or not isinstance(entry.get("size_bytes"), int)
         or entry["size_bytes"] < 0
+        or entry["size_bytes"] > MAX_FILE_BYTES
     ):
         raise ParsingError("A staged entry violates the L0 review-only contract.")
 
@@ -312,17 +327,30 @@ def parse_staged_documents(
     root, staging_manifest, staging_manifest_sha256 = load_staging_manifest(stage_root)
     entries = staging_manifest["files"]
 
+    if len(entries) > MAX_FILES:
+        raise ParsingError("Staging manifest exceeds the configured file-count limit.")
+
     validated: list[tuple[dict[str, Any], Path, PurePosixPath]] = []
+    seen_paths: set[str] = set()
+    total_bytes = 0
     for entry in entries:
         if not isinstance(entry, dict):
             raise ParsingError("Staging manifest contains a malformed file entry.")
         source, relative = validate_staged_entry(root, entry)
+        if relative.as_posix() in seen_paths:
+            raise ParsingError("Staging manifest contains duplicate source paths.")
+        seen_paths.add(relative.as_posix())
+        total_bytes += entry["size_bytes"]
+        if total_bytes > MAX_TOTAL_BYTES:
+            raise ParsingError("Staging manifest exceeds the configured total-size limit.")
         validated.append((entry, source, relative))
 
     requested_output = Path(output_dir).expanduser()
     if requested_output.exists() or requested_output.is_symlink():
         raise ParsingError("Output directory must be new; existing data will not be overwritten.")
 
+    if requested_output.parent.is_symlink():
+        raise ParsingError("Output parent must not be a symlink.")
     requested_output.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
     output_parent = requested_output.parent.resolve(strict=True)
     if output_parent.is_relative_to(root):
