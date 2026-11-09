@@ -19,6 +19,7 @@ class MotherTwoStagingTests(unittest.TestCase):
                 "library/books/book-one.pdf": b"licensed status unknown",
                 "library/articles/guide.md": "راهنمای حقوقی".encode("utf-8"),
                 "library/research/data.csv": b"id,value\n1,2\n",
+                "library/research/credentials.txt": b"OPENAI_API_KEY=sk-abcdefghijklmnopqrstuvwxyz1234567890\n",
                 "misc/unknown.pdf": b"unclassified file",
                 "private/.env": b"SECRET_TOKEN=never-stage",
                 "../outside.pdf": b"unsafe path",
@@ -48,14 +49,18 @@ class MotherTwoStagingTests(unittest.TestCase):
             result = stage_archive(archive_path, inventory_path, root / "staging")
 
             self.assertEqual(result["status"], "staging_created")
+            self.assertEqual(result["selected_files"], 4)
             self.assertEqual(result["staged_files"], 3)
+            self.assertEqual(result["secret_content_candidates"], 1)
             self.assertFalse(result["indexing_allowed"])
             self.assertFalse(result["retrieval_allowed"])
             self.assertFalse(result["original_archive_modified"])
 
             stage_root = Path(result["stage_path"])
             manifest = json.loads((stage_root / "staging-manifest.json").read_text("utf-8"))
+            self.assertEqual(manifest["summary"]["selected_files"], 4)
             self.assertEqual(manifest["summary"]["staged_files"], 3)
+            self.assertEqual(manifest["summary"]["secret_content_candidates"], 1)
             self.assertFalse(manifest["summary"]["indexing_allowed"])
             self.assertTrue(manifest["policy"]["secrets_excluded"])
             self.assertFalse(manifest["policy"]["copyright_and_access_rights_verified"])
@@ -66,6 +71,7 @@ class MotherTwoStagingTests(unittest.TestCase):
                 "library/articles/guide.md",
                 "library/research/data.csv",
             })
+            self.assertFalse(any("credentials" in path for path in staged_paths))
             self.assertNotIn("misc/unknown.pdf", staged_paths)
             self.assertTrue((stage_root / "library/books/book-one.pdf").is_file())
             self.assertFalse((stage_root / "private/.env").exists())
@@ -83,7 +89,9 @@ class MotherTwoStagingTests(unittest.TestCase):
             result = stage_archive(archive_path, inventory_path, output_parent, dry_run=True)
 
             self.assertEqual(result["status"], "dry_run_verified")
-            self.assertEqual(result["selected_files"], 3)
+            self.assertEqual(result["selected_files"], 4)
+            self.assertEqual(result["secret_content_candidates"], 1)
+            self.assertEqual(result["eligible_after_content_scan"], 3)
             self.assertEqual(result["staged_files"], 0)
             self.assertFalse(result["extraction_performed"])
             self.assertFalse(output_parent.exists())
