@@ -128,6 +128,9 @@ function isValidDate(value) {
     return isValidGregorianDate(year, month, day);
   }
 
+  // Intl and the Iranian civil Jalali calendar agree in Gregorian years 1800–2256.
+  // Reject dates outside that supported interval rather than guessing leap-year rules.
+  if (year < 1179 || year > 1634) return false;
   if (month <= 6) return day <= 31;
   if (month <= 11) return day <= 30;
   return day <= 29 || (day === 30 && isJalaliLeapYear(year));
