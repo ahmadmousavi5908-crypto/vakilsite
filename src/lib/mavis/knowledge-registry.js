@@ -1,6 +1,6 @@
 import "server-only";
 
-import publishedArticles from "../../data/articles.js";
+import { articles as publishedArticles } from "../../data/articles.js";
 import {
   getLegalRecordTitle,
   legalLibraryCollections,
