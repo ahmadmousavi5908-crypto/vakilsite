@@ -155,14 +155,53 @@ def create_review_queue(staging_manifest_path: str | Path, output_path: str | Pa
     }
 
     destination = Path(output_path).expanduser() if output_path else root / "historical-review-queue.json"
+    template_path = destination.with_name("historical-review-decisions.template.json")
     destination.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-    if destination.exists() or destination.is_symlink():
-        raise ReviewQueueError("Review queue output already exists; refusing to overwrite.")
+    if destination.exists() or destination.is_symlink() or template_path.exists() or template_path.is_symlink():
+        raise ReviewQueueError("Review queue or decisions template already exists; refusing to overwrite.")
+
+    decisions_template = {
+        "schema_version": "1.0.0",
+        "decisions": [
+            {
+                "source_id": record["source_id"],
+                "decision": None,
+                "title": None,
+                "source_class": None,
+                "access_class": None,
+                "rights_status": "unknown",
+                "rights_evidence": None,
+                "author": None,
+                "publisher": None,
+                "publication_date": None,
+                "jurisdiction": None,
+                "language": None,
+                "source_url": None,
+                "exact_citation": None,
+                "reviewed_by": None,
+                "reviewed_at": None,
+                "review_notes": None,
+                "human_approved_searchable": False,
+                "primary_source_verified": False,
+                "validity_status": "unknown",
+                "last_verified_at": None,
+            }
+            for record in queue["records"]
+        ],
+    }
+
     payload = (json.dumps(queue, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    template_payload = (json.dumps(decisions_template, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
     with destination.open("xb") as stream:
         stream.write(payload)
     try:
         destination.chmod(0o600)
+    except OSError:
+        pass
+    with template_path.open("xb") as stream:
+        stream.write(template_payload)
+    try:
+        template_path.chmod(0o600)
     except OSError:
         pass
 
@@ -170,6 +209,8 @@ def create_review_queue(staging_manifest_path: str | Path, output_path: str | Pa
         "status": "review_queue_created",
         "queue_path": str(destination),
         "queue_sha256": hashlib.sha256(payload).hexdigest(),
+        "decisions_template_path": str(template_path),
+        "decisions_template_sha256": hashlib.sha256(template_payload).hexdigest(),
         "records": len(validated),
         "duplicate_content_records": queue["summary"]["duplicate_content_records"],
         "indexing_allowed": False,
