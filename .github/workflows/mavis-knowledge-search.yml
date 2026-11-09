@@ -57,7 +57,13 @@ jobs:
           node --check public/mavis-offline/sw.js
 
       - name: Validate offline knowledge bundle and provenance
-        run: node scripts/mavis/validate-offline-bundle.mjs
+        run: node scripts/mavis/validate-offline-bundle.mjs scripts/mavis/validate-legal-review-queue.mjs tests/mavis/legal-review-queue.test.mjs
+
+      - name: Validate legal source review queue against canonical corpus
+        run: node scripts/mavis/validate-legal-review-queue.mjs
+
+      - name: Test legal source review queue contract
+        run: node --test tests/mavis/legal-review-queue.test.mjs
 
       - name: Test offline Persian search
         run: node --test tests/mavis/offline-search.test.mjs
