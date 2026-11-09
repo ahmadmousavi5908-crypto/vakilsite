@@ -75,7 +75,7 @@ test("refreshes OAuth credentials and queries Search Analytics with read-only ac
   assert.match(calls[0].options.body, /grant_type=refresh_token/);
   assert.match(calls[0].options.body, /client_secret=oauth-client-secret/);
   assert.equal(calls[1].options.method, "POST");
-  assert.match(calls[1].url, /webmasters\\/v3\\/sites\\/https%3A%2F%2Fvakilahmadmousavi\\.ir%2F\\/searchAnalytics\\/query/);
+  assert.match(calls[1].url, /webmasters\/v3\/sites\/https%3A%2F%2Fvakilahmadmousavi\.ir%2F\/searchAnalytics\/query/);
   assert.equal(calls[1].options.headers.Authorization, "Bearer short-lived-access-token");
   const body = JSON.parse(calls[1].options.body);
   assert.deepEqual(body.dimensions, ["query", "page"]);
