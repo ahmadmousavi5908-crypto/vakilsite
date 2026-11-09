@@ -49,6 +49,7 @@ SUPPORTED_EXTENSIONS = {
 }
 LEGACY_OFFICE_EXTENSIONS = {".doc", ".rtf", ".ppt", ".xls"}
 OCR_LANGUAGES = ["fas", "eng"]
+OCR_IMAGES_SCALE = 3.0
 DOCUMENT_TIMEOUT_SECONDS = 120
 MAX_FILE_BYTES = 100 * 1024 * 1024
 MAX_TOTAL_BYTES = 1024 * 1024 * 1024
@@ -395,6 +396,7 @@ def create_converter(*, ocr: bool, artifacts_dir: str | Path | None = None) -> A
 
         pipeline_options = PdfPipelineOptions(
             do_ocr=True,
+            images_scale=OCR_IMAGES_SCALE,
             ocr_options=TesseractCliOcrOptions(
                 lang=OCR_LANGUAGES,
                 mode=OcrMode.FULL_PAGE,
@@ -592,6 +594,7 @@ def parse_staged_documents(
                     "version": parser_version,
                     "ocr_enabled": parser_ocr_enabled,
                     "ocr_languages": OCR_LANGUAGES if parser_ocr_enabled else [],
+                    "ocr_images_scale": OCR_IMAGES_SCALE if parser_ocr_enabled else None,
                 }
 
                 payload = {
@@ -611,6 +614,7 @@ def parse_staged_documents(
                         "error_count": len(errors),
                         "ocr_enabled": parser_ocr_enabled,
                         "ocr_languages": OCR_LANGUAGES if parser_ocr_enabled else [],
+                    "ocr_images_scale": OCR_IMAGES_SCALE if parser_ocr_enabled else None,
                     },
                     "content": {
                         "text_sha256": text_hash,

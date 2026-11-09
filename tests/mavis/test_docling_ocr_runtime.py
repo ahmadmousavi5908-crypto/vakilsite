@@ -196,6 +196,7 @@ class DoclingOcrRuntimeTests(unittest.TestCase):
             self.assertEqual(result["parsed_files"], 1)
             self.assertEqual(document["parser"]["name"], "docling")
             self.assertTrue(document["parser"]["ocr_enabled"])
+            self.assertEqual(document["parser"]["ocr_images_scale"], 3.0)
             self.assertFalse(document["review"]["indexing_allowed"])
             self.assertFalse(document["review"]["retrieval_allowed"])
             self.assertIn("MAVIS", extracted.upper())
