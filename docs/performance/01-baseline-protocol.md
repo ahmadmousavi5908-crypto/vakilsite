@@ -18,7 +18,7 @@ Use GitHub Actions workflow **Site performance and bundle baseline** with workfl
 - /articles
 - /legal-library
 
-It performs three mobile Lighthouse runs per route and stores JSON/HTML reports as a 14-day workflow artifact. This is a lab baseline; no score threshold blocks the build.
+It performs three mobile Lighthouse runs per route, verifies at least 24 JSON/HTML files exist, and stores them as a 14-day workflow artifact. This is a lab baseline; no score threshold blocks the build.
 
 ## Interpretation
 
