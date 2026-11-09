@@ -58,7 +58,7 @@ sha256sum --check "$CHECKSUM_NAME" || fail "هش بسته با manifest رسمی
 
 if ! proot-distro login debian -- /bin/true >/dev/null 2>&1; then
   log "نصب محیط Debian برای اجرای سازگار ARM64/glibc"
-  proot-distro install debian
+  proot-distro install debian:trixie --name debian
 fi
 
 log "آماده‌سازی runtime لینوکسی و نصب نسخه تأییدشده Node.js"
