@@ -24,6 +24,7 @@ class MotherTwoInventoryTests(unittest.TestCase):
                 "metadata/manifest.json": b'{"schema":"test"}',
                 "private/.env": b"SUPABASE_SERVICE_ROLE_KEY=must-never-appear",
                 "config/db-password.txt": b"DB_PASSWORD=must-also-never-appear",
+                "private/clients/client-records.json": b'{"fullName":"Private Client","phone":"09000000000"}',
                 "../outside.txt": b"unsafe path member",
             }
             for name, content in files.items():
@@ -43,9 +44,10 @@ class MotherTwoInventoryTests(unittest.TestCase):
             archive_path = self.make_archive(root)
             report = inventory_archive(archive_path)
 
-            self.assertEqual(report["summary"]["files"], 9)
+            self.assertEqual(report["summary"]["files"], 10)
             self.assertEqual(report["summary"]["symlinks"], 1)
             self.assertEqual(report["summary"]["secret_candidate_count"], 2)
+            self.assertEqual(report["summary"]["confidential_candidate_count"], 1)
             self.assertEqual(report["summary"]["unsafe_path_count"], 1)
             self.assertEqual(report["summary"]["unsafe_link_target_count"], 1)
             self.assertEqual(report["summary"]["duplicate_content_groups"], 1)
@@ -64,6 +66,12 @@ class MotherTwoInventoryTests(unittest.TestCase):
             self.assertNotIn(".env", json.dumps(report))
             self.assertNotIn("db-password", json.dumps(report))
             self.assertNotIn("DB_PASSWORD", json.dumps(report))
+            self.assertNotIn("client-records.json", json.dumps(report))
+            self.assertNotIn("Private Client", json.dumps(report))
+            restricted_entries = [entry for entry in report["files"] if entry["classification"] == "restricted_personal"]
+            self.assertEqual(len(restricted_entries), 1)
+            self.assertIsNone(restricted_entries[0]["path"])
+            self.assertIsNone(restricted_entries[0]["sha256"])
             self.assertEqual(sorted(item.name for item in root.iterdir()), ["mother-two-test.tar.gz"])
 
     def test_writes_private_inventory_and_checksum_outside_archive(self):
