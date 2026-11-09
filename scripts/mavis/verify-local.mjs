@@ -23,6 +23,11 @@ const lintTargets = [
 
 const steps = [
   {
+    label: "Generate the offline published article bundle",
+    command: process.execPath,
+    args: ["scripts/mavis/generate-offline-published-articles.mjs"],
+  },
+  {
     label: "Validate the canonical legal library",
     command: "python3",
     args: ["src/data/legal-library/validation/validate_library.py"],
