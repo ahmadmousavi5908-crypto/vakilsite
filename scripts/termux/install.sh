@@ -6,7 +6,7 @@ readonly RELEASE_TAG="mavis-termux-v1.0.0"
 readonly ARCHIVE_NAME="mavis-termux-arm64.tar.gz"
 readonly CHECKSUM_NAME="${ARCHIVE_NAME}.sha256"
 readonly NODE_VERSION="24.22.2"
-readonly DOWNLOAD_DIR="${MAVIS_DOWNLOAD_DIR:-$HOME/downloads/mavis-termux-v1.0.0}"
+readonly DOWNLOAD_DIR="$HOME/downloads/mavis-termux-v1.0.0"
 
 log() { printf '\n[MAVIS] %s\n' "$1"; }
 fail() { printf '\n[MAVIS] ERROR: %s\n' "$1" >&2; exit 1; }
@@ -109,5 +109,5 @@ export MAVIS_INTAKE_ENABLED=false
 export MAVIS_PROVIDER=mock
 export NEXT_PUBLIC_SITE_URL=https://vakilahmadmousavi.ir
 cd "/opt/mavis/'"$RELEASE_TAG"'"
-exec node node_modules/next/dist/bin/next start --hostname 0.0.0.0 --port 3002
+exec node node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3002
 '
