@@ -2,11 +2,11 @@
 set -Eeuo pipefail
 
 readonly REPOSITORY="ahmadmousavi5908-crypto/vakilsite"
-readonly RELEASE_TAG="mavis-termux-v1.0.0"
+readonly RELEASE_TAG="mavis-termux-v1.0.1"
 readonly ARCHIVE_NAME="mavis-termux-arm64.tar.gz"
 readonly CHECKSUM_NAME="${ARCHIVE_NAME}.sha256"
 readonly NODE_VERSION="24.22.2"
-readonly DOWNLOAD_DIR="$HOME/downloads/mavis-termux-v1.0.0"
+readonly DOWNLOAD_DIR="$HOME/downloads/mavis-termux-v1.0.1"
 
 log() { printf '\n[MAVIS] %s\n' "$1"; }
 fail() { printf '\n[MAVIS] ERROR: %s\n' "$1" >&2; exit 1; }
@@ -75,9 +75,9 @@ fi
 log "آماده‌سازی runtime لینوکسی و نصب نسخه تأییدشده Node.js"
 proot-distro login --shared-home mavis-debian -- bash -lc '
 set -Eeuo pipefail
-RELEASE_TAG="mavis-termux-v1.0.0"
+RELEASE_TAG="mavis-termux-v1.0.1"
 NODE_VERSION="'"$NODE_VERSION"'"
-ARCHIVE="/root/downloads/mavis-termux-v1.0.0/'"$ARCHIVE_NAME"'"
+ARCHIVE="/root/downloads/mavis-termux-v1.0.1/'"$ARCHIVE_NAME"'"
 NODE_ROOT="/opt/node-v${NODE_VERSION}-linux-arm64"
 APP_ROOT="/opt/mavis/'"$RELEASE_TAG"'"
 
