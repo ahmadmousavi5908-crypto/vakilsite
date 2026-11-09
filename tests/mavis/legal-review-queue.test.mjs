@@ -113,10 +113,12 @@ test("rejects impossible instrument dates and timestamps", () => {
     published_at: "2026-02-31",
     retrieved_at: "2026-11-08T10:00:00",
     reviewed_at: "not-a-date",
+    effective_from: "2026-02-31",
   })));
   assert.ok(result.errors.some((error) => error.includes("invalid calendar date for published_at")));
   assert.ok(result.errors.some((error) => error.includes("invalid ISO timestamp for retrieved_at")));
   assert.ok(result.errors.some((error) => error.includes("invalid ISO timestamp for reviewed_at")));
+  assert.ok(result.errors.some((error) => error.includes("invalid calendar date for effective_from")));
 });
 
 test("requires a registered primary publication source before accepting a verified record", () => {
@@ -155,4 +157,13 @@ test("requires a registered primary source when a primary document is marked ret
     primarySourceIds: ["src_official"],
   });
   assert.ok(result.errors.some((error) => error.includes("without linking a registered primary source")));
+});
+
+test("rejects impossible calendar dates embedded in ISO timestamps", () => {
+  const result = validateLegalReviewQueue(makeCsv(makeRow({
+    retrieved_at: "2026-02-31T10:00:00Z",
+    reviewed_at: "2026-11-08T25:00:00Z",
+  })));
+  assert.ok(result.errors.some((error) => error.includes("invalid ISO timestamp for retrieved_at")));
+  assert.ok(result.errors.some((error) => error.includes("invalid ISO timestamp for reviewed_at")));
 });
