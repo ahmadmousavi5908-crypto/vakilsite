@@ -18,6 +18,8 @@ const typeLabels = {
   term: "اصطلاح حقوقی",
   law: "قانون",
   article: "خلاصه ماده",
+  published_article: "مقاله آموزشی سایت",
+  research_note: "یادداشت پژوهشی ثانویه",
 };
 
 const matchedFieldLabels = {
@@ -66,6 +68,7 @@ const dossierSectionLabels = {
   official_guidance: "راهنمای رسمی",
   legal_term: "اصطلاحات",
   educational_summary: "خلاصه مواد",
+  research_note: "یادداشت پژوهشی",
   unclassified: "دسته‌بندی‌نشده",
 };
 
