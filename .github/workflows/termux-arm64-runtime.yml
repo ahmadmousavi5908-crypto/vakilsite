@@ -166,7 +166,13 @@ jobs:
           set -Eeuo pipefail
           cd release-assets
           if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release upload "$RELEASE_TAG" mavis-termux-arm64.tar.gz mavis-termux-arm64.tar.gz.sha256 --repo "$GITHUB_REPOSITORY" --clobber
+            ASSETS="$(gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+            if ! grep -Fxq 'mavis-termux-arm64.tar.gz' <<< "$ASSETS"; then
+              gh release upload "$RELEASE_TAG" mavis-termux-arm64.tar.gz --repo "$GITHUB_REPOSITORY"
+            fi
+            if ! grep -Fxq 'mavis-termux-arm64.tar.gz.sha256' <<< "$ASSETS"; then
+              gh release upload "$RELEASE_TAG" mavis-termux-arm64.tar.gz.sha256 --repo "$GITHUB_REPOSITORY"
+            fi
           else
             gh release create "$RELEASE_TAG" mavis-termux-arm64.tar.gz mavis-termux-arm64.tar.gz.sha256 \
               --repo "$GITHUB_REPOSITORY" \
