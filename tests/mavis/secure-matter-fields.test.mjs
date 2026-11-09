@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   getSecureMatterFieldSchema,
+  getSecureMatterQuestionnaireContract,
+  SECURE_MATTER_QUESTIONNAIRE_VERSION,
   secureMatterFieldSchemas,
   validateSecureMatterFields,
 } from "../../src/lib/mavis/secure-matter-fields.mjs";
@@ -146,12 +148,7 @@ test("validates Jalali month lengths and Esfand 30 only in leap years", () => {
   assert.ok(invalidThirtyFirst.errors.executionDate);
 });
 
-test("exposes one immutable versioned post-approval questionnaire contract", async () => {
-  const {
-    SECURE_MATTER_QUESTIONNAIRE_VERSION,
-    getSecureMatterQuestionnaireContract,
-  } = await import("../../src/lib/mavis/secure-matter-fields.mjs");
-
+test("exposes one immutable versioned post-approval questionnaire contract", () => {
   assert.equal(SECURE_MATTER_QUESTIONNAIRE_VERSION, 1);
   const contract = getSecureMatterQuestionnaireContract("civil");
   assert.equal(contract.id, "mavis-matter-civil-v1");
