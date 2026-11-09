@@ -50,7 +50,7 @@ function buildVerifiedKnowledgeContext(retrieval) {
   let totalCharacters = 0;
 
   for (const record of retrieval.results) {
-    if (!record || typeof record.id !== "string" || seen.has(record.id) ||
+    if (!record || typeof record.id !== "string" || !record.id.trim() || seen.has(record.id) ||
         record.evidence?.state !== "verified_primary") continue;
 
     const citations = Array.isArray(record.evidence.citations)
