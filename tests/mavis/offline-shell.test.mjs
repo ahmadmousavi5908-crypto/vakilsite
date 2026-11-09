@@ -101,3 +101,11 @@ test("offline public assistant merges generated published articles into the loca
   assert.equal(publishedArticles.records.length, publishedArticles.counts.published_articles);
   assert.ok(publishedArticles.records.every((record) => record.review_status === "secondary_source_only"));
 });
+
+
+test("offline published article results expose the full educational text accessibly", () => {
+  assert.match(app, /article-fulltext/);
+  assert.match(app, /مطالعه متن کامل آموزشی/);
+  assert.match(app, /item\.record_type==="published_article"&&item\.definition/);
+  assert.match(app, /if\(item\.warning\)/);
+});
