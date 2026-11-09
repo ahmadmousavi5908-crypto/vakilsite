@@ -82,8 +82,8 @@ STAGE_ROOT باید مسیر واقعی workspace جدیدی باشد که stage
 - OCR و استخراج متن، اصالت سند، اعتبار قانونی، لازم‌الاجرا بودن قانون، حقوق نشر یا صحت استناد را اثبات نمی‌کند.
 - منابع حقوقی فقط پس از بررسی انسانی نسخه، تاریخ، مرجع انتشار، مجوز، محرمانگی و page/article anchors می‌توانند به L2 برسند.
 - اسناد موکل، اطلاعات محرمانه و credentialها نباید از مسیر این worker وارد دانش عمومی شوند.
-- فایل‌های legacy DOC، RTF و JSON در این adapter پشتیبانی نمی‌شوند و با وضعیت unsupported گزارش می‌شوند؛ برای آن‌ها parser جداگانه و محدود لازم است.
-- Docling و مدل‌های OCR باید در محیط ایزوله اجرا شوند؛ ورودی سند نامطمئن است و parser سطح حمله دارد.
+- قالب‌های legacy DOC، RTF، PPT و XLS با backend رسمی Docling پشتیبانی می‌شوند، اما برای تبدیل به قالب OOXML به LibreOffice نیاز دارند؛ اگر فرمان soffice در PATH نباشد، فایل با وضعیت skipped_missing_libreoffice کنار گذاشته می‌شود. JSON عمومی در این adapter پشتیبانی نمی‌شود و به‌عنوان unsupported گزارش می‌شود.
+- Docling و مدل‌های OCR باید در محیط ایزوله اجرا شوند؛ ورودی سند نامطمئن است و parser سطح حمله دارد. تبدیل legacy Office با LibreOffice نیز فقط در sandbox و بدون اجرای macro انجام شود.
 - Termux/Android برای اجرای Docling تأیید نشده است. این dependency در محیط اصلی Termux نصب نمی‌شود.
 
 ## مهارت‌های توسعه
@@ -96,6 +96,9 @@ STAGE_ROOT باید مسیر واقعی workspace جدیدی باشد که stage
 - Docling installation و slim extras: https://docling-project.github.io/docling/installation/
 - Docling OCR options و Tesseract CLI: https://docling-project.github.io/docling/usage/advanced_options/
 - Tesseract Persian fast traineddata: https://github.com/tesseract-ocr/tessdata_fast/blob/main/fas.traineddata
+- Docling legacy Word/RTF backend: https://github.com/docling-project/docling/blob/1005c8d7d39447ff433ff650fbc49e046ad0aeee/docling/backend/msword_backend.py
+- Docling legacy PowerPoint backend: https://github.com/docling-project/docling/blob/1005c8d7d39447ff433ff650fbc49e046ad0aeee/docling/backend/mspowerpoint_backend.py
+- Docling legacy Excel backend: https://github.com/docling-project/docling/blob/1005c8d7d39447ff433ff650fbc49e046ad0aeee/docling/backend/msexcel_backend.py
 - OpenCV headless 5.0.0.93: https://pypi.org/project/opencv-python-headless/5.0.0.93/
 - Upstream Python skill: https://github.com/docling-project/docling/tree/1005c8d7d39447ff433ff650fbc49e046ad0aeee/.agents/skills/dignified-python
 
