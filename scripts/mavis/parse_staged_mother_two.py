@@ -160,6 +160,7 @@ def validate_staged_entry(root: Path, entry: dict[str, Any]) -> tuple[Path, Pure
         or entry.get("extension") != extension
         or not SHA256_PATTERN.fullmatch(str(entry.get("sha256", "")))
         or not isinstance(entry.get("size_bytes"), int)
+        or isinstance(entry.get("size_bytes"), bool)
         or entry["size_bytes"] < 0
         or entry["size_bytes"] > MAX_FILE_BYTES
     ):
@@ -350,7 +351,8 @@ def parse_staged_documents(
 ) -> dict[str, Any]:
     root, staging_manifest, staging_manifest_sha256 = load_staging_manifest(stage_root)
     if (
-        not SHA256_PATTERN.fullmatch(expected_manifest_sha256)
+        not isinstance(expected_manifest_sha256, str)
+        or not SHA256_PATTERN.fullmatch(expected_manifest_sha256)
         or not hmac.compare_digest(expected_manifest_sha256, staging_manifest_sha256)
     ):
         raise ParsingError("Staging manifest SHA-256 does not match the trusted staging result.")
@@ -377,9 +379,14 @@ def parse_staged_documents(
 
     summary = staging_manifest["summary"]
     if (
-        summary.get("staged_files") != len(validated)
+        not isinstance(summary.get("staged_files"), int)
+        or isinstance(summary.get("staged_files"), bool)
+        or summary.get("staged_files") != len(validated)
+        or not isinstance(summary.get("staged_bytes"), int)
+        or isinstance(summary.get("staged_bytes"), bool)
         or summary.get("staged_bytes") != total_bytes
         or not isinstance(summary.get("selected_files"), int)
+        or isinstance(summary.get("selected_files"), bool)
         or summary.get("selected_files") < len(validated)
     ):
         raise ParsingError("Staging manifest counts do not match the validated quarantine files.")
