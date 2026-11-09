@@ -144,6 +144,9 @@ def verify_queue_files(queue: dict[str, Any], queue_path: Path) -> None:
         if not isinstance(size, int) or size < 0:
             raise ReviewDecisionError("Review queue contains an invalid file size.")
 
+        expected_id = "hist_" + hashlib.sha256((relative_path + ":" + digest).encode("utf-8")).hexdigest()[:24]
+        if source_id != expected_id:
+            raise ReviewDecisionError("Review queue source ID does not match its path and checksum.")
         file_path = root.joinpath(*PurePosixPath(relative_path).parts)
         if file_path.is_symlink() or not file_path.is_file():
             raise ReviewDecisionError("A quarantined file is missing or is not a regular file.")
@@ -269,6 +272,12 @@ def validate_review_decisions(queue_path_value: str | Path, decisions_path_value
     decisions_payload, decisions_hash, _ = load_json(decisions_path_value, "Review decisions")
     if queue.get("schema_version") != "1.0.0" or not isinstance(queue.get("records"), list):
         raise ReviewDecisionError("Unsupported review queue schema.")
+    queue_summary = queue.get("summary")
+    queue_policy = queue.get("policy")
+    if not isinstance(queue_summary, dict) or not isinstance(queue_policy, dict) or \
+       queue_summary.get("indexing_allowed") is not False or queue_summary.get("retrieval_allowed") is not False or \
+       queue_policy.get("metadata_only") is not True or queue_policy.get("file_contents_included") is not False:
+        raise ReviewDecisionError("Review queue does not satisfy the metadata-only non-retrieval contract.")
     if decisions_payload.get("schema_version") != "1.0.0" or not isinstance(decisions_payload.get("decisions"), list):
         raise ReviewDecisionError("Unsupported review decisions schema.")
 
