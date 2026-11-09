@@ -102,10 +102,10 @@ const aiAssistantNoindex = /(^|[,\s])noindex([,\s]|$)/.test(aiAssistantRobots);
 
 const homeResult = await fetchText("/");
 const homeSiteName = readMeta(homeResult.body, "og:site_name");
-const homeLcpImageTag = homeResult.body.match(/<img\\b[^>]*class=[\"']lawyer-photo-image[\"'][^>]*>/i)?.[0] || "";
+const homeLcpImageTag = homeResult.body.match(/<img\b[^>]*class=[\"']lawyer-photo-image[\"'][^>]*>/i)?.[0] || "";
 const homeLcpHighPriority = /fetchpriority=[\"']high[\"']/i.test(homeLcpImageTag);
 const aboutResult = await fetchText("/about");
-const aboutLcpImageTag = aboutResult.body.match(/<img\\b[^>]*alt=[\"']تصویر سید احمد موسوی[^>]*>/i)?.[0] || "";
+const aboutLcpImageTag = aboutResult.body.match(/<img\b[^>]*alt=[\"']تصویر سید احمد موسوی[^>]*>/i)?.[0] || "";
 const aboutLcpHighPriority = /fetchpriority=[\"']high[\"']/i.test(aboutLcpImageTag);
 const cityChipAccessible = /aria-label=[\"']اهواز، مرکز، انتخاب شهر و رفتن به فرم درخواست[\"']/i.test(homeResult.body);
 const jsonLdBlocks = [...homeResult.body.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
