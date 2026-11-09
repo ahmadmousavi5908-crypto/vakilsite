@@ -39,7 +39,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             tesseract-ocr tesseract-ocr-fas tesseract-ocr-eng \
-            fonts-noto-core fonts-dejavu-core
+            fonts-noto-core fonts-dejavu-core \
+            libfribidi0 libharfbuzz0b
           tesseract --list-langs
 
       - name: Install optional Docling OCR runtime

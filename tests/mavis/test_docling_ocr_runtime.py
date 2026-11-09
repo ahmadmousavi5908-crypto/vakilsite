@@ -8,9 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-import arabic_reshaper
-from bidi.algorithm import get_display
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, features
 
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts" / "mavis"))
@@ -93,8 +91,20 @@ class DoclingOcrRuntimeTests(unittest.TestCase):
         image = Image.new("RGB", (1800, 520), "white")
         draw = ImageDraw.Draw(image)
         font = ImageFont.truetype(str(font_path), 132)
-        persian_text = get_display(arabic_reshaper.reshape("قانون آزمایشی ماویس"))
-        draw.text((100, 95), persian_text, font=font, fill="black", stroke_width=1)
+        self.assertTrue(
+            features.check_feature("raqm"),
+            "Pillow must provide libraqm for deterministic right-to-left fixture rendering.",
+        )
+        persian_text = "قانون آزمایشی ماویس"
+        draw.text(
+            (100, 95),
+            persian_text,
+            font=font,
+            fill="black",
+            stroke_width=1,
+            direction="rtl",
+            language="fa",
+        )
         english_font = ImageFont.truetype(
             "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
             72,
