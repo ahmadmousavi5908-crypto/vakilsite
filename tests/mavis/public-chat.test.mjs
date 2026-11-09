@@ -11,6 +11,10 @@ import { runPublicChat } from "../../src/lib/mavis/public-chat.mjs";
 const verifiedRecord = {
   id: "law-verified",
   title: "قانون نمونه",
+  review_status: "verified_primary_source",
+  source_verified: true,
+  validity_status: "in_force",
+  last_verified_at: "2026-11-09",
   article_number: "10",
   definition: "متن رسمی و تأییدشده برای آزمون",
   summary: "خلاصه محدود منبع اولیه",
@@ -333,4 +337,21 @@ test("rejects forged verified evidence from an untrusted host or impossible acce
     assert.equal(result.reasonCode, "NO_VERIFIED_PRIMARY_EVIDENCE");
     assert.equal(providerCalled, false);
   }
+});
+
+test("does not trust an evidence state without record-level verification flags", async () => {
+  let providerCalled = false;
+  const unverifiedRecord = { ...verifiedRecord, review_status: "needs_legal_review", source_verified: false };
+  const result = await runPublicChat({
+    input: { message: "برای تنظیم قرارداد مشارکت راهنمایی عمومی می‌خواهم." },
+    retrieve: verifiedRetriever([unverifiedRecord]),
+    provider: testProvider(async () => {
+      providerCalled = true;
+      return { claims: [{ text: "پاسخ", sourceRecordIds: ["law-verified"] }] };
+    }),
+    env: enabledEnv,
+  });
+  assert.equal(result.status, "needs_human_review");
+  assert.equal(result.reasonCode, "NO_VERIFIED_PRIMARY_EVIDENCE");
+  assert.equal(providerCalled, false);
 });
