@@ -46,9 +46,10 @@
 
 ## فرمان‌های Termux پس از staging
 
-پس از اجرای staging، مسیر workspace را مستقیماً از خروجی ابزار بگیر:
+پس از اجرای staging، ابتدا مطمئن شو متغیر REPORT از مرحله inventory تنظیم شده است، سپس مسیر workspace را مستقیماً از خروجی ابزار بگیر:
 
 ~~~bash
+test -f "$REPORT" || { echo "Verified inventory report not found"; exit 1; }
 STAGE="$(python3 scripts/mavis/stage_mother_two.py \
   --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
   --inventory "$REPORT" \
@@ -65,6 +66,7 @@ python3 scripts/mavis/create_historical_review_queue.py \
 
 cp -n "$STAGE/historical-review-decisions.template.json" \
   "$STAGE/historical-review-decisions.json"
+chmod 600 "$STAGE/historical-review-decisions.json"
 ~~~
 
 فایل historical-review-decisions.json را با اطلاعات واقعی و پس از بررسی انسانی تکمیل کن. برای هر source_id یک تصمیم approve_for_registration، reject یا hold_for_ocr لازم است. هیچ تصمیمی را بر اساس حدس یا نام فایل ثبت نکن.
