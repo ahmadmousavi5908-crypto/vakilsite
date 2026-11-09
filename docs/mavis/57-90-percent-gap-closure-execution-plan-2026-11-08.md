@@ -1,8 +1,8 @@
 # MAVIS 90%+ Gap-Closure Execution Plan — 2026-11-08
 
 **Status:** Approved engineering direction; execution plan only. This document does not approve production deployment, migrations, publication, or legal retention periods.
-**Base candidate:** `1307624d120f3fff99c94bf4d4bf1c30e883dd15`
-**Working branch:** `docs/mavis-90-percent-gap-closure-20261108`
+**Base candidate:** `1ea133cfa4cf24e5ada06ae345120a50573b5b9e`
+**Working branch:** `docs/mavis-evidence-gated-execution-plan-20261109`
 **Principles:** small batches, official interfaces first, reuse existing assets, measurable acceptance, no parallel knowledge base, no UI redesign, no secrets in Git.
 
 ## 1. What “above 90%” means
@@ -18,7 +18,7 @@ A blocked external dependency is not silently counted as complete. It is either 
 
 ## 2. Current baseline and hard blockers
 
-The current candidate has successful application and database workflows on commit `1307624d120f3fff99c94bf4d4bf1c30e883dd15`. The previous database acceptance covered migrations 001–011 and 167 pgTAP assertions. This proves only the automated checks that ran.
+The current candidate has successful application and database workflows on commit `1ea133cfa4cf24e5ada06ae345120a50573b5b9e`. The previous database acceptance covered migrations 001–011 and 167 pgTAP assertions. This proves only the automated checks that ran.
 
 The legal review queue contains 175 records. Current evidence audit: 0 fully primary-source verified, 144 require legal review, 31 are secondary-source-only, only 10 records have a source connected and 165 have no source attached. These records must not be presented as verified legal authority.
 
