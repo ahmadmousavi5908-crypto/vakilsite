@@ -158,3 +158,24 @@ test("rejects impossible calendar dates and clock values inside evidence timesta
   assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time for retrieved_at")));
   assert.ok(result.errors.some((error) => error.includes("invalid ISO date-time for reviewed_at")));
 });
+
+test("fails closed when primary verification is requested without the source registry", () => {
+  const row = makeRow({
+    review_status: "verified_primary_source",
+    primary_document_retrieved: "true",
+    primary_document_identifier: "Gazette issue 123",
+    issuing_authority: "Official issuing authority",
+    published_at: "2024-01-01",
+    amendment_chain_reviewed: "true",
+    retrieved_at: "2026-11-08T10:00:00Z",
+    content_sha256: "a".repeat(64),
+    reviewer_id: "lawyer-01",
+    reviewed_at: "2026-11-08T11:00:00Z",
+  });
+  const result = validateLegalReviewQueue(makeCsv(row), {
+    knownSourceIds: ["src_official"],
+    expectedRecordIds: ["law_example"],
+  });
+  assert.ok(result.errors.some((error) => error.includes("without the primary source registry")));
+  assert.ok(result.errors.some((error) => error.includes("cannot claim a retrieved primary document")));
+});
