@@ -16,7 +16,7 @@ const KNOWLEDGE_UNAVAILABLE_MESSAGE = "دسترسی به منابع حقوقی �
 const INVALID_ANSWER_MESSAGE = "پاسخ نتوانست به منابع اولیه تأییدشده ارجاع معتبر بدهد؛ این پرسش باید توسط وکیل بررسی شود.";
 
 function isValidCalendarDate(value) {
-  if (typeof value !== "string" || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return false;
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const date = new Date(value + "T00:00:00.000Z");
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
@@ -26,7 +26,6 @@ function isTrustedPrimaryCitation(citation) {
       citation.authorityVerified !== true ||
       typeof citation.title !== "string" || !citation.title.trim() ||
       !isValidCalendarDate(citation.accessedAt)) return false;
-      !/^\d{4}-\d{2}-\d{2}$/.test(citation.accessedAt)) return false;
 
   try {
     const parsed = new URL(citation.url);
@@ -84,7 +83,6 @@ function buildVerifiedKnowledgeContext(retrieval) {
         title: citation.title.trim().slice(0, 240),
         url: citation.url,
         publicationDate: citation.publicationDate || null,
-        accessedAt: citation.accessedAt,
         sourceVersion: typeof citation.sourceVersion === "string"
           ? citation.sourceVersion.slice(0, 120)
           : null,
