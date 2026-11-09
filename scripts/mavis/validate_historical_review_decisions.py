@@ -8,6 +8,7 @@ import hashlib
 import json
 import re
 from datetime import date, datetime
+import unicodedata
 from pathlib import Path, PurePosixPath
 from typing import Any
 from urllib.parse import urlparse
@@ -25,10 +26,10 @@ PRIMARY_CLASSES = {
     "administrative_court_decision",
     "advisory_opinion",
     "judicial_session",
-    "official_guidance",
 }
 ALLOWED_CLASSES = PRIMARY_CLASSES | {
     "academic_commentary",
+    "official_guidance",
     "legal_term",
     "educational_summary",
     "research_note",
@@ -89,7 +90,7 @@ def clean_optional_text(value: Any, maximum: int = 2000) -> str | None:
         return None
     if not isinstance(value, str):
         raise ReviewDecisionError("Metadata fields must be strings or null.")
-    clean = value.normalize("NFC").strip() if hasattr(value, "normalize") else value.strip()
+    clean = unicodedata.normalize("NFC", value).strip()
     if len(clean) > maximum:
         raise ReviewDecisionError("A metadata field exceeds its maximum length.")
     return clean or None
