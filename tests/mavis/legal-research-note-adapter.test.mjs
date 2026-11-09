@@ -58,3 +58,25 @@ test("keeps note text bounded and normalizes unsafe control characters", () => {
   assert.equal(records[0].title.includes("\u0000"), false);
   assert.ok(records[0].definition.length <= 8000);
 });
+
+
+import { readFileSync } from "node:fs";
+const canonicalReport = JSON.parse(readFileSync(
+  new URL("../../src/data/legal-library/reports/source-review.json", import.meta.url),
+  "utf8",
+));
+
+test("connects every canonical source-review note without upgrading its review status", () => {
+  const records = buildLegalResearchNoteRecords(canonicalReport);
+  assert.equal(records.length, canonicalReport.items.length);
+  assert.ok(records.length > 0);
+  assert.ok(records.every((record) => record.record_type === "research_note"));
+  assert.ok(records.every((record) => record.source_class === "research_note"));
+  assert.ok(records.every((record) => record.review_status !== "verified_primary_source"));
+  assert.ok(records.every((record) => record.source_verified === false));
+  assert.ok(records.every((record) => record.validity_status === "unknown"));
+  assert.ok(records.every((record) => record.sources.every((source) =>
+    source.source_type === "secondary" &&
+    source.verification_status === "secondary_source_only"
+  )));
+});
