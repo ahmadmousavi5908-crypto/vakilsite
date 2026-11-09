@@ -59,7 +59,7 @@ export default async function MavisAdminPage() {
           <section className="admin-stats">
             <article><span>اصطلاحات حقوقی</span><strong>{inventory.terms.toLocaleString("fa-IR")}</strong><small>از کتابخانه موجود</small></article>
             <article><span>قوانین ثبت‌شده</span><strong>{inventory.laws.toLocaleString("fa-IR")}</strong><small>همراه با وضعیت بررسی</small></article>
-            <article><span>مقالات و خلاصه‌ها</span><strong>{(inventory.legalArticles + inventory.publishedArticles).toLocaleString("fa-IR")}</strong><small>{inventory.legalArticles.toLocaleString("fa-IR")} خلاصه ماده · {inventory.publishedArticles.toLocaleString("fa-IR")} مقاله منتشرشده متصل</small></article>
+            <article><span>مقالات و خلاصه‌ها</span><strong>{(inventory.legalArticles + inventory.publishedArticles + inventory.researchNotes).toLocaleString("fa-IR")}</strong><small>{inventory.legalArticles.toLocaleString("fa-IR")} خلاصه ماده · {inventory.publishedArticles.toLocaleString("fa-IR")} مقاله سایت · {inventory.researchNotes.toLocaleString("fa-IR")} یادداشت پژوهشی</small></article>
           </section>
 
           <MavisIntakeInbox />
