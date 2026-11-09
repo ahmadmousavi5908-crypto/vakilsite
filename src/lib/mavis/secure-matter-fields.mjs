@@ -86,7 +86,8 @@ function validateValue(descriptor, value) {
     case "enum_list":
       if (!Array.isArray(value) || value.length > descriptor.maxItems) return null;
       if (value.some((item) => !descriptor.values.includes(item))) return null;
-      return [...new Set(value)];
+      if (new Set(value).size !== value.length) return null;
+      return [...value];
     case "boolean": return typeof value === "boolean" ? value : null;
     case "amount": return typeof value === "string" && AMOUNT_PATTERN.test(value) ? value : null;
     case "currency": return typeof value === "string" && CURRENCY_PATTERN.test(value) ? value : null;

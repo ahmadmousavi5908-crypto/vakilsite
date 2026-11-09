@@ -82,10 +82,14 @@ test("validates family age bands and boolean fields without collecting detailed 
   });
   assert.equal(result.ok, true);
   assert.deepEqual(result.value.childrenAgeBands, ["under_7", "13_to_18"]);
-  const invalid = validateSecureMatterFields("family", {
-    childrenAgeBands: ["under_7", "under_7", "adult", "7_to_12", "13_to_18"],
+  const duplicate = validateSecureMatterFields("family", {
+    childrenAgeBands: ["under_7", "under_7"],
   });
-  assert.equal(invalid.ok, false);
+  assert.equal(duplicate.ok, false);
+  const tooMany = validateSecureMatterFields("family", {
+    childrenAgeBands: ["under_7", "adult", "7_to_12", "13_to_18", "over_18"],
+  });
+  assert.equal(tooMany.ok, false);
 });
 
 test("rejects arrays, null payloads and unsupported matter types", () => {
