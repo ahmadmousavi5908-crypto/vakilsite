@@ -7,7 +7,7 @@
 
 - Vercel React Best Practices skill: local agent guidance; no runtime dependency.
 - `@next/bundle-analyzer@16.4.3`: exact match to the installed Next.js version, MIT, loaded only when `ANALYZE=true`.
-- Lighthouse CI `@lhci/cli@0.16.0`: isolated CI-only audit tool, not added to app dependencies.
+- Google Lighthouse CLI `13.6.0`: isolated CI-only audit tool, not added to app dependencies.
 - CrUX / Search Console: field measurements only when a verified property or sufficient real-user data is available.
 
 ## Run
@@ -18,7 +18,7 @@ Use GitHub Actions workflow **Site performance and bundle baseline** with workfl
 - /articles
 - /legal-library
 
-It performs three Lighthouse runs per route and stores the reports as a 14-day workflow artifact. Initial assertions are warnings only; do not turn them into blocking thresholds until a stable baseline exists.
+It performs three mobile Lighthouse runs per route and stores JSON/HTML reports as a 14-day workflow artifact. This is a lab baseline; no score threshold blocks the build.
 
 ## Interpretation
 
@@ -31,13 +31,13 @@ It performs three Lighthouse runs per route and stores the reports as a 14-day w
 
 ## Bundle analyzer
 
-The analyzer plugin is installed only inside the isolated workflow with `--no-save --no-package-lock`. It is conditionally loaded from `next.config.mjs` only when `ANALYZE=true`; normal builds and runtime do not require it.
+The analyzer plugin and Lighthouse CLI are installed only inside the isolated workflow with `--no-save --no-package-lock`. The analyzer is conditionally loaded from `next.config.mjs` only when `ANALYZE=true`; normal builds and runtime do not require either tool.
 
 ## Official references
 
 - Next.js package bundling: https://nextjs.org/docs/app/guides/package-bundling
 - Next.js production checklist: https://nextjs.org/docs/app/guides/production-checklist
-- Lighthouse CI: https://github.com/GoogleChrome/lighthouse-ci
+- Lighthouse CLI: https://github.com/GoogleChrome/lighthouse
 - CrUX tools and data cadence: https://developer.chrome.com/docs/crux/methodology/tools
 - Core Web Vitals: https://web.dev/articles/vitals
 
