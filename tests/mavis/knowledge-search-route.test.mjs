@@ -30,11 +30,8 @@ function makeAccess(overrides = {}) {
 function createHarness(overrides = {}) {
   const calls = {
     rateLimit: 0,
-    search: 0,
-    evidence: 0,
-    dossier: 0,
-    searchArgs: null,
-    dossierArgs: null,
+    retrieve: 0,
+    retrieveArgs: null,
   };
 
   const defaultAccess = makeAccess({
@@ -51,27 +48,16 @@ function createHarness(overrides = {}) {
 
   const dependencies = {
     requireAdmin: async () => defaultAccess,
-    searchMavisKnowledge: (query, limit) => {
-      calls.search += 1;
-      calls.searchArgs = { query, limit };
-      return [{
-        id: "law_civil_code",
-        record_type: "law",
-        title: "قانون مدنی",
-        review_status: "needs_legal_review",
-        source_class: undefined,
-        search_score: 1000,
-        matched_field: "title",
-      }];
-    },
-    buildLegalEvidence: (record) => {
-      calls.evidence += 1;
-      return { recordId: record.id, state: "needs_official_check" };
-    },
-    buildLegalResearchDossier: (args) => {
-      calls.dossier += 1;
-      calls.dossierArgs = args;
-      return { ok: true, topic: args.topic, itemCount: args.records.length };
+    retrieveMavisKnowledge: (query, limit) => {
+      calls.retrieve += 1;
+      calls.retrieveArgs = { query, limit };
+      return {
+        query,
+        count: 1,
+        results: [{ id: "law_civil_code", evidence: { state: "needs_official_check" } }],
+        researchDossier: { ok: true, topic: query, itemCount: 1 },
+        notice: "این خروجی فقط بازیابی است و نظر حقوقی محسوب نمی‌شود.",
+      };
     },
     isJsonContentType,
     matchesRequestOrigin,
@@ -111,7 +97,7 @@ test("rejects missing admin configuration without searching", async () => {
   const response = await handler(makeRequest({ query: "قانون مدنی" }));
   assert.equal(response.status, 503);
   assert.equal((await readError(response)).code, "SERVICE_UNAVAILABLE");
-  assert.equal(calls.search, 0);
+  assert.equal(calls.retrieve, 0);
 });
 
 test("fails closed when admin authentication throws or is unavailable", async () => {
@@ -135,7 +121,7 @@ test("rejects unauthenticated and non-admin users before rate limiting", async (
   const unauthenticatedResponse = await unauthenticated.handler(makeRequest({ query: "قانون مدنی" }));
   assert.equal(unauthenticatedResponse.status, 401);
   assert.equal((await readError(unauthenticatedResponse)).code, "UNAUTHENTICATED");
-  assert.equal(unauthenticated.calls.search, 0);
+  assert.equal(unauthenticated.calls.retrieve, 0);
 
   const nonAdmin = createHarness({
     requireAdmin: async () => makeAccess({ isAdmin: false }),
@@ -143,7 +129,7 @@ test("rejects unauthenticated and non-admin users before rate limiting", async (
   const nonAdminResponse = await nonAdmin.handler(makeRequest({ query: "قانون مدنی" }));
   assert.equal(nonAdminResponse.status, 403);
   assert.equal((await readError(nonAdminResponse)).code, "FORBIDDEN");
-  assert.equal(nonAdmin.calls.search, 0);
+  assert.equal(nonAdmin.calls.retrieve, 0);
 });
 
 test("fails closed when the admin role check is unavailable", async () => {
@@ -153,7 +139,7 @@ test("fails closed when the admin role check is unavailable", async () => {
   const response = await handler(makeRequest({ query: "قانون مدنی" }));
   assert.equal(response.status, 503);
   assert.equal((await readError(response)).code, "AUTHORIZATION_UNAVAILABLE");
-  assert.equal(calls.search, 0);
+  assert.equal(calls.retrieve, 0);
 });
 
 test("rejects cross-origin requests before consuming a rate-limit slot", async () => {
@@ -162,7 +148,7 @@ test("rejects cross-origin requests before consuming a rate-limit slot", async (
   assert.equal(response.status, 403);
   assert.equal((await readError(response)).code, "ORIGIN_REJECTED");
   assert.equal(calls.rateLimit, 0);
-  assert.equal(calls.search, 0);
+  assert.equal(calls.retrieve, 0);
 });
 
 test("fails closed when database rate limiting is unavailable", async () => {
@@ -172,7 +158,7 @@ test("fails closed when database rate limiting is unavailable", async () => {
   const response = await handler(makeRequest({ query: "قانون مدنی" }));
   assert.equal(response.status, 503);
   assert.equal((await readError(response)).code, "RATE_LIMIT_UNAVAILABLE");
-  assert.equal(calls.search, 0);
+  assert.equal(calls.retrieve, 0);
 });
 
 test("fails closed when the database rate-limit RPC throws", async () => {
@@ -188,7 +174,7 @@ test("fails closed when the database rate-limit RPC throws", async () => {
   const response = await handler(makeRequest({ query: "قانون مدنی" }));
   assert.equal(response.status, 503);
   assert.equal((await readError(response)).code, "RATE_LIMIT_UNAVAILABLE");
-  assert.equal(calls.search, 0);
+  assert.equal(calls.retrieve, 0);
 });
 
 test("returns a bounded Retry-After response when rate limited", async () => {
@@ -200,7 +186,7 @@ test("returns a bounded Retry-After response when rate limited", async () => {
   assert.equal(response.headers.get("retry-after"), "17");
   assert.equal(response.headers.get("cache-control"), "no-store");
   assert.equal((await response.json()).error.code, "RATE_LIMITED");
-  assert.equal(calls.search, 0);
+  assert.equal(calls.retrieve, 0);
 });
 
 test("rejects non-JSON media types", async () => {
@@ -208,7 +194,7 @@ test("rejects non-JSON media types", async () => {
   const response = await handler(makeRequest({ query: "قانون مدنی" }, { contentType: "text/plain" }));
   assert.equal(response.status, 415);
   assert.equal((await readError(response)).code, "UNSUPPORTED_MEDIA_TYPE");
-  assert.equal(calls.search, 0);
+  assert.equal(calls.retrieve, 0);
 });
 
 test("rejects invalid JSON and oversized bodies", async () => {
@@ -221,7 +207,7 @@ test("rejects invalid JSON and oversized bodies", async () => {
   const oversizedResponse = await oversized.handler(makeRequest("x".repeat(4097)));
   assert.equal(oversizedResponse.status, 413);
   assert.equal((await readError(oversizedResponse)).code, "PAYLOAD_TOO_LARGE");
-  assert.equal(oversized.calls.search, 0);
+  assert.equal(oversized.calls.retrieve, 0);
 });
 
 test("rejects invalid query and result limit values", async () => {
@@ -253,16 +239,14 @@ test("normalizes legal records and returns evidence plus a research dossier", as
   assert.equal(payload.results[0].evidence.state, "needs_official_check");
   assert.equal(payload.researchDossier.ok, true);
   assert.equal(payload.notice.includes("نظر حقوقی"), true);
-  assert.deepEqual(calls.searchArgs, { query: "قانون مدنی", limit: 10 });
-  assert.equal(calls.dossierArgs.records[0].source_class, "statute");
+  assert.deepEqual(calls.retrieveArgs, { query: "قانون مدنی", limit: 10 });
   assert.equal(calls.rateLimit, 1);
-  assert.equal(calls.evidence, 1);
-  assert.equal(calls.dossier, 1);
+  assert.equal(calls.retrieve, 1);
 });
 
 test("returns a generic no-store error when retrieval or evidence assembly fails", async () => {
   const { handler } = createHarness({
-    searchMavisKnowledge: () => { throw new Error("private internal failure"); },
+    retrieveMavisKnowledge: () => { throw new Error("private internal failure"); },
   });
   const response = await handler(makeRequest({ query: "قانون مدنی" }));
   assert.equal(response.status, 500);
