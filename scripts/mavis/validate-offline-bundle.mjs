@@ -1,4 +1,6 @@
 import { readFile } from "node:fs/promises";
+import { articles as publishedArticles } from "../../src/data/articles.js";
+import { buildPublishedArticleRecords } from "../../src/lib/mavis/published-article-adapter.mjs";
 import {
   isLiveAccessEvidenceComplete,
   isPrimaryVerificationComplete,
@@ -6,6 +8,8 @@ import {
 } from "../../src/lib/mavis/legal-provenance-contract.mjs";
 
 const bundle = JSON.parse(await readFile(new URL("../../public/mavis-offline/knowledge.json", import.meta.url), "utf8"));
+const publishedBundle = JSON.parse(await readFile(new URL("../../public/mavis-offline/published-articles.json", import.meta.url), "utf8"));
+const expectedPublishedRecords = buildPublishedArticleRecords(publishedArticles);
 let failures = 0;
 const fail = (message) => {
   failures += 1;
@@ -61,6 +65,43 @@ for (const source of bundle.source_registry) {
   if (!isLiveAccessEvidenceComplete(source)) fail("Live access status lacks a valid, scoped evidence record: " + source.id);
 }
 
+if (publishedBundle.source !== "src/data/articles.js") fail("Unexpected published article bundle source.");
+if (!Array.isArray(publishedBundle.records) || publishedBundle.records.length !== expectedPublishedRecords.length) {
+  fail("Published article bundle count does not match the canonical site article collection.");
+} else {
+  if (publishedBundle.counts?.published_articles !== expectedPublishedRecords.length) fail("Published article bundle count metadata mismatch.");
+  const expectedById = new Map(expectedPublishedRecords.map((record) => [record.id, record]));
+  const publishedIds = new Set();
+  for (const record of publishedBundle.records) {
+    const expected = expectedById.get(record.id);
+    if (!expected || publishedIds.has(record.id) || ids.has(record.id)) fail("Unknown, duplicate or colliding published article id: " + record.id);
+    publishedIds.add(record.id);
+    if (record.record_type !== "published_article" || record.review_status !== "secondary_source_only" || record.source_verified !== false) {
+      fail("Published article is not explicitly secondary-only: " + record.id);
+    }
+    if (record.access_class !== "public" || record.provenance?.source_file !== "src/data/articles.js") {
+      fail("Published article access or provenance metadata is incomplete: " + record.id);
+    }
+    if (record.provenance?.exact_primary_document_verified !== false || record.provenance?.current_validity_verified !== false) {
+      fail("Published article carries unsafe legal verification flags: " + record.id);
+    }
+    if (expected && (record.title !== expected.title || record.path !== expected.path || record.summary !== expected.summary)) {
+      fail("Published article content does not match the canonical site record: " + record.id);
+    }
+    for (const source of record.sources || []) {
+      let parsed;
+      try { parsed = new URL(source.url); } catch { parsed = null; }
+      if (!parsed || parsed.protocol !== "https:" || parsed.username || parsed.password) {
+        fail("Unsafe published article source URL: " + record.id);
+      }
+      if (source.source_type !== "secondary" || source.verification_status !== "secondary_source_only") {
+        fail("Published article citation was not kept secondary-only: " + record.id);
+      }
+    }
+  }
+  if (publishedIds.size !== expectedPublishedRecords.length) fail("One or more canonical published articles are missing from the offline bundle.");
+}
+
 if (bundle.counts.source_registry !== bundle.source_registry.length) fail("Source registry count mismatch.");
 if (!bundle.provenance_policy?.required_for_primary_verification?.includes("content_sha256")) fail("Missing primary-source verification contract.");
 
@@ -68,6 +109,7 @@ if (failures > 0) process.exitCode = 1;
 else console.log(JSON.stringify({
   records: bundle.records.length,
   ...bundle.counts,
+  published_articles: publishedBundle.records.length,
   registryReviewDate: bundle.registry_review_date,
   primaryVerifiedRecords: bundle.records.filter((record) => record.review_status === "verified_primary_source").length,
   validationFailures: failures
