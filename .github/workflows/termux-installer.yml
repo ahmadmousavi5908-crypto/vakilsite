@@ -32,7 +32,7 @@ jobs:
           grep -Fq '127.0.0.1 --port 3002' scripts/termux/install.sh
           grep -Fq '/dev/tcp/127.0.0.1/3002' scripts/termux/install.sh
           grep -Fq 'Runtime path must not be a symlink' scripts/termux/install.sh
-          ! grep -Eq 'npm ci|npm install|npm run build|git clone|rm -rf' scripts/termux/install.sh
+          ! grep -Eq 'npm ci|npm install|npm run build|git clone|rm -rf|pkg upgrade' scripts/termux/install.sh
       - name: Validate runtime workflow syntax markers
         run: |
           grep -Fq 'runs-on: ubuntu-24.04-arm' .github/workflows/termux-arm64-runtime.yml
