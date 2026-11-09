@@ -75,6 +75,7 @@ fi
 log "آماده‌سازی runtime لینوکسی و نصب نسخه تأییدشده Node.js"
 proot-distro login --shared-home mavis-debian -- bash -lc '
 set -Eeuo pipefail
+RELEASE_TAG="mavis-termux-v1.0.0"
 NODE_VERSION="'"$NODE_VERSION"'"
 ARCHIVE="/root/downloads/mavis-termux-v1.0.0/'"$ARCHIVE_NAME"'"
 NODE_ROOT="/opt/node-v${NODE_VERSION}-linux-arm64"
