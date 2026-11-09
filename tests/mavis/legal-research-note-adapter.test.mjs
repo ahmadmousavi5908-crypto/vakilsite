@@ -96,3 +96,19 @@ test("finds real source-review notes through deterministic Persian retrieval", (
   assert.ok(results.every((record) => record.review_status === "secondary_source_only"));
   assert.ok(results.every((record) => record.source_verified === false));
 });
+
+
+test("never promotes a research note even if its source report is mislabelled primary", () => {
+  const records = buildLegalResearchNoteRecords({
+    items: [{
+      topic: "یادداشت دارای وضعیت نادرست",
+      status: "verified_primary_source",
+      findings: ["یادداشت پژوهشی"],
+      sources: ["https://example.org/source"],
+    }],
+  });
+
+  assert.equal(records[0].review_status, "needs_legal_review");
+  assert.equal(records[0].source_verified, false);
+  assert.equal(records[0].sources[0].source_type, "secondary");
+});
