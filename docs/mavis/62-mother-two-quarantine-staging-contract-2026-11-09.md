@@ -35,20 +35,16 @@
 ابتدا مسیر دقیق آرشیو و گزارش inventory تأیید شود. آرشیو اصلی نباید جابه‌جا یا بازنویسی شود.
 
 ~~~bash
-python3 scripts/mavis/inventory_mother_two.py \
-  --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
-  --output-dir "$HOME/downloads/vakilsite-mother-two-audit"
-~~~
-
-پس از بررسی خروجی و checksum گزارش:
-
-~~~bash
 REPORT="$(python3 scripts/mavis/inventory_mother_two.py \
   --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
   --output-dir "$HOME/downloads/vakilsite-mother-two-audit" \
   | python3 -c 'import json,sys; print(json.load(sys.stdin)["report_path"])')" || exit 1
 test -f "$REPORT" || { echo "Inventory report not found"; exit 1; }
+~~~
 
+پس از بررسی خروجی و checksum گزارش:
+
+~~~bash
 python3 scripts/mavis/stage_mother_two.py \
   --archive "$HOME/downloads/vakilsite-backups/VAKILSITE-MOTHER-TWO-UPDATED-20261106-220500-payload.tar.gz" \
   --inventory "$REPORT" \
