@@ -36,14 +36,14 @@ SECRET_PATH_PATTERN = re.compile(
 SECRET_SUFFIXES = {".pem", ".key", ".p12", ".pfx", ".jks", ".keystore"}
 
 CATEGORY_PATTERNS = [
-    ("books", re.compile(r"(^|/)(books?|کتاب(?:ها|خانه)?|کتب)(/|$)", re.IGNORECASE)),
-    ("published_articles", re.compile(r"(^|/)(articles?|مقالات?|مقاله)(/|$)", re.IGNORECASE)),
-    ("judicial_decisions", re.compile(r"(^|/)(decisions?|judgments?|precedents?|آرا|رأی|رای|وحدت[-_ ]?رویه)(/|$)", re.IGNORECASE)),
-    ("advisory_opinions", re.compile(r"(^|/)(advisory|opinions?|مشورتی|نظریات?)(/|$)", re.IGNORECASE)),
-    ("legal_sources", re.compile(r"(^|/)(laws?|statutes?|regulations?|legislation|قوانین|قانون|مقررات|روزنامه[-_ ]?رسمی)(/|$)", re.IGNORECASE)),
-    ("research_and_datasets", re.compile(r"(^|/)(research|datasets?|corpus|پژوهش|داده(?:ها)?)(/|$)", re.IGNORECASE)),
-    ("seo_and_growth", re.compile(r"(^|/)(seo|search[-_ ]?console|keywords?|سئو|کلیدواژه)(/|$)", re.IGNORECASE)),
-    ("project_documentation", re.compile(r"(^|/)(docs?|documentation|مستندات)(/|$)", re.IGNORECASE)),
+    ("books", re.compile(r"(^|[/_\s.-])(?:books?|کتاب(?:‌ها|ها|خانه)?|کتب)(?=$|[/_\s.-])", re.IGNORECASE)),
+    ("published_articles", re.compile(r"(^|[/_\s.-])(?:articles?|مقالات?|مقاله(?:‌ها|ها)?)(?=$|[/_\s.-])", re.IGNORECASE)),
+    ("judicial_decisions", re.compile(r"(^|[/_\s.-])(?:decisions?|judgments?|precedents?|آرا|رأی|رای|وحدت[-_ ]?رویه)(?=$|[/_\s.-])", re.IGNORECASE)),
+    ("advisory_opinions", re.compile(r"(^|[/_\s.-])(?:advisory|opinions?|مشورتی|نظریات?)(?=$|[/_\s.-])", re.IGNORECASE)),
+    ("legal_sources", re.compile(r"(^|[/_\s.-])(?:laws?|statutes?|regulations?|legislation|قوانین|قانون|مقررات|روزنامه[-_ ]?رسمی)(?=$|[/_\s.-])", re.IGNORECASE)),
+    ("research_and_datasets", re.compile(r"(^|[/_\s.-])(?:research|datasets?|corpus|پژوهش|داده(?:ها)?)(?=$|[/_\s.-])", re.IGNORECASE)),
+    ("seo_and_growth", re.compile(r"(^|[/_\s.-])(?:seo|search[-_ ]?console|keywords?|سئو|کلیدواژه)(?=$|[/_\s.-])", re.IGNORECASE)),
+    ("project_documentation", re.compile(r"(^|[/_\s.-])(?:docs?|documentation|مستندات)(?=$|[/_\s.-])", re.IGNORECASE)),
 ]
 
 MANIFEST_PATTERN = re.compile(r"(manifest|sha256|checksum|inventory|catalog|فهرست|مانیفست)", re.IGNORECASE)
