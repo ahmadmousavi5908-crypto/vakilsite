@@ -56,13 +56,15 @@ fi
 cd "$DOWNLOAD_DIR"
 sha256sum --check "$CHECKSUM_NAME" || fail "هش بسته با manifest رسمی یکسان نیست."
 
-if ! proot-distro login debian -- /bin/true >/dev/null 2>&1; then
-  log "نصب محیط Debian برای اجرای سازگار ARM64/glibc"
-  proot-distro install debian:trixie --name debian
+if proot-distro login mavis-debian -- /bin/true >/dev/null 2>&1; then
+  proot-distro login mavis-debian -- bash -lc 'grep -q "^VERSION_CODENAME=trixie$" /etc/os-release' || fail "محیط mavis-debian موجود است اما Debian Trixie نیست؛ برای جلوگیری از حذف داده‌ها متوقف شد."
+else
+  log "نصب محیط مستقل Debian Trixie برای اجرای سازگار ARM64/glibc"
+  proot-distro install debian:trixie --name mavis-debian
 fi
 
 log "آماده‌سازی runtime لینوکسی و نصب نسخه تأییدشده Node.js"
-proot-distro login debian --shared-home -- bash -lc '
+proot-distro login mavis-debian --shared-home -- bash -lc '
 set -Eeuo pipefail
 NODE_VERSION="'"$NODE_VERSION"'"
 ARCHIVE="/root/downloads/mavis-termux-v1.0.0/'"$ARCHIVE_NAME"'"
@@ -91,7 +93,7 @@ fi
 ' || fail "آماده‌سازی محیط Debian یا دریافت Node.js ناموفق بود."
 
 log "آزمون سلامت بسته پیش از اجرا"
-proot-distro login debian --shared-home -- bash -lc '
+proot-distro login mavis-debian --shared-home -- bash -lc '
 set -Eeuo pipefail
 NODE_ROOT="/opt/node-v'"$NODE_VERSION"'-linux-arm64"
 APP_ROOT="/opt/mavis/'"$RELEASE_TAG"'"
@@ -100,7 +102,7 @@ APP_ROOT="/opt/mavis/'"$RELEASE_TAG"'"
 ' || fail "ساختار بسته نهایی کامل نیست."
 
 log "اجرای MAVIS روی پورت 3002"
-proot-distro login debian --shared-home -- bash -lc '
+proot-distro login mavis-debian --shared-home -- bash -lc '
 set -Eeuo pipefail
 export PATH="/opt/node-v'"$NODE_VERSION"'-linux-arm64/bin:$PATH"
 export MAVIS_TERMUX_BUILD=true
