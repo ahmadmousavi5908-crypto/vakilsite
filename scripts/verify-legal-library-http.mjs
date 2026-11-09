@@ -108,6 +108,18 @@ const aboutResult = await fetchText("/about");
 const aboutLcpImageTag = aboutResult.body.match(/<img\b[^>]*alt=[\"']تصویر سید احمد موسوی[^>]*>/i)?.[0] || "";
 const aboutLcpHighPriority = /fetchpriority=[\"']high[\"']/i.test(aboutLcpImageTag);
 const cityChipAccessible = /aria-label=[\"']اهواز، مرکز، انتخاب شهر و رفتن به فرم درخواست[\"']/i.test(homeResult.body);
+const homeLinkTags = homeResult.body.match(/<link\b[^>]*>/gi) || [];
+const fontPreconnect = homeLinkTags.some((tag) =>
+  /\brel=["']preconnect["']/i.test(tag) &&
+  /\bhref=["']https:\/\/cdn\.jsdelivr\.net["']/i.test(tag)
+);
+const fontPreload = homeLinkTags.some((tag) =>
+  /\brel=["']preload["']/i.test(tag) &&
+  /\bas=["']font["']/i.test(tag) &&
+  /\btype=["']font\/woff2["']/i.test(tag) &&
+  /Vazirmatn(?:%5B|\[)wght(?:%5D|\])\.woff2/i.test(tag)
+);
+
 const jsonLdBlocks = [...homeResult.body.matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
 let websiteSchemaName = null;
 for (const match of jsonLdBlocks) {
@@ -153,6 +165,8 @@ console.log("HOME WEB SITE SCHEMA NAME:", websiteSchemaName);
 console.log("HOME LCP IMAGE PRIORITY:", homeLcpHighPriority);
 console.log("ABOUT LCP IMAGE PRIORITY:", aboutLcpHighPriority);
 console.log("FEATURED CITY ACCESSIBLE LABEL:", cityChipAccessible);
+console.log("FONT CDN PRECONNECT:", fontPreconnect);
+console.log("FONT RESOURCE PRELOAD:", fontPreload);
 
 console.log("BASE URL:", baseUrl);
 console.log("LEGAL LIBRARY ROUTES IN BUILD:", routes.length);
@@ -211,7 +225,8 @@ if (failed.length || noindexMissing.length || sitemapResult.response.status !== 
     canonicalMismatches.length || aiAssistantResult.response.status !== 200 ||
     !aiAssistantNoindex || aiAssistantCanonical !== "/ai-assistant" ||
     aiAssistantInSitemap || siteNameMismatch ||
-    !homeLcpHighPriority || !aboutLcpHighPriority || !cityChipAccessible) {
+    !homeLcpHighPriority || !aboutLcpHighPriority || !cityChipAccessible ||
+    !fontPreconnect || !fontPreload) {
   if (failed.length && routes.length) {
     console.log("\nPOSSIBLE STALE SERVER BUILD: the build manifest contains these routes, but the running server does not serve them. Stop the old Next.js server, build the current branch, then start the production server again.");
   }

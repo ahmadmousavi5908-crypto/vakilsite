@@ -7,6 +7,9 @@ on:
       - feature/mavis-final-verification-20261109
     paths:
       - next.config.mjs
+      - src/app/layout.js
+      - src/app/globals.css
+      - public/fonts/**
       - .github/workflows/site-performance-baseline.yml
 
 permissions:
