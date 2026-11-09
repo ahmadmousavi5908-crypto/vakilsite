@@ -81,7 +81,11 @@ class DoclingOcrRuntimeTests(unittest.TestCase):
         font = ImageFont.truetype(str(font_path), 108)
         persian_text = get_display(arabic_reshaper.reshape("قانون آزمایشی ماویس"))
         draw.text((120, 110), persian_text, font=font, fill="black")
-        draw.text((120, 320), "MAVIS OCR TEST", font=ImageFont.truetype(str(font_path), 72), fill="black")
+        english_font = ImageFont.truetype(
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            72,
+        )
+        draw.text((120, 320), "MAVIS OCR TEST", font=english_font, fill="black")
 
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
