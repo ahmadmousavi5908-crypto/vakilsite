@@ -483,8 +483,9 @@ def parse_staged_documents(
     if output_parent.is_relative_to(root):
         raise ParsingError("Parser output must be outside the source quarantine directory.")
 
-    active_converter = converter or create_converter(ocr=ocr, artifacts_dir=artifacts_dir)
-    active_version = docling_version or installed_docling_version()
+    active_converter = converter
+    active_version = docling_version
+    parser_components: dict[tuple[str, str, bool], dict[str, Any]] = {}
     requested_output.mkdir(mode=0o700)
 
     records: list[dict[str, Any]] = []
@@ -509,6 +510,19 @@ def parse_staged_documents(
                 )
                 continue
 
+            if extension == ".json" and entry["size_bytes"] > MAX_JSON_BYTES:
+                records.append(
+                    {
+                        "document_id": document_id,
+                        "source_path": relative.as_posix(),
+                        "source_sha256": source_hash,
+                        "status": "skipped_json_size_limit",
+                        "indexing_allowed": False,
+                        "retrieval_allowed": False,
+                    }
+                )
+                continue
+
             if extension in LEGACY_OFFICE_EXTENSIONS and shutil.which("soffice") is None:
                 records.append(
                     {
@@ -523,20 +537,46 @@ def parse_staged_documents(
                 )
                 continue
 
-            operation = "convert"
+            operation = "parse_json" if extension == ".json" else "convert"
             try:
-                result = active_converter.convert(str(source))
-                if sha256_file(source) != source_hash:
-                    raise ParsingError("Source changed while Docling was processing it.")
+                if extension == ".json":
+                    markdown, anchors, anchors_truncated = _parse_json_dataset(source)
+                    pages = [
+                        {
+                            "page_no": None,
+                            "segment_type": "structured_json",
+                            "markdown": markdown,
+                            "anchors": anchors,
+                            "anchors_truncated": anchors_truncated,
+                        }
+                    ]
+                    parser_name = "python-json"
+                    parser_version = platform.python_version()
+                    conversion_status = "success"
+                    errors = []
+                    parser_ocr_enabled = False
+                else:
+                    if active_converter is None:
+                        active_converter = create_converter(ocr=ocr, artifacts_dir=artifacts_dir)
+                    if active_version is None:
+                        active_version = installed_docling_version()
 
-                operation = "extract_page_content"
-                document = result.document
-                pages = _document_pages(document)
+                    result = active_converter.convert(str(source))
+                    operation = "extract_page_content"
+                    document = result.document
+                    pages = _document_pages(document)
+                    parser_name = "docling"
+                    parser_version = active_version
+                    errors = getattr(result, "errors", []) or []
+                    conversion_status = getattr(result, "status", "unknown")
+                    conversion_status = getattr(conversion_status, "value", str(conversion_status))
+                    parser_ocr_enabled = ocr
+
+                if sha256_file(source) != source_hash:
+                    raise ParsingError("Source changed while the parser was processing it.")
+
                 combined_text = "\n\n".join(page["markdown"] for page in pages).strip()
                 text_hash = hashlib.sha256(combined_text.encode("utf-8")).hexdigest()
-                errors = getattr(result, "errors", []) or []
-                conversion_status = getattr(result, "status", "unknown")
-                conversion_status = getattr(conversion_status, "value", str(conversion_status))
 
                 if not combined_text:
                     status = "empty_output_needs_ocr_or_review"
@@ -544,6 +584,13 @@ def parse_staged_documents(
                     status = "parsed_with_warnings_pending_review"
                 else:
                     status = "parsed_pending_review"
+
+                parser_components[(parser_name, parser_version, parser_ocr_enabled)] = {
+                    "name": parser_name,
+                    "version": parser_version,
+                    "ocr_enabled": parser_ocr_enabled,
+                    "ocr_languages": OCR_LANGUAGES if parser_ocr_enabled else [],
+                }
 
                 payload = {
                     "schema_version": "1.0.0",
@@ -556,12 +603,12 @@ def parse_staged_documents(
                         "staging_manifest_sha256": staging_manifest_sha256,
                     },
                     "parser": {
-                        "name": "docling",
-                        "version": active_version,
+                        "name": parser_name,
+                        "version": parser_version,
                         "conversion_status": conversion_status,
                         "error_count": len(errors),
-                        "ocr_enabled": ocr,
-                        "ocr_languages": OCR_LANGUAGES if ocr else [],
+                        "ocr_enabled": parser_ocr_enabled,
+                        "ocr_languages": OCR_LANGUAGES if parser_ocr_enabled else [],
                     },
                     "content": {
                         "text_sha256": text_hash,
@@ -590,6 +637,8 @@ def parse_staged_documents(
                         "source_sha256": source_hash,
                         "output_file": output_name,
                         "output_sha256": output_sha256,
+                        "parser_name": parser_name,
+                        "parser_version": parser_version,
                         "page_count": sum(page["page_no"] is not None for page in pages),
                         "content_segment_count": len(pages),
                         "status": status,
@@ -622,6 +671,7 @@ def parse_staged_documents(
             "skipped_files": sum(record["status"].startswith("skipped_") for record in records),
             "unsupported_files": sum(record["status"] == "skipped_unsupported_format" for record in records),
             "missing_dependency_files": sum(record["status"] == "skipped_missing_libreoffice" for record in records),
+            "json_size_limit_files": sum(record["status"] == "skipped_json_size_limit" for record in records),
             "failed_files": sum(record["status"] == "conversion_failed" for record in records),
             "human_review_required": True,
             "indexing_allowed": False,
@@ -633,10 +683,11 @@ def parse_staged_documents(
             "source_archive_sha256": staging_manifest["source_archive"]["sha256"],
             "staging_manifest_sha256": staging_manifest_sha256,
             "parser": {
-                "name": "docling",
-                "version": active_version,
-                "ocr_enabled": ocr,
-                "ocr_languages": OCR_LANGUAGES if ocr else [],
+                "name": "mavis-local-multi-parser",
+                "components": sorted(
+                    parser_components.values(),
+                    key=lambda component: (component["name"], component["version"]),
+                ),
             },
             "summary": summary,
             "files": sorted(records, key=lambda record: record["source_path"]),
