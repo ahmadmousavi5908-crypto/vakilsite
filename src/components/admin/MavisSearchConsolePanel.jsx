@@ -1,7 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { rankContentOpportunities } from "../../lib/mavis/growth-metrics.mjs";
+import {
+  aggregateSearchPerformanceRows,
+  rankContentOpportunities,
+} from "../../lib/mavis/growth-metrics.mjs";
 import styles from "./MavisSearchConsolePanel.module.css";
 
 function localDate(date) {
@@ -100,12 +103,11 @@ export default function MavisSearchConsolePanel() {
     const rows = result.rows.map((row) => ({
       page: row.dimensions.page,
       query: row.dimensions.query,
-      date: row.dimensions.date,
       clicks: row.metrics.clicks,
       impressions: row.metrics.impressions,
       averagePosition: row.metrics.averagePosition,
-    })).filter((row) => row.page || row.query);
-    return rankContentOpportunities(rows).slice(0, 10);
+    }));
+    return rankContentOpportunities(aggregateSearchPerformanceRows(rows)).slice(0, 10);
   }, [result]);
 
   return (
