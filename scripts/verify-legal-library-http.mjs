@@ -19,7 +19,7 @@ function canonicalPath(value) {
 function readMeta(html, key) {
   const tags = html.match(/<meta\b[^>]*>/gi) || [];
   for (const tag of tags) {
-    const name = tag.match(/\bname\s*=\s*["']([^"']+)["']/i)?.[1]?.toLowerCase();
+    const name = tag.match(/\b(?:name|property)\s*=\s*["']([^"']+)["']/i)?.[1]?.toLowerCase();
     if (name !== key.toLowerCase()) continue;
     return tag.match(/\bcontent\s*=\s*["']([^"']*)["']/i)?.[1]?.toLowerCase() || "";
   }
