@@ -67,15 +67,70 @@ function normalizeText(value, maxLength) {
   return normalized.length > 0 && normalized.length <= maxLength ? normalized : null;
 }
 
+const JALALI_LEAP_YEAR_CACHE = new Map();
+const PERSIAN_DATE_FORMATTER = new Intl.DateTimeFormat("en-US-u-ca-persian-nu-latn", {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  timeZone: "UTC",
+});
+
+function isJalaliLeapYear(year) {
+  if (JALALI_LEAP_YEAR_CACHE.has(year)) return JALALI_LEAP_YEAR_CACHE.get(year);
+
+  let leap = false;
+  try {
+    const gregorianYear = year + 622;
+    for (let day = 18; day <= 22; day += 1) {
+      const date = new Date(Date.UTC(gregorianYear, 2, day));
+      const parts = Object.fromEntries(
+        PERSIAN_DATE_FORMATTER.formatToParts(date).map(({ type, value }) => [type, value]),
+      );
+      if (Number(parts.year) === year && Number(parts.month) === 12 && Number(parts.day) === 30) {
+        leap = true;
+        break;
+      }
+    }
+  } catch {
+    leap = false;
+  }
+
+  if (JALALI_LEAP_YEAR_CACHE.size >= 32) {
+    const oldestYear = JALALI_LEAP_YEAR_CACHE.keys().next().value;
+    JALALI_LEAP_YEAR_CACHE.delete(oldestYear);
+  }
+  JALALI_LEAP_YEAR_CACHE.set(year, leap);
+  return leap;
+}
+
+function isValidGregorianDate(year, month, day) {
+  const date = new Date(0);
+  date.setUTCFullYear(year, month - 1, day);
+  date.setUTCHours(0, 0, 0, 0);
+  return date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day;
+}
+
 function isValidDate(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   if (Object.keys(value).sort().join(",") !== "calendar,value") return false;
   if (!DATE_CALENDARS.has(value.calendar) || typeof value.value !== "string") return false;
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.value);
+  const match = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(value.value);
   if (!match) return false;
+
+  const year = Number(match[1]);
   const month = Number(match[2]);
   const day = Number(match[3]);
-  return month >= 1 && month <= 12 && day >= 1 && day <= 31;
+  if (year < 1 || month < 1 || month > 12 || day < 1) return false;
+
+  if (value.calendar === "gregorian") {
+    return isValidGregorianDate(year, month, day);
+  }
+
+  if (month <= 6) return day <= 31;
+  if (month <= 11) return day <= 30;
+  return day <= 29 || (day === 30 && isJalaliLeapYear(year));
 }
 
 function validateValue(descriptor, value) {
