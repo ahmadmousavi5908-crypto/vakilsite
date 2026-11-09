@@ -35,7 +35,8 @@ function pageContainsSensitiveQuery(value) {
   if (typeof value !== "string") return false;
   try {
     const url = new URL(value);
-    return [...url.searchParams.values()].some(mayContainPersonalQuery);
+    return mayContainPersonalQuery(url.pathname) ||
+      [...url.searchParams.values()].some(mayContainPersonalQuery);
   } catch {
     return false;
   }
