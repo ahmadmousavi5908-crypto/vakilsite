@@ -118,15 +118,15 @@ export default function MavisSearchConsolePanel() {
         <fieldset className={styles.dimensions}>
           <legend>ابعاد گزارش</legend>
           <label>
-            <input type="checkbox" checked={displayedDimensions.includes("query")} onChange={() => toggleDimension("query")} />
+            <input type="checkbox" checked={dimensions.includes("query")} onChange={() => toggleDimension("query")} />
             عبارت جست‌وجو
           </label>
           <label>
-            <input type="checkbox" checked={displayedDimensions.includes("page")} onChange={() => toggleDimension("page")} />
+            <input type="checkbox" checked={dimensions.includes("page")} onChange={() => toggleDimension("page")} />
             صفحه
           </label>
           <label>
-            <input type="checkbox" checked={displayedDimensions.includes("date")} onChange={() => toggleDimension("date")} />
+            <input type="checkbox" checked={dimensions.includes("date")} onChange={() => toggleDimension("date")} />
             تاریخ
           </label>
         </fieldset>
