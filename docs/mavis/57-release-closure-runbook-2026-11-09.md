@@ -19,16 +19,15 @@ A green CI result is evidence only for the checks actually executed. It is not p
 
 ### Latest integration status — 2026-11-09
 
-- Candidate head before the PR #60 CI refactor: `07216e98853ec0696e99108b79e9f896807d746f`. PRs #51–#59 have been merged into `integration/mavis-mvp-candidate-20261108`; integration PR #25 remains Draft and unmerged. The candidate has not been merged to main.
-- The latest fully green PR CI is PR #59 head `9286b23e9849e3b38d6528dbb29fe82565e83b69`; the candidate merge commit `07216e9` also passed its pull-request and push application/database workflows. The database workflow passed all 182 pgTAP assertions and the synthetic local database backup/restore check.
-- The legal review queue validator reports 175/175 canonical records and 0 validation errors: 144 `needs_legal_review`, 31 `secondary_source_only`, and 0 `verified_primary_source`. This validates queue structure and coverage, not legal correctness.
-- The public conversation core now has a disabled-by-default Mock Provider, a guarded state machine, deterministic urgent/priority human-review routing, and a verified-primary-only answer gate. Since the current corpus has zero verified primary records, ordinary legal questions are deliberately prevented from reaching a model.
-- The post-approval matter questionnaire has an immutable v1 contract, but no client portal, authentication, persistence, upload, or public activation.
-- Qwen3.5-9B with vLLM is documented only as a candidate for a synthetic-data benchmark. No real model, GPU host, external provider or production integration has been approved.
-- The Civil Code source pilot remains `secondary_source_only`: the official primary document, amendment chain and lawyer sign-off have not been captured.
-- PR #60 is validating the new serialized database workflow and bounded cleanup behavior. Recheck the exact candidate SHA and its pull-request workflows after that PR merges, before local verification.
-- Database CI now uses a lightweight change-detection job: it runs the full Supabase stack only when `supabase/**` or the local backup/restore verifier changes (or when manually dispatched). Database jobs share a FIFO concurrency queue; candidate push duplication is removed because the candidate is validated through its pull request. This prevents docs-only PRs and duplicate push/PR events from competing for fixed local Supabase ports and registry pulls.
-
+- Candidate head after PRs #63 and #64: `1ea133cfa4cf24e5ada06ae345120a50573b5b9e`. PRs #51–#60 and #63–#64 are merged into `integration/mavis-mvp-candidate-20261108`. PR #25 remains Draft and unmerged; no candidate code has been merged to `main`.
+- PR #63 added stronger legal review queue gates. Its exact head `49db5e077390ba4e96c15a03d8f170c32b6ca3e2` passed the application verification workflow and change detection; the database workflow was correctly skipped because no database files changed. All 12 legal review queue tests passed, including rejection of secondary-only evidence, impossible dates, malformed timestamps, and reversed effective periods.
+- PR #64 refreshed the operational runbook and legal source pilot documentation on the current candidate. Its application verification and change-detection checks passed; the database workflow was correctly skipped for documentation-only changes.
+- The legal review queue covers 175/175 canonical records with 0 structural validation errors: 144 `needs_legal_review`, 31 `secondary_source_only`, and 0 `verified_primary_source`. The validator now requires an official primary-publication source for any verified row. This proves queue integrity, not legal correctness.
+- Public conversation remains disabled by default. Urgent/priority cases bypass retrieval and model generation; ordinary answers require a verified primary-source packet, a valid in-force state and server-owned citations. With zero verified primary-source records, generated legal answers remain blocked by design.
+- The client matter-field contract remains a design/implementation contract, not a deployed client portal. No client authentication, secure upload, public chat activation or external model provider is enabled.
+- Candidate and `main` branch protection are both currently disabled. Enable required checks and review protection only after confirming repository-admin permissions and the exact branch policy; this is still a release gate.
+- PR #25 remains Draft. No production migration, hosted backup/restore, real-device airplane-mode test, Termux verification, retention activation, OAuth integration, or production deployment has been evidenced. Mother Two remains a protected rollback artifact and must not be overwritten.
+- CI results are scoped to their exact PR heads. The candidate's latest integrated head must pass its own exact-SHA workflows before local Termux verification or release decisions.
 
 
 ## 2. Final local verification (Termux — execute last)
