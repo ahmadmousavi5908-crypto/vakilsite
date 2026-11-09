@@ -46,7 +46,7 @@ curl -fsSL https://raw.githubusercontent.com/ahmadmousavi5908-crypto/vakilsite/f
 برای انتخاب پوشه دیگری:
 
 ```bash
-MAVIS_DIR="$HOME/downloads/vakilsite-mavis-termux-2" bash install.sh
+MAVIS_DIR="$HOME/downloads/vakilsite-mavis-termux-2" bash -c "$(curl -fsSL https://raw.githubusercontent.com/ahmadmousavi5908-crypto/vakilsite/feature/mavis-final-verification-20261109/scripts/termux/install.sh)"
 ```
 
 ## مرزهای ایمنی
