@@ -33,6 +33,7 @@ function isTrustedPrimaryCitation(citation) {
     return parsed.protocol === "https:" &&
       !parsed.username &&
       !parsed.password &&
+      !parsed.port &&
       [...TRUSTED_PRIMARY_HOSTS].some((trusted) => host === trusted || host.endsWith("." + trusted));
   } catch {
     return false;
@@ -56,7 +57,11 @@ function buildVerifiedKnowledgeContext(retrieval) {
 
   for (const record of retrieval.results) {
     if (!record || typeof record.id !== "string" || !record.id.trim() || seen.has(record.id) ||
-        record.evidence?.state !== "verified_primary") continue;
+        record.evidence?.state !== "verified_primary" ||
+        record.review_status !== "verified_primary_source" ||
+        record.source_verified !== true ||
+        record.validity_status !== "in_force" ||
+        !isValidCalendarDate(record.last_verified_at)) continue;
 
     const citations = Array.isArray(record.evidence.citations)
       ? record.evidence.citations.filter(isTrustedPrimaryCitation).slice(0, 2)
