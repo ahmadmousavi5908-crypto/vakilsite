@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - feature/mavis-deterministic-legal-search-20261108
+      - feature/mavis-growth-intelligence-audit-20261108
+  pull_request:
+    branches:
+      - feature/mavis-deterministic-legal-search-20261108
   workflow_dispatch:
   pull_request:
     branches:
@@ -15,7 +19,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: mavis-knowledge-search-${{ github.ref }}
+  group: mavis-knowledge-search-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -42,8 +46,11 @@ jobs:
       - name: Test deterministic MAVIS retrieval
         run: npm run test:mavis-search
 
+      - name: Test deterministic Growth Intelligence audit
+        run: node --test tests/mavis/growth-audit.test.mjs
+
       - name: Lint MAVIS retrieval modules
-        run: npm run lint -- src/lib/mavis/knowledge-search.mjs src/lib/mavis/knowledge-registry.js src/lib/mavis/request-guards.mjs src/lib/mavis/rate-limit.mjs src/lib/supabase/admin.js src/app/api/mavis/knowledge-search/route.js src/components/admin/MavisKnowledgeSearch.jsx src/app/admin/mavis/page.js src/app/admin/page.js src/app/admin/login/page.js src/app/admin/login/actions.js tests/mavis/knowledge-search.test.mjs
+        run: npm run lint -- src/lib/mavis/knowledge-search.mjs src/lib/mavis/knowledge-registry.js src/lib/mavis/request-guards.mjs src/lib/mavis/rate-limit.mjs src/lib/supabase/admin.js src/app/api/mavis/knowledge-search/route.js src/components/admin/MavisKnowledgeSearch.jsx src/app/admin/mavis/page.js src/app/admin/page.js src/app/admin/login/page.js src/app/admin/login/actions.js src/lib/mavis/growth-audit.mjs src/components/admin/MavisGrowthAudit.jsx src/components/admin/MavisArticleInventory.jsx src/app/admin/mavis/growth/page.js src/app/admin/mavis/articles/page.js tests/mavis/knowledge-search.test.mjs tests/mavis/growth-audit.test.mjs
 
       - name: Test public intake validation
         if: ${{ hashFiles('tests/mavis/public-intake-validation.test.mjs') != '' }}
