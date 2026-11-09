@@ -21,6 +21,8 @@ class MotherTwoStagingTests(unittest.TestCase):
                 "library/books/book-one.pdf": b"licensed status unknown",
                 "library/articles/guide.md": "راهنمای حقوقی".encode("utf-8"),
                 "library/research/data.csv": b"id,value\n1,2\n",
+                "library/research/old-presentation.ppt": b"legacy presentation",
+                "library/research/old-spreadsheet.xls": b"legacy spreadsheet",
                 "library/research/notes.txt": b"OPENAI_API_KEY=sk-abcdefghijklmnopqrstuvwxyz1234567890\n",
                 "misc/unknown.pdf": b"unclassified file",
                 "private/.env": b"SECRET_TOKEN=never-stage",
@@ -52,8 +54,8 @@ class MotherTwoStagingTests(unittest.TestCase):
             result = stage_archive(archive_path, inventory_path, root / "staging")
 
             self.assertEqual(result["status"], "staging_created")
-            self.assertEqual(result["selected_files"], 4)
-            self.assertEqual(result["staged_files"], 3)
+            self.assertEqual(result["selected_files"], 6)
+            self.assertEqual(result["staged_files"], 5)
             self.assertEqual(result["secret_content_candidates"], 1)
             self.assertFalse(result["indexing_allowed"])
             self.assertFalse(result["retrieval_allowed"])
@@ -61,8 +63,8 @@ class MotherTwoStagingTests(unittest.TestCase):
 
             stage_root = Path(result["stage_path"])
             manifest = json.loads((stage_root / "staging-manifest.json").read_text("utf-8"))
-            self.assertEqual(manifest["summary"]["selected_files"], 4)
-            self.assertEqual(manifest["summary"]["staged_files"], 3)
+            self.assertEqual(manifest["summary"]["selected_files"], 6)
+            self.assertEqual(manifest["summary"]["staged_files"], 5)
             self.assertEqual(manifest["summary"]["secret_content_candidates"], 1)
             self.assertFalse(manifest["summary"]["indexing_allowed"])
             self.assertTrue(manifest["policy"]["secrets_excluded"])
@@ -73,6 +75,8 @@ class MotherTwoStagingTests(unittest.TestCase):
                 "library/books/book-one.pdf",
                 "library/articles/guide.md",
                 "library/research/data.csv",
+                "library/research/old-presentation.ppt",
+                "library/research/old-spreadsheet.xls",
             })
             self.assertNotIn("library/research/notes.txt", staged_paths)
             self.assertNotIn("misc/unknown.pdf", staged_paths)
@@ -96,7 +100,7 @@ class MotherTwoStagingTests(unittest.TestCase):
             self.assertEqual(result["status"], "dry_run_verified")
             self.assertEqual(result["selected_files"], 4)
             self.assertEqual(result["secret_content_candidates"], 1)
-            self.assertEqual(result["eligible_after_content_scan"], 3)
+            self.assertEqual(result["eligible_after_content_scan"], 5)
             self.assertEqual(result["staged_files"], 0)
             self.assertFalse(result["extraction_performed"])
             self.assertFalse(output_parent.exists())
