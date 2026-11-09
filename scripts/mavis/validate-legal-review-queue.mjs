@@ -190,7 +190,9 @@ export function validateLegalReviewQueue(source, options = {}) {
     }
 
     if (record.primary_document_retrieved === "true") {
-      if (primarySourceIds && !sourceIds.some((sourceId) => primarySourceIds.has(sourceId))) {
+      if (!primarySourceIds) {
+        errors.push(`Row ${line} cannot claim a retrieved primary document without the primary source registry.`);
+      } else if (!sourceIds.some((sourceId) => primarySourceIds.has(sourceId))) {
         errors.push(`Row ${line} claims a retrieved primary document without linking a registered official primary publication.`);
       }
       for (const fieldName of ["primary_document_identifier", "issuing_authority", "retrieved_at", "content_sha256"]) {
@@ -227,7 +229,9 @@ export function validateLegalReviewQueue(source, options = {}) {
         errors.push(`Row ${line} is marked verified without any instrument date.`);
       }
       if (sourceIds.length === 0) errors.push(`Row ${line} is marked verified without a linked source.`);
-      if (primarySourceIds && !sourceIds.some((sourceId) => primarySourceIds.has(sourceId))) {
+      if (!primarySourceIds) {
+        errors.push(`Row ${line} cannot be marked verified without the primary source registry.`);
+      } else if (!sourceIds.some((sourceId) => primarySourceIds.has(sourceId))) {
         errors.push(`Row ${line} is marked verified without an official primary-publication source.`);
       }
       if (record.content_sha256 && !/^[a-f0-9]{64}$/i.test(record.content_sha256)) {
