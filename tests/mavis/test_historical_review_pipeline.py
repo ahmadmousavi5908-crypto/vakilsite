@@ -16,7 +16,7 @@ class HistoricalReviewPipelineTests(unittest.TestCase):
         files = {
             "books/book.pdf": b"copyrighted legal book bytes",
             "laws/statute.pdf": b"official statute bytes",
-            "growth/seo.md": b"public SEO document bytes",
+            "seo/seo.md": b"public SEO document bytes",
         }
         records = []
         import hashlib
@@ -145,7 +145,7 @@ class HistoricalReviewPipelineTests(unittest.TestCase):
             book = self.valid_book_decision(by_path["books/book.pdf"]["source_id"])
             statute = self.valid_statute_decision(by_path["laws/statute.pdf"]["source_id"])
             growth = {
-                "source_id": by_path["growth/seo.md"]["source_id"],
+                "source_id": by_path["seo/seo.md"]["source_id"],
                 "decision": "approve_for_registration",
                 "title": "راهنمای سئوی حقوقی",
                 "source_class": "seo_document",
@@ -174,7 +174,7 @@ class HistoricalReviewPipelineTests(unittest.TestCase):
             self.assertTrue(entries["laws/statute.pdf"]["eligibility"]["public_legal_chat"])
             self.assertTrue(entries["books/book.pdf"]["eligibility"]["lawyer_copilot"])
             self.assertFalse(entries["books/book.pdf"]["eligibility"]["public_legal_chat"])
-            self.assertTrue(entries["growth/seo.md"]["eligibility"]["growth"])
+            self.assertTrue(entries["seo/seo.md"]["eligibility"]["growth"])
             self.assertFalse(candidate["policy"]["database_ingestion_performed"])
 
     def test_requires_a_decision_for_every_staged_file(self):
