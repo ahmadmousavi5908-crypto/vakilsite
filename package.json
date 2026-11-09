@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "prebuild": "node scripts/prepare-indexnow-key.mjs",
+    "predev": "node scripts/mavis/generate-offline-published-articles.mjs",
+    "prebuild": "node scripts/prepare-indexnow-key.mjs && node scripts/mavis/generate-offline-published-articles.mjs",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
