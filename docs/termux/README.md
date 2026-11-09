@@ -19,7 +19,18 @@ Termux محل توسعه، ساخت پروژه یا رفع خطا نیست. بس
 پس از ادغام PR شماره 76 و انتشار بسته تأییدشده:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/ahmadmousavi5908-crypto/vakilsite/feature/mavis-final-verification-20261109/scripts/termux/install.sh)"
+if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+  gh api "repos/ahmadmousavi5908-crypto/vakilsite/contents/scripts/termux/install.sh?ref=feature/mavis-final-verification-20261109" --jq .content | base64 -d | bash
+else
+  bash -c "$(curl -fsSL https://raw.githubusercontent.com/ahmadmousavi5908-crypto/vakilsite/feature/mavis-final-verification-20261109/scripts/termux/install.sh)"
+fi
+```
+
+اگر مخزن خصوصی باشد و هنوز GitHub CLI احراز هویت نشده باشد، فقط یک‌بار پیش از دستور بالا اجرا کن:
+
+```bash
+pkg install -y gh
+gh auth login
 ```
 
 نصب‌کننده به‌صورت خودکار:
