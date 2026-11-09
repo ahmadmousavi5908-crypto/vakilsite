@@ -125,12 +125,11 @@ export function validateSecureMatterFields(caseType, input) {
     else value[key] = normalized;
   }
 
-  for (const [amountKey, currencyKey] of [
-    ["claimedAmount", "currency"],
-    ["amount", "currency"],
-    ["approximateAmount", "currency"],
-  ]) {
-    if (Object.hasOwn(value, amountKey) !== Object.hasOwn(value, currencyKey)) {
+  for (const amountKey of ["claimedAmount", "amount", "approximateAmount"]) {
+    const currencyKey = "currency";
+    if (Object.hasOwn(schema, amountKey) &&
+        Object.hasOwn(schema, currencyKey) &&
+        Object.hasOwn(value, amountKey) !== Object.hasOwn(value, currencyKey)) {
       errors[amountKey] = "مبلغ و واحد پول باید با هم ثبت شوند.";
       errors[currencyKey] = "مبلغ و واحد پول باید با هم ثبت شوند.";
     }
