@@ -53,6 +53,12 @@ jobs:
       - name: Test hash-verified Mother Two quarantine staging
         run: npm run test:mavis-mother-two-staging
 
+      - name: Test Docling quarantine parser and page provenance contract
+        run: npm run test:mavis-docling-ingestion
+
+      - name: Compile the optional Docling parser worker
+        run: python3 -m py_compile scripts/mavis/parse_staged_mother_two.py tests/mavis/test_docling_ingestion.py
+
       - name: Test deterministic MAVIS retrieval
         run: npm run test:mavis-search
 
