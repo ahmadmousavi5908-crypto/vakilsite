@@ -94,7 +94,7 @@ def select_inventory_entries(report: dict[str, Any]) -> dict[str, dict[str, Any]
             or entry.get("status") != "L0_downloaded_unreviewed"
             or not isinstance(path, str)
             or _is_unsafe_path(path)
-            or _classification(path) == "restricted_secret"
+            or _classification(path) != category
             or not isinstance(digest, str)
             or not SHA256_PATTERN.fullmatch(digest)
             or not isinstance(size, int)
