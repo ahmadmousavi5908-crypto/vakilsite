@@ -12,7 +12,7 @@
     "indexnow:prepare": "node scripts/prepare-indexnow-key.mjs",
     "indexnow:submit": "node scripts/submit-indexnow.mjs",
     "test:legal-library-http": "node scripts/verify-legal-library-http.mjs",
-    "test:mavis-search": "node --test tests/mavis/knowledge-search.test.mjs tests/mavis/knowledge-search-route.test.mjs tests/mavis/knowledge-retrieval.test.mjs",
+    "test:mavis-search": "node --test tests/mavis/knowledge-search.test.mjs tests/mavis/knowledge-search-route.test.mjs tests/mavis/knowledge-retrieval.test.mjs tests/mavis/published-article-adapter.test.mjs",
     "test:mavis-core": "node --test tests/mavis/public-chat.test.mjs tests/mavis/conversation-state.test.mjs",
     "mavis:verify": "node scripts/mavis/verify-local.mjs",
     "test:mavis-matter-fields": "node --test tests/mavis/secure-matter-fields.test.mjs",
