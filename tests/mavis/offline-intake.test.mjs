@@ -104,6 +104,8 @@ test("flattens control characters in one-line fields to prevent forged message s
 test("does not persist or transmit intake data from the browser script", async () => {
   const { readFile } = await import("node:fs/promises");
   const script = await readFile(new URL("../../public/mavis-offline/intake.js", import.meta.url), "utf8");
+  const { execFileSync } = await import("node:child_process");
+  execFileSync(process.execPath, ["--check", "--input-type=module"], { input: script, encoding: "utf8" });
   assert.doesNotMatch(script, /localStorage|sessionStorage|fetch\s*\(/);
   assert.match(script, /navigator\.clipboard\.writeText/);
   assert.match(script, /https:\/\/wa\.me\//);
