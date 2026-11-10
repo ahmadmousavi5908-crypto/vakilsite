@@ -1,4 +1,3 @@
-const SIMPLE_FIELDS = ["fullName", "phone", "city", "topicLabel", "role", "stage", "urgency", "deadline", "reference", "goal", "otherDocs"];
 const TOPIC_LABELS = {
   property: "ملک، زمین و امور ثبتی",
   contract: "قرارداد و تعهدات",
