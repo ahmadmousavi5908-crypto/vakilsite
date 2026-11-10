@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import PublishedWorks from "../../components/PublishedWorks";
 
 export const metadata = {
   title: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری",
@@ -81,6 +82,8 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      <PublishedWorks />
 
       <section className="container about-approach-section">
         <div className="about-section-heading">

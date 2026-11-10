@@ -12,16 +12,19 @@ export default function MavisAvatarDock() {
       <Link
         href="/ai-assistant"
         className={styles.link}
-        aria-label="ورود به صفحه دستیار ماویس"
-        title="دستیار هوشمند ماویس"
+        aria-label="گفت‌وگو با ماویس، دستیار هوش مصنوعی حقوقی"
+        title="ماویس، دستیار هوش مصنوعی حقوقی"
       >
-        <span className={styles.halo} aria-hidden="true" />
+        <span className={styles.label} aria-hidden="true">
+          <strong>دستیار هوش مصنوعی</strong>
+          <small>برای گفت‌وگو کلیک کنید</small>
+        </span>
         <span className={styles.frame}>
           <Image
             src={portrait}
             alt=""
             fill
-            sizes="(max-width: 480px) 52px, 58px"
+            sizes="(max-width: 480px) 58px, 64px"
             unoptimized
             className={styles.image}
           />

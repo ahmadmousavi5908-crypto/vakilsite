@@ -163,7 +163,7 @@ export default function Home() {
                 <div><span>شماره پروانه وکالت</span><strong dir="ltr">74516</strong></div>
                 <div><span>عضویت حرفه‌ای</span><strong>مرکز وکلای قوه قضائیه</strong></div>
                 <div><span>تحصیلات</span><strong>کارشناسی ارشد حقوق</strong></div>
-                <div><span>فعالیت علمی</span><strong>نویسنده مقاله و کتاب</strong></div>
+                <div><span>فعالیت علمی</span><Link href="/about#about-publications" style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}><strong style={{ fontWeight: 700 }}>نویسنده مقاله و کتاب</strong></Link></div>
               </div>
             </div>
             <div className="floating-note"><span className="note-icon"><LegalIcon name="scales" size={22} /></span><span><b>بررسی دقیق موضوع</b><small>پیش از انتخاب مسیر قانونی</small></span></div>
