@@ -194,6 +194,7 @@ test("rejects non-JSON media types", async () => {
   const response = await handler(makeRequest({ query: "قانون مدنی" }, { contentType: "text/plain" }));
   assert.equal(response.status, 415);
   assert.equal((await readError(response)).code, "UNSUPPORTED_MEDIA_TYPE");
+  assert.equal(calls.rateLimit, 0);
   assert.equal(calls.retrieve, 0);
 });
 
@@ -202,11 +203,13 @@ test("rejects invalid JSON and oversized bodies", async () => {
   const invalidResponse = await invalid.handler(makeRequest("{"));
   assert.equal(invalidResponse.status, 400);
   assert.equal((await readError(invalidResponse)).code, "INVALID_JSON");
+  assert.equal(invalid.calls.rateLimit, 0);
 
   const oversized = createHarness();
   const oversizedResponse = await oversized.handler(makeRequest("x".repeat(4097)));
   assert.equal(oversizedResponse.status, 413);
   assert.equal((await readError(oversizedResponse)).code, "PAYLOAD_TOO_LARGE");
+  assert.equal(oversized.calls.rateLimit, 0);
   assert.equal(oversized.calls.retrieve, 0);
 });
 
@@ -215,16 +218,19 @@ test("rejects invalid query and result limit values", async () => {
   const shortResponse = await shortQuery.handler(makeRequest({ query: "ق" }));
   assert.equal(shortResponse.status, 400);
   assert.equal((await readError(shortResponse)).code, "INVALID_QUERY");
+  assert.equal(shortQuery.calls.rateLimit, 0);
 
   const longQuery = createHarness();
   const longResponse = await longQuery.handler(makeRequest({ query: "ق".repeat(121) }));
   assert.equal(longResponse.status, 400);
   assert.equal((await readError(longResponse)).code, "INVALID_QUERY");
+  assert.equal(longQuery.calls.rateLimit, 0);
 
   const invalidLimit = createHarness();
   const limitResponse = await invalidLimit.handler(makeRequest({ query: "قانون مدنی", limit: 21 }));
   assert.equal(limitResponse.status, 400);
   assert.equal((await readError(limitResponse)).code, "INVALID_LIMIT");
+  assert.equal(invalidLimit.calls.rateLimit, 0);
 });
 
 test("normalizes legal records and returns evidence plus a research dossier", async () => {
