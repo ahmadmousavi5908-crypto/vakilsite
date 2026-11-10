@@ -117,11 +117,11 @@ function cleanParagraph(value, maxLength = 2000) {
 }
 
 export function getRoleOptions(topic) {
-  return [...(ROLE_OPTIONS[topic] || ROLE_OPTIONS.other)];
+  return ROLE_OPTIONS[topic] ? [...ROLE_OPTIONS[topic]] : [];
 }
 
 export function getStageOptions(topic) {
-  return [...(STAGE_OPTIONS[topic] || STAGE_OPTIONS.other)];
+  return STAGE_OPTIONS[topic] ? [...STAGE_OPTIONS[topic]] : [];
 }
 
 export function getTopicQuestions(topic, role = "", stage = "") {
