@@ -46,4 +46,10 @@ test("offline library links to a privacy-preserving conditional intake form", as
   assert.match(intake, /name="marketingConsent"/);
   assert.match(intake, /id="copy-open"/);
   assert.match(intake, /هیچ پیامی بدون اقدام نهایی شما ارسال نمی‌شود/);
+  assert.match(intake, /data-step-panel="1"/);
+  assert.match(intake, /data-step-panel="4"/);
+  assert.match(intake, /name="contactWindow"/);
+  assert.match(intake, /name="urgentSignal"/);
+  assert.match(intake, /data-next-step="2"/);
+  assert.match(intake, /data-prev-step="3"/);
 });
