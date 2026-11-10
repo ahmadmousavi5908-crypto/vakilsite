@@ -44,7 +44,7 @@ test("creates a faithful client-authored intake message without legal analysis",
   assert.match(message, /شرح موضوع از زبان متقاضی/);
   assert.match(message, /گواهی عدم پرداخت/);
   assert.match(message, /رضایت پیام‌های بازاریابی: خیر/);
-  assert.match(message, /بدون تحلیل یا نتیجه‌گیری حقوقی/);
+  assert.match(message, /شامل تحلیل یا نتیجه‌گیری حقوقی نیست/);
 });
 
 test("flattens control characters in one-line fields to prevent forged message sections", () => {
