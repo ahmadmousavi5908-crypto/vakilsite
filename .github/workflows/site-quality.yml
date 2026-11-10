@@ -30,6 +30,12 @@ jobs:
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
         run: npm run validate:legal-library-seo
+      - name: Generate offline published-article bundle
+        run: node scripts/mavis/generate-offline-published-articles.mjs
+      - name: Validate MAVIS offline knowledge bundle
+        run: npm run validate:mavis-offline
+      - name: Run MAVIS offline tests
+        run: npm run test:mavis-offline
       - name: Run MAVIS knowledge retrieval tests
         run: >-
           node --test
