@@ -10,7 +10,7 @@ const [html, app, worker] = await Promise.all([
 ]);
 
 test("offline service worker precaches every runtime dependency", () => {
-  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json"]) {
+  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "intake.html", "intake.js", "intake-core.mjs"]) {
     assert.ok(worker.includes("/mavis-offline/" + asset), "missing precache asset: " + asset);
   }
   assert.match(worker, /cache\.addAll\(ASSETS\)/);
@@ -35,4 +35,15 @@ test("offline page clearly limits the guarantee to the cached route and download
   assert.match(html, /یک‌بار با اینترنت باز کنید/);
   assert.match(html, /ثبت درخواست و ارسال مدارک بدون اتصال انجام نمی‌شود/);
   assert.match(html, /noindex,follow/);
+});
+
+test("offline library links to a privacy-preserving conditional intake form", async () => {
+  const intake = await readFile(new URL("intake.html", root), "utf8");
+  assert.match(html, /href="\.\/intake\.html"/);
+  assert.match(intake, /id="intake-form"/);
+  assert.match(intake, /name="caseConsent"/);
+  assert.match(intake, /name="thirdPartyNotice"/);
+  assert.match(intake, /name="marketingConsent"/);
+  assert.match(intake, /id="copy-open"/);
+  assert.match(intake, /هیچ پیامی بدون اقدام نهایی شما ارسال نمی‌شود/);
 });
