@@ -126,38 +126,6 @@ export function createKnowledgeSearchHandler(dependencies) {
       );
     }
 
-    let rateLimitResult;
-    try {
-      rateLimitResult = await access.supabase.rpc("consume_mavis_knowledge_search_limit");
-    } catch {
-      rateLimitResult = { error: true };
-    }
-
-    let rateLimit;
-    try {
-      rateLimit = parseKnowledgeSearchRateLimit(rateLimitResult);
-    } catch {
-      rateLimit = { status: "unavailable" };
-    }
-
-    if (rateLimit.status === "unavailable") {
-      return jsonResponse(
-        { error: { code: "RATE_LIMIT_UNAVAILABLE", message: "کنترل ظرفیت سرویس در دسترس نیست؛ جست‌وجو موقتاً متوقف شد." } },
-        503,
-      );
-    }
-
-    if (rateLimit.status === "limited") {
-      return jsonResponse(
-        { error: { code: "RATE_LIMITED", message: "تعداد درخواست‌های جست‌وجو بیش از حد مجاز است. کمی بعد دوباره تلاش کنید." } },
-        429,
-        {
-          ...NO_STORE_HEADERS,
-          "Retry-After": String(rateLimit.retryAfterSeconds),
-        },
-      );
-    }
-
     if (!isJsonContentType(request.headers.get("content-type"))) {
       return jsonResponse(
         { error: { code: "UNSUPPORTED_MEDIA_TYPE", message: "نوع محتوای درخواست باید JSON باشد." } },
@@ -195,6 +163,38 @@ export function createKnowledgeSearchHandler(dependencies) {
       return jsonResponse(
         { error: { code: "INVALID_LIMIT", message: "تعداد نتایج باید عدد صحیح بین ۱ تا ۲۰ باشد." } },
         400,
+      );
+    }
+
+    let rateLimitResult;
+    try {
+      rateLimitResult = await access.supabase.rpc("consume_mavis_knowledge_search_limit");
+    } catch {
+      rateLimitResult = { error: true };
+    }
+
+    let rateLimit;
+    try {
+      rateLimit = parseKnowledgeSearchRateLimit(rateLimitResult);
+    } catch {
+      rateLimit = { status: "unavailable" };
+    }
+
+    if (rateLimit.status === "unavailable") {
+      return jsonResponse(
+        { error: { code: "RATE_LIMIT_UNAVAILABLE", message: "کنترل ظرفیت سرویس در دسترس نیست؛ جست‌وجو موقتاً متوقف شد." } },
+        503,
+      );
+    }
+
+    if (rateLimit.status === "limited") {
+      return jsonResponse(
+        { error: { code: "RATE_LIMITED", message: "تعداد درخواست‌های جست‌وجو بیش از حد مجاز است. کمی بعد دوباره تلاش کنید." } },
+        429,
+        {
+          ...NO_STORE_HEADERS,
+          "Retry-After": String(rateLimit.retryAfterSeconds),
+        },
       );
     }
 
