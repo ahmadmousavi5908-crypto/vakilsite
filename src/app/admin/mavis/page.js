@@ -31,6 +31,8 @@ export default async function MavisAdminPage() {
         <nav className="admin-nav" aria-label="منوی مدیریت">
           <Link href="/admin">داشبورد</Link>
           <Link className="active" href="/admin/mavis">مرکز دانش MAVIS</Link>
+          <a href="#knowledge-search">پژوهش حقوقی</a>
+          <a href="#growth-intelligence">هوشمندی رشد</a>
         </nav>
         <div className="admin-sidebar-foot">
           <span>دسترسی مدیر</span>
