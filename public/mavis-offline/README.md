@@ -8,7 +8,9 @@ This is a separate, public, deterministic knowledge-retrieval and answer-composi
 - A scoped service worker caches only this standalone application and its public knowledge bundle.
 - Subsequent searches and preliminary answer composition run locally in the browser. The top retrieved record is presented with its source status, a topic-specific information checklist and an explicit no-match response. No ChatGPT, LLM, external API, server-side search endpoint, or network request is required for search or answer composition.
 - Search text is not persisted and is not transmitted.
-- The offline bundle also includes a conditional intake form. It validates the user's answers locally and creates a faithful, structured message with a local reference code; no legal analysis is added. The form and draft can be prepared offline, but sending to the office requires internet and an explicit user action in WhatsApp.
+- The offline bundle also includes a guided, four-step intake flow. Follow-up questions adapt to the selected legal topic, the applicant's role, and the procedural stage. A deterministic local triage rule organizes the office's review priority only from urgency and contact timing explicitly reported by the applicant; it does not calculate legal deadlines or assess legal merits.
+- The generated report separates the applicant's own narrative from an office-facing intake summary, includes an optional missing-information checklist, and labels priority as a suggested human-review queue. It never claims the request was received, accepted, or assigned to a lawyer.
+- The form and draft can be prepared offline, but sending to the office requires internet and an explicit user action in WhatsApp.
 - Intake answers are not sent to a server, database, analytics provider, or browser storage. The message is copied only after the user clicks a copy/send-preparation control. The user reviews it and presses Send in WhatsApp. No attachment upload is supported.
 - The rest of the website, WhatsApp delivery, online intake persistence, and live legal-source checks are not guaranteed offline.
 
