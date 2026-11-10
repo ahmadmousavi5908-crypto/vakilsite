@@ -2,7 +2,7 @@ name: Site quality checks
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, work/mother-two-updated-mavis-20261110]
   push:
     branches:
       - main
@@ -29,6 +29,14 @@ jobs:
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
         run: npm run validate:legal-library-seo
+      - name: Run MAVIS knowledge retrieval tests
+        run: >-
+          node --test
+          tests/mavis/knowledge-search.test.mjs
+          tests/mavis/knowledge-retrieval.test.mjs
+          tests/mavis/knowledge-search-route.test.mjs
+          tests/mavis/legal-evidence.test.mjs
+          tests/mavis/legal-research-dossier.test.mjs
       - name: Run ESLint
         run: npm run lint
       - name: Build production site
