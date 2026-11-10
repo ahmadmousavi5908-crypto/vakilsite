@@ -36,6 +36,8 @@ jobs:
         run: npm run validate:mavis-offline
       - name: Run MAVIS offline tests
         run: npm run test:mavis-offline
+      - name: Run MAVIS Search Console tests
+        run: npm run test:mavis-search-console
       - name: Run MAVIS knowledge retrieval tests
         run: >-
           node --test

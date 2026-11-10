@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "../../../lib/supabase/admin";
 import { getMavisKnowledgeInventory } from "../../../lib/mavis/knowledge-registry";
 import MavisKnowledgeSearch from "../../../components/admin/MavisKnowledgeSearch";
+import MavisSearchConsolePanel from "../../../components/admin/MavisSearchConsolePanel";
 import { signOut } from "../actions";
 
 export const metadata = {
@@ -30,6 +31,8 @@ export default async function MavisAdminPage() {
         <nav className="admin-nav" aria-label="منوی مدیریت">
           <Link href="/admin">داشبورد</Link>
           <Link className="active" href="/admin/mavis">مرکز دانش MAVIS</Link>
+          <a href="#knowledge-search">پژوهش حقوقی</a>
+          <a href="#growth-intelligence">هوشمندی رشد</a>
         </nav>
         <div className="admin-sidebar-foot">
           <span>دسترسی مدیر</span>
@@ -56,6 +59,7 @@ export default async function MavisAdminPage() {
             <article><span>مقالات و خلاصه‌ها</span><strong>{(inventory.legalArticles + inventory.publishedArticles + inventory.researchNotes).toLocaleString("fa-IR")}</strong><small>{inventory.legalArticles.toLocaleString("fa-IR")} خلاصه ماده · {inventory.publishedArticles.toLocaleString("fa-IR")} مقاله سایت · {inventory.researchNotes.toLocaleString("fa-IR")} یادداشت پژوهشی</small></article>
           </section>
           <section id="knowledge-search"><MavisKnowledgeSearch /></section>
+          <section id="growth-intelligence"><MavisSearchConsolePanel /></section>
           <section className="admin-help">
             <strong>مرز استفاده از نتایج</strong>
             <p>این نسخه فقط مدخل‌های موجود را بازیابی و مرتب می‌کند. منبع ثانویه یا وضعیت «نیازمند بازبینی» به‌عنوان قانون معتبر معرفی نمی‌شود. خروجی، نظر حقوقی یا محاسبه مهلت نیست و هر نتیجه نیازمند بررسی وکیل است.</p>
