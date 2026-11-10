@@ -135,7 +135,10 @@ function setStep(step) {
   status.textContent = "مرحله " + currentStep + " از ۴";
   if (currentStep !== 4) preview.hidden = true;
   const heading = document.querySelector('[data-step-panel="' + currentStep + '"] h2');
-  if (heading) heading.setAttribute("tabindex", "-1"), heading.focus({ preventScroll: true });
+  if (heading) {
+    heading.setAttribute("tabindex", "-1");
+    heading.focus({ preventScroll: true });
+  }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
