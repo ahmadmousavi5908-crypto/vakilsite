@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "description": "Small deterministic top-1 smoke set for the current public legal-library corpus; not a statistically representative relevance benchmark.",
+  "cases": [
+    {
+      "query": "سند رسمی",
+      "expected_id": "term_official_document",
+      "rationale": "Exact canonical term"
+    },
+    {
+      "query": "سند تک‌برگ",
+      "expected_id": "term_title_deed",
+      "rationale": "Exact alias after Persian normalization"
+    },
+    {
+      "query": "ثبت رسمی ملک",
+      "expected_id": "term_official_registration",
+      "rationale": "Exact curated alias"
+    },
+    {
+      "query": "تعریف سند رسمی",
+      "expected_id": "art_civil_code_1287",
+      "rationale": "Exact article-summary title"
+    },
+    {
+      "query": "قانون الزام به ثبت رسمی معاملات اموال غیرمنقول",
+      "expected_id": "law_compulsory_real_estate_registration",
+      "rationale": "Exact law title"
+    }
+  ]
+}
