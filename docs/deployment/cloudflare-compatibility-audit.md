@@ -37,6 +37,9 @@ The OpenNext and Wrangler configuration files on this branch are audit-only. Ada
 - Adapter: `@opennextjs/cloudflare@1.20.16`
 - Wrangler: `4.160.0`
 - Configuration: `open-next.config.ts` and `wrangler.jsonc` on this audit branch only.
+- Initial dependency-resolution attempt failed safely: adapter 1.20.16 requires Next.js `>=16.4.5`, while the baseline pins `16.4.3`. No peer-dependency override was used.
+- Next.js `16.4.5` includes security fixes; the current stable patch is `16.4.6`. The audit workflow now retests OpenNext with Next.js and `eslint-config-next` `16.4.6` applied only to the ephemeral CI checkout.
+- The repository's `package.json` and `package-lock.json` remain unchanged by this patch test.
 - Build result: pending GitHub Actions.
 - No preview or deployment has been started.
 
