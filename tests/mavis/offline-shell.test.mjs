@@ -33,7 +33,7 @@ test("offline answer panel has visible provenance and accessible live-region mar
 
 test("offline page clearly limits the guarantee to the cached route and downloaded data", () => {
   assert.match(html, /یک‌بار با اینترنت باز کنید/);
-  assert.match(html, /ثبت درخواست و ارسال مدارک بدون اتصال انجام نمی‌شود/);
+  assert.match(html, /ارسال درخواست به دفتر بدون اتصال انجام نمی‌شود/);
   assert.match(html, /noindex,follow/);
 });
 
