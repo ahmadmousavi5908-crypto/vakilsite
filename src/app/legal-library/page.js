@@ -60,6 +60,7 @@ export default function LegalLibraryPage() {
             <Link href="/legal-glossary">فرهنگ عمومی اصطلاحات حقوقی ←</Link>
             <Link href="/articles">راهنماها و مقالات حقوقی ←</Link>
             <Link href="/legal-library/catalog">فهرست مستقل همه مدخل‌های کتابخانه ←</Link>
+            <Link href="/mavis-offline/index.html">پاسخ‌گوی آفلاین ماویس ←</Link>
           </div>
         </div>
       </section>
