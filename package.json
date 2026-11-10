@@ -15,7 +15,7 @@
     "predev": "node scripts/mavis/generate-offline-published-articles.mjs",
     "validate:mavis-offline": "node scripts/mavis/validate-offline-bundle.mjs",
     "pretest:mavis-offline": "node scripts/mavis/generate-offline-published-articles.mjs",
-    "test:mavis-offline": "node --test tests/mavis/offline-search.test.mjs tests/mavis/offline-answer.test.mjs tests/mavis/offline-shell.test.mjs",
+    "test:mavis-offline": "node --test tests/mavis/offline-search.test.mjs tests/mavis/offline-answer.test.mjs tests/mavis/offline-shell.test.mjs tests/mavis/offline-intake.test.mjs",
     "test:mavis-search-console": "node --test tests/mavis/search-console-adapter.test.mjs tests/mavis/search-console-client.test.mjs tests/mavis/search-console-handler.test.mjs tests/mavis/growth-metrics.test.mjs"
   },
   "dependencies": {

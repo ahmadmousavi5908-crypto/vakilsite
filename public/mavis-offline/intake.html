@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#142b43">
+<meta name="robots" content="noindex,follow">
+<meta name="description" content="فرم فشرده و شرطی پذیرش اولیه درخواست حقوقی در دستیار ماویس.">
+<title>پذیرش اولیه موکل | ماویس</title>
+<style>
+:root{color-scheme:light;--navy:#142b43;--gold:#b79a5b;--ink:#233447;--muted:#657386;--line:#dce3e9;--paper:#f5f7f9;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Tahoma,"Segoe UI",sans-serif;line-height:1.8}
+header{background:linear-gradient(125deg,#10253a,#1d3b56);color:#fff;padding:20px 16px 22px;border-bottom:3px solid var(--gold)}
+.wrap{width:min(900px,calc(100% - 24px));margin:auto}header a{color:#ead7a8;text-decoration:none;font-size:12px}h1{font-size:clamp(21px,4vw,29px);margin:7px 0}header p{color:#e2e8ee;margin:0;font-size:13px}
+main{padding:18px 0 42px}.notice{background:#fff8e9;border:1px solid #ead9ac;border-radius:12px;padding:11px 13px;font-size:12px;color:#665326;margin-bottom:12px}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.panel h2{font-size:15px;color:var(--navy);margin:0 0 12px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}.field{min-width:0}.field.full{grid-column:1/-1}
+label,.legend{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
+input,select,textarea{width:100%;min-width:0;border:1px solid #cbd5df;border-radius:9px;padding:9px 10px;font:inherit;font-size:13px;color:var(--ink);background:#fff}
+textarea{min-height:82px;resize:vertical}input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.hint{font-size:11px;color:var(--muted);margin:4px 0 0}
+.choices{display:flex;gap:8px 14px;flex-wrap:wrap}.choice{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:400;margin:0}.choice input{width:auto;min-width:0;accent-color:var(--navy)}
+.consent{display:grid;gap:8px}.consent label{display:flex;gap:8px;align-items:flex-start;font-weight:400;font-size:12px;margin:0}.consent input{width:auto;margin-top:5px;flex:0 0 auto}
+.actions{display:flex;gap:9px;flex-wrap:wrap}.actions button{border:0;border-radius:9px;padding:10px 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.primary{background:var(--navy);color:#fff}.secondary{background:#eee8da;color:#54472e}.muted{background:#edf1f5;color:#40546a}
+button:disabled{opacity:.55;cursor:not-allowed}
+#form-status{font-size:12px;color:var(--muted);margin:10px 0 0}#preview{margin-top:14px}#preview[hidden]{display:none}.preview-box{background:#f8fafb;border:1px solid var(--line);border-radius:10px;padding:12px}.preview-box h2{font-size:15px;margin:0 0 8px}#message-preview{width:100%;min-height:260px;direction:rtl;white-space:pre-wrap;font-size:12px}
+footer{text-align:center;font-size:11px;color:var(--muted);padding:8px 0}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.panel{padding:13px}.actions button{width:100%}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a href="./index.html">← بازگشت به کتابخانه آفلاین ماویس</a><h1>فرم پذیرش اولیه و آماده‌سازی درخواست</h1><p>پرسش‌ها متناسب با موضوع انتخابی نمایش داده می‌شوند تا اطلاعات لازم جمع‌آوری شود، بدون آنکه فرم به یک دیوار بلند از سؤال تبدیل شود.</p></div></header>
+<main class="wrap">
+<div class="notice"><strong>حریم خصوصی:</strong> این فرم اطلاعات را در سرور یا حافظه مرورگر ذخیره نمی‌کند. پس از تکمیل، متن درخواست فقط با اقدام شما کپی می‌شود و می‌توانید آن را در واتساپ دفتر ارسال کنید. رمز، اطلاعات بانکی، کد ملی، تصویر مدارک محرمانه و اطلاعات غیرضروری اشخاص ثالث را وارد نکنید.</div>
+<form id="intake-form" novalidate>
+<section class="panel">
+<h2>۱. مشخصات و راه تماس</h2>
+<div class="grid">
+<div class="field"><label for="full-name">نام و نام خانوادگی *</label><input id="full-name" name="fullName" maxlength="80" autocomplete="name" required></div>
+<div class="field"><label for="phone">شماره همراه *</label><input id="phone" name="phone" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="مثلاً 0912..." required></div>
+<div class="field"><label for="city">شهر محل سکونت یا رسیدگی *</label><input id="city" name="city" maxlength="60" required></div>
+<div class="field"><label for="topic">موضوع اصلی درخواست *</label><select id="topic" name="topic" required><option value="">انتخاب کنید</option><option value="property">ملک، زمین و امور ثبتی</option><option value="contract">قرارداد و تعهدات</option><option value="cheque">چک، سفته و مطالبه وجه</option><option value="family">خانواده، مهریه و طلاق</option><option value="criminal">شکایت و پرونده کیفری</option><option value="labor">کار و تأمین اجتماعی</option><option value="administrative">امور اداری و دیوان عدالت</option><option value="other">سایر موضوعات</option></select></div>
+<div class="field"><label for="role">سمت شما در موضوع *</label><select id="role" name="role" required><option value="">انتخاب کنید</option><option>خواهان یا شاکی</option><option>خوانده یا مشتکی‌عنه</option><option>متهم</option><option>محکوم‌له یا محکوم‌علیه</option><option>طرف قرارداد یا ذی‌نفع</option><option>نماینده یا ولی</option><option>هنوز اقدام قضایی نشده</option><option>سایر</option></select></div>
+<div class="field"><label for="stage">مرحله فعلی موضوع *</label><select id="stage" name="stage" required><option value="">انتخاب کنید</option><option>هنوز اقدام رسمی نشده</option><option>مذاکره یا ارسال اظهارنامه</option><option>ثبت دادخواست یا شکایت</option><option>دادسرا یا تحقیقات مقدماتی</option><option>رسیدگی در دادگاه</option><option>اعتراض، تجدیدنظر یا فرجام</option><option>اجرای رأی یا اجرائیه</option><option>مختومه یا در حال اجرا</option><option>اطلاع ندارم</option></select></div>
+</div>
+</section>
+<section class="panel">
+<h2>۲. فوریت و اطلاعات متناسب با موضوع</h2>
+<div class="field"><span class="legend">میزان فوریت *</span><div class="choices"><label class="choice"><input type="radio" name="urgency" value="عادی" required>عادی</label><label class="choice"><input type="radio" name="urgency" value="نیازمند بررسی زودهنگام">نیازمند بررسی زودهنگام</label><label class="choice"><input type="radio" name="urgency" value="دارای مهلت یا جلسه نزدیک">دارای مهلت یا جلسه نزدیک</label></div></div>
+<div class="grid" style="margin-top:10px"><div class="field"><label for="deadline">تاریخ جلسه، ابلاغ یا پایان مهلت (در صورت وجود)</label><input id="deadline" name="deadline" type="text" maxlength="80" placeholder="تاریخ و نوع رویداد را بنویسید"></div><div class="field"><label for="reference">شماره پرونده یا شعبه (اختیاری)</label><input id="reference" name="reference" maxlength="100"></div></div>
+<div id="topic-fields" class="grid" style="margin-top:10px" aria-live="polite"><p class="hint field full">پس از انتخاب موضوع، پرسش‌های مرتبط نمایش داده می‌شوند.</p></div>
+</section>
+<section class="panel">
+<h2>۳. شرح موضوع و خواسته شما</h2>
+<div class="grid">
+<div class="field full"><label for="summary">ماجرا را به ترتیب زمانی و با ذکر تاریخ‌های مهم توضیح دهید *</label><textarea id="summary" name="summary" minlength="20" maxlength="2000" required placeholder="چه اتفاقی افتاده؟ از چه زمانی؟ چه اقداماتی انجام شده است؟"></textarea><p class="hint">۲۰ تا ۲۰۰۰ نویسه. فقط اطلاعات ضروری را بنویسید.</p></div>
+<div class="field full"><label for="goal">از وکیل چه کمکی می‌خواهید؟ *</label><textarea id="goal" name="goal" minlength="5" maxlength="500" required placeholder="مثلاً بررسی امکان مطالبه وجه، دفاع، اعتراض به رأی یا تنظیم قرارداد"></textarea></div>
+<div class="field full"><span class="legend">مدارک یا اطلاعاتی که در اختیار دارید</span><div id="document-options" class="choices"></div><div class="field" style="margin-top:8px"><label for="other-docs">مدرک یا توضیح تکمیلی</label><input id="other-docs" name="otherDocs" maxlength="250"></div></div>
+</div>
+</section>
+<section class="panel">
+<h2>۴. رضایت‌ها و ارسال درخواست</h2>
+<div class="consent">
+<label><input type="checkbox" name="caseConsent" required><span>با ارسال این درخواست، رضایت می‌دهم اطلاعاتی که شخصاً وارد کرده‌ام برای بررسی اولیه موضوع توسط دفتر وکیل استفاده شود. می‌دانم این ثبت، به‌تنهایی به معنی قبول وکالت نیست. *</span></label>
+<label><input type="checkbox" name="thirdPartyNotice" required><span>می‌دانم باید از درج اطلاعات حساس و غیرضروری اشخاص ثالث خودداری کنم و در صورت ضرورت، مجوز یا مبنای قانونی ارائه اطلاعات آنان را داشته باشم. *</span></label>
+<label><input type="checkbox" name="marketingConsent"><span>به‌صورت اختیاری با دریافت پیام‌های اطلاع‌رسانی و محتوای حقوقی دفتر موافقم.</span></label>
+</div>
+<p class="hint">رضایت بررسی درخواست، آگاهی درباره اطلاعات اشخاص ثالث و رضایت بازاریابی مستقل هستند. گزینه بازاریابی اختیاری است.</p>
+<div class="actions" style="margin-top:14px"><button class="primary" type="submit">ساخت پیام آماده برای وکیل</button><button class="muted" type="reset">پاک‌کردن فرم</button></div>
+<p id="form-status" role="status" aria-live="polite">پس از ساخت پیام، متن را بررسی کنید؛ هیچ پیامی بدون اقدام نهایی شما ارسال نمی‌شود.</p>
+<div id="preview" hidden><div class="preview-box"><h2>پیش‌نمایش درخواست شما</h2><textarea id="message-preview" readonly aria-label="متن آماده درخواست"></textarea><div class="actions" style="margin-top:9px"><button class="primary" id="copy-open" type="button">کپی متن و بازکردن واتساپ دفتر</button><button class="secondary" id="copy-only" type="button">فقط کپی متن</button></div><p class="hint">برای ارسال، متن کپی‌شده را در گفت‌وگوی واتساپ دفتر جای‌گذاری و خودتان دکمه ارسال را بزنید. این فرم چیزی را خودکار ارسال نمی‌کند.</p></div></div>
+</section>
+</form>
+<footer>ماویس · پذیرش اولیه ساختاریافته · بدون ذخیره‌سازی خودکار اطلاعات</footer>
+</main>
+<script type="module" src="./intake.js"></script>
+</body></html>
