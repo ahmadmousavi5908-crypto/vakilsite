@@ -103,7 +103,7 @@ function renderTopicFields() {
   topicFields.replaceChildren();
   documentOptions.replaceChildren();
   if (!topic) return;
-  (topicQuestions[topic] || []).forEach((field, index) => topicFields.append(createField(...field, index)));
+  (topicQuestions[topic] || []).forEach((field, index) => topicFields.append(createField(field[0], field[1], field[2], field[3] || [], index)));
   for (const [index, label] of (documentSets[topic] || []).entries()) {
     const wrapper = document.createElement("label");
     wrapper.className = "choice";
@@ -174,12 +174,13 @@ async function copyMessage() {
 
 document.getElementById("copy-only").addEventListener("click", copyMessage);
 document.getElementById("copy-open").addEventListener("click", async () => {
-  await copyMessage();
   if (!navigator.onLine) {
+    await copyMessage();
     status.textContent += " اینترنت در دسترس نیست؛ پس از اتصال، متن را در واتساپ دفتر ارسال کنید.";
     return;
   }
   window.open("https://wa.me/989169165902", "_blank", "noopener,noreferrer");
+  await copyMessage();
 });
 
 form.addEventListener("reset", () => {
