@@ -40,11 +40,12 @@ The OpenNext and Wrangler configuration files on this branch are audit-only. Ada
 - Initial dependency-resolution attempt failed safely: adapter 1.20.16 requires Next.js `>=16.4.5`, while the baseline pins `16.4.3`. No peer-dependency override was used.
 - Next.js `16.4.5` includes security fixes; the current stable patch is `16.4.6`. The audit workflow now retests OpenNext with Next.js and `eslint-config-next` `16.4.6` applied only to the ephemeral CI checkout.
 - The repository's `package.json` and `package-lock.json` remain unchanged by this patch test.
-- Build result: pending GitHub Actions.
-- No preview or deployment has been started.
+- OpenNext Workers build result: **success** in GitHub Actions run `42920481874`, after the ephemeral CI checkout applied Next.js and `eslint-config-next` `16.4.6`.
+- Vinext compatibility scan and OpenNext adapter build both completed successfully in the same run.
+- This validates adapter compilation only. No local Workers-runtime preview, Supabase authentication smoke test, production deployment, or domain binding has been performed.
 
 OpenNext is a relevant comparison because its Cloudflare adapter transforms the output of the existing `next build`, supports Next.js 16, and uses the Node.js runtime compatibility layer. Its preview still must be tested for Supabase cookie refresh, Server Actions, API handlers, and image delivery.
 
 ## Decision gate
 
-Do not merge this audit PR or change the hosting target based only on a compatibility scan or a successful adapter build. The next gate is a successful OpenNext build followed by a local Workers-runtime preview and HTTP/authentication smoke tests. Compare image behavior and route semantics before selecting the adapter.
+The audit PR was merged into the active Mother Two Updated work branch after both CI jobs succeeded. Do not change the hosting target based only on a compatibility scan or successful adapter build. The next gate is a successful OpenNext build followed by a local Workers-runtime preview and HTTP/authentication smoke tests. Compare image behavior and route semantics before selecting the adapter.
