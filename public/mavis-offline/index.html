@@ -62,16 +62,15 @@ label{display:block;font-weight:700;margin-bottom:8px}form{display:flex;gap:9px;
 /* MAVIS welcome area only: the conversation and intake UI below remain unchanged. */
 header.welcome-hero{padding:24px 18px 20px;background:linear-gradient(125deg,#10253a,#1d3b56);color:#fff;border:0;border-bottom:3px solid var(--gold)}
 .welcome-inner{width:min(1040px,calc(100% - 28px));margin:0 auto}
-.welcome-main{display:grid;grid-template-columns:minmax(0,1fr) 250px;align-items:center;gap:26px;direction:rtl}
-.welcome-copy{min-width:0;text-align:right}
-header.welcome-hero .eyebrow{display:inline-block;color:#e0c78d;font-size:12px;font-weight:700;letter-spacing:.5px}
-header.welcome-hero h1{margin:8px 0 10px;color:#fff;font-size:clamp(25px,4vw,34px);line-height:1.5}
-header.welcome-hero p{max-width:720px;margin:8px 0;color:#e2e8ee;font-size:14px;line-height:2}
-header.welcome-hero .welcome-lead{color:#fff;font-size:17px;font-weight:700}
-header.welcome-hero .welcome-instruction{color:#f2dfb5;font-weight:700}
-header.welcome-hero .welcome-disclaimer{margin-top:12px;padding-top:9px;border-top:1px solid rgba(226,232,238,.25);color:#cbd5df;font-size:11px;line-height:1.8}
-.welcome-portrait{display:flex;align-items:center;justify-content:center;min-width:0;min-height:240px}
-.welcome-portrait img{display:block;width:min(100%,240px);height:260px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 12px 18px rgba(0,0,0,.28))}
+.welcome-main{display:grid;grid-template-columns:minmax(0,1fr) 390px;align-items:center;gap:34px;direction:rtl}
+.welcome-copy{min-width:0;text-align:right;max-width:590px}
+header.welcome-hero .eyebrow{display:inline-block;color:#e0c78d;font-size:11px;font-weight:700;letter-spacing:.6px}
+header.welcome-hero h1{margin:8px 0 6px;color:#fff;font-size:clamp(28px,4.2vw,38px);line-height:1.35}
+header.welcome-hero p{max-width:560px;margin:10px 0;color:#e2e8ee;font-size:15px;line-height:1.9}
+header.welcome-hero .welcome-lead{color:#f2dfb5;font-size:16px;font-weight:700}
+header.welcome-hero .welcome-disclaimer{margin-top:14px;padding-top:9px;border-top:1px solid rgba(226,232,238,.25);color:#cbd5df;font-size:11px;line-height:1.7}
+.welcome-portrait{display:flex;align-items:center;justify-content:center;min-width:0;min-height:410px;perspective:1000px}
+.welcome-portrait img{display:block;width:min(100%,390px);height:420px;object-fit:contain;object-position:center bottom;transform:rotateY(-7deg) translateZ(18px);filter:drop-shadow(0 22px 24px rgba(0,0,0,.34))}
 .welcome-whatsapp{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:18px;padding:15px 17px;border:1px solid rgba(224,199,141,.75);border-radius:14px;background:rgba(7,22,36,.34)}
 .welcome-whatsapp-copy{min-width:0}
 .welcome-whatsapp strong{display:block;color:#f2dfb5;font-size:16px;line-height:1.7}
@@ -80,24 +79,24 @@ header.welcome-hero .welcome-disclaimer{margin-top:12px;padding-top:9px;border-t
 .welcome-whatsapp-link:hover{background:#ead7a8;transform:translateY(-1px)}
 .welcome-whatsapp-link:focus-visible{outline:3px solid #fff;outline-offset:3px}
 @media(max-width:620px){
- header.welcome-hero{padding:17px 12px 15px}
+ header.welcome-hero{padding:18px 14px 15px}
  .welcome-inner{width:100%}
- .welcome-main{grid-template-columns:minmax(0,1fr) 126px;gap:10px;align-items:center}
- header.welcome-hero h1{font-size:23px;margin:5px 0}
- header.welcome-hero p{font-size:12px;line-height:1.9;margin:6px 0}
+ .welcome-main{grid-template-columns:minmax(0,1fr);gap:4px;align-items:center}
+ .welcome-copy{text-align:center;margin:0 auto}
+ header.welcome-hero h1{font-size:25px;margin:4px 0}
+ header.welcome-hero p{font-size:13px;line-height:1.8;margin:7px auto}
  header.welcome-hero .welcome-lead{font-size:14px}
- .welcome-portrait{min-height:175px}
- .welcome-portrait img{width:100%;height:190px}
- .welcome-whatsapp{align-items:stretch;flex-direction:column;gap:10px;margin-top:12px;padding:12px}
- .welcome-whatsapp strong{font-size:15px}
- .welcome-whatsapp p{font-size:12px!important}
- .welcome-whatsapp-link{width:100%}
+ .welcome-portrait{min-height:265px}
+ .welcome-portrait img{width:min(78vw,285px);height:280px;transform:rotateY(-5deg) translateZ(12px)}
+ .welcome-whatsapp{align-items:center;flex-direction:row;gap:10px;margin-top:12px;padding:12px}
+ .welcome-whatsapp strong{font-size:13px}
+ .welcome-whatsapp-link{width:auto;white-space:nowrap;padding:9px 12px}
 }
 @media(max-width:370px){
- .welcome-main{grid-template-columns:minmax(0,1fr) 104px;gap:7px}
- .welcome-portrait{min-height:155px}
- .welcome-portrait img{height:165px}
- header.welcome-hero p{font-size:11px}
+ .welcome-portrait{min-height:235px}
+ .welcome-portrait img{width:min(76vw,255px);height:250px}
+ .welcome-whatsapp{align-items:stretch;flex-direction:column}
+ .welcome-whatsapp-link{width:100%}
 }
 @media(prefers-reduced-motion:reduce){.welcome-whatsapp-link{transition:none}.welcome-whatsapp-link:hover{transform:none}}
 
@@ -112,18 +111,15 @@ header.welcome-hero .welcome-disclaimer{margin-top:12px;padding-top:9px;border-t
       </div>
       <div class="welcome-copy">
         <span class="eyebrow">MAVIS · MOUSAVI LEGAL AI</span>
-        <h1>سلام، خوش آمدید!</h1>
-        <p class="welcome-lead">من ماویس هستم؛ دستیار هوشمند گروه وکیل موسوی.</p>
-        <p>اینجا می‌توانید موضوع حقوقی خود را با من در میان بگذارید. من کمک می‌کنم موضوعتان را بهتر بشناسید، اطلاعات و راهنمایی‌های اولیه حقوقی را بررسی کنید و برای پیگیری دقیق‌تر، آماده شوید.</p>
-        <p class="welcome-instruction">برای اینکه بهتر راهنمایی‌تان کنم، لطفاً بخش‌های زیر را با دقت مطالعه کنید و اطلاعات خواسته‌شده را تکمیل کنید.</p>
-        <p>اگر می‌خواهید موضوعتان توسط وکیل بررسی شود، اطلاعات اولیه را ثبت کنید تا مسیر ارتباط و پیگیری با دفتر برایتان فراهم شود.</p>
-        <p class="welcome-disclaimer">ماویس دستیار هوشمند راهنمایی اولیه است؛ این ابزار مدل زبانی مولد یا جایگزین مشاوره حقوقی و بررسی تخصصی وکیل نیست.</p>
+        <h1>سلام، من ماویس هستم</h1>
+        <p class="welcome-lead">دستیار هوشمند گروه وکیل موسوی</p>
+        <p>موضوع حقوقی‌تان را بنویسید تا راهنمایی اولیه و مسیر پیگیری را شروع کنیم.</p>
+        <p class="welcome-disclaimer">راهنمایی اولیه؛ نه جایگزین بررسی و مشاوره وکیل.</p>
       </div>
     </div>
     <aside class="welcome-whatsapp" aria-label="ارتباط با دفتر در واتساپ">
       <div class="welcome-whatsapp-copy">
-        <strong>همراه ما در واتساپ باشید</strong>
-        <p>برای اطلاع از تازه‌ترین مطالب حقوقی، تغییرات قوانین و نکات کاربردی روزانه، شماره دفتر گروه وکیل موسوی را ذخیره کنید و از طریق واتساپ به ما پیام دهید.</p>
+        <strong>مطالب حقوقی و ارتباط با دفتر</strong>
       </div>
       <a class="welcome-whatsapp-link" href="https://wa.me/989169165902" target="_blank" rel="noopener noreferrer" aria-label="ارسال پیام به واتساپ دفتر وکیل موسوی">پیام به واتساپ دفتر <span aria-hidden="true">↗</span></a>
     </aside>
