@@ -17,6 +17,7 @@ const documentOptions = document.getElementById("document-options");
 const preview = document.getElementById("preview");
 const messagePreview = document.getElementById("message-preview");
 const status = document.getElementById("form-status");
+const isEmbedded = Boolean(document.getElementById("intake-section"));
 const stepPanels = [...document.querySelectorAll("[data-step-panel]")];
 const stepIndicators = [...document.querySelectorAll("[data-step-indicator]")];
 let currentStep = 1;
@@ -171,6 +172,12 @@ function createTrackingId() {
 }
 
 topicSelect.addEventListener("change", () => updateTopicOptions(true));
+document.addEventListener("mavis:topic-detected", (event) => {
+  const topic = event.detail?.topic;
+  if (!topic || !topicLabels[topic]) return;
+  topicSelect.value = topic;
+  updateTopicOptions(true);
+});
 roleSelect.addEventListener("change", renderTopicFields);
 stageSelect.addEventListener("change", renderTopicFields);
 
@@ -185,7 +192,7 @@ document.querySelectorAll("[data-prev-step]").forEach((button) => {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  if (!validateCurrentStep()) return;
+  if (isEmbedded ? !form.reportValidity() : !validateCurrentStep()) return;
   const data = getData();
   const errors = validateIntake(data);
   if (errors.length) {
@@ -232,11 +239,11 @@ document.getElementById("copy-open").addEventListener("click", async () => {
 form.addEventListener("reset", () => {
   Promise.resolve().then(() => {
     updateTopicOptions(true);
-    setStep(1);
+    if (!isEmbedded) setStep(1);
     preview.hidden = true;
     status.textContent = "فرم پاک شد. هیچ اطلاعاتی ذخیره نشده بود.";
   });
 });
 
 updateTopicOptions(true);
-setStep(1);
+if (!isEmbedded) setStep(1);
