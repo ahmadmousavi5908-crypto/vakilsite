@@ -54,6 +54,10 @@ test("MAVIS opens one local conversation with an embedded conditional intake", a
   assert.match(dock, /href="\/mavis-offline\/index\.html"/);
   assert.match(html, /id="intake-section"[^>]*hidden/);
   assert.match(html, /id="intake-open"/);
+  assert.match(html, /id="footer-intake-open"/);
+  assert.match(app, /const openIntake=\(\)=>/);
+  assert.match(app, /if\(answer\)answer\.hidden=false/);
+  assert.match(app, /#intake-open, #footer-intake-open/);
   assert.match(html, /id="intake-form"/);
   assert.match(html, /id="intake-guidance"/);
   assert.doesNotMatch(html, /href="\.\/intake\.html"/);

@@ -38,6 +38,13 @@ label{display:block;font-weight:700;margin-bottom:8px}form{display:flex;gap:9px;
 
 .conversation-turn{display:grid;gap:8px;margin-bottom:14px}.user-message{justify-self:start;max-width:min(92%,720px);margin:0;background:#edf2f6;border:1px solid #dbe4ec;border-radius:14px 14px 4px 14px;padding:10px 14px;color:var(--navy);font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
 .conversation-history{display:grid;gap:12px}.conversation-results{display:grid;gap:10px;margin-top:10px}.conversation-results:empty{display:none}#offline-answer #intake-section{margin-top:16px}
+
+.closing-cta{margin:20px 0 0;padding:22px;background:linear-gradient(125deg,#10253a,#1d3b56);border:1px solid var(--gold);border-radius:16px;color:#fff;box-shadow:0 10px 28px #172d4014}
+.closing-cta .eyebrow{color:#e0c78d;font-size:12px;font-weight:700}
+.closing-cta h2{font-size:18px;margin:7px 0;color:#fff}
+.closing-cta p{margin:7px 0;color:#e2e8ee;font-size:13px}
+.closing-cta button{margin-top:10px;background:#d9c28d;color:#172d40;padding:11px 18px}
+.closing-cta .hint{color:#e2e8ee;font-size:11px}
 </style>
 </head>
 <body>
@@ -99,6 +106,13 @@ label{display:block;font-weight:700;margin-bottom:8px}form{display:flex;gap:9px;
 <section class="panel" style="margin-top:16px" aria-labelledby="source-registry-title"><h2 id="source-registry-title" style="font-size:17px;margin:0 0 10px">فهرست منابع پژوهش حقوقی</h2><p class="hint">منابع رسمی و منابع ثانویه از هم تفکیک شده‌اند. دسترسی زنده به این وب‌سایت‌ها در زمان ساخت بسته آفلاین تأیید نشده است.</p><div id="source-list" class="source-list"></div></section>
 \n<section class="warning"><strong>محدودیت مهم:</strong> این ابزار پاسخ‌گوی مولد یا مشاور حقوقی نیست. فقط اطلاعات موجود را بازیابی می‌کند. خلاصه‌ها متن رسمی قانون نیستند و وضعیت اعتبار همه قوانین به‌طور کامل تنقیح نشده است. برای مهلت‌ها، اقدامات فوری و تصمیم درباره پرونده، متن رسمی روز و نظر وکیل لازم است.</section>
 <p class="footer">برای استفاده آفلاین، این صفحه را یک‌بار با اینترنت باز کنید و تا پایان بارگذاری کتابخانه باز نگه دارید. در حالت آفلاین، فقط همین بخش و داده‌های ذخیره‌شده روی دستگاه در دسترس است؛ ارسال درخواست به دفتر بدون اتصال انجام نمی‌شود.</p>
+<section class="closing-cta" aria-labelledby="closing-cta-title">
+<span class="eyebrow">گام بعدی · ارتباط با وکیل</span>
+<h2 id="closing-cta-title">برای بررسی دقیق‌تر، مسیر را همین‌جا ادامه دهید</h2>
+<p>پاسخ‌های این صفحه راهنمای اولیه‌اند. با تکمیل فرم، شرح موضوع و اطلاعات مهم را منظم می‌کنید تا برای بررسی انسانی وکیل آماده باشد.</p>
+<button id="footer-intake-open" type="button">ادامه و آماده‌سازی درخواست برای وکیل</button>
+<p class="hint">گزارش ابتدا روی دستگاه شما ساخته می‌شود؛ ارسال آن فقط با انتخاب خودتان و پس از اتصال اینترنت انجام می‌شود. ساخت گزارش به معنی ثبت درخواست یا قبول وکالت نیست.</p>
+</section>
 </main>
 <script type="module" src="./app.js"></script>
 </body></html>
