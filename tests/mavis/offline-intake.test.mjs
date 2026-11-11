@@ -123,6 +123,6 @@ test("does not persist or transmit intake data from the browser script", async (
   assert.match(script, /navigator\.clipboard\.writeText/);
   assert.match(script, /https:\/\/wa\.me\//);
   assert.match(script, /data-next-step/);
-  assert.match(script, /form\\.reportValidity\\(\\)/);
+  assert.match(script, /form\.reportValidity\(\)/);
   assert.match(script, /mavis:topic-detected/);
 });
