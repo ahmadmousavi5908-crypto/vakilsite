@@ -94,6 +94,31 @@ const DOCUMENT_OPTIONS = {
   other: ["قرارداد یا توافق", "مکاتبات", "رسید یا سند پرداخت", "ابلاغیه یا رأی", "سایر مدارک مرتبط"],
 };
 
+
+const INTAKE_TOPIC_TERMS = [
+  { topic: "family", terms: ["طلاق", "مهریه", "نفقه", "حضانت", "تمکین", "اجرت المثل", "جهیزیه", "رابطه زوجیت", "ازدواج"] },
+  { topic: "cheque", terms: ["چک برگشتی", "گواهی عدم پرداخت", "چک", "سفته", "واخواست", "مطالبه وجه چک"] },
+  { topic: "criminal", terms: ["کلاهبرداری", "فیشینگ", "سرقت", "خیانت در امانت", "ضرب و جرح", "تهدید", "توهین", "قتل", "جرم", "پرونده کیفری", "شکایت کیفری", "بازداشت"] },
+  { topic: "labor", terms: ["اداره کار", "تامین اجتماعی", "تأمین اجتماعی", "حقوق معوقه", "اخراج", "سنوات", "عیدی", "کارگر", "کارفرما", "بیمه"] },
+  { topic: "administrative", terms: ["دیوان عدالت", "شهرداری", "تصمیم اداری", "تخلف اداری", "ابطال مصوبه", "دستگاه اجرایی"] },
+  { topic: "property", terms: ["قرارداد اجاره", "قولنامه", "مبایعه نامه", "سند مالکیت", "سرقفلی", "تخلیه", "تصرف", "افراز", "تفکیک", "ملک", "زمین", "اجاره", "مالکیت", "ثبتی"] },
+  { topic: "contract", terms: ["قرارداد", "فسخ", "تعهد", "وجه التزام", "پیمانکاری", "مشارکت", "نقض تعهد", "خسارت قراردادی"] },
+];
+
+export function detectIntakeTopic(value) {
+  const query = String(value ?? "")
+    .toLowerCase()
+    .replace(/[يى]/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/[\\u200c\\s]+/g, " ")
+    .trim();
+  if (!query) return null;
+  for (const group of INTAKE_TOPIC_TERMS) {
+    if (group.terms.some((term) => query.includes(term))) return group.topic;
+  }
+  return null;
+}
+
 export function normalizeDigits(value) {
   return String(value ?? "")
     .replace(/[۰-۹]/g, (digit) => String(digit.charCodeAt(0) - 1776))
