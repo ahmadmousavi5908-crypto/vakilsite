@@ -58,12 +58,76 @@ label{display:block;font-weight:700;margin-bottom:8px}form{display:flex;gap:9px;
 .panel[aria-labelledby="search-title"]{margin-bottom:0;border-radius:16px 16px 0 0;border-bottom:0;box-shadow:none}
 #offline-answer{margin:0;padding:0 18px 18px;background:#fff;border:1px solid var(--line);border-top:0;border-bottom:0;border-radius:0;box-shadow:none}
 .panel[aria-labelledby="source-registry-title"]{margin-top:0!important;border-top:0;border-radius:0 0 16px 16px;box-shadow:0 8px 28px #172d4010}
+
+/* MAVIS welcome area only: the conversation and intake UI below remain unchanged. */
+header.welcome-hero{padding:24px 18px 20px;background:linear-gradient(125deg,#10253a,#1d3b56);color:#fff;border:0;border-bottom:3px solid var(--gold)}
+.welcome-inner{width:min(1040px,calc(100% - 28px));margin:0 auto}
+.welcome-main{display:grid;grid-template-columns:minmax(0,1fr) 250px;align-items:center;gap:26px;direction:rtl}
+.welcome-copy{min-width:0;text-align:right}
+header.welcome-hero .eyebrow{display:inline-block;color:#e0c78d;font-size:12px;font-weight:700;letter-spacing:.5px}
+header.welcome-hero h1{margin:8px 0 10px;color:#fff;font-size:clamp(25px,4vw,34px);line-height:1.5}
+header.welcome-hero p{max-width:720px;margin:8px 0;color:#e2e8ee;font-size:14px;line-height:2}
+header.welcome-hero .welcome-lead{color:#fff;font-size:17px;font-weight:700}
+header.welcome-hero .welcome-instruction{color:#f2dfb5;font-weight:700}
+.welcome-portrait{display:flex;align-items:center;justify-content:center;min-width:0;min-height:240px}
+.welcome-portrait img{display:block;width:min(100%,240px);height:260px;object-fit:contain;object-position:center bottom;filter:drop-shadow(0 12px 18px rgba(0,0,0,.28))}
+.welcome-whatsapp{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:18px;padding:15px 17px;border:1px solid rgba(224,199,141,.75);border-radius:14px;background:rgba(7,22,36,.34)}
+.welcome-whatsapp-copy{min-width:0}
+.welcome-whatsapp strong{display:block;color:#f2dfb5;font-size:16px;line-height:1.7}
+.welcome-whatsapp p{margin:4px 0 0!important;color:#e2e8ee;font-size:13px!important;line-height:1.9}
+.welcome-whatsapp-link{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:9px 15px;border:1px solid #d9c28d;border-radius:10px;background:#d9c28d;color:#172d40;text-decoration:none;font-size:13px;font-weight:700;transition:background .2s ease,transform .2s ease}
+.welcome-whatsapp-link:hover{background:#ead7a8;transform:translateY(-1px)}
+.welcome-whatsapp-link:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(max-width:620px){
+ header.welcome-hero{padding:17px 12px 15px}
+ .welcome-inner{width:100%}
+ .welcome-main{grid-template-columns:minmax(0,1fr) 126px;gap:10px;align-items:center}
+ header.welcome-hero h1{font-size:23px;margin:5px 0}
+ header.welcome-hero p{font-size:12px;line-height:1.9;margin:6px 0}
+ header.welcome-hero .welcome-lead{font-size:14px}
+ .welcome-portrait{min-height:175px}
+ .welcome-portrait img{width:100%;height:190px}
+ .welcome-whatsapp{align-items:stretch;flex-direction:column;gap:10px;margin-top:12px;padding:12px}
+ .welcome-whatsapp strong{font-size:15px}
+ .welcome-whatsapp p{font-size:12px!important}
+ .welcome-whatsapp-link{width:100%}
+}
+@media(max-width:370px){
+ .welcome-main{grid-template-columns:minmax(0,1fr) 104px;gap:7px}
+ .welcome-portrait{min-height:155px}
+ .welcome-portrait img{height:165px}
+ header.welcome-hero p{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){.welcome-whatsapp-link{transition:none}.welcome-whatsapp-link:hover{transform:none}}
+
 </style>
 </head>
 <body>
-<header><div class="wrap"><span class="eyebrow">MAVIS · OFFLINE KNOWLEDGE</span><h1>گفت‌وگوی راهنمای ماویس</h1><p>پرسش خود را بنویسید؛ کتابخانه حقوقی همین دستگاه جست‌وجو می‌شود و پس از تشخیص موضوع، پرسش‌های مرتبط برای آماده‌سازی گزارش بررسی وکیل در همین صفحه نمایش داده می‌شود. این ابزار مدل زبانی مولد یا جایگزین مشاوره حقوقی نیست.</p></div></header>
+<header class="welcome-hero">
+  <div class="welcome-inner">
+    <div class="welcome-main">
+      <div class="welcome-copy">
+        <span class="eyebrow">MAVIS · MOUSAVI LEGAL AI</span>
+        <h1>سلام، خوش آمدید!</h1>
+        <p class="welcome-lead">من ماویس هستم؛ دستیار هوشمند گروه وکیل موسوی.</p>
+        <p>اینجا می‌توانید موضوع حقوقی خود را با من در میان بگذارید. من کمک می‌کنم موضوعتان را بهتر بشناسید، اطلاعات و راهنمایی‌های اولیه حقوقی را بررسی کنید و برای پیگیری دقیق‌تر، آماده شوید.</p>
+        <p class="welcome-instruction">برای اینکه بهتر راهنمایی‌تان کنم، لطفاً بخش‌های زیر را با دقت مطالعه کنید و اطلاعات خواسته‌شده را تکمیل کنید.</p>
+        <p>اگر می‌خواهید موضوعتان توسط وکیل بررسی شود، اطلاعات اولیه را ثبت کنید تا مسیر ارتباط و پیگیری با دفتر برایتان فراهم شود.</p>
+      </div>
+      <div class="welcome-portrait">
+        <img src="data:image/webp;base64,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" alt="ماویس، دستیار هوشمند گروه وکیل موسوی" width="240" height="260" fetchpriority="high">
+      </div>
+    </div>
+    <aside class="welcome-whatsapp" aria-label="ارتباط با دفتر در واتساپ">
+      <div class="welcome-whatsapp-copy">
+        <strong>همراه ما در واتساپ باشید</strong>
+        <p>برای اطلاع از تازه‌ترین مطالب حقوقی، تغییرات قوانین و نکات کاربردی روزانه، شماره دفتر گروه وکیل موسوی را ذخیره کنید و از طریق واتساپ به ما پیام دهید.</p>
+      </div>
+      <a class="welcome-whatsapp-link" href="https://wa.me/989169165902" target="_blank" rel="noopener noreferrer" aria-label="ارسال پیام به واتساپ دفتر وکیل موسوی">پیام به واتساپ دفتر <span aria-hidden="true">↗</span></a>
+    </aside>
+  </div>
+</header>
 <main class="wrap">
-<div class="statusbar"><span class="pill"><i class="dot" id="network-dot"></i><span id="network-status">در حال بررسی وضعیت اتصال…</span></span><span id="bundle-status">در حال بارگذاری کتابخانه…</span></div>
 <section class="panel" aria-labelledby="search-title"><h2 id="search-title" style="font-size:18px;margin:0 0 12px">گفت‌وگو را با توضیح موضوع شروع کنید</h2>
 <form id="search-form"><label for="query" style="position:absolute;right:-9999px">عبارت جست‌وجو</label><input id="query" type="search" maxlength="160" minlength="2" placeholder="مثلاً چک برگشتی، قولنامه، مهریه، فیشینگ یا اعتراض به رأی" autocomplete="off" required><button id="submit" type="submit" disabled>جست‌وجوی پاسخ اولیه</button></form>
 <p class="hint">جست‌وجو و تشخیص موضوع روی همین دستگاه انجام می‌شود؛ متن پرسش ذخیره یا به سرور ارسال نمی‌شود.</p>
