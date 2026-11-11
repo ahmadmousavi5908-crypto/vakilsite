@@ -79,15 +79,45 @@ function renderTopicFields() {
       )
     : {};
 
-  const previousDocuments = sameTopic
-    ? new Set(
-        [...documentOptions.querySelectorAll('input[name="documents"]:checked')]
-          .map((field) => field.value),
-      )
-    : new Set();
+  const previousDocumentStatuses = Object.fromEntries(
+    [...documentOptions.querySelectorAll("select[data-document]")].map(
+      (field) => [field.dataset.document, field.value],
+    ),
+  );
 
   topicFields.replaceChildren();
   documentOptions.replaceChildren();
+
+  const documentStatusOptions = [
+    ["", "وضعیت را انتخاب کنید"],
+    ["available", "در اختیار دارم"],
+    ["missing", "در اختیار ندارم"],
+    ["later", "بعداً ارائه می‌کنم"],
+    ["not_applicable", "مرتبط نیست"],
+  ];
+
+  getDocumentOptions(topic).forEach((label, index) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "document-status";
+
+    const labelNode = document.createElement("label");
+    const id = "document-status-" + index;
+    labelNode.htmlFor = id;
+    labelNode.textContent = label;
+
+    const select = document.createElement("select");
+    select.id = id;
+    select.name = "documentStatus";
+    select.dataset.document = label;
+
+    for (const [value, text] of documentStatusOptions) {
+      select.add(new Option(text, value));
+    }
+    select.value = previousDocumentStatuses[label] || "";
+
+    wrapper.append(labelNode, select);
+    documentOptions.append(wrapper);
+  });
 
   if (!topic) {
     topicFields.innerHTML =
@@ -103,20 +133,6 @@ function renderTopicFields() {
       createField(question, index, previousValues[question.label] || ""),
     );
   });
-
-  for (const label of getDocumentOptions(topic)) {
-    const wrapper = document.createElement("label");
-    wrapper.className = "choice";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.name = "documents";
-    checkbox.value = label;
-    checkbox.checked = previousDocuments.has(label);
-
-    wrapper.append(checkbox, document.createTextNode(label));
-    documentOptions.append(wrapper);
-  }
 
   renderedTopic = topic;
 }
@@ -134,7 +150,14 @@ function updateTopicOptions(resetRole = false) {
 function getData() {
   const data = Object.fromEntries(new FormData(form).entries());
   data.phone = normalizeDigits(data.phone);
-  data.documents = new FormData(form).getAll("documents");
+  data.documentStatuses = Object.fromEntries(
+    [...documentOptions.querySelectorAll("select[data-document]")].map(
+      (field) => [field.dataset.document, field.value],
+    ),
+  );
+  data.documents = Object.entries(data.documentStatuses)
+    .filter(([, value]) => value === "available")
+    .map(([label]) => label);
   data.caseConsent = form.elements.caseConsent.checked;
   data.thirdPartyNotice = form.elements.thirdPartyNotice.checked;
   data.marketingConsent = form.elements.marketingConsent.checked;

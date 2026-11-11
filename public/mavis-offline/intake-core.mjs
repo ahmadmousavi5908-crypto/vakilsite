@@ -6,6 +6,7 @@ const TOPIC_LABELS = {
   criminal: "شکایت و پرونده کیفری",
   labor: "کار و تأمین اجتماعی",
   administrative: "امور اداری و دیوان عدالت",
+  civil: "دعاوی مدنی، مطالبه وجه و خسارت",
   other: "سایر موضوعات",
 };
 
@@ -17,6 +18,7 @@ const ROLE_OPTIONS = {
   criminal: ["شاکی", "مشتکی‌عنه", "متهم", "بزه‌دیده", "نماینده یا ولی", "سایر"],
   labor: ["کارگر یا کارمند", "کارفرما", "پیمانکار", "بیمه‌شده", "نماینده", "سایر"],
   administrative: ["شخص حقیقی", "کارمند دولت", "شرکت یا شخص حقوقی", "نماینده", "سایر"],
+  civil: ["خواهان", "خوانده", "طلبکار", "بدهکار", "ذی‌نفع", "نماینده", "سایر"],
   other: ["متقاضی یا ذی‌نفع", "طرف مقابل", "نماینده", "سایر"],
 };
 
@@ -28,6 +30,7 @@ const STAGE_OPTIONS = {
   criminal: ["هنوز شکایت یا پرونده تشکیل نشده", "ثبت شکایت یا گزارش", "دادسرا یا تحقیقات مقدماتی", "رسیدگی در دادگاه", "اعتراض یا تجدیدنظر", "اجرای رأی", "اطلاع ندارم"],
   labor: ["هنوز درخواست ثبت نشده", "مراجعه به اداره کار یا تأمین اجتماعی", "رسیدگی در مرجع مربوط", "اعتراض به رأی", "اجرای رأی", "اطلاع ندارم"],
   administrative: ["هنوز درخواست یا اعتراضی ثبت نشده", "مکاتبه با دستگاه", "ثبت درخواست یا شکایت", "رسیدگی در مرجع اداری یا قضایی", "اعتراض یا تجدیدنظر", "اجرای رأی", "اطلاع ندارم"],
+  civil: ["هنوز اقدام رسمی نشده", "ارسال اظهارنامه یا مذاکره", "ثبت دادخواست", "رسیدگی در دادگاه", "اعتراض یا تجدیدنظر", "اجرای رأی یا اجرائیه", "اطلاع ندارم"],
   other: ["هنوز اقدام رسمی نشده", "مذاکره یا مکاتبه", "ثبت درخواست یا شکایت", "رسیدگی در مرجع رسمی", "اعتراض یا تجدیدنظر", "اجرای رأی", "اطلاع ندارم"],
 };
 
@@ -77,6 +80,12 @@ const BASE_QUESTIONS = {
     { question: "تاریخ ابلاغ تصمیم (در صورت وجود)", label: "تاریخ ابلاغ تصمیم", type: "text" },
     { question: "آیا پیش از این درخواست یا اعتراض ثبت کرده‌اید؟", label: "درخواست یا اعتراض قبلی", type: "select", options: ["بله و پاسخ دریافت شده", "بله و بدون پاسخ", "خیر", "اطلاع ندارم"] },
   ],
+  civil: [
+    { question: "نوع خواسته یا دعوای مدنی چیست؟", label: "نوع خواسته مدنی", type: "text", required: true },
+    { question: "مبنای ادعا یا تعهد مورد اختلاف چیست؟", label: "مبنای ادعا", type: "text", required: true },
+    { question: "مبلغ یا ارزش تقریبی خواسته (در صورت امکان)", label: "مبلغ یا ارزش خواسته", type: "text" },
+    { question: "آیا رأی یا پرونده قبلی درباره این موضوع وجود دارد؟", label: "رأی یا پرونده قبلی مدنی", type: "select", options: ["رأی صادر شده", "پرونده در جریان است", "وجود ندارد", "اطلاع ندارم"] },
+  ],
   other: [
     { question: "ماهیت موضوع را در یک عبارت مشخص کنید.", label: "ماهیت موضوع", type: "text", required: true },
     { question: "آیا موضوع در مرجع رسمی مطرح شده است؟", label: "طرح موضوع در مرجع رسمی", type: "select", options: ["بله", "خیر", "اطلاع ندارم"] },
@@ -91,9 +100,23 @@ const DOCUMENT_OPTIONS = {
   criminal: ["شکواییه یا لایحه", "احضاریه یا ابلاغیه", "گزارش یا صورت‌جلسه", "رأی یا قرار صادرشده", "مدرک مرتبط با واقعه"],
   labor: ["قرارداد یا حکم کارگزینی", "فیش حقوقی یا سابقه بیمه", "سوابق حضور و غیاب", "نامه یا رأی اداره کار", "مکاتبات کاری"],
   administrative: ["تصمیم یا نامه اداری", "ابلاغیه", "درخواست یا پاسخ دستگاه", "رأی مرجع اداری", "مدرک ثبت اعتراض"],
+  civil: ["قرارداد یا سند منشأ ادعا", "رسید و اسناد پرداخت", "مکاتبات و اظهارنامه", "دادخواست و ابلاغیه", "رأی یا اجرائیه", "گزارش کارشناسی"],
   other: ["قرارداد یا توافق", "مکاتبات", "رسید یا سند پرداخت", "ابلاغیه یا رأی", "سایر مدارک مرتبط"],
 };
 
+const BASE_DOCUMENT_OPTIONS = [
+  "مدارک هویتی (کارت ملی یا شناسنامه)",
+  "قراردادها و توافق‌نامه‌ها",
+  "اسناد رسمی یا ثبتی",
+  "رسیدها و اسناد پرداخت",
+  "مکاتبات، پیامک‌ها و پیام‌های مرتبط",
+  "اظهارنامه‌ها، دادخواست‌ها و لوایح",
+  "ابلاغیه‌ها و اخطاریه‌ها",
+  "آراء، قرارها و اجرائیه‌ها",
+  "گزارش‌ها، صورت‌جلسه‌ها و نظریه کارشناسی",
+  "عکس، فیلم، فایل صوتی یا سایر ادله",
+  "اطلاعات شهود یا مطلعان",
+];
 
 const INTAKE_TOPIC_TERMS = [
   { topic: "family", terms: ["طلاق", "مهریه", "نفقه", "حضانت", "تمکین", "اجرت المثل", "جهیزیه", "رابطه زوجیت", "ازدواج"] },
@@ -101,6 +124,7 @@ const INTAKE_TOPIC_TERMS = [
   { topic: "criminal", terms: ["کلاهبرداری", "فیشینگ", "سرقت", "خیانت در امانت", "ضرب و جرح", "تهدید", "توهین", "قتل", "جرم", "پرونده کیفری", "شکایت کیفری", "بازداشت"] },
   { topic: "labor", terms: ["اداره کار", "تامین اجتماعی", "تأمین اجتماعی", "حقوق معوقه", "اخراج", "سنوات", "عیدی", "کارگر", "کارفرما", "بیمه"] },
   { topic: "administrative", terms: ["دیوان عدالت", "شهرداری", "تصمیم اداری", "تخلف اداری", "ابطال مصوبه", "دستگاه اجرایی"] },
+  { topic: "civil", terms: ["دعوای مدنی", "دعوای حقوقی", "مطالبه خسارت", "الزام به انجام تعهد", "مسئولیت مدنی", "جبران خسارت", "مطالبه وجه", "استرداد وجه"] },
   { topic: "property", terms: ["قرارداد اجاره", "قولنامه", "مبایعه نامه", "سند مالکیت", "سرقفلی", "تخلیه", "تصرف", "افراز", "تفکیک", "ملک", "زمین", "اجاره", "مالکیت", "ثبتی"] },
   { topic: "contract", terms: ["قرارداد", "فسخ", "تعهد", "وجه التزام", "پیمانکاری", "مشارکت", "نقض تعهد", "خسارت قراردادی"] },
 ];
@@ -180,7 +204,7 @@ export function getTopicQuestions(topic, role = "", stage = "") {
 }
 
 export function getDocumentOptions(topic) {
-  return [...(DOCUMENT_OPTIONS[topic] || DOCUMENT_OPTIONS.other)];
+  return [...new Set([...BASE_DOCUMENT_OPTIONS, ...(DOCUMENT_OPTIONS[topic] || DOCUMENT_OPTIONS.other)])];
 }
 
 export function classifyIntake(data) {
@@ -221,8 +245,9 @@ export function getReviewChecklist(data) {
   const missing = [];
   if (!cleanLine(data.deadline, 80)) missing.push("تاریخ جلسه، ابلاغ یا مهلت (در صورت وجود)");
   if (!cleanLine(data.reference, 100)) missing.push("شماره پرونده یا شعبه (در صورت وجود)");
-  if (!Array.isArray(data.documents) || data.documents.length === 0) missing.push("مدارک موجود یا توضیح درباره نبود مدارک");
-  if (!cleanLine(data.otherDocs, 250)) missing.push("توضیح تکمیلی درباره مدارک (در صورت نیاز)");
+  const documentStatuses = data.documentStatuses || {};
+  const unansweredDocuments = getDocumentOptions(data.topic).filter((label) => !documentStatuses[label]);
+  if (unansweredDocuments.length) missing.push("تعیین وضعیت " + unansweredDocuments.length + " دسته از مدارک");
   const questions = getTopicQuestions(data.topic, data.role, data.stage);
   const unanswered = questions
     .filter((question) => question.required && !cleanLine(data.topicDetails?.[question.label], 250))
@@ -307,9 +332,20 @@ export function buildIntakeMessage(data, meta = {}) {
     "خواسته متقاضی از وکیل",
     cleanParagraph(data.goal, 500),
     "",
-    "مدارک/اطلاعات موجود",
-    (Array.isArray(data.documents) ? data.documents.map((item) => cleanLine(item, 100)).filter(Boolean) : []).join("، ") || "اعلام نشده",
-    "توضیح مدارک: " + cleanLine(data.otherDocs, 250),
+    "وضعیت چک‌لیست مدارک",
+    ...getDocumentOptions(data.topic)
+      .filter((label) => data.documentStatuses?.[label])
+      .map((label) => {
+        const statusLabels = {
+          available: "در اختیار دارم",
+          missing: "در اختیار ندارم",
+          later: "بعداً ارائه می‌کنم",
+          not_applicable: "مرتبط نیست",
+        };
+        return "- " + label + ": " + (statusLabels[data.documentStatuses[label]] || "نامشخص");
+      }),
+    "مدارک در اختیار: " + (Array.isArray(data.documents) ? data.documents.map((item) => cleanLine(item, 100)).filter(Boolean).join("، ") : "") || "اعلام نشده",
+    "توضیح تکمیلی درباره مدارک: " + cleanParagraph(data.otherDocs, 700),
     "",
     "رضایت بررسی اولیه: بله",
     "آگاهی درباره اطلاعات اشخاص ثالث: تأیید شد",
