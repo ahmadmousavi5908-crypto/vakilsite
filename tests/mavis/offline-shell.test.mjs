@@ -56,12 +56,15 @@ test("offline page clearly limits the guarantee to the cached route and download
 test("MAVIS opens one local conversation with an embedded conditional intake", async () => {
   const intake = await readFile(new URL("intake.html", root), "utf8");
   assert.match(dock, /href="\/mavis-offline\/index\.html"/);
-  assert.match(html, /id="intake-section"[^>]*hidden/);
-  assert.match(html, /id="intake-open"/);
-  assert.match(html, /id="footer-intake-open"/);
-  assert.match(app, /const openIntake=\(\)=>/);
-  assert.match(app, /if\(answer\)answer\.hidden=false/);
-  assert.match(app, /#intake-open, #footer-intake-open/);
+  assert.match(html, /id="intake-section" class="panel"/);
+  assert.doesNotMatch(html, /id="intake-section"[^>]*hidden/);
+  assert.match(html, /class="welcome-hero"/);
+  assert.match(html, /همراه ما در واتساپ باشید/);
+  assert.match(html, /href="https:\/\/wa\.me\/989169165902"/);
+  assert.ok(html.indexOf('class="welcome-portrait"') < html.indexOf('class="welcome-copy"'));
+  assert.doesNotMatch(html, /class="statusbar"|id="bundle-status"/);
+  assert.match(app, /const section=\$\("intake-section"\)/);
+  assert.match(app, /if\(section\)\{section\.hidden=false/);
   assert.match(html, /id="intake-form"/);
   assert.match(html, /id="intake-guidance"/);
   assert.doesNotMatch(html, /href="\.\/intake\.html"/);
