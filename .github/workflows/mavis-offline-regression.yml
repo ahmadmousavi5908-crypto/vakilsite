@@ -1,6 +1,9 @@
 name: MAVIS Offline Regression
 
 on:
+  push:
+    branches:
+      - mavis/unified-offline-conversation-20261111
   pull_request:
     branches:
       - work/mother-two-updated-mavis-20261110
