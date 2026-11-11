@@ -1,0 +1,39 @@
+name: MAVIS Offline Regression
+
+on:
+  push:
+    branches:
+      - mavis/unified-offline-conversation-20261111
+  pull_request:
+    branches:
+      - work/mother-two-updated-mavis-20261110
+    paths:
+      - "public/mavis-offline/**"
+      - "tests/mavis/**"
+      - "src/components/mavis/MavisAvatarDock.jsx"
+      - ".github/workflows/mavis-offline-regression.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Validate offline legal bundle
+        run: npm run validate:mavis-offline
+      - name: Run MAVIS offline regression tests
+        run: npm run test:mavis-offline
+      - name: Run ESLint
+        run: npm run lint

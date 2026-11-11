@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   buildIntakeMessage,
   classifyIntake,
+  detectIntakeTopic,
   getReviewChecklist,
   getRoleOptions,
   getStageOptions,
@@ -31,6 +32,18 @@ const valid = {
   documents: ["تصویر چک یا سفته", "گواهی عدم پرداخت"],
   topicDetails: { "نوع سند": "چک صیادی" },
 };
+
+
+test("detects common legal topics without inventing a topic for generic text", () => {
+  assert.equal(detectIntakeTopic("طلاق و مهریه"), "family");
+  assert.equal(detectIntakeTopic("چک برگشتی و گواهی عدم پرداخت"), "cheque");
+  assert.equal(detectIntakeTopic("قرارداد اجاره و تخلیه ملک"), "property");
+  assert.equal(detectIntakeTopic("فسخ قرارداد پیمانکاری"), "contract");
+  assert.equal(detectIntakeTopic("کلاهبرداری اینترنتی و فیشینگ"), "criminal");
+  assert.equal(detectIntakeTopic("حقوق معوقه و بیمه تأمین اجتماعی"), "labor");
+  assert.equal(detectIntakeTopic("اعتراض به تصمیم شهرداری در دیوان عدالت"), "administrative");
+  assert.equal(detectIntakeTopic("سلام، وقت بخیر"), null);
+});
 
 test("normalizes Persian and Arabic digits before validating contact numbers", () => {
   assert.equal(normalizeDigits("۰۹۱۲٣٤"), "091234");
@@ -110,4 +123,6 @@ test("does not persist or transmit intake data from the browser script", async (
   assert.match(script, /navigator\.clipboard\.writeText/);
   assert.match(script, /https:\/\/wa\.me\//);
   assert.match(script, /data-next-step/);
+  assert.match(script, /form\.reportValidity\(\)/);
+  assert.match(script, /mavis:topic-detected/);
 });
