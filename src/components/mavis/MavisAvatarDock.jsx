@@ -10,14 +10,14 @@ export default function MavisAvatarDock() {
   return (
     <div className={styles.root} dir="rtl">
       <Link
-        href="/ai-assistant"
+        href="/mavis-offline/"
         className={styles.link}
         aria-label="گفت‌وگو با ماویس، دستیار هوش مصنوعی حقوقی"
         title="ماویس، دستیار هوش مصنوعی حقوقی"
       >
         <span className={styles.label} aria-hidden="true">
-          <strong>دستیار هوش مصنوعی</strong>
-          <small>برای گفت‌وگو کلیک کنید</small>
+          <strong>گفت‌وگو با ماویس</strong>
+          <small>پرسش خود را مطرح کنید</small>
         </span>
         <span className={styles.frame}>
           <Image
@@ -29,7 +29,7 @@ export default function MavisAvatarDock() {
             className={styles.image}
           />
         </span>
-        <span className={styles.srOnly}>ورود به صفحه دستیار ماویس</span>
+        <span className={styles.srOnly}>ورود مستقیم به گفت‌وگوی ماویس</span>
       </Link>
     </div>
   );
