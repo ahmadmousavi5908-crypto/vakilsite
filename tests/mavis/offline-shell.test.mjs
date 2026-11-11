@@ -3,10 +3,11 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const root = new URL("../../public/mavis-offline/", import.meta.url);
-const [html, app, worker] = await Promise.all([
+const [html, app, worker, dock] = await Promise.all([
   readFile(new URL("index.html", root), "utf8"),
   readFile(new URL("app.js", root), "utf8"),
   readFile(new URL("sw.js", root), "utf8"),
+  readFile(new URL("../../src/components/mavis/MavisAvatarDock.jsx", import.meta.url), "utf8"),
 ]);
 
 test("offline service worker precaches every runtime dependency", () => {
@@ -37,10 +38,18 @@ test("offline page clearly limits the guarantee to the cached route and download
   assert.match(html, /noindex,follow/);
 });
 
-test("offline library links to a privacy-preserving conditional intake form", async () => {
+test("MAVIS opens one local conversation with an embedded conditional intake", async () => {
   const intake = await readFile(new URL("intake.html", root), "utf8");
-  assert.match(html, /href="\.\/intake\.html"/);
-  assert.match(intake, /id="intake-form"/);
+  assert.match(dock, /href="\\/mavis-offline\\/"/);
+  assert.match(html, /id="intake-section"[^>]*hidden/);
+  assert.match(html, /id="intake-open"/);
+  assert.match(html, /id="intake-form"/);
+  assert.match(html, /id="intake-guidance"/);
+  assert.doesNotMatch(html, /href="\\.\\/intake\\.html"/);
+  assert.doesNotMatch(html, /data-step-panel|data-next-step|data-prev-step|class="stepper"/);
+  assert.match(app, /import "\\.\\/intake\\.js"/);
+  assert.match(app, /detectIntakeTopic\\(raw\\)/);
+  assert.match(app, /mavis:topic-detected/);
   assert.match(intake, /name="caseConsent"/);
   assert.match(intake, /name="thirdPartyNotice"/);
   assert.match(intake, /name="marketingConsent"/);
