@@ -42,7 +42,7 @@ test("offline answer panel has visible provenance and accessible live-region mar
   assert.ok(html.indexOf('id="intake-section"') > html.indexOf('id="offline-answer"'));
   assert.match(html, /ماویس دستیار هوشمند راهنمایی اولیه است؛ این ابزار مدل زبانی مولد یا جایگزین مشاوره حقوقی و بررسی تخصصی وکیل نیست/);
   assert.match(html, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
-  assert.match(html, /#intake-section \.grid\{grid-template-columns:1fr\}/);
+  assert.match(html, /#intake-section \.grid,#intake-section \.document-checklist\{grid-template-columns:1fr\}/);
   assert.doesNotMatch(app, /localStorage|sessionStorage|indexedDB/);
   assert.match(app, /root\.append\(turn\)/);
 });
