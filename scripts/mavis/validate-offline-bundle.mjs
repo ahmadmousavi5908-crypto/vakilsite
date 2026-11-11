@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 
 const bundle = JSON.parse(await readFile(new URL("../../public/mavis-offline/knowledge.json", import.meta.url), "utf8"));
 const manifest = JSON.parse(await readFile(new URL("../../src/data/legal-library/MANIFEST.json", import.meta.url), "utf8"));
+const publishedBundle = JSON.parse(await readFile(new URL("../../public/mavis-offline/published-articles.json", import.meta.url), "utf8"));
 let failures = 0;
 const fail = (message) => {
   failures += 1;
@@ -40,6 +41,36 @@ for (const record of bundle.records) {
   }
 }
 
+
+const publishedRecords = Array.isArray(publishedBundle.records) ? publishedBundle.records : [];
+
+if (publishedBundle.source !== "src/data/articles.js") fail("Unexpected published article source.");
+if (publishedRecords.length === 0) fail("Published article bundle is empty.");
+if (publishedBundle.counts?.published_articles !== publishedRecords.length) fail("Published article count mismatch.");
+
+for (const record of publishedRecords) {
+  if (!record.id || ids.has(record.id)) fail("Missing or duplicate published article id: " + record.id);
+  ids.add(record.id);
+
+  if (record.record_type !== "published_article") fail("Unexpected published article type: " + record.id);
+  if (record.review_status !== "secondary_source_only" || record.source_verified !== false) {
+    fail("Published article must remain secondary-only: " + record.id);
+  }
+  if (record.access_class !== "public") fail("Published article is not public: " + record.id);
+  if (!record.provenance || record.provenance.exact_primary_document_verified !== false ||
+      record.provenance.current_validity_verified !== false) {
+    fail("Published article provenance is incomplete: " + record.id);
+  }
+  if (typeof record.path !== "string" || !record.path.startsWith("/articles/")) {
+    fail("Invalid published article path: " + record.id);
+  }
+  for (const source of record.sources || []) {
+    if (!/^https:\/\//i.test(source.url || "")) {
+      fail("Non-HTTPS published article source: " + record.id);
+    }
+  }
+}
+
 for (const source of bundle.source_registry) {
   if (!/^https:\/\//i.test(source.url || "")) fail("Non-HTTPS registry URL: " + source.id);
   if (source.live_access_checked !== false) fail("Live access state must remain explicit: " + source.id);
@@ -51,6 +82,7 @@ if (!bundle.provenance_policy?.required_for_primary_verification?.includes("cont
 if (failures > 0) process.exitCode = 1;
 else console.log(JSON.stringify({
   records: bundle.records.length,
+  publishedArticles: publishedRecords.length,
   ...bundle.counts,
   registryReviewDate: bundle.registry_review_date,
   primaryVerifiedRecords: bundle.records.filter((record) => record.review_status === "verified_primary_source").length,

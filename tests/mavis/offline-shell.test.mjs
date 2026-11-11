@@ -11,7 +11,7 @@ const [html, app, worker, dock] = await Promise.all([
 ]);
 
 test("offline service worker precaches every runtime dependency", () => {
-  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "intake.html", "intake.js", "intake-core.mjs"]) {
+  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "published-articles.json", "intake.html", "intake.js", "intake-core.mjs"]) {
     assert.ok(worker.includes("/mavis-offline/" + asset), "missing precache asset: " + asset);
   }
   assert.match(worker, /cache\.addAll\(ASSETS\)/);
@@ -51,7 +51,7 @@ test("offline page clearly limits the guarantee to the cached route and download
 
 test("MAVIS opens one local conversation with an embedded conditional intake", async () => {
   const intake = await readFile(new URL("intake.html", root), "utf8");
-  assert.match(dock, /href="\/mavis-offline\/"/);
+  assert.match(dock, /href="\/mavis-offline\/index\.html"/);
   assert.match(html, /id="intake-section"[^>]*hidden/);
   assert.match(html, /id="intake-open"/);
   assert.match(html, /id="intake-form"/);
@@ -61,6 +61,8 @@ test("MAVIS opens one local conversation with an embedded conditional intake", a
   assert.match(app, /import "\.\/intake\.js"/);
   assert.match(app, /detectIntakeTopic\(raw\)/);
   assert.match(app, /mavis:topic-detected/);
+  assert.match(app, /PUBLISHED_ARTICLES_URL/);
+  assert.match(app, /corpus\.records\.push\(\.\.\.articleRecords\)/);
   assert.match(intake, /name="caseConsent"/);
   assert.match(intake, /name="thirdPartyNotice"/);
   assert.match(intake, /name="marketingConsent"/);

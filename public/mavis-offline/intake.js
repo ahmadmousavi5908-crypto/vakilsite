@@ -21,6 +21,7 @@ const isEmbedded = Boolean(document.getElementById("intake-section"));
 const stepPanels = [...document.querySelectorAll("[data-step-panel]")];
 const stepIndicators = [...document.querySelectorAll("[data-step-indicator]")];
 let currentStep = 1;
+let renderedTopic = topicSelect.value;
 
 const topicLabels = Object.fromEntries(
   [...topicSelect.options]
@@ -68,33 +69,57 @@ function createField(question, index, previousValue = "") {
 
 function renderTopicFields() {
   const topic = topicSelect.value;
-  const previousValues = Object.fromEntries(
-    [...topicFields.querySelectorAll("[data-label]")].map((field) => [field.dataset.label, field.value]),
-  );
+  const sameTopic = topic === renderedTopic;
+
+  const previousValues = sameTopic
+    ? Object.fromEntries(
+        [...topicFields.querySelectorAll("[data-label]")].map(
+          (field) => [field.dataset.label, field.value],
+        ),
+      )
+    : {};
+
+  const previousDocuments = sameTopic
+    ? new Set(
+        [...documentOptions.querySelectorAll('input[name="documents"]:checked')]
+          .map((field) => field.value),
+      )
+    : new Set();
+
   topicFields.replaceChildren();
   documentOptions.replaceChildren();
+
   if (!topic) {
-    topicFields.innerHTML = '<p class="hint field full">پس از انتخاب موضوع، پرسش‌های متناسب با نقش و مرحله شما نمایش داده می‌شوند.</p>';
+    topicFields.innerHTML =
+      '<p class="hint field full">پس از انتخاب موضوع، پرسش‌های متناسب با نقش و مرحله شما نمایش داده می‌شوند.</p>';
+    renderedTopic = topic;
     return;
   }
 
   const questions = getTopicQuestions(topic, roleSelect.value, stageSelect.value);
+
   questions.forEach((question, index) => {
-    topicFields.append(createField(question, index, previousValues[question.label] || ""));
+    topicFields.append(
+      createField(question, index, previousValues[question.label] || ""),
+    );
   });
 
   for (const label of getDocumentOptions(topic)) {
     const wrapper = document.createElement("label");
     wrapper.className = "choice";
+
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.name = "documents";
     checkbox.value = label;
+    checkbox.checked = previousDocuments.has(label);
+
     wrapper.append(checkbox, document.createTextNode(label));
     documentOptions.append(wrapper);
   }
-}
 
+  renderedTopic = topic;
+}
 function updateTopicOptions(resetRole = false) {
   const topic = topicSelect.value;
   fillSelect(roleSelect, getRoleOptions(topic), topic ? "نقش خود را انتخاب کنید" : "ابتدا موضوع را انتخاب کنید");
@@ -175,8 +200,9 @@ topicSelect.addEventListener("change", () => updateTopicOptions(true));
 document.addEventListener("mavis:topic-detected", (event) => {
   const topic = event.detail?.topic;
   if (!topic || !topicLabels[topic]) return;
+  const previousTopic = topicSelect.value;
   topicSelect.value = topic;
-  updateTopicOptions(true);
+  updateTopicOptions(previousTopic !== topic);
 });
 roleSelect.addEventListener("change", renderTopicFields);
 stageSelect.addEventListener("change", renderTopicFields);

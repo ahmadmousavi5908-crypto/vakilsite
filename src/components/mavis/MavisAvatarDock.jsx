@@ -10,7 +10,7 @@ export default function MavisAvatarDock() {
   return (
     <div className={styles.root} dir="rtl">
       <Link
-        href="/mavis-offline/"
+        href="/mavis-offline/index.html"
         className={styles.link}
         aria-label="گفت‌وگو با ماویس، دستیار هوش مصنوعی حقوقی"
         title="ماویس، دستیار هوش مصنوعی حقوقی"

@@ -101,3 +101,30 @@ test("research notes retain secondary-only status and conservative provenance", 
   assert.ok(notes.every((record) => record.provenance.current_validity_verified === false));
   assert.ok(notes.every((record) => record.sources.length > 0));
 });
+
+
+const publishedBundle = JSON.parse(
+  await readFile(new URL("../../public/mavis-offline/published-articles.json", import.meta.url), "utf8"),
+);
+
+test("published site articles are searchable offline and remain secondary-only", () => {
+  const articles = publishedBundle.records;
+  assert.ok(articles.length > 0);
+  assert.equal(publishedBundle.counts.published_articles, articles.length);
+
+  assert.ok(articles.every((record) =>
+    record.record_type === "published_article" &&
+    record.review_status === "secondary_source_only" &&
+    record.source_verified === false &&
+    record.access_class === "public" &&
+    record.provenance?.exact_primary_document_verified === false &&
+    record.provenance?.current_validity_verified === false
+  ));
+
+  const ids = [...knowledge.records, ...articles].map((record) => record.id);
+  assert.equal(new Set(ids).size, ids.length);
+
+  const sample = articles.find((record) => record.title);
+  assert.ok(sample);
+  assert.equal(rankOfflineRecords(sample.title, articles)[0].id, sample.id);
+});
