@@ -59,7 +59,12 @@ test("MAVIS opens one local conversation with an embedded conditional intake", a
   assert.match(html, /id="intake-section" class="panel"/);
   assert.doesNotMatch(html, /id="intake-section"[^>]*hidden/);
   assert.match(html, /class="welcome-hero"/);
-  assert.match(html, /همراه ما در واتساپ باشید/);
+  assert.match(html, /سلام، من ماویس هستم/);
+  assert.match(html, /width:min\(100%,390px\)/);
+  assert.match(html, /width:min\(78vw,285px\)/);
+  assert.match(html, /transform:rotateY\(-7deg\) translateZ\(18px\)/);
+  assert.match(html, /مطالب حقوقی و ارتباط با دفتر/);
+  assert.doesNotMatch(html, /برای اطلاع از تازه‌ترین مطالب حقوقی/);
   assert.match(html, /href="https:\/\/wa\.me\/989169165902"/);
   assert.ok(html.indexOf('class="welcome-portrait"') < html.indexOf('class="welcome-copy"'));
   assert.doesNotMatch(html, /class="statusbar"|id="bundle-status"/);
