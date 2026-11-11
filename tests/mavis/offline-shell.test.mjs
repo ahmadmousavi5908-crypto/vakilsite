@@ -28,6 +28,8 @@ test("offline readiness is not announced before service-worker activation", () =
 test("offline answer panel has visible provenance and accessible live-region markup", () => {
   assert.match(html, /id="offline-answer"[^>]*aria-live="polite"/);
   assert.match(html, /\.answer-card\{/);
+  assert.match(html, /\.panel:has\(\+ #offline-answer:not\(\[hidden\]\)\)/);
+  assert.match(html, /#offline-answer\{margin-top:0;[^}]*border-top:0/);
   assert.match(html, /\.answer-source-status/);
   assert.match(html, /\.answer-caution/);
   assert.match(html, /\.user-message\{/);
