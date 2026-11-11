@@ -110,7 +110,7 @@ export function detectIntakeTopic(value) {
     .toLowerCase()
     .replace(/[يى]/g, "ی")
     .replace(/ك/g, "ک")
-    .replace(/[\\u200c\\s]+/g, " ")
+    .replace(/[\u200c\s]+/g, " ")
     .trim();
   if (!query) return null;
   for (const group of INTAKE_TOPIC_TERMS) {
