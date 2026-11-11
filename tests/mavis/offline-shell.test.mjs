@@ -11,9 +11,10 @@ const [html, app, worker, dock] = await Promise.all([
 ]);
 
 test("offline service worker precaches every runtime dependency", () => {
-  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "published-articles.json", "intake.html", "intake.js", "intake-core.mjs"]) {
+  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "published-articles.json", "intake.html", "intake.js", "intake-core.mjs", "mavis-welcome-hero.png"]) {
     assert.ok(worker.includes("/mavis-offline/" + asset), "missing precache asset: " + asset);
   }
+  assert.match(worker, /mavis-offline-v1\.3\.2-20261112/);
   assert.match(worker, /cache\.addAll\(ASSETS\)/);
   assert.match(worker, /self\.skipWaiting\(\)/);
 });
@@ -40,9 +41,9 @@ test("offline answer panel has visible provenance and accessible live-region mar
   assert.match(html, /id="conversation-history"/);
   assert.doesNotMatch(html, /id="results"/);
   assert.ok(html.indexOf('id="intake-section"') > html.indexOf('id="offline-answer"'));
-  assert.match(html, /این ابزار مدل زبانی مولد یا جایگزین مشاوره حقوقی نیست/);
+  assert.match(html, /ماویس دستیار هوشمند راهنمایی اولیه است؛ این ابزار مدل زبانی مولد یا جایگزین مشاوره حقوقی و بررسی تخصصی وکیل نیست/);
   assert.match(html, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
-  assert.match(html, /#intake-section \.grid\{grid-template-columns:1fr\}/);
+  assert.match(html, /#intake-section \.grid,#intake-section \.document-checklist\{grid-template-columns:1fr\}/);
   assert.doesNotMatch(app, /localStorage|sessionStorage|indexedDB/);
   assert.match(app, /root\.append\(turn\)/);
 });
@@ -56,12 +57,25 @@ test("offline page clearly limits the guarantee to the cached route and download
 test("MAVIS opens one local conversation with an embedded conditional intake", async () => {
   const intake = await readFile(new URL("intake.html", root), "utf8");
   assert.match(dock, /href="\/mavis-offline\/index\.html"/);
-  assert.match(html, /id="intake-section"[^>]*hidden/);
-  assert.match(html, /id="intake-open"/);
-  assert.match(html, /id="footer-intake-open"/);
-  assert.match(app, /const openIntake=\(\)=>/);
-  assert.match(app, /if\(answer\)answer\.hidden=false/);
-  assert.match(app, /#intake-open, #footer-intake-open/);
+  assert.match(html, /id="intake-section" class="panel"/);
+  assert.doesNotMatch(html, /id="intake-section"[^>]*hidden/);
+  assert.match(html, /class="welcome-hero"/);
+  assert.match(html, /src="\/mavis-offline\/mavis-welcome-hero\.png"/);
+  assert.match(html, /width="1024" height="1536"/);
+  assert.match(html, /loading="eager" fetchpriority="high"/);
+  assert.match(html, /width:100%;max-width:390px;height:auto;object-fit:contain/);
+  assert.doesNotMatch(html, /\.welcome-portrait img\{[^}]*transform:/);
+  assert.match(html, /سلام، من ماویس هستم/);
+  assert.match(html, /دستیار هوشمند موسوی/);
+  assert.match(html, /پرسش حقوقی‌تان را همین‌جا مطرح کنید/);
+  assert.match(html, /ارتباط مستقیم با دفتر وکیل موسوی/);
+  assert.match(html, /برای پیگیری، هماهنگی یا ارتباط با دفتر، از طریق واتساپ پیام بفرستید/);
+  assert.match(html, /پیام به واتساپ دفتر/);
+  assert.match(html, /href="https:\/\/wa\.me\/989169165902"/);
+  assert.ok(html.indexOf('class="welcome-portrait"') < html.indexOf('class="welcome-copy"'));
+  assert.doesNotMatch(html, /class="statusbar"|id="bundle-status"/);
+  assert.match(app, /const section=\$\("intake-section"\)/);
+  assert.match(app, /if\(section\)\{section\.hidden=false/);
   assert.match(html, /id="intake-form"/);
   assert.match(html, /id="intake-guidance"/);
   assert.doesNotMatch(html, /href="\.\/intake\.html"/);

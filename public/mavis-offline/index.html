@@ -58,12 +58,69 @@ label{display:block;font-weight:700;margin-bottom:8px}form{display:flex;gap:9px;
 .panel[aria-labelledby="search-title"]{margin-bottom:0;border-radius:16px 16px 0 0;border-bottom:0;box-shadow:none}
 #offline-answer{margin:0;padding:0 18px 18px;background:#fff;border:1px solid var(--line);border-top:0;border-bottom:0;border-radius:0;box-shadow:none}
 .panel[aria-labelledby="source-registry-title"]{margin-top:0!important;border-top:0;border-radius:0 0 16px 16px;box-shadow:0 8px 28px #172d4010}
+
+/* MAVIS welcome area only: the conversation and intake UI below remain unchanged. */
+header.welcome-hero{padding:22px 18px 20px;background:linear-gradient(125deg,#10253a,#1d3b56);color:#fff;border:0;border-bottom:3px solid var(--gold)}
+.welcome-inner{width:min(1040px,calc(100% - 28px));margin:0 auto}
+.welcome-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,390px);align-items:center;gap:28px;direction:rtl}
+.welcome-copy{min-width:0;text-align:right}
+header.welcome-hero .eyebrow{display:inline-block;color:#e0c78d;font-size:12px;font-weight:700;letter-spacing:.5px}
+header.welcome-hero h1{margin:8px 0 6px;color:#fff;font-size:clamp(25px,4vw,34px);line-height:1.5}
+header.welcome-hero p{max-width:720px;margin:8px 0;color:#e2e8ee;font-size:14px;line-height:1.9}
+header.welcome-hero .welcome-lead{color:#f2dfb5;font-size:17px;font-weight:700}
+header.welcome-hero .welcome-disclaimer{margin-top:12px;padding-top:9px;border-top:1px solid rgba(226,232,238,.25);color:#cbd5df;font-size:11px;line-height:1.8}
+.welcome-portrait{display:flex;align-items:center;justify-content:center;min-width:0}
+.welcome-portrait img{display:block;width:100%;max-width:390px;height:auto;object-fit:contain;object-position:center;filter:drop-shadow(0 16px 22px rgba(0,0,0,.3))}
+.welcome-whatsapp{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:18px;padding:15px 17px;border:1px solid rgba(224,199,141,.75);border-radius:14px;background:rgba(7,22,36,.34)}
+.welcome-whatsapp-copy{min-width:0}
+.welcome-whatsapp strong{display:block;color:#f2dfb5;font-size:16px;line-height:1.7}
+.welcome-whatsapp p{margin:4px 0 0!important;color:#e2e8ee;font-size:13px!important;line-height:1.9}
+.welcome-whatsapp-link{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 17px;border:1px solid #d9c28d;border-radius:10px;background:#d9c28d;color:#172d40;text-decoration:none;font-size:14px;font-weight:700;transition:background .2s ease,transform .2s ease}
+.welcome-whatsapp-link:hover{background:#ead7a8;transform:translateY(-1px)}
+.welcome-whatsapp-link:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(max-width:620px){
+ header.welcome-hero{padding:17px 14px 15px}
+ .welcome-inner{width:100%}
+ .welcome-main{grid-template-columns:minmax(0,1fr);gap:10px}
+ .welcome-portrait img{width:100%;max-width:min(88vw,390px)}
+ .welcome-copy{text-align:center}
+ header.welcome-hero h1{font-size:25px;margin:5px 0}
+ header.welcome-hero p{font-size:13px;line-height:1.85;margin:7px auto}
+ header.welcome-hero .welcome-lead{font-size:15px}
+ .welcome-whatsapp{align-items:stretch;flex-direction:column;gap:10px;margin-top:12px;padding:13px}
+ .welcome-whatsapp strong{font-size:15px}
+ .welcome-whatsapp p{font-size:13px!important}
+ .welcome-whatsapp-link{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.welcome-whatsapp-link{transition:none}.welcome-whatsapp-link:hover{transform:none}}
+
 </style>
 </head>
 <body>
-<header><div class="wrap"><span class="eyebrow">MAVIS · OFFLINE KNOWLEDGE</span><h1>گفت‌وگوی راهنمای ماویس</h1><p>پرسش خود را بنویسید؛ کتابخانه حقوقی همین دستگاه جست‌وجو می‌شود و پس از تشخیص موضوع، پرسش‌های مرتبط برای آماده‌سازی گزارش بررسی وکیل در همین صفحه نمایش داده می‌شود. این ابزار مدل زبانی مولد یا جایگزین مشاوره حقوقی نیست.</p></div></header>
+<header class="welcome-hero">
+  <div class="welcome-inner">
+    <div class="welcome-main">
+      <div class="welcome-portrait">
+        <img src="/mavis-offline/mavis-welcome-hero.png" alt="تصویر ماویس، دستیار هوشمند موسوی با پوشش رسمی و کتاب حقوقی" width="1024" height="1536" loading="eager" fetchpriority="high">
+      </div>
+      <div class="welcome-copy">
+        <span class="eyebrow">MAVIS · MOUSAVI LEGAL AI</span>
+        <h1>سلام، من ماویس هستم</h1>
+        <p class="welcome-lead">دستیار هوشمند موسوی</p>
+        <p>پرسش حقوقی‌تان را همین‌جا مطرح کنید.</p>
+        <p class="welcome-disclaimer">ماویس دستیار هوشمند راهنمایی اولیه است؛ این ابزار مدل زبانی مولد یا جایگزین مشاوره حقوقی و بررسی تخصصی وکیل نیست.</p>
+      </div>
+    </div>
+    <aside class="welcome-whatsapp" aria-label="ارتباط با دفتر در واتساپ">
+      <div class="welcome-whatsapp-copy">
+        <strong>ارتباط مستقیم با دفتر وکیل موسوی</strong>
+        <p>برای پیگیری، هماهنگی یا ارتباط با دفتر، از طریق واتساپ پیام بفرستید.</p>
+      </div>
+      <a class="welcome-whatsapp-link" href="https://wa.me/989169165902" target="_blank" rel="noopener noreferrer" aria-label="ارسال پیام به واتساپ دفتر وکیل موسوی">پیام به واتساپ دفتر <span aria-hidden="true">↗</span></a>
+    </aside>
+  </div>
+</header>
 <main class="wrap">
-<div class="statusbar"><span class="pill"><i class="dot" id="network-dot"></i><span id="network-status">در حال بررسی وضعیت اتصال…</span></span><span id="bundle-status">در حال بارگذاری کتابخانه…</span></div>
 <section class="panel" aria-labelledby="search-title"><h2 id="search-title" style="font-size:18px;margin:0 0 12px">گفت‌وگو را با توضیح موضوع شروع کنید</h2>
 <form id="search-form"><label for="query" style="position:absolute;right:-9999px">عبارت جست‌وجو</label><input id="query" type="search" maxlength="160" minlength="2" placeholder="مثلاً چک برگشتی، قولنامه، مهریه، فیشینگ یا اعتراض به رأی" autocomplete="off" required><button id="submit" type="submit" disabled>جست‌وجوی پاسخ اولیه</button></form>
 <p class="hint">جست‌وجو و تشخیص موضوع روی همین دستگاه انجام می‌شود؛ متن پرسش ذخیره یا به سرور ارسال نمی‌شود.</p>
