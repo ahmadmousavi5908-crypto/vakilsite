@@ -344,7 +344,7 @@ export function buildIntakeMessage(data, meta = {}) {
         };
         return "- " + label + ": " + (statusLabels[data.documentStatuses[label]] || "نامشخص");
       }),
-    "مدارک در اختیار: " + (Array.isArray(data.documents) ? data.documents.map((item) => cleanLine(item, 100)).filter(Boolean).join("، ") : "") || "اعلام نشده",
+    "مدارک در اختیار: " + ((Array.isArray(data.documents) ? data.documents.map((item) => cleanLine(item, 100)).filter(Boolean).join("، ") : "") || "اعلام نشده"),
     "توضیح تکمیلی درباره مدارک: " + cleanParagraph(data.otherDocs, 700),
     "",
     "رضایت بررسی اولیه: بله",
