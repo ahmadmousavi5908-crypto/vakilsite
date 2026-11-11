@@ -36,6 +36,7 @@ label{display:block;font-weight:700;margin-bottom:8px}form{display:flex;gap:9px;
 #intake-section [hidden]{display:none!important}
 @media(max-width:560px){#intake-section .grid{grid-template-columns:1fr}#intake-section .field.full{grid-column:auto}#intake-section .actions button{width:100%}}
 
+.conversation-turn{display:grid;gap:8px;margin-bottom:14px}.user-message{justify-self:start;max-width:min(92%,720px);margin:0;background:#edf2f6;border:1px solid #dbe4ec;border-radius:14px 14px 4px 14px;padding:10px 14px;color:var(--navy);font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -51,7 +52,7 @@ label{display:block;font-weight:700;margin-bottom:8px}form{display:flex;gap:9px;
 <section id="offline-answer" class="offline-answer" aria-live="polite" aria-label="پاسخ اولیه آفلاین" hidden></section>
 <section id="results" aria-live="polite" aria-label="نتایج جست‌وجو"></section>
 <section id="intake-section" class="panel" hidden aria-labelledby="intake-title">
-<div class="intake-heading"><span class="eyebrow">MAVIS · INTAKE</span><h2 id="intake-title">آماده‌سازی درخواست برای بررسی وکیل</h2><p id="intake-guidance" class="hint">پاسخ‌ها فقط روی همین دستگاه پردازش می‌شوند. اطلاعات تا اقدام آگاهانه شما در مرورگر باقی می‌مانند.</p></div>
+<div class="intake-heading"><span class="eyebrow">MAVIS · INTAKE</span><h2 id="intake-title">آماده‌سازی درخواست برای بررسی وکیل</h2><p id="intake-guidance" class="hint">پاسخ‌ها فقط در حافظه همین صفحه پردازش می‌شوند؛ اطلاعات فرم به‌صورت خودکار در فضای ذخیره‌سازی مرورگر یا سرور ثبت نمی‌شوند.</p></div>
 <form id="intake-form" novalidate>
 <section class="intake-panel">
 <h2>مشخصات و راه تماس</h2>
