@@ -32,6 +32,11 @@ test("offline answer panel has visible provenance and accessible live-region mar
   assert.match(html, /\.answer-caution/);
   assert.match(html, /\.user-message\{/);
   assert.match(app, /function renderAnswer\(answer,query\)/);
+  assert.match(html, /این ابزار مدل زبانی مولد یا جایگزین مشاوره حقوقی نیست/);
+  assert.match(html, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+  assert.match(html, /#intake-section \.grid\{grid-template-columns:1fr\}/);
+  assert.doesNotMatch(app, /localStorage|sessionStorage|indexedDB/);
+  assert.match(app, /root\.append\(turn\)/);
 });
 
 test("offline page clearly limits the guarantee to the cached route and downloaded data", () => {
