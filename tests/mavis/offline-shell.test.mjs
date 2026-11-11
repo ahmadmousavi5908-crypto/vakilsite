@@ -35,7 +35,7 @@ test("offline answer panel has visible provenance and accessible live-region mar
   assert.match(app, /render\(records,resultRoot\)/);
   assert.match(html, /id="conversation-history"/);
   assert.doesNotMatch(html, /id="results"/);
-  assert.ok(html.indexOf("id=\\"intake-section\\"") > html.indexOf("id=\\"offline-answer\\""));
+  assert.ok(html.indexOf('id="intake-section"') > html.indexOf('id="offline-answer"'));
   assert.match(html, /این ابزار مدل زبانی مولد یا جایگزین مشاوره حقوقی نیست/);
   assert.match(html, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
   assert.match(html, /#intake-section \.grid\{grid-template-columns:1fr\}/);
