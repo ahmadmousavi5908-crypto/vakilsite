@@ -11,9 +11,10 @@ const [html, app, worker, dock] = await Promise.all([
 ]);
 
 test("offline service worker precaches every runtime dependency", () => {
-  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "published-articles.json", "intake.html", "intake.js", "intake-core.mjs"]) {
+  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "published-articles.json", "intake.html", "intake.js", "intake-core.mjs", "mavis-welcome-hero.png"]) {
     assert.ok(worker.includes("/mavis-offline/" + asset), "missing precache asset: " + asset);
   }
+  assert.match(worker, /mavis-offline-v1\.3\.2-20261112/);
   assert.match(worker, /cache\.addAll\(ASSETS\)/);
   assert.match(worker, /self\.skipWaiting\(\)/);
 });
@@ -59,12 +60,17 @@ test("MAVIS opens one local conversation with an embedded conditional intake", a
   assert.match(html, /id="intake-section" class="panel"/);
   assert.doesNotMatch(html, /id="intake-section"[^>]*hidden/);
   assert.match(html, /class="welcome-hero"/);
+  assert.match(html, /src="\/mavis-offline\/mavis-welcome-hero\.png"/);
+  assert.match(html, /width="1024" height="1536"/);
+  assert.match(html, /loading="eager" fetchpriority="high"/);
+  assert.match(html, /width:100%;max-width:390px;height:auto;object-fit:contain/);
+  assert.doesNotMatch(html, /\.welcome-portrait img\{[^}]*transform:/);
   assert.match(html, /سلام، من ماویس هستم/);
-  assert.match(html, /width:min\(100%,390px\)/);
-  assert.match(html, /width:min\(78vw,285px\)/);
-  assert.match(html, /transform:rotateY\(-7deg\) translateZ\(18px\)/);
-  assert.match(html, /مطالب حقوقی و ارتباط با دفتر/);
-  assert.doesNotMatch(html, /برای اطلاع از تازه‌ترین مطالب حقوقی/);
+  assert.match(html, /دستیار هوشمند موسوی/);
+  assert.match(html, /پرسش حقوقی‌تان را همین‌جا مطرح کنید/);
+  assert.match(html, /ارتباط مستقیم با دفتر وکیل موسوی/);
+  assert.match(html, /برای پیگیری، هماهنگی یا ارتباط با دفتر، از طریق واتساپ پیام بفرستید/);
+  assert.match(html, /پیام به واتساپ دفتر/);
   assert.match(html, /href="https:\/\/wa\.me\/989169165902"/);
   assert.ok(html.indexOf('class="welcome-portrait"') < html.indexOf('class="welcome-copy"'));
   assert.doesNotMatch(html, /class="statusbar"|id="bundle-status"/);
