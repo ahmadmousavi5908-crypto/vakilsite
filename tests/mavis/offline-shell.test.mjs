@@ -40,15 +40,15 @@ test("offline page clearly limits the guarantee to the cached route and download
 
 test("MAVIS opens one local conversation with an embedded conditional intake", async () => {
   const intake = await readFile(new URL("intake.html", root), "utf8");
-  assert.match(dock, /href="\\/mavis-offline\\/"/);
+  assert.match(dock, /href="\/mavis-offline\/"/);
   assert.match(html, /id="intake-section"[^>]*hidden/);
   assert.match(html, /id="intake-open"/);
   assert.match(html, /id="intake-form"/);
   assert.match(html, /id="intake-guidance"/);
-  assert.doesNotMatch(html, /href="\\.\\/intake\\.html"/);
+  assert.doesNotMatch(html, /href="\.\/intake\.html"/);
   assert.doesNotMatch(html, /data-step-panel|data-next-step|data-prev-step|class="stepper"/);
-  assert.match(app, /import "\\.\\/intake\\.js"/);
-  assert.match(app, /detectIntakeTopic\\(raw\\)/);
+  assert.match(app, /import "\.\/intake\.js"/);
+  assert.match(app, /detectIntakeTopic\(raw\)/);
   assert.match(app, /mavis:topic-detected/);
   assert.match(intake, /name="caseConsent"/);
   assert.match(intake, /name="thirdPartyNotice"/);
