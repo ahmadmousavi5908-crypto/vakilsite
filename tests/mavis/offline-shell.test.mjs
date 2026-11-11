@@ -29,6 +29,9 @@ test("offline answer panel has visible provenance and accessible live-region mar
   assert.match(html, /id="offline-answer"[^>]*aria-live="polite"/);
   assert.match(html, /\.answer-card\{/);
   assert.match(html, /\.panel:has\(\+ #offline-answer:not\(\[hidden\]\)\)/);
+  assert.match(html, /\.panel\[aria-labelledby="search-title"\]\{margin-bottom:0;[^}]*border-bottom:0/);
+  assert.match(html, /#offline-answer\{margin:0;[^}]*border-top:0;border-bottom:0/);
+  assert.match(html, /\.panel\[aria-labelledby="source-registry-title"\]\{margin-top:0!important;border-top:0/);
   assert.match(html, /#offline-answer\{margin-top:0;[^}]*border-top:0/);
   assert.match(html, /\.answer-source-status/);
   assert.match(html, /\.answer-caution/);
