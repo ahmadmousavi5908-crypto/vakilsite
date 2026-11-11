@@ -30,6 +30,8 @@ test("offline answer panel has visible provenance and accessible live-region mar
   assert.match(html, /\.answer-card\{/);
   assert.match(html, /\.answer-source-status/);
   assert.match(html, /\.answer-caution/);
+  assert.match(html, /\.user-message\{/);
+  assert.match(app, /function renderAnswer\(answer,query\)/);
 });
 
 test("offline page clearly limits the guarantee to the cached route and downloaded data", () => {
