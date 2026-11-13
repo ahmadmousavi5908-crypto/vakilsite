@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 
 const root = new URL("../../public/mavis-offline/", import.meta.url);
 const [html, app, worker, dock] = await Promise.all([
@@ -11,10 +11,10 @@ const [html, app, worker, dock] = await Promise.all([
 ]);
 
 test("offline service worker precaches every runtime dependency", () => {
-  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "published-articles.json", "intake.html", "intake.js", "intake-core.mjs", "mavis-welcome-hero.png"]) {
+  for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "published-articles.json", "intake.html", "intake.js", "intake-core.mjs", "mavis-welcome-hero.webp"]) {
     assert.ok(worker.includes("/mavis-offline/" + asset), "missing precache asset: " + asset);
   }
-  assert.match(worker, /mavis-offline-v1\.3\.3-20261113/);
+  assert.match(worker, /mavis-offline-v1\.3\.5-20261114/);
   assert.match(worker, /cache\.addAll\(ASSETS\)/);
   assert.match(worker, /self\.skipWaiting\(\)/);
 });
@@ -73,8 +73,8 @@ test("MAVIS opens one local conversation with an embedded conditional intake", a
   assert.match(html, /id="intake-section" class="panel"/);
   assert.doesNotMatch(html, /id="intake-section"[^>]*hidden/);
   assert.match(html, /class="welcome-hero"/);
-  assert.match(html, /src="\/mavis-offline\/mavis-welcome-hero\.png"/);
-  assert.match(html, /width="1024" height="1536"/);
+  assert.match(html, /src="\/mavis-offline\/mavis-welcome-hero\.webp"/);
+  assert.match(html, /width="780" height="1170"/);
   assert.match(html, /loading="eager" fetchpriority="high"/);
   assert.match(html, /width:100%;max-width:390px;height:auto;object-fit:contain/);
   assert.doesNotMatch(html, /\.welcome-portrait img\{[^}]*transform:/);
@@ -109,4 +109,33 @@ test("MAVIS opens one local conversation with an embedded conditional intake", a
   assert.match(intake, /name="urgentSignal"/);
   assert.match(intake, /data-next-step="2"/);
   assert.match(intake, /data-prev-step="3"/);
+});
+
+test("offline search becomes available after the core library, without waiting for published articles", () => {
+  const articleFetch = app.indexOf('const articlesPromise=fetch(PUBLISHED_ARTICLES_URL');
+  const coreFetch = app.indexOf('await fetch(DATA_URL');
+  const enableSearch = app.indexOf('$("submit").disabled=false');
+  const waitForArticles = app.indexOf('await articlesPromise');
+  assert.ok(articleFetch >= 0 && articleFetch < coreFetch, "published articles should start loading in parallel");
+  assert.ok(coreFetch < enableSearch && enableSearch < waitForArticles, "core search should unlock before optional article data finishes");
+  assert.match(app, /if\(articleResponse\?\.ok\)/);
+});
+
+test("MAVIS welcome image uses a compact WebP asset and remains precached offline", async () => {
+  const hero = await stat(new URL("mavis-welcome-hero.webp", root));
+  assert.ok(hero.size < 400_000, "MAVIS hero should remain below 400 KB");
+  assert.ok(html.includes('src="/mavis-offline/mavis-welcome-hero.webp"'));
+  assert.ok(!html.includes("mavis-welcome-hero.png"));
+  assert.ok(worker.includes("mavis-welcome-hero.webp"));
+  assert.ok(!worker.includes("mavis-welcome-hero.png"));
+});
+
+test("floating MAVIS and attorney docks shift inward only at desktop widths", async () => {
+  const mavisCss = await readFile(new URL("../../src/components/mavis/MavisAvatarDock.module.css", import.meta.url), "utf8");
+  const attorney = await readFile(new URL("../../src/components/AttorneyProfileDock.jsx", import.meta.url), "utf8");
+  assert.ok(mavisCss.includes("@media (min-width: 701px)"));
+  assert.ok(mavisCss.includes("left: clamp(20px, 2vw, 28px);"));
+  assert.ok(attorney.includes('className="attorney-profile-dock-root"'));
+  assert.ok(attorney.includes("@media (min-width: 701px)"));
+  assert.ok(attorney.includes("left: clamp(20px, 2vw, 28px) !important;"));
 });
