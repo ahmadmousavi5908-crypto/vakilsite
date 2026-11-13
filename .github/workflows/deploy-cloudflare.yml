@@ -68,7 +68,7 @@ jobs:
           node --input-type=module <<'NODE'
           import fs from "node:fs";
           const log = fs.readFileSync("/tmp/wrangler-production-dry-run.log", "utf8");
-          const match = log.match(/Total Upload:\\s*[\\d.]+\\s*(?:B|KiB|MiB|GiB)\\s*\\/\\s*gzip:\\s*([\\d.]+)\\s*(B|KiB|MiB|GiB)/i);
+          const match = log.match(/Total Upload:\s*[\d.]+\s*(?:B|KiB|MiB|GiB)\s*\/\s*gzip:\s*([\d.]+)\s*(B|KiB|MiB|GiB)/i);
           if (!match) {
             console.error("Could not verify the compressed Worker upload size.");
             process.exit(1);
