@@ -19,5 +19,11 @@
     "NEXT_PUBLIC_SITE_URL": "https://vakilahmadmousavi.ir",
     "NEXT_PUBLIC_SUPABASE_URL": "https://jroflcmiczfwtmiaxmpd.supabase.co",
     "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_OQAYkMnnChOJTutvi3kLfg_RnWEhEvs"
-  }
+  },
+  "routes": [
+    {
+      "pattern": "vakilahmadmousavi.ir",
+      "custom_domain": true
+    }
+  ]
 }
