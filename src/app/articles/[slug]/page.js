@@ -14,7 +14,7 @@ export async function generateMetadata({ params }) {
   if (!article) return { title: "مطلب پیدا نشد" };
   const canonicalPath = "/articles/" + article.slug;
   return {
-    title: article.title,
+    title: article.metaTitle || article.title,
     description: article.excerpt,
     alternates: { canonical: canonicalPath },
     openGraph: {
