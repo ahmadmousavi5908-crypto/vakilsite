@@ -14,7 +14,7 @@ test("offline service worker precaches every runtime dependency", () => {
   for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "published-articles.json", "intake.html", "intake.js", "intake-core.mjs", "mavis-welcome-hero.png"]) {
     assert.ok(worker.includes("/mavis-offline/" + asset), "missing precache asset: " + asset);
   }
-  assert.match(worker, /mavis-offline-v1\.3\.2-20261112/);
+  assert.match(worker, /mavis-offline-v1\.3\.3-20261113/);
   assert.match(worker, /cache\.addAll\(ASSETS\)/);
   assert.match(worker, /self\.skipWaiting\(\)/);
 });
@@ -46,6 +46,19 @@ test("offline answer panel has visible provenance and accessible live-region mar
   assert.match(html, /#intake-section \.grid,#intake-section \.document-checklist\{grid-template-columns:1fr\}/);
   assert.doesNotMatch(app, /localStorage|sessionStorage|indexedDB/);
   assert.match(app, /root\.append\(turn\)/);
+});
+
+
+test("offline startup tolerates optional status elements omitted from the page", () => {
+  assert.doesNotMatch(html, /id="(?:network-status|network-dot|bundle-status)"/);
+  assert.match(app, /const status=\$\("network-status"\);const dot=\$\("network-dot"\);if\(status\)/);
+  assert.match(app, /const status=\$\("bundle-status"\);if\(status\)/);
+});
+
+test("search controls are bound before asynchronous startup", () => {
+  assert.match(app, /function bindSearchControls\(\)/);
+  assert.ok(app.indexOf("bindSearchControls();") >= 0);
+  assert.ok(app.indexOf("bindSearchControls();") < app.indexOf("boot();"));
 });
 
 test("offline page clearly limits the guarantee to the cached route and downloaded data", () => {
