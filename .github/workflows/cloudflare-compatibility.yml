@@ -157,17 +157,15 @@ jobs:
                 exit 1
               fi
             elif [ "$status" = "200" ]; then
-              node --input-type=module -e '
-                import fs from "node:fs";
-                const html = fs.readFileSync("/tmp/vakilsite-admin.html", "utf8");
-                const streamedRedirect = new RegExp('<meta[^>]+http-equiv="refresh"[^>]+content="0;url=/admin/login', "i").test(html);
-                const protectedContent = /داشبورد وب‌سایت|مدیریت سایت|مرکز دانش و پژوهش/.test(html);
-                if (!streamedRedirect || protectedContent) {
-                  console.error("Admin route did not produce a safe streamed redirect.");
-                  process.exit(1);
-                }
-                console.log("Admin access guard: streamed redirect confirmed; protected content absent.");
-              '
+              if ! grep -Eqi '<meta[^>]+http-equiv="refresh"[^>]+content="0;url=/admin/login' /tmp/vakilsite-admin.html; then
+                echo "$route did not emit the expected streamed redirect to the admin login page."
+                exit 1
+              fi
+              if grep -Eqi 'داشبورد وب‌سایت|مدیریت سایت|مرکز دانش و پژوهش' /tmp/vakilsite-admin.html; then
+                echo "$route exposed protected admin content before authentication."
+                exit 1
+              fi
+              echo "Admin access guard: streamed redirect confirmed; protected content absent."
             else
               cat /tmp/opennext-preview.log
               exit 1
