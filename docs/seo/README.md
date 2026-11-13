@@ -32,3 +32,5 @@
 - [رجیستری منابع حقوقی و استاندارد استناد](./07-iran-legal-source-registry-and-citation-standard.md)
 
 - [تحلیل رقبا، فرصت‌های حقوقی روز و نقشه تحریریه](./08-editorial-intelligence-competitor-and-legal-opportunity-briefs.md)
+
+- [وضعیت عملیاتی SEO/AEO/GEO و جذب موکل — ۱۴ نوامبر ۲۰۲۶](./09-current-operational-status-2026-11-14.md)
