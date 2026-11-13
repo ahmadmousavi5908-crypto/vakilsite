@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#142b43">
+<meta name="description" content="گفت‌وگوی راهنمای محلی ماویس و جست‌وجو در کتابخانه حقوقی آفلاین.">
+<meta name="robots" content="noindex,follow">
+<title>گفت‌وگوی ماویس | کتابخانه حقوقی آفلاین</title>
+<style>
+:root{color-scheme:light;--navy:#142b43;--gold:#b79a5b;--ink:#233447;--muted:#657386;--line:#dce3e9;--paper:#f5f7f9;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Tahoma,"Segoe UI",sans-serif;line-height:1.85}
+header{background:linear-gradient(125deg,#10253a,#1d3b56);color:#fff;padding:26px 18px 30px;border-bottom:3px solid var(--gold)}
+.wrap{width:min(1040px,calc(100% - 28px));margin:auto}header .eyebrow{font-size:12px;color:#e0c78d;letter-spacing:.5px}h1{font-size:clamp(22px,4vw,32px);margin:8px 0}header p{color:#e2e8ee;margin:0;max-width:760px}
+main{padding:22px 0 48px}.statusbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px;color:var(--muted);font-size:13px}
+.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:3px 11px;background:#fff}.dot{width:8px;height:8px;border-radius:50%;background:#9a7a39}.dot.online{background:#2b8a65}
+.panel{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 8px 28px #172d4010}
+label{display:block;font-weight:700;margin-bottom:8px}form{display:flex;gap:9px;flex-wrap:wrap}input{flex:1;min-width:210px;border:1px solid #cbd5df;border-radius:10px;padding:13px 14px;font:inherit;outline-offset:2px}button{border:0;border-radius:10px;background:var(--navy);color:#fff;padding:11px 22px;font:inherit;font-weight:700;cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}
+.hint{font-size:12px;color:var(--muted);margin:9px 0 0}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.chip{background:#f4f0e7;border:1px solid #e5dcc8;color:#56482e;border-radius:999px;padding:5px 11px;font-size:12px;cursor:pointer}
+#message{margin:14px 0 0;font-size:13px;color:var(--muted)}#results{display:grid;gap:12px;margin-top:16px}.result{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}.top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px}.type{background:#edf2f6;color:#28445e;border-radius:6px;padding:2px 8px}.review{background:#f5f0e4;color:#6d5625;border-radius:6px;padding:2px 8px}.result h2{font-size:17px;margin:10px 0 6px;color:var(--navy)}.result p{margin:6px 0;white-space:pre-wrap}.meta{font-size:12px;color:var(--muted);margin-top:9px}.refs{font-size:12px;margin-top:9px;padding-top:8px;border-top:1px solid var(--line);color:#526274}.sources{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.sources a{color:#285b80;font-size:12px;overflow-wrap:anywhere}.warning{background:#fff8e9;border:1px solid #ead9ac;border-radius:12px;padding:12px 14px;margin-top:16px;font-size:12px;color:#665326}.footer{font-size:12px;color:var(--muted);text-align:center;margin:18px auto 0;max-width:760px}.source-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:9px;margin-top:12px}.source-item{border:1px solid var(--line);border-radius:10px;padding:10px}.source-item strong{display:block;font-size:13px}.source-kind{color:#876a2d;font-weight:700}.source-item small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.source-item a{font-size:12px;color:#285b80;overflow-wrap:anywhere}.empty{padding:22px;text-align:center;color:var(--muted);border:1px dashed #c7d1dc;border-radius:12px;background:#fff}.offline-answer{margin-top:0;padding:0 18px 18px;background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 16px 16px;box-shadow:0 8px 28px #172d4010}.panel:has(+ #offline-answer:not([hidden])){border-radius:16px 16px 0 0;border-bottom-color:transparent;box-shadow:none}.answer-card{background:#fff;border:1px solid #d9cba9;border-right:4px solid var(--gold);border-radius:14px;padding:17px;box-shadow:0 8px 28px #172d400c}.answer-label{display:inline-block;background:#f4f0e7;color:#6d5625;border-radius:6px;padding:2px 9px;font-size:12px;font-weight:700}.answer-card h2{font-size:17px;color:var(--navy);margin:10px 0 7px}.answer-card p{margin:7px 0;white-space:pre-wrap}.answer-summary{font-weight:600}.answer-source-status,.answer-follow-up,.answer-caution{font-size:12px;color:var(--muted)}.answer-caution{padding-top:8px;border-top:1px solid var(--line)}
+@media(max-width:560px){.panel{padding:14px}form button{width:100%}input{width:100%}.result{padding:13px}}
+
+#intake-section{margin-top:16px;padding:0 18px 18px;overflow:hidden}
+#intake-section > .intake-heading{margin:0 -18px 18px;padding:18px 20px 16px;background:linear-gradient(125deg,#10253a,#1d3b56);border-bottom:3px solid var(--gold);color:#fff}
+#intake-section .intake-heading .eyebrow{font-size:11px;color:#e0c78d;font-weight:700}
+#intake-section .intake-heading h2{font-size:19px;color:#fff;margin:4px 0}
+#intake-section .intake-heading p{margin:4px 0;color:#e2e8ee}
+#intake-section form{display:block}
+#intake-section .intake-group{margin:0;padding:0}
+#intake-section .intake-group + .intake-group{margin-top:18px}
+#intake-section .intake-group > h2{font-size:15px;color:var(--navy);margin:0 0 12px;padding-bottom:7px;border-bottom:1px solid #e5dcc8}
+#intake-section .document-checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px;margin-top:8px}
+#intake-section .document-status{display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,42%);gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #edf0f2}
+#intake-section .document-status label{font-size:12px;font-weight:500;margin:0}
+#intake-section .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}#intake-section .field{min-width:0}#intake-section .field.full{grid-column:1/-1}
+#intake-section label,#intake-section .legend{display:block;font-size:12px;font-weight:700;margin-bottom:4px}
+#intake-section input,#intake-section select,#intake-section textarea{display:block;width:100%;min-width:0;flex:initial;border:1px solid #cbd5df;border-radius:9px;padding:9px 10px;font:inherit;font-size:13px;color:var(--ink);background:#fff}
+#intake-section textarea{min-height:82px;resize:vertical}#intake-section input:focus,#intake-section select:focus,#intake-section textarea:focus{outline:2px solid var(--gold);outline-offset:2px}
+#intake-section .hint{font-size:11px;color:var(--muted);margin:4px 0 0}
+#intake-section .choices{display:flex;gap:8px 14px;flex-wrap:wrap}#intake-section .choice{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:400;margin:0}#intake-section .choice input{width:auto;min-width:0;accent-color:var(--navy)}
+#intake-section .consent{display:grid;gap:8px}#intake-section .consent label{display:flex;gap:8px;align-items:flex-start;font-weight:400;font-size:12px;margin:0}#intake-section .consent input{width:auto;margin-top:5px;flex:0 0 auto}
+#intake-section .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}#intake-section .actions button{border:0;border-radius:9px;padding:10px 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+#intake-section .primary{background:var(--navy);color:#fff}#intake-section .secondary{background:#eee8da;color:#5b4c2d}#intake-section .muted{background:#eef1f4;color:#394a5c}
+#intake-section #form-status{font-size:12px;color:var(--muted)}#intake-section .preview-box{border:1px solid #e5dcc8;border-radius:12px;padding:12px;background:#fcfbf8}#intake-section #message-preview{min-height:220px}
+#intake-section [hidden]{display:none!important}
+@media(max-width:560px){#intake-section{padding:0 14px 14px}#intake-section > .intake-heading{margin:0 -14px 16px;padding:16px 14px 14px}#intake-section .grid,#intake-section .document-checklist{grid-template-columns:1fr}#intake-section .field.full{grid-column:auto}#intake-section .actions button{width:100%}}
+
+.conversation-turn{display:grid;gap:8px;margin-bottom:14px}.user-message{justify-self:start;max-width:min(92%,720px);margin:0;background:#edf2f6;border:1px solid #dbe4ec;border-radius:14px 14px 4px 14px;padding:10px 14px;color:var(--navy);font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+.conversation-history{display:grid;gap:12px}.conversation-results{display:grid;gap:10px;margin-top:10px}.conversation-results:empty{display:none}#offline-answer #intake-section{margin-top:16px}
+
+.closing-cta{margin:20px 0 0;padding:22px;background:linear-gradient(125deg,#10253a,#1d3b56);border:1px solid var(--gold);border-radius:16px;color:#fff;box-shadow:0 10px 28px #172d4014}
+.closing-cta .eyebrow{color:#e0c78d;font-size:12px;font-weight:700}
+.closing-cta h2{font-size:18px;margin:7px 0;color:#fff}
+.closing-cta p{margin:7px 0;color:#e2e8ee;font-size:13px}
+.closing-cta button{margin-top:10px;background:#d9c28d;color:#172d40;padding:11px 18px}
+.closing-cta .hint{color:#e2e8ee;font-size:11px}
+
+/* Keep the search, conversation and source registry in one continuous surface. */
+.panel[aria-labelledby="search-title"]{margin-bottom:0;border-radius:16px 16px 0 0;border-bottom:0;box-shadow:none}
+#offline-answer{margin:0;padding:0 18px 18px;background:#fff;border:1px solid var(--line);border-top:0;border-bottom:0;border-radius:0;box-shadow:none}
+.panel[aria-labelledby="source-registry-title"]{margin-top:0!important;border-top:0;border-radius:0 0 16px 16px;box-shadow:0 8px 28px #172d4010}
+
+/* MAVIS welcome area only: the conversation and intake UI below remain unchanged. */
+header.welcome-hero{padding:22px 18px 20px;background:linear-gradient(125deg,#10253a,#1d3b56);color:#fff;border:0;border-bottom:3px solid var(--gold)}
+.welcome-inner{width:min(1040px,calc(100% - 28px));margin:0 auto}
+.welcome-main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,390px);align-items:center;gap:28px;direction:rtl}
+.welcome-copy{min-width:0;text-align:right}
+header.welcome-hero .eyebrow{display:inline-block;color:#e0c78d;font-size:12px;font-weight:700;letter-spacing:.5px}
+header.welcome-hero h1{margin:8px 0 6px;color:#fff;font-size:clamp(25px,4vw,34px);line-height:1.5}
+header.welcome-hero p{max-width:720px;margin:8px 0;color:#e2e8ee;font-size:14px;line-height:1.9}
+header.welcome-hero .welcome-lead{color:#f2dfb5;font-size:17px;font-weight:700}
+header.welcome-hero .welcome-disclaimer{margin-top:12px;padding-top:9px;border-top:1px solid rgba(226,232,238,.25);color:#cbd5df;font-size:11px;line-height:1.8}
+.welcome-portrait{display:flex;align-items:center;justify-content:center;min-width:0}
+.welcome-portrait img{display:block;width:100%;max-width:390px;height:auto;object-fit:contain;object-position:center;filter:drop-shadow(0 16px 22px rgba(0,0,0,.3))}
+.welcome-whatsapp{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:18px;padding:15px 17px;border:1px solid rgba(224,199,141,.75);border-radius:14px;background:rgba(7,22,36,.34)}
+.welcome-whatsapp-copy{min-width:0}
+.welcome-whatsapp strong{display:block;color:#f2dfb5;font-size:16px;line-height:1.7}
+.welcome-whatsapp p{margin:4px 0 0!important;color:#e2e8ee;font-size:13px!important;line-height:1.9}
+.welcome-whatsapp-link{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 17px;border:1px solid #d9c28d;border-radius:10px;background:#d9c28d;color:#172d40;text-decoration:none;font-size:14px;font-weight:700;transition:background .2s ease,transform .2s ease}
+.welcome-whatsapp-link:hover{background:#ead7a8;transform:translateY(-1px)}
+.welcome-whatsapp-link:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(max-width:620px){
+ header.welcome-hero{padding:17px 14px 15px}
+ .welcome-inner{width:100%}
+ .welcome-main{grid-template-columns:minmax(0,1fr);gap:10px}
+ .welcome-portrait img{width:100%;max-width:min(88vw,390px)}
+ .welcome-copy{text-align:center}
+ header.welcome-hero h1{font-size:25px;margin:5px 0}
+ header.welcome-hero p{font-size:13px;line-height:1.85;margin:7px auto}
+ header.welcome-hero .welcome-lead{font-size:15px}
+ .welcome-whatsapp{align-items:stretch;flex-direction:column;gap:10px;margin-top:12px;padding:13px}
+ .welcome-whatsapp strong{font-size:15px}
+ .welcome-whatsapp p{font-size:13px!important}
+ .welcome-whatsapp-link{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.welcome-whatsapp-link{transition:none}.welcome-whatsapp-link:hover{transform:none}}
+
+</style>
+</head>
+<body>
+<header class="welcome-hero">
+  <div class="welcome-inner">
+    <div class="welcome-main">
+      <div class="welcome-portrait">
+        <img src="/mavis-offline/mavis-welcome-hero.png" alt="تصویر ماویس، دستیار هوشمند موسوی با پوشش رسمی و کتاب حقوقی" width="1024" height="1536" loading="eager" fetchpriority="high">
+      </div>
+      <div class="welcome-copy">
+        <span class="eyebrow">MAVIS · MOUSAVI LEGAL AI</span>
+        <h1>سلام، من ماویس هستم</h1>
+        <p class="welcome-lead">دستیار هوشمند موسوی</p>
+        <p>پرسش حقوقی‌تان را همین‌جا مطرح کنید.</p>
+        <p class="welcome-disclaimer">ماویس دستیار هوشمند راهنمایی اولیه است؛ این ابزار مدل زبانی مولد یا جایگزین مشاوره حقوقی و بررسی تخصصی وکیل نیست.</p>
+      </div>
+    </div>
+    <aside class="welcome-whatsapp" aria-label="ارتباط با دفتر در واتساپ">
+      <div class="welcome-whatsapp-copy">
+        <strong>ارتباط مستقیم با دفتر وکیل موسوی</strong>
+        <p>برای پیگیری، هماهنگی یا ارتباط با دفتر، از طریق واتساپ پیام بفرستید.</p>
+      </div>
+      <a class="welcome-whatsapp-link" href="https://wa.me/989169165902" target="_blank" rel="noopener noreferrer" aria-label="ارسال پیام به واتساپ دفتر وکیل موسوی">پیام به واتساپ دفتر <span aria-hidden="true">↗</span></a>
+    </aside>
+  </div>
+</header>
+<main class="wrap">
+<section class="panel" aria-labelledby="search-title"><h2 id="search-title" style="font-size:18px;margin:0 0 12px">گفت‌وگو را با توضیح موضوع شروع کنید</h2>
+<form id="search-form"><label for="query" style="position:absolute;right:-9999px">عبارت جست‌وجو</label><input id="query" type="search" maxlength="160" minlength="2" placeholder="مثلاً چک برگشتی، قولنامه، مهریه، فیشینگ یا اعتراض به رأی" autocomplete="off" required><button id="submit" type="submit" disabled>جست‌وجوی پاسخ اولیه</button></form>
+<p class="hint">جست‌وجو و تشخیص موضوع روی همین دستگاه انجام می‌شود؛ متن پرسش ذخیره یا به سرور ارسال نمی‌شود.</p>
+<div class="chips" aria-label="موضوعات پرتکرار">
+<button class="chip" type="button" data-query="چک برگشتی">چک برگشتی</button><button class="chip" type="button" data-query="قولنامه">قولنامه</button><button class="chip" type="button" data-query="مهریه">مهریه</button><button class="chip" type="button" data-query="کلاهبرداری اینترنتی">کلاهبرداری اینترنتی</button><button class="chip" type="button" data-query="تجدیدنظرخواهی">تجدیدنظرخواهی</button><button class="chip" type="button" data-query="اضافه کاری">اضافه‌کاری</button>
+</div><p id="message" role="status" aria-live="polite">برای شروع، موضوع یا پرسش خود را بنویسید.</p></section>
+<section id="offline-answer" class="offline-answer" aria-live="polite" aria-label="گفت‌وگوی ماویس">
+<div id="conversation-history" class="conversation-history"></div>
+<section id="intake-section" class="panel" aria-labelledby="intake-title">
+<div class="intake-heading"><span class="eyebrow">MAVIS · INTAKE</span><h2 id="intake-title">آماده‌سازی درخواست برای بررسی وکیل</h2><p id="intake-guidance" class="hint">پاسخ‌ها فقط در حافظه همین صفحه پردازش می‌شوند؛ اطلاعات فرم به‌صورت خودکار در فضای ذخیره‌سازی مرورگر یا سرور ثبت نمی‌شوند.</p></div>
+<form id="intake-form" novalidate>
+<section class="intake-group">
+<h2>مشخصات و راه تماس</h2>
+<div class="grid">
+<div class="field"><label for="full-name">نام و نام خانوادگی *</label><input id="full-name" name="fullName" maxlength="80" autocomplete="name" required></div>
+<div class="field"><label for="phone">شماره همراه *</label><input id="phone" name="phone" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="مثلاً 0912..." required></div>
+<div class="field"><label for="city">شهر محل سکونت یا رسیدگی *</label><input id="city" name="city" maxlength="60" required></div>
+<div class="field"><label for="topic">موضوع اصلی درخواست *</label><select id="topic" name="topic" required><option value="">انتخاب کنید</option><option value="property">ملک، زمین و امور ثبتی</option><option value="contract">قرارداد و تعهدات</option><option value="cheque">چک، سفته و مطالبه وجه</option><option value="family">خانواده، مهریه و طلاق</option><option value="criminal">شکایت و پرونده کیفری</option><option value="labor">کار و تأمین اجتماعی</option><option value="administrative">امور اداری و دیوان عدالت</option><option value="civil">دعاوی مدنی، مطالبه وجه و خسارت</option><option value="other">سایر موضوعات</option></select></div>
+<div class="field"><label for="role">نقش شما در موضوع *</label><select id="role" name="role" required><option value="">ابتدا موضوع را انتخاب کنید</option></select></div>
+<div class="field"><label for="stage">مرحله فعلی موضوع *</label><select id="stage" name="stage" required><option value="">ابتدا موضوع را انتخاب کنید</option></select></div>
+</div>
+</section>
+<section class="intake-group">
+<h2>موضوع و فوریت</h2>
+<div class="field"><span class="legend">میزان فوریت *</span><div class="choices"><label class="choice"><input type="radio" name="urgency" value="عادی" required>عادی</label><label class="choice"><input type="radio" name="urgency" value="نیازمند بررسی زودهنگام">نیازمند بررسی زودهنگام</label><label class="choice"><input type="radio" name="urgency" value="دارای مهلت یا جلسه نزدیک">دارای مهلت یا جلسه نزدیک</label></div></div>
+<div class="grid" style="margin-top:10px"><div class="field"><label for="contact-window">چه زمانی برای تماس دفتر نیاز دارید؟ *</label><select id="contact-window" name="contactWindow" required><option value="">انتخاب کنید</option><option>امروز</option><option>حداکثر ۳ روز آینده</option><option>حداکثر یک هفته آینده</option><option>بدون فوریت خاص</option><option>مطمئن نیستم</option></select></div><div class="field"><label for="urgent-signal">آیا وضعیت فوری مشخصی وجود دارد؟ *</label><select id="urgent-signal" name="urgentSignal" required><option value="">انتخاب کنید</option><option>هیچ‌کدام</option><option>بازداشت یا محدودیت آزادی</option><option>جلسه یا مهلت در ۷۲ ساعت آینده</option><option>اقدام اجرایی فوری</option><option>مطمئن نیستم</option></select><p class="hint">این گزینه فقط برای اولویت‌بندی تماس دفتر است و به معنی تشخیص فوریت قانونی نیست.</p></div></div>
+<div class="grid"><div class="field"><label for="deadline">تاریخ جلسه، ابلاغ یا پایان مهلت (در صورت وجود)</label><input id="deadline" name="deadline" type="text" maxlength="80" placeholder="تاریخ و نوع رویداد را بنویسید"></div><div class="field"><label for="reference">شماره پرونده یا شعبه (اختیاری)</label><input id="reference" name="reference" maxlength="100"></div></div>
+<div id="topic-fields" class="grid" style="margin-top:10px" aria-live="polite"><p class="hint field full">پس از انتخاب موضوع، پرسش‌های مرتبط نمایش داده می‌شوند.</p></div>
+</section>
+<section class="intake-group">
+<h2>شرح موضوع و خواسته شما</h2>
+<div class="grid">
+<div class="field full"><label for="summary">ماجرا را به ترتیب زمانی و با ذکر تاریخ‌های مهم توضیح دهید *</label><textarea id="summary" name="summary" minlength="20" maxlength="2000" required placeholder="چه اتفاقی افتاده؟ از چه زمانی؟ چه اقداماتی انجام شده است؟"></textarea><p class="hint">۲۰ تا ۲۰۰۰ نویسه. فقط اطلاعات ضروری را بنویسید.</p></div>
+<div class="field full"><label for="goal">از وکیل چه کمکی می‌خواهید؟ *</label><textarea id="goal" name="goal" minlength="5" maxlength="500" required placeholder="مثلاً بررسی امکان مطالبه وجه، دفاع، اعتراض به رأی یا تنظیم قرارداد"></textarea></div>
+<div class="field full"><span class="legend">مدارک یا اطلاعاتی که در اختیار دارید</span><div id="document-options" class="document-checklist"></div><div class="field" style="margin-top:8px"><label for="other-docs">توضیح تکمیلی درباره مدارک موجود، ناموجود یا مدارکی که بعداً ارائه می‌کنید</label><textarea id="other-docs" name="otherDocs" maxlength="700" rows="3" placeholder="مثلاً اصل سند نزد طرف مقابل است؛ تصویر قرارداد و رسید پرداخت را دارم؛ گواهی یا ابلاغیه را بعداً ارائه می‌کنم."></textarea></div></div>
+</div>
+</section>
+<section class="intake-group">
+<h2>رضایت و آماده‌سازی گزارش</h2>
+<div class="consent">
+<label><input type="checkbox" name="caseConsent" required><span>با تهیه این گزارش و در صورت ارسال آگاهانه آن به دفتر، رضایت می‌دهم اطلاعاتی که شخصاً وارد کرده‌ام برای بررسی اولیه موضوع استفاده شود. می‌دانم این اقدام به‌تنهایی به معنی قبول وکالت نیست. *</span></label>
+<label><input type="checkbox" name="thirdPartyNotice" required><span>می‌دانم باید از درج اطلاعات حساس و غیرضروری اشخاص ثالث خودداری کنم و در صورت ضرورت، مجوز یا مبنای قانونی ارائه اطلاعات آنان را داشته باشم. *</span></label>
+<label><input type="checkbox" name="marketingConsent"><span>به‌صورت اختیاری با دریافت پیام‌های اطلاع‌رسانی و محتوای حقوقی دفتر موافقم.</span></label>
+</div>
+<p class="hint">رضایت بررسی درخواست، آگاهی درباره اطلاعات اشخاص ثالث و رضایت بازاریابی مستقل هستند. گزینه بازاریابی اختیاری است.</p>
+<div class="actions" style="margin-top:14px"><button class="primary" type="submit">ساخت گزارش پذیرش برای وکیل</button><button class="muted" type="reset">پاک‌کردن فرم</button></div>
+<p id="form-status" role="status" aria-live="polite">پس از ساخت پیام، متن را بررسی کنید؛ هیچ پیامی بدون اقدام نهایی شما ارسال نمی‌شود.</p>
+<div id="preview" hidden><div class="preview-box"><h2>پیش‌نمایش درخواست شما</h2><textarea id="message-preview" readonly aria-label="متن آماده درخواست"></textarea><div class="actions" style="margin-top:9px"><button class="primary" id="copy-open" type="button">کپی متن و بازکردن واتساپ دفتر</button><button class="secondary" id="copy-only" type="button">فقط کپی متن</button></div><p class="hint">برای ارسال، متن کپی‌شده را در گفت‌وگوی واتساپ دفتر جای‌گذاری و خودتان دکمه ارسال را بزنید. این فرم چیزی را خودکار ارسال نمی‌کند.</p></div></div>
+</section>
+</form>
+</section>
+</section>
+<section class="panel" style="margin-top:16px" aria-labelledby="source-registry-title"><h2 id="source-registry-title" style="font-size:17px;margin:0 0 10px">فهرست منابع پژوهش حقوقی</h2><p class="hint">منابع رسمی و منابع ثانویه از هم تفکیک شده‌اند. دسترسی زنده به این وب‌سایت‌ها در زمان ساخت بسته آفلاین تأیید نشده است.</p><div id="source-list" class="source-list"></div></section>
+\n<section class="warning"><strong>محدودیت مهم:</strong> این ابزار پاسخ‌گوی مولد یا مشاور حقوقی نیست. فقط اطلاعات موجود را بازیابی می‌کند. خلاصه‌ها متن رسمی قانون نیستند و وضعیت اعتبار همه قوانین به‌طور کامل تنقیح نشده است. برای مهلت‌ها، اقدامات فوری و تصمیم درباره پرونده، متن رسمی روز و نظر وکیل لازم است.</section>
+<p class="footer">برای استفاده آفلاین، این صفحه را یک‌بار با اینترنت باز کنید و تا پایان بارگذاری کتابخانه باز نگه دارید. در حالت آفلاین، فقط همین بخش و داده‌های ذخیره‌شده روی دستگاه در دسترس است؛ ارسال درخواست به دفتر بدون اتصال انجام نمی‌شود.</p>
+
+</main>
+<script type="module" src="./app.js"></script>
+</body></html>

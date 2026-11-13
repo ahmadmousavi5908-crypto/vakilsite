@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "vakilahmadmousavi-ir",
+  "main": ".open-next/worker.js",
+  "upload_source_maps": true,
+  "compatibility_date": "2026-11-11",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "account_id": "01718af5c2dfbfe5e4ccedb0fd130cc2",
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://vakilahmadmousavi.ir",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://jroflcmiczfwtmiaxmpd.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_OQAYkMnnChOJTutvi3kLfg_RnWEhEvs"
+  }
+}
