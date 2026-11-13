@@ -154,12 +154,13 @@ jobs:
           const html = ["/tmp/vakilsite-home.html", "/tmp/vakilsite-about.html"]
             .map((file) => fs.readFileSync(file, "utf8"))
             .join("\n");
-          const match = html.match(/src="([^"]*\\/_next\\/image\\?[^"]+)"/);
-          if (!match) {
+          const imageSources = [...html.matchAll(/src="([^"]+)"/g)].map((entry) => entry[1]);
+          const imageSource = imageSources.find((source) => source.includes("/_next/image?"));
+          if (!imageSource) {
             console.log("No Next.js image optimizer URL found in the homepage/about smoke pages.");
             process.exit(0);
           }
-          const imageUrl = new URL(match[1].replaceAll("&amp;", "&"), "http://127.0.0.1:8787");
+          const imageUrl = new URL(imageSource.replaceAll("&amp;", "&"), "http://127.0.0.1:8787");
           const response = await fetch(imageUrl, { signal: AbortSignal.timeout(15000) });
           const contentType = response.headers.get("content-type") || "";
           console.log(`Image optimizer -> HTTP ${response.status} (${contentType})`);
