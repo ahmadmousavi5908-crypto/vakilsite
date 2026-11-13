@@ -1,0 +1,63 @@
+name: Deploy Vakilsite to Cloudflare Workers
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vakilsite-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and deploy production Worker
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CLOUDFLARE_ACCOUNT_ID: "01718af5c2dfbfe5e4ccedb0fd130cc2"
+      NEXT_PUBLIC_SITE_URL: "https://vakilahmadmousavi.ir"
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - name: Check out approved release branch
+        uses: actions/checkout@v7
+        with:
+          ref: work/mother-two-updated-mavis-20261110
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Validate production configuration
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY CLOUDFLARE_API_TOKEN; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Required GitHub variable or secret is missing: $name"
+              exit 1
+            fi
+          done
+
+      - name: Install project dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install pinned Cloudflare adapter tooling
+        run: >-
+          npm install --no-save --package-lock=false --no-audit --no-fund
+          @opennextjs/cloudflare@1.20.17
+          wrangler@4.161.0
+
+      - name: Build production Worker
+        run: npx opennextjs-cloudflare build
+
+      - name: Deploy production Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler deploy
