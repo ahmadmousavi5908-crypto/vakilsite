@@ -172,6 +172,24 @@ jobs:
             fi
           done
 
+          for endpoint in /api/mavis/knowledge-search /api/admin/mavis/search-console; do
+            status="$(curl --silent --show-error -o /tmp/vakilsite-api-guard.json -w '%{http_code}' -X POST "http://127.0.0.1:8787$endpoint" -H "Origin: http://127.0.0.1:8787" -H "Content-Type: application/json" --data '{"query":"قانون","limit":3}')"
+            echo "$endpoint -> HTTP $status"
+            if [ "$status" != "401" ] && [ "$status" != "403" ] && [ "$status" != "503" ]; then
+              cat /tmp/opennext-preview.log
+              exit 1
+            fi
+            node --input-type=module -e '
+              import fs from "node:fs";
+              const data = JSON.parse(fs.readFileSync("/tmp/vakilsite-api-guard.json", "utf8"));
+              if (!data.error || typeof data.error.code !== "string") {
+                console.error("Protected MAVIS API did not fail closed:", data);
+                process.exit(1);
+              }
+              console.log("Protected MAVIS API: fail-closed response confirmed.");
+            '
+          done
+
           connectivity="$(curl --silent --show-error --fail http://127.0.0.1:8787/api/mavis/connectivity)"
           node --input-type=module -e '
             const data = JSON.parse(process.argv[1]);
