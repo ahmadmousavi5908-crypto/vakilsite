@@ -3,11 +3,12 @@ import assert from "node:assert/strict";
 import { readFile, stat } from "node:fs/promises";
 
 const root = new URL("../../public/mavis-offline/", import.meta.url);
-const [html, app, worker, dock] = await Promise.all([
+const [html, app, worker, dock, contactDock] = await Promise.all([
   readFile(new URL("index.html", root), "utf8"),
   readFile(new URL("app.js", root), "utf8"),
   readFile(new URL("sw.js", root), "utf8"),
   readFile(new URL("../../src/components/mavis/MavisAvatarDock.jsx", import.meta.url), "utf8"),
+  readFile(new URL("../../src/components/SocialContactDock.jsx", import.meta.url), "utf8"),
 ]);
 
 test("offline service worker precaches every runtime dependency", () => {
@@ -130,12 +131,13 @@ test("MAVIS welcome image uses a compact WebP asset and remains precached offlin
   assert.ok(!worker.includes("mavis-welcome-hero.png"));
 });
 
-test("floating MAVIS and attorney docks shift inward only at desktop widths", async () => {
+test("all floating launchers use desktop-only safe insets", async () => {
   const mavisCss = await readFile(new URL("../../src/components/mavis/MavisAvatarDock.module.css", import.meta.url), "utf8");
   const attorney = await readFile(new URL("../../src/components/AttorneyProfileDock.jsx", import.meta.url), "utf8");
   assert.ok(mavisCss.includes("@media (min-width: 701px)"));
-  assert.ok(mavisCss.includes("left: clamp(20px, 2vw, 28px);"));
+  assert.ok(mavisCss.includes("left: clamp(36px, 3vw, 44px);"));
   assert.ok(attorney.includes('className="attorney-profile-dock-root"'));
   assert.ok(attorney.includes("@media (min-width: 701px)"));
-  assert.ok(attorney.includes("left: clamp(20px, 2vw, 28px) !important;"));
+  assert.ok(attorney.includes("left: clamp(36px, 3vw, 44px) !important;"));
+  assert.match(contactDock, /@media \(min-width: 701px\)[\s\S]*?\.site-contact-launcher\s*\{\s*right: clamp\(24px, 2\.5vw, 36px\) !important;/);
 });
