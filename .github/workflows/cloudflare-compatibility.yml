@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - work/mother-two-updated-mavis-20261110
+      - fix/cloudflare-workers-edge-runtime-20261113
   pull_request:
     branches:
       - work/mother-two-updated-mavis-20261110
