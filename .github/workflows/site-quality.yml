@@ -16,6 +16,8 @@ permissions:
 jobs:
   lint-and-build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: https://vakilsite-ci.example
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -26,6 +28,8 @@ jobs:
           cache: npm
       - name: Install dependencies and synchronize lockfile
         run: npm ci --no-audit --no-fund
+      - name: Test canonical site URL and sitemap invariants
+        run: npm run test:site-url
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data

@@ -9,6 +9,7 @@ import SocialLinksPublic from "../components/SocialLinksPublic";
 import LegalIcon from "../components/LegalIcon";
 import CitySelector from "../components/CitySelector";
 import MavisAvatarDock from "../components/mavis/MavisAvatarDock";
+import { getSiteUrl } from "../lib/site-url.mjs";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -39,7 +40,7 @@ const faqs = [
 ];
 
 export default function Home() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  const siteUrl = getSiteUrl();
   const structuredSite = siteUrl
     ? {
         "@context": "https://schema.org",

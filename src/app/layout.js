@@ -2,8 +2,9 @@ import "./globals.css";
 import SocialContactDock from "../components/SocialContactDock";
 import AttorneyProfileDock from "../components/AttorneyProfileDock";
 import GlobalMobileMenu from "../components/GlobalMobileMenu";
+import { getSiteUrl } from "../lib/site-url.mjs";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const siteUrl = getSiteUrl();
 
 export const viewport = {
   width: "device-width",
