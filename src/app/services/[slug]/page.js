@@ -11,7 +11,7 @@ export async function generateMetadata({ params }) {
   const area = practiceAreas.find((item) => item.slug === slug);
   if (!area) return { title: "حوزه خدمات پیدا نشد" };
   return {
-    title: area.title + " | خدمات حقوقی سید احمد موسوی",
+    title: slug === "legal-consultation"\n      ? "مشاوره حقوقی و بررسی پرونده"\n      : area.title + " | خدمات حقوقی سید احمد موسوی",
     description: area.description,
     alternates: { canonical: "/services/" + area.slug },
     openGraph: { type: "website", locale: "fa_IR", title: area.title, description: area.description },
