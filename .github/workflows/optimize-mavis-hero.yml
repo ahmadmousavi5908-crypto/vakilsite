@@ -25,19 +25,21 @@ jobs:
         with:
           node-version: 24
       - name: Install pinned image processor
-        run: npm install --prefix /tmp/mavis-image-tools --no-save --no-audit --no-fund sharp@0.35.5
+        run: npm install --no-save --package-lock=false --no-audit --no-fund sharp@0.35.5
       - name: Convert MAVIS hero to responsive WebP
         run: |
           node --input-type=module <<'NODE'
-          import sharp from "/tmp/mavis-image-tools/node_modules/sharp/lib/index.js";
+          import sharp from "sharp";
+          import { stat } from "node:fs/promises";
           const input = "public/mavis-offline/mavis-welcome-hero.png";
           const output = "public/mavis-offline/mavis-welcome-hero.webp";
           const info = await sharp(input)
             .resize({ width: 780, withoutEnlargement: true })
             .webp({ quality: 90, alphaQuality: 100, effort: 6 })
             .toFile(output);
+          const inputStat = await stat(input);
           console.log(JSON.stringify({
-            inputBytes: (await import("node:fs/promises")).stat(input).then(x => x.size),
+            inputBytes: inputStat.size,
             outputBytes: info.size,
             width: info.width,
             height: info.height,
