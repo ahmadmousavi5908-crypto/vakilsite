@@ -124,14 +124,17 @@ test("offline search becomes available after the core library, without waiting f
 test("MAVIS welcome image uses a compact WebP asset and remains precached offline", async () => {
   const hero = await stat(new URL("mavis-welcome-hero.webp", root));
   assert.ok(hero.size < 400_000, "MAVIS hero should remain below 400 KB");
-  assert.match(html, /src="\\/mavis-offline\\/mavis-welcome-hero\\.webp"/);
-  assert.doesNotMatch(worker, /mavis-welcome-hero\\.png/);
+  assert.ok(html.includes('src="/mavis-offline/mavis-welcome-hero.webp"'));
+  assert.ok(worker.includes("mavis-welcome-hero.webp"));
+  assert.ok(!worker.includes("mavis-welcome-hero.png"));
 });
 
 test("floating MAVIS and attorney docks shift inward only at desktop widths", async () => {
   const mavisCss = await readFile(new URL("../../src/components/mavis/MavisAvatarDock.module.css", import.meta.url), "utf8");
   const attorney = await readFile(new URL("../../src/components/AttorneyProfileDock.jsx", import.meta.url), "utf8");
-  assert.match(mavisCss, /@media \\(min-width: 701px\\)[\\s\\S]*?left: clamp\\(20px, 2vw, 28px\\)/);
-  assert.match(attorney, /className="attorney-profile-dock-root"/);
-  assert.match(attorney, /@media \\(min-width: 701px\\)[\\s\\S]*?left: clamp\\(20px, 2vw, 28px\\) !important/);
+  assert.ok(mavisCss.includes("@media (min-width: 701px)"));
+  assert.ok(mavisCss.includes("left: clamp(20px, 2vw, 28px);"));
+  assert.ok(attorney.includes('className="attorney-profile-dock-root"'));
+  assert.ok(attorney.includes("@media (min-width: 701px)"));
+  assert.ok(attorney.includes("left: clamp(20px, 2vw, 28px) !important;"));
 });
