@@ -72,3 +72,34 @@ Recheck official documentation before any future policy change; crawler names, b
 - [ ] Confirm admin and API routes reject unauthenticated requests even if directly requested.
 - [ ] Check access logs against official IP ranges where the platform publishes them.
 - [ ] Repeat after CDN, hosting, robots, or domain changes.
+
+
+## 7. Current platform clarifications — 14 November 2026
+
+### Google-Extended and Gemini visibility
+
+Google's current crawler documentation states that `Google-Extended` controls whether content crawled by Google may be used for both:
+- Training future generations of Gemini models.
+- Grounding responses in Gemini Apps and Grounding with Google Search on Vertex AI.
+
+It does **not** control Google Search inclusion or ranking. The current `Disallow: /` therefore preserves ordinary Google Search and Google AI Overviews eligibility through Googlebot, but opts the site out of Gemini Apps grounding as well as the specified model-training uses. This is an explicit privacy-versus-Gemini-visibility trade-off; do not change it without the owner's recorded decision.
+
+Official reference: https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers
+
+### Anthropic training preference
+
+Anthropic's current crawler guidance distinguishes `ClaudeBot` (training), `Claude-SearchBot` (search), and `Claude-User` (user-requested retrieval). Anthropic announced a gradual rollout of a machine-readable AI-training preference signal on 30 October 2026 and states that a directly named `ClaudeBot` robots rule takes precedence. Keep the existing explicit `ClaudeBot` block unless the owner changes the training policy.
+
+Official reference: https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler
+
+### xAI / Grok and DeepSeek
+
+The official xAI developer documentation describes a live Web Search tool, and DeepSeek documents Search and Fetch APIs. The official materials reviewed do not provide a verified publisher crawler token, robots.txt policy, or stable IP allowlist for these products. Do not add speculative tokens such as `GrokBot` or `DeepSeekBot` as if they were official. The wildcard public-crawl rule already permits unidentified compliant crawlers; CDN/WAF access and actual citations still require measurement.
+
+Official references:
+- https://docs.x.ai/developers/tools/web-search
+- https://api-docs.deepseek.com/guides/search/
+
+### Operational verification boundary
+
+An `Allow` directive is only a declared crawl preference. It does not prove that a platform has crawled, indexed, retrieved, or cited the site. Confirm access through CDN/Worker logs where available and measure citations with each platform's available webmaster or visibility reporting. Search Console and Bing Webmaster verification, OAuth credentials, and WAF treatment must remain marked unverified until their live account state or request logs are inspected.
