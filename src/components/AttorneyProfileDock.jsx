@@ -30,7 +30,7 @@ export default function AttorneyProfileDock() {
   }
 
   return (
-    <div ref={rootRef} dir="rtl" style={{ position: "fixed", left: "max(12px, env(safe-area-inset-left))", bottom: "max(78px, calc(env(safe-area-inset-bottom) + 76px))", zIndex: 1050, fontFamily: "inherit" }}>
+    <div ref={rootRef} className="attorney-profile-dock-root" dir="rtl" style={{ position: "fixed", left: "max(12px, env(safe-area-inset-left))", bottom: "max(78px, calc(env(safe-area-inset-bottom) + 76px))", zIndex: 1050, fontFamily: "inherit" }}>
       {open && (
         <section id="attorney-profile-panel" role="dialog" aria-label="معرفی وکیل" style={{ position: "absolute", left: 0, bottom: 66, width: "min(350px, calc(100vw - 28px))", maxHeight: "min(72vh, 570px)", overflowY: "auto", padding: 17, border: "1px solid #e2d8c7", borderRadius: 16, background: "#fffefa", color: "#18334b", boxShadow: "0 16px 42px rgba(5,20,35,.22)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 13, paddingBottom: 13, borderBottom: "1px solid #e9e1d3" }}>
@@ -64,6 +64,12 @@ export default function AttorneyProfileDock() {
         <span>{open ? "بستن معرفی" : "دیدن وکیل"}</span>
       </button>
       <style jsx global>{`
+        @media (min-width: 701px) {
+          .attorney-profile-dock-root {
+            left: clamp(20px, 2vw, 28px) !important;
+          }
+        }
+
         .attorney-profile-cta {
           position: relative;
           isolation: isolate;
