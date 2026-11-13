@@ -53,11 +53,21 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi.ir
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
           NEXT_PUBLIC_SUPABASE_URL: https://jroflcmiczfwtmiaxmpd.supabase.co
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_OQAYkMnnChOJTutvi3kLfg_RnWEhEvs
         shell: bash
         run: |
           set -euo pipefail
+          npm run indexnow:prepare
+          if [ -n "${INDEXNOW_KEY:-}" ]; then
+            test -s public/indexnow-key.txt
+            test "$(cat public/indexnow-key.txt)" = "$INDEXNOW_KEY"
+            echo "IndexNow verification file prepared."
+          else
+            echo "IndexNow key is not configured; URL notifications remain disabled."
+          fi
+
           npx opennextjs-cloudflare build
 
           npx wrangler deploy --dry-run --outdir .wrangler-production-dry-run 2>&1 | tee /tmp/wrangler-production-dry-run.log
