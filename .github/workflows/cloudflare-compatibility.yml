@@ -155,7 +155,7 @@ jobs:
               cat /tmp/opennext-preview.log
               exit 1
             fi
-            if ! grep -qi 'location: .*\/admin\/login' /tmp/vakilsite-admin.headers; then
+            if ! grep -qi 'location: .*/admin/login' /tmp/vakilsite-admin.headers; then
               echo "$route did not redirect to the admin login page."
               exit 1
             fi
