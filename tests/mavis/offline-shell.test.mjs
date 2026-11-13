@@ -73,7 +73,7 @@ test("MAVIS opens one local conversation with an embedded conditional intake", a
   assert.match(html, /id="intake-section" class="panel"/);
   assert.doesNotMatch(html, /id="intake-section"[^>]*hidden/);
   assert.match(html, /class="welcome-hero"/);
-  assert.match(html, /src="\/mavis-offline\/mavis-welcome-hero\.png"/);
+  assert.match(html, /src="\/mavis-offline\/mavis-welcome-hero\.webp"/);
   assert.match(html, /width="780" height="1170"/);
   assert.match(html, /loading="eager" fetchpriority="high"/);
   assert.match(html, /width:100%;max-width:390px;height:auto;object-fit:contain/);
