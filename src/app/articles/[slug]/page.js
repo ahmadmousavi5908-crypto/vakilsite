@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { articles } from "../../../data/articles";
 import JsonLd from "../../../components/JsonLd";
+import { getSiteUrl } from "../../../lib/site-url.mjs";
 
 export function generateStaticParams() {
   return articles.map((article) => ({ slug: article.slug }));
@@ -31,8 +32,8 @@ export default async function ArticleDetailPage({ params }) {
   const article = articles.find((item) => item.slug === slug);
   if (!article) notFound();
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  const articleUrl = siteUrl ? siteUrl + "/articles/" + article.slug : null;
+  const siteUrl = getSiteUrl();
+  const articleUrl = siteUrl ? new URL("/articles/" + article.slug, siteUrl).href : null;
   const structuredArticle = articleUrl
     ? {
         "@context": "https://schema.org",
