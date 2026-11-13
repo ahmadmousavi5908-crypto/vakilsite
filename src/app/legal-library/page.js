@@ -7,7 +7,7 @@ const lawCount = getLegalRecords("laws").length;
 const articleCount = getLegalRecords("articles").length;
 
 export const metadata = {
-  title: "کتابخانه پژوهشی حقوق ایران | قوانین و اصطلاحات حقوقی",
+  title: "کتابخانه حقوقی ایران | قوانین و اصطلاحات",
   description: "جست‌وجوی اصطلاحات حقوقی، قوانین و خلاصه مواد قانونی ایران همراه با وضعیت بررسی منابع و پیوند به مراجع رسمی.",
   keywords: ["کتابخانه حقوقی", "قوانین ایران", "اصطلاحات حقوقی", "خلاصه مواد قانونی", "حقوق ثبت", "چک صیادی", "سفته"],
   alternates: { canonical: "/legal-library" },

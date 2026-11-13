@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getLegalRecords, legalLibraryCategories, legalReviewLabels } from "../../../lib/legal-library";
 
 export const metadata = {
-  title: "فهرست مدخل‌های دانشنامه حقوقی ایران",
+  title: "فهرست کتابخانه حقوقی ایران",
   description: "فهرست ساختاریافته اصطلاحات، قوانین و خلاصه مواد قانونی در کتابخانه پژوهشی حقوق ایران؛ همراه با پیوند مستقل و وضعیت بازبینی هر مدخل.",
   alternates: { canonical: "/legal-library/catalog" },
   openGraph: {
