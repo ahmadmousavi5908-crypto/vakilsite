@@ -112,6 +112,13 @@
   }
 }
 
+
+@media (min-width: 701px) {
+  .root {
+    left: clamp(20px, 2vw, 28px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .link,
   .label,
