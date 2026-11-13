@@ -125,6 +125,7 @@ test("MAVIS welcome image uses a compact WebP asset and remains precached offlin
   const hero = await stat(new URL("mavis-welcome-hero.webp", root));
   assert.ok(hero.size < 400_000, "MAVIS hero should remain below 400 KB");
   assert.ok(html.includes('src="/mavis-offline/mavis-welcome-hero.webp"'));
+  assert.ok(!html.includes("mavis-welcome-hero.png"));
   assert.ok(worker.includes("mavis-welcome-hero.webp"));
   assert.ok(!worker.includes("mavis-welcome-hero.png"));
 });
