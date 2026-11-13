@@ -160,7 +160,7 @@ jobs:
               node --input-type=module -e '
                 import fs from "node:fs";
                 const html = fs.readFileSync("/tmp/vakilsite-admin.html", "utf8");
-                const streamedRedirect = /<meta[^>]+http-equiv="refresh"[^>]+content="0;url=\\/admin\\/login/i.test(html);
+                const streamedRedirect = new RegExp('<meta[^>]+http-equiv="refresh"[^>]+content="0;url=/admin/login', "i").test(html);
                 const protectedContent = /داشبورد وب‌سایت|مدیریت ماویس|مرکز دانش و پژوهش/.test(html);
                 if (!streamedRedirect || protectedContent) {
                   console.error("Admin route did not produce a safe streamed redirect.");
