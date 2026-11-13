@@ -2,7 +2,7 @@ import Link from "next/link";
 import { practiceAreas } from "../../data/practice-areas";
 
 export const metadata = {
-  title: "حوزه‌های خدمات حقوقی و وکالت",
+  title: "حوزه‌های خدمات حقوقی",
   description: "معرفی حوزه‌های بررسی و خدمات حقوقی سید احمد موسوی؛ دعاوی خانواده، کیفری، ملکی، قراردادها، مطالبات و مشاوره اولیه در اهواز و سراسر ایران.",
   alternates: { canonical: "/services" },
 };
