@@ -66,7 +66,7 @@ export default function AttorneyProfileDock() {
       <style jsx global>{`
         @media (min-width: 701px) {
           .attorney-profile-dock-root {
-            left: clamp(20px, 2vw, 28px) !important;
+            left: clamp(36px, 3vw, 44px) !important;
           }
         }
 
