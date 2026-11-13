@@ -159,6 +159,10 @@ jobs:
             elif [ "$status" = "200" ]; then
               if ! grep -Eqi '<meta[^>]+http-equiv="refresh"[^>]+content="0;url=/admin/login' /tmp/vakilsite-admin.html; then
                 echo "$route did not emit the expected streamed redirect to the admin login page."
+                echo "Response headers:"
+                cat /tmp/vakilsite-admin.headers
+                echo "Response body preview:"
+                head -c 5000 /tmp/vakilsite-admin.html
                 exit 1
               fi
               if grep -Eqi 'داشبورد وب‌سایت|مدیریت سایت|مرکز دانش و پژوهش' /tmp/vakilsite-admin.html; then
