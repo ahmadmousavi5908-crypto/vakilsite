@@ -1,8 +1,9 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+import { getSiteUrl } from "../lib/site-url.mjs";
 
 const privatePaths = ["/admin", "/api"];
 
 export default function robots() {
+  const siteUrl = getSiteUrl();
   return {
     rules: [
       {
