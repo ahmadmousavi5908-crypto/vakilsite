@@ -21,34 +21,21 @@ function renderSourceRegistry(){const root=$("source-list");if(!root||!Array.isA
 function updateNetwork(){const online=navigator.onLine;const status=$("network-status");const dot=$("network-dot");if(status)status.textContent=online?"اتصال اینترنت برقرار است؛ جست‌وجو همچنان محلی است":"حالت آفلاین فعال است؛ جست‌وجو از داده‌های ذخیره‌شده انجام می‌شود";if(dot)dot.classList.toggle("online",online);}
 async function boot(){updateNetwork();window.addEventListener("online",updateNetwork);window.addEventListener("offline",updateNetwork);
 let publishedArticleState="بسته مقالات منتشرشده بارگذاری نشد";
+let cacheState="pending";
 const baseStatus=()=> "کتابخانه آماده · "+corpus.counts.terms+" اصطلاح، "+corpus.counts.laws+" قانون، "+corpus.counts.articles+" خلاصه ماده و "+corpus.counts.research_notes+" یادداشت پژوهشی · "+publishedArticleState+" · نسخه "+corpus.library_version+" · بازبینی فهرست منابع "+corpus.registry_review_date;
-function updateCacheStatus(state){const messages={pending:"جست‌وجوی محلی آماده است؛ ذخیره آفلاین در حال تکمیل است.",ready:"جست‌وجوی محلی و ذخیره آفلاین آماده‌اند.",failed:"جست‌وجوی محلی آماده است؛ ذخیره آفلاین تأیید نشد. صفحه را با اینترنت باز نگه دارید و دوباره بارگذاری کنید.",unsupported:"جست‌وجوی محلی آماده است؛ این مرورگر ذخیره آفلاین را پشتیبانی نمی‌کند."};const status=$("bundle-status");if(status)status.textContent=baseStatus()+" · "+messages[state];}
-try{const response=await fetch(DATA_URL,{cache:"force-cache"});if(!response.ok)throw new Error("bundle unavailable");corpus=await response.json();
+function updateCacheStatus(state){cacheState=state;const messages={pending:"جست‌وجوی محلی آماده است؛ ذخیره آفلاین در حال تکمیل است.",ready:"جست‌وجوی محلی و ذخیره آفلاین آماده‌اند.",failed:"جست‌وجوی محلی آماده است؛ ذخیره آفلاین تأیید نشد. صفحه را با اینترنت باز نگه دارید و دوباره بارگذاری کنید.",unsupported:"جست‌وجوی محلی آماده است؛ این مرورگر ذخیره آفلاین را پشتیبانی نمی‌کند."};const status=$("bundle-status");if(status)status.textContent=baseStatus()+" · "+messages[state];}
 try{
-const articleResponse=await fetch(PUBLISHED_ARTICLES_URL,{cache:"force-cache"});
-if(articleResponse.ok){
-const articleBundle=await articleResponse.json();
-if(Array.isArray(articleBundle.records)){
-const existingIds=new Set(corpus.records.map(record=>record.id));
-const articleRecords=articleBundle.records.filter(record=>
-record &&
-record.record_type==="published_article" &&
-record.review_status==="secondary_source_only" &&
-record.source_verified===false &&
-record.access_class==="public" &&
-typeof record.id==="string" &&
-!existingIds.has(record.id)
-);
-corpus.records.push(...articleRecords);
-publishedArticleState=articleRecords.length+" مقاله منتشرشده سایت";
-}else{
-publishedArticleState="ساختار بسته مقالات نامعتبر است";
-}
-}
-}catch{
-publishedArticleState="بسته مقالات در دسترس نیست";
-}
+const publishedArticlesPromise=fetch(PUBLISHED_ARTICLES_URL,{cache:"force-cache"}).catch(()=>null);
+const response=await fetch(DATA_URL,{cache:"force-cache"});if(!response.ok)throw new Error("bundle unavailable");corpus=await response.json();
 $("submit").disabled=false;renderSourceRegistry();updateCacheStatus("pending");
+void publishedArticlesPromise.then(async articleResponse=>{
+if(!articleResponse?.ok){publishedArticleState="بسته مقالات در دسترس نیست";updateCacheStatus(cacheState);return;}
+const articleBundle=await articleResponse.json();
+if(!Array.isArray(articleBundle.records)){publishedArticleState="ساختار بسته مقالات نامعتبر است";updateCacheStatus(cacheState);return;}
+const existingIds=new Set(corpus.records.map(record=>record.id));
+const articleRecords=articleBundle.records.filter(record=>record&&record.record_type==="published_article"&&record.review_status==="secondary_source_only"&&record.source_verified===false&&record.access_class==="public"&&typeof record.id==="string"&&!existingIds.has(record.id));
+corpus.records.push(...articleRecords);publishedArticleState=articleRecords.length+" مقاله منتشرشده سایت";updateCacheStatus(cacheState);
+}).catch(()=>{publishedArticleState="بسته مقالات در دسترس نیست";updateCacheStatus(cacheState);});
 if("serviceWorker" in navigator){try{const registration=await navigator.serviceWorker.register("./sw.js",{scope:"./"});const worker=registration.installing||registration.waiting||registration.active;if(registration.active?.state==="activated"||worker?.state==="activated"){updateCacheStatus("ready");}else if(worker){worker.addEventListener("statechange",()=>{if(worker.state==="activated")updateCacheStatus("ready");else if(worker.state==="redundant")updateCacheStatus("failed");});}else{updateCacheStatus("failed");}}catch{updateCacheStatus("failed");}}else{updateCacheStatus("unsupported");}}
 catch{const status=$("bundle-status");if(status)status.textContent="بارگذاری کتابخانه ناموفق بود؛ یک‌بار با اینترنت دوباره صفحه را باز کنید.";$("message").textContent="داده‌های آفلاین در دسترس نیستند.";}
 }
