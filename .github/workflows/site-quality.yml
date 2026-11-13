@@ -30,6 +30,8 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Test canonical site URL and sitemap invariants
         run: npm run test:site-url
+      - name: Test IndexNow key and URL validation
+        run: npm run test:indexnow
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
