@@ -62,12 +62,23 @@ jobs:
             const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
             pkg.dependencies.next = "16.4.6";
             pkg.devDependencies["eslint-config-next"] = "16.4.6";
+            pkg.allowScripts = { ...(pkg.allowScripts || {}), "unrs-resolver@1.12.2": true };
             fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
           '
           npm install --package-lock-only --ignore-scripts --no-audit --no-fund
 
       - name: Install project dependencies
         run: npm ci --no-audit --no-fund
+
+      - name: Upload generated Next.js 16.4.6 dependency files
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-16.4.6-dependency-files
+          path: |
+            package.json
+            package-lock.json
+          if-no-files-found: error
+          retention-days: 1
 
       - name: Verify isolated framework versions
         run: npm ls next eslint-config-next
