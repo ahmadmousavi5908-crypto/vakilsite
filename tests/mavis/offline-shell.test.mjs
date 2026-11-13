@@ -117,13 +117,13 @@ test("MAVIS search becomes interactive without waiting for optional published ar
   const articleMerge = app.indexOf("corpus.records.push(...articleRecords)");
   assert.ok(articleFetch >= 0 && articleFetch < searchReady);
   assert.ok(searchReady >= 0 && searchReady < articleMerge);
-  assert.match(app, /void publishedArticlesPromise\\.then/);
+  assert.match(app, /void publishedArticlesPromise\.then/);
 });
 
 test("floating MAVIS and attorney docks shift inward only at desktop widths", async () => {
   const mavisCss = await readFile(new URL("../../src/components/mavis/MavisAvatarDock.module.css", import.meta.url), "utf8");
   const attorney = await readFile(new URL("../../src/components/AttorneyProfileDock.jsx", import.meta.url), "utf8");
-  assert.match(mavisCss, /@media \\(min-width: 701px\\)[\\s\\S]*?left: clamp\\(20px, 2vw, 28px\\)/);
+  assert.match(mavisCss, /@media \(min-width: 701px\)[\s\S]*?left: clamp\(20px, 2vw, 28px\)/);
   assert.match(attorney, /className="attorney-profile-dock-root"/);
-  assert.match(attorney, /@media \\(min-width: 701px\\)[\\s\\S]*?left: clamp\\(20px, 2vw, 28px\\) !important/);
+  assert.match(attorney, /@media \(min-width: 701px\)[\s\S]*?left: clamp\(20px, 2vw, 28px\) !important/);
 });
