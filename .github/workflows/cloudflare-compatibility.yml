@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - audit/cloudflare-compatibility-20261111
+      - work/mother-two-updated-mavis-20261110
+      - fix/cloudflare-workers-edge-runtime-20261113
   pull_request:
     branches:
       - work/mother-two-updated-mavis-20261110
@@ -14,6 +15,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "next.config.mjs"
+      - "wrangler.jsonc"
       - ".github/workflows/cloudflare-compatibility.yml"
 
 permissions:
@@ -41,9 +43,9 @@ jobs:
         run: npx --yes vinext@1.3.1 check
 
   opennext-adapter-build:
-    name: Read-only OpenNext Cloudflare build
+    name: OpenNext build, bundle validation, and local Workers runtime
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -54,28 +56,168 @@ jobs:
           node-version: 24
           cache: npm
 
-      - name: Apply isolated Next.js security patch for adapter test
-        run: |
-          node --input-type=module -e '
-            import fs from "node:fs";
-            const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
-            pkg.dependencies.next = "16.4.6";
-            pkg.devDependencies["eslint-config-next"] = "16.4.6";
-            fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
-          '
-          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-
       - name: Install project dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Verify isolated framework versions
+      - name: Verify framework versions
         run: npm ls next eslint-config-next
 
       - name: Install isolated Cloudflare adapter tooling
         run: >-
           npm install --no-save --package-lock=false --no-audit --no-fund
-          @opennextjs/cloudflare@1.20.16
-          wrangler@4.160.0
+          @opennextjs/cloudflare@1.20.17
+          wrangler@4.161.0
 
       - name: Build Next.js for Cloudflare Workers
-        run: npx opennextjs-cloudflare build
+        shell: bash
+        run: |
+          set -o pipefail
+          npx opennextjs-cloudflare build 2>&1 | tee /tmp/opennext-build.log
+          if grep -q "Node.js middleware support is experimental" /tmp/opennext-build.log; then
+            echo "Unsupported Node.js middleware was detected in the Cloudflare build."
+            exit 1
+          fi
+          if grep -q "Bundling Node.js middleware" /tmp/opennext-build.log; then
+            echo "The build unexpectedly bundled Node.js middleware."
+            exit 1
+          fi
+          grep -q "Bundling middleware function" /tmp/opennext-build.log
+
+      - name: Validate Worker bundle and static asset limits without deploying
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx wrangler deploy --dry-run --outdir .wrangler-dry-run 2>&1 | tee /tmp/wrangler-dry-run.log
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const log = fs.readFileSync("/tmp/wrangler-dry-run.log", "utf8");
+          const size = log.match(/Total Upload:\s*([\d.]+)\s*(B|KiB|MiB|GiB)/i);
+          const assets = log.match(/Read\s+(\d+)\s+files from the assets directory/i);
+          if (!size || !assets) {
+            console.error("Wrangler did not report the Worker size and static asset count.");
+            process.exit(1);
+          }
+          const units = { B: 1, KiB: 1024, MiB: 1024 ** 2, GiB: 1024 ** 3 };
+          const bytes = Number(size[1]) * units[size[2]];
+          const assetCount = Number(assets[1]);
+          const workerLimit = 64 * 1024 ** 2;
+          const assetLimit = 20_000;
+          console.log(`Worker bundle: ${(bytes / 1024 / 1024).toFixed(2)} MiB / 64 MiB.`);
+          console.log(`Static assets: ${assetCount} / ${assetLimit}.`);
+          if (bytes > workerLimit || assetCount > assetLimit) process.exit(1);
+          NODE
+
+      - name: Profile Worker startup locally
+        run: npx wrangler check startup
+
+      - name: Smoke-test the Cloudflare Workers runtime locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx opennextjs-cloudflare preview --ip 127.0.0.1 --port 8787 > /tmp/opennext-preview.log 2>&1 &
+          PREVIEW_PID=$!
+          trap 'kill "$PREVIEW_PID" 2>/dev/null || true' EXIT
+
+          ready=false
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail http://127.0.0.1:8787/ -o /tmp/vakilsite-home.html 2>/dev/null; then
+              ready=true
+              break
+            fi
+            if ! kill -0 "$PREVIEW_PID" 2>/dev/null; then
+              cat /tmp/opennext-preview.log
+              exit 1
+            fi
+            sleep 1
+          done
+
+          if [ "$ready" != true ]; then
+            cat /tmp/opennext-preview.log
+            echo "Cloudflare Workers preview did not become ready within 60 seconds."
+            exit 1
+          fi
+
+          for route in /about /legal-library /admin/login; do
+            output="/tmp/vakilsite-route.html"
+            if [ "$route" = "/about" ]; then output="/tmp/vakilsite-about.html"; fi
+            status="$(curl --silent --show-error -o "$output" -w '%{http_code}' "http://127.0.0.1:8787$route")"
+            echo "$route -> HTTP $status"
+            if [ "$status" != "200" ]; then
+              cat /tmp/opennext-preview.log
+              exit 1
+            fi
+          done
+
+          for route in /admin /admin/mavis; do
+            status="$(curl --silent --show-error -D /tmp/vakilsite-admin.headers -o /tmp/vakilsite-admin.html -w '%{http_code}' "http://127.0.0.1:8787$route")"
+            echo "$route -> HTTP $status"
+            if [ "$status" = "302" ] || [ "$status" = "307" ]; then
+              if ! grep -qi 'location: .*/admin/login' /tmp/vakilsite-admin.headers; then
+                echo "$route returned an HTTP redirect to an unexpected destination."
+                exit 1
+              fi
+            elif [ "$status" = "200" ]; then
+              if ! grep -Fq 'NEXT_REDIRECT;replace;/admin/login' /tmp/vakilsite-admin.html; then
+                echo "$route did not emit the expected streamed redirect to the admin login page."
+                echo "Response headers:"
+                cat /tmp/vakilsite-admin.headers
+                echo "Response body preview:"
+                head -c 5000 /tmp/vakilsite-admin.html
+                exit 1
+              fi
+              if grep -Eqi 'داشبورد وب‌سایت|مدیریت سایت|مرکز دانش و پژوهش' /tmp/vakilsite-admin.html; then
+                echo "$route exposed protected admin content before authentication."
+                exit 1
+              fi
+              echo "Admin access guard: streamed redirect confirmed; protected content absent."
+            else
+              cat /tmp/opennext-preview.log
+              exit 1
+            fi
+          done
+
+          for endpoint in /api/mavis/knowledge-search /api/admin/mavis/search-console; do
+            status="$(curl --silent --show-error -o /tmp/vakilsite-api-guard.json -w '%{http_code}' -X POST "http://127.0.0.1:8787$endpoint" -H "Origin: http://127.0.0.1:8787" -H "Content-Type: application/json" --data '{"query":"قانون","limit":3}')"
+            echo "$endpoint -> HTTP $status"
+            if [ "$status" != "401" ] && [ "$status" != "403" ] && [ "$status" != "503" ]; then
+              cat /tmp/opennext-preview.log
+              exit 1
+            fi
+            node --input-type=module -e '
+              import fs from "node:fs";
+              const data = JSON.parse(fs.readFileSync("/tmp/vakilsite-api-guard.json", "utf8"));
+              if (!data.error || typeof data.error.code !== "string") {
+                console.error("Protected MAVIS API did not fail closed:", data);
+                process.exit(1);
+              }
+              console.log("Protected MAVIS API: fail-closed response confirmed.");
+            '
+          done
+
+          connectivity="$(curl --silent --show-error --fail http://127.0.0.1:8787/api/mavis/connectivity)"
+          node --input-type=module -e '
+            const data = JSON.parse(process.argv[1]);
+            if (data.status !== "ok" || data.service !== "mavis-connectivity") {
+              console.error("Unexpected MAVIS connectivity response:", data);
+              process.exit(1);
+            }
+            console.log("MAVIS connectivity endpoint: OK");
+          ' "$connectivity"
+
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const html = ["/tmp/vakilsite-home.html", "/tmp/vakilsite-about.html"]
+            .map((file) => fs.readFileSync(file, "utf8"))
+            .join("\n");
+          const sources = [...html.matchAll(/src="([^"]+)"/g)].map((entry) => entry[1]);
+          const source = sources.find((value) => value.includes("/_next/image?"));
+          if (!source) {
+            console.error("No Next.js image optimizer URL was rendered.");
+            process.exit(1);
+          }
+          const imageUrl = new URL(source.replaceAll("&amp;", "&"), "http://127.0.0.1:8787");
+          const response = await fetch(imageUrl, { signal: AbortSignal.timeout(15000) });
+          const contentType = response.headers.get("content-type") || "";
+          console.log(`Next.js image route -> HTTP ${response.status} (${contentType})`);
+          if (!response.ok || !contentType.startsWith("image/")) process.exit(1);
+          NODE
