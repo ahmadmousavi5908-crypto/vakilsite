@@ -30,12 +30,9 @@ jobs:
       - name: Validate production credentials
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
         run: |
           set -euo pipefail
-          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY; do
+          for name in CLOUDFLARE_API_TOKEN; do
             if [ -z "${!name}" ]; then
               echo "::error::Required GitHub Actions secret is missing: $name"
               exit 1
@@ -55,10 +52,9 @@ jobs:
       - name: Build and deploy production Worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi.ir
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: https://jroflcmiczfwtmiaxmpd.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_OQAYkMnnChOJTutvi3kLfg_RnWEhEvs
         shell: bash
         run: |
           set -euo pipefail
@@ -83,17 +79,4 @@ jobs:
           }
           NODE
 
-          node --input-type=module <<'NODE'
-          import fs from "node:fs";
-          const secrets = {
-            NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
-            NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-            NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-          };
-          for (const [key, value] of Object.entries(secrets)) {
-            if (!value) throw new Error(`Missing required runtime variable: ${key}`);
-          }
-          fs.writeFileSync(".secrets.production.json", JSON.stringify(secrets), { mode: 0o600 });
-          NODE
-          trap 'rm -f .secrets.production.json' EXIT
-          npx wrangler deploy --secrets-file .secrets.production.json
+          npx wrangler deploy
