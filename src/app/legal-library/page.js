@@ -66,6 +66,7 @@ export default function LegalLibraryPage() {
       </section>
 
       <section className="container practice-list-section legal-library-main">
+        <h2 className="sr-only">مدخل‌های کتابخانه حقوقی</h2>
         <LegalLibraryExplorer />
       </section>
 
