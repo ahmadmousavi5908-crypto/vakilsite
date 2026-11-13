@@ -14,7 +14,7 @@ test("offline service worker precaches every runtime dependency", () => {
   for (const asset of ["index.html", "app.js", "search.mjs", "answer.mjs", "knowledge.json", "published-articles.json", "intake.html", "intake.js", "intake-core.mjs", "mavis-welcome-hero.png"]) {
     assert.ok(worker.includes("/mavis-offline/" + asset), "missing precache asset: " + asset);
   }
-  assert.match(worker, /mavis-offline-v1\.3\.3-20261113/);
+  assert.match(worker, /mavis-offline-v1\.3\.4-20261114/);
   assert.match(worker, /cache\.addAll\(ASSETS\)/);
   assert.match(worker, /self\.skipWaiting\(\)/);
 });
@@ -109,4 +109,14 @@ test("MAVIS opens one local conversation with an embedded conditional intake", a
   assert.match(intake, /name="urgentSignal"/);
   assert.match(intake, /data-next-step="2"/);
   assert.match(intake, /data-prev-step="3"/);
+});
+
+test("offline search becomes available after the core library, without waiting for published articles", () => {
+  const articleFetch = app.indexOf('const articlesPromise=fetch(PUBLISHED_ARTICLES_URL');
+  const coreFetch = app.indexOf('await fetch(DATA_URL');
+  const enableSearch = app.indexOf('$("submit").disabled=false');
+  const waitForArticles = app.indexOf('await articlesPromise');
+  assert.ok(articleFetch >= 0 && articleFetch < coreFetch, "published articles should start loading in parallel");
+  assert.ok(coreFetch < enableSearch && enableSearch < waitForArticles, "core search should unlock before optional article data finishes");
+  assert.match(app, /if\(articleResponse\?\.ok\)/);
 });
