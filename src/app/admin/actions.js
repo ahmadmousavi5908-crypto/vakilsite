@@ -1,4 +1,5 @@
 "use server";
+import { randomUUID } from "node:crypto";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -104,8 +105,7 @@ export async function saveSocialLinks(formData) {
     }
     if (id && !/^[0-9a-f-]{36}$/i.test(id)) redirect("/admin?error=social");
 
-    clean.push({
-      ...(id ? { id } : {}),
+    clean.push({ id: id || randomUUID(),
       platform,
       link_type: linkType,
       label,
@@ -128,7 +128,7 @@ export async function saveSocialLinks(formData) {
     if (error) redirect("/admin?error=social");
   }
 
-  const retainedIds = new Set(clean.filter((item) => item.id).map((item) => item.id));
+  const retainedIds = new Set(clean.map((item) => item.id));
   for (const row of existing || []) {
     if (!retainedIds.has(row.id)) {
       const { error } = await supabase.from("social_links").delete().eq("id", row.id);

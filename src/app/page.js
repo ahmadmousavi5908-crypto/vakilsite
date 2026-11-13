@@ -8,6 +8,7 @@ import JsonLd from "../components/JsonLd";
 import SocialLinksPublic from "../components/SocialLinksPublic";
 import LegalIcon from "../components/LegalIcon";
 import CitySelector from "../components/CitySelector";
+import MavisAvatarDock from "../components/mavis/MavisAvatarDock";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -81,6 +82,7 @@ export default function Home() {
 
   return (
     <main id="main-content" dir="rtl">
+      <MavisAvatarDock />
       {structuredSite && <JsonLd data={structuredSite} />}
       <a className="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
       <div className="topline">
@@ -161,7 +163,7 @@ export default function Home() {
                 <div><span>شماره پروانه وکالت</span><strong dir="ltr">74516</strong></div>
                 <div><span>عضویت حرفه‌ای</span><strong>مرکز وکلای قوه قضائیه</strong></div>
                 <div><span>تحصیلات</span><strong>کارشناسی ارشد حقوق</strong></div>
-                <div><span>فعالیت علمی</span><strong>نویسنده مقاله و کتاب</strong></div>
+                <div><span>فعالیت علمی</span><Link href="/about#about-publications" style={{ color: "inherit", textDecoration: "underline", textUnderlineOffset: "3px" }}><strong style={{ fontWeight: 700 }}>نویسنده مقاله و کتاب</strong></Link></div>
               </div>
             </div>
             <div className="floating-note"><span className="note-icon"><LegalIcon name="scales" size={22} /></span><span><b>بررسی دقیق موضوع</b><small>پیش از انتخاب مسیر قانونی</small></span></div>

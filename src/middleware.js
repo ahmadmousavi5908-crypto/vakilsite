@@ -1,7 +1,9 @@
+// Keep the Edge middleware convention for Cloudflare Workers.
+// Next.js 16 proxy.js uses Node.js, which OpenNext does not officially support on Workers.
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
 
-export async function proxy(request) {
+export async function middleware(request) {
   let response = NextResponse.next({ request });
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -29,6 +31,8 @@ export async function proxy(request) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/admin/:path*",
+    "/api/admin/:path*",
+    "/api/mavis/knowledge-search",
   ],
 };
