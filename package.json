@@ -19,7 +19,7 @@
     "test:mavis-search-console": "node --test tests/mavis/search-console-adapter.test.mjs tests/mavis/search-console-client.test.mjs tests/mavis/search-console-handler.test.mjs tests/mavis/growth-metrics.test.mjs"
   },
   "dependencies": {
-    "next": "16.4.3",
+    "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "@supabase/ssr": "^0.6.1",
@@ -28,7 +28,10 @@
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
     "eslint": "^9",
-    "eslint-config-next": "16.4.3",
+    "eslint-config-next": "16.4.6",
     "tailwindcss": "^4"
+  },
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true
   }
 }
