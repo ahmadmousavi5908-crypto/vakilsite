@@ -149,14 +149,27 @@ jobs:
           done
 
           for route in /admin /admin/mavis; do
-            status="$(curl --silent --show-error -D /tmp/vakilsite-admin.headers -o /dev/null -w '%{http_code}' "http://127.0.0.1:8787$route")"
+            status="$(curl --silent --show-error -D /tmp/vakilsite-admin.headers -o /tmp/vakilsite-admin.html -w '%{http_code}' "http://127.0.0.1:8787$route")"
             echo "$route -> HTTP $status"
-            if [ "$status" != "307" ] && [ "$status" != "302" ]; then
+            if [ "$status" = "302" ] || [ "$status" = "307" ]; then
+              if ! grep -qi 'location: .*/admin/login' /tmp/vakilsite-admin.headers; then
+                echo "$route returned an HTTP redirect to an unexpected destination."
+                exit 1
+              fi
+            elif [ "$status" = "200" ]; then
+              node --input-type=module -e '
+                import fs from "node:fs";
+                const html = fs.readFileSync("/tmp/vakilsite-admin.html", "utf8");
+                const streamedRedirect = /<meta[^>]+http-equiv=["\\x27]refresh["\\x27][^>]+content=["\\x27]0;url=\\/admin\\/login/i.test(html);
+                const protectedContent = /داشبورد وب‌سایت|مدیریت ماویس|مرکز دانش و پژوهش/.test(html);
+                if (!streamedRedirect || protectedContent) {
+                  console.error("Admin route did not produce a safe streamed redirect.");
+                  process.exit(1);
+                }
+                console.log("Admin access guard: streamed redirect confirmed; protected content absent.");
+              '
+            else
               cat /tmp/opennext-preview.log
-              exit 1
-            fi
-            if ! grep -qi 'location: .*/admin/login' /tmp/vakilsite-admin.headers; then
-              echo "$route did not redirect to the admin login page."
               exit 1
             fi
           done
