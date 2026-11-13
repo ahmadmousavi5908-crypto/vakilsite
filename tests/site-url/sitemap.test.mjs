@@ -29,7 +29,7 @@ test("rejects external and protocol-relative paths", () => {
 });
 
 test("rejects query strings, fragments, and control characters", () => {
-  for (const path of ["/about?x=1", "/about#section", "/about\\nadmin"]) {
+  for (const path of ["/about?x=1", "/about#section", "/about\nadmin"]) {
     assert.throws(() => buildSitemapEntries([entry(path)], origin));
   }
 });
