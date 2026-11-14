@@ -144,3 +144,79 @@ export async function importMavisSourceCandidate(candidate) {
     return { ok: false, error: "ارتباط امن با پایگاه داده برقرار نشد." };
   }
 }
+
+
+export async function submitMavisArticleForReview(articleId, expectedVersion) {
+  if (typeof articleId !== "string" || !/^[0-9a-f-]{36}$/i.test(articleId)
+    || !Number.isInteger(expectedVersion) || expectedVersion < 1) {
+    return { ok: false, error: "شناسه یا نسخه مقاله معتبر نیست." };
+  }
+
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, error: "برای ارسال مقاله به بازبینی، ورود با حساب مدیر الزامی است." };
+  }
+
+  try {
+    const { data, error } = await access.supabase.rpc("submit_mavis_article_for_review", {
+      p_article_id: articleId,
+      p_expected_version: expectedVersion,
+    });
+    if (error?.code === "40001") return { ok: false, error: "نسخه مقاله تغییر کرده است. صفحه را تازه‌سازی و نسخه جدید را بررسی کنید." };
+    if (error?.code === "55000") return { ok: false, error: "این مقاله در وضعیت قابل ارسال برای بازبینی نیست." };
+    if (error?.code === "P0002") return { ok: false, error: "مقاله پیدا نشد." };
+    if (error?.code === "42883" || error?.code === "PGRST202") return { ok: false, error: "گردش‌کار بازبینی هنوز روی پایگاه داده فعال نشده است." };
+    if (error) return { ok: false, error: "ارسال مقاله برای بازبینی انجام نشد." };
+    if (!data || data.status !== "in_review" || data.articleVersion !== expectedVersion) {
+      return { ok: false, error: "پاسخ پایگاه داده برای ارسال بازبینی معتبر نبود." };
+    }
+    return { ok: true, articleId, articleVersion: expectedVersion };
+  } catch {
+    return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
+  }
+}
+
+export async function decideMavisArticleReview(articleId, articleVersion, decision, decisionNote = "") {
+  if (typeof articleId !== "string" || !/^[0-9a-f-]{36}$/i.test(articleId)
+    || !Number.isInteger(articleVersion) || articleVersion < 1
+    || !["approved", "changes_requested", "rejected"].includes(decision)
+    || typeof decisionNote !== "string" || decisionNote.length > 2000) {
+    return { ok: false, error: "اطلاعات تصمیم بازبینی معتبر نیست." };
+  }
+
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, error: "برای ثبت تصمیم بازبینی، ورود با حساب مدیر الزامی است." };
+  }
+
+  try {
+    const { data, error } = await access.supabase.rpc("decide_mavis_article_review", {
+      p_article_id: articleId,
+      p_article_version: articleVersion,
+      p_decision: decision,
+      p_decision_note: decisionNote,
+    });
+    if (error?.code === "40001") return { ok: false, error: "نسخه مقاله با نسخه در حال بازبینی یکسان نیست. بررسی را دوباره بارگذاری کنید." };
+    if (error?.code === "55000") return { ok: false, error: "این مقاله دیگر در صف بازبینی نیست." };
+    if (error?.code === "P0002") return { ok: false, error: "مقاله پیدا نشد." };
+    if (error?.code === "22023") return { ok: false, error: "تصمیم یا یادداشت بازبینی معتبر نیست." };
+    if (error?.code === "42883" || error?.code === "PGRST202") return { ok: false, error: "گردش‌کار بازبینی هنوز روی پایگاه داده فعال نشده است." };
+    if (error) return { ok: false, error: "ثبت تصمیم بازبینی انجام نشد." };
+    if (!data || data.articleVersion !== articleVersion || data.decision !== decision) {
+      return { ok: false, error: "پاسخ پایگاه داده برای تصمیم بازبینی معتبر نبود." };
+    }
+    return { ok: true, status: data.status };
+  } catch {
+    return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
+  }
+}
