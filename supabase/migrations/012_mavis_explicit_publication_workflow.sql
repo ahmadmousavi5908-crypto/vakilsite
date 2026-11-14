@@ -167,6 +167,6 @@ grant execute on function public.unpublish_mavis_article(uuid, integer)
   to authenticated;
 
 comment on function public.publish_mavis_article(uuid, integer) is
-  'Publishes only the exact current immutable version with an administrator approval record. Approval does not publish automatically.';
+  'Requires a separate administrator action to publish the exact current immutable version with an approval record. Review approval alone never publishes.';
 comment on function public.unpublish_mavis_article(uuid, integer) is
-  'Removes an article from public visibility and returns it to approved status without deleting its approval or version history.';
+  'Unpublishes the exact current approved version, clears its public timestamp, and returns it to approved status without deleting approval or version history.';
