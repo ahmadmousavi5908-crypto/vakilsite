@@ -77,7 +77,7 @@ test("OpenAlex remains disabled without key and explicit usage budget", async ()
 test("OpenAlex uses selected metadata fields and bearer authentication", async () => {
   let request;
   const adapters = createMavisSourceDiscoveryAdapters({
-    env: { OPENALEX_API_KEY: "private-test-key", MAVIS_OPENALEX_MAX_COST_USD: "0.05" },
+    env: { OPENALEX_API_KEY: "private-test-key", MAVIS_OPENALEX_MAX_COST_USD: "0.05", MAVIS_OPENALEX_BUDGET_ENFORCEMENT: "true" },
     fetchImpl: async (url, options) => {
       request = { url: new URL(url), options };
       return response({ results: [{
@@ -157,4 +157,16 @@ test("adapter stops reading streamed responses as soon as the byte limit is exce
   const result = await adapters.searchCrossref("stream test");
   assert.equal(result.error, "UPSTREAM_RESPONSE_TOO_LARGE");
   assert.equal(cancelled, true);
+});
+
+
+test("OpenAlex remains disabled when a budget value exists without enforced accounting", async () => {
+  let called = false;
+  const adapters = createMavisSourceDiscoveryAdapters({
+    env: { OPENALEX_API_KEY: "private-test-key", MAVIS_OPENALEX_MAX_COST_USD: "1.00" },
+    fetchImpl: async () => { called = true; return response({ results: [] }); },
+  });
+  const result = await adapters.searchOpenAlex("law");
+  assert.equal(result.error, "PROVIDER_DISABLED");
+  assert.equal(called, false);
 });
