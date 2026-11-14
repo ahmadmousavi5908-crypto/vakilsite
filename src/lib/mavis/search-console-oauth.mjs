@@ -60,7 +60,6 @@ export function createSearchConsoleAuthorizationUrl(config, state) {
     scope: SEARCH_CONSOLE_READ_ONLY_SCOPE,
     access_type: "offline",
     prompt: "consent",
-    include_granted_scopes: "true",
     state,
   }).toString();
   return url.href;
