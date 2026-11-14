@@ -63,8 +63,8 @@ select set_config(
  (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
  true
 );
-select is(current_setting('test.anon_visibility'), '0', 'anonymous readers cannot access an approved but unpublished article');
 reset role;
+select is(current_setting('test.anon_visibility'), '0', 'anonymous readers cannot access an approved but unpublished article');
 set local role authenticated;
 set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
 
@@ -95,8 +95,8 @@ select set_config(
  (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
  true
 );
-select is(current_setting('test.anon_visibility'), '1', 'anonymous readers can access an explicitly published article');
 reset role;
+select is(current_setting('test.anon_visibility'), '1', 'anonymous readers can access an explicitly published article');
 set local role authenticated;
 set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
 
@@ -132,8 +132,8 @@ select set_config(
  (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
  true
 );
-select is(current_setting('test.anon_visibility'), '0', 'anonymous readers lose access after unpublishing');
 reset role;
+select is(current_setting('test.anon_visibility'), '0', 'anonymous readers lose access after unpublishing');
 set local role authenticated;
 set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
 
