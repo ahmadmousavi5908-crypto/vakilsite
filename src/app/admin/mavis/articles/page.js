@@ -5,6 +5,7 @@ import MavisArticleCatalog from "../../../../components/admin/MavisArticleCatalo
 import MavisDraftList from "../../../../components/admin/MavisDraftList";
 import MavisSourceDiscovery from "../../../../components/admin/MavisSourceDiscovery";
 import MavisReviewQueue from "../../../../components/admin/MavisReviewQueue";
+import MavisPublicationQueue from "../../../../components/admin/MavisPublicationQueue";
 import { decodeMavisArticleCursor, encodeMavisArticleCursor } from "../../../../lib/mavis/editorial-cursor.mjs";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { signOut } from "../../../admin/actions";
@@ -87,6 +88,34 @@ export default async function MavisArticlesPage({ searchParams }) {
     reviewError = "ارتباط امن با پایگاه داده برقرار نشد.";
   }
 
+  let approvedRows = [];
+  let publishedRows = [];
+  let publicationError = null;
+  try {
+    const [approvedResult, publishedResult] = await Promise.all([
+      access.supabase
+        .from("mavis_articles")
+        .select("id, slug, title, category, current_version, updated_at")
+        .eq("status", "approved")
+        .order("updated_at", { ascending: false })
+        .limit(50),
+      access.supabase
+        .from("mavis_articles")
+        .select("id, slug, title, category, current_version, updated_at, published_at")
+        .eq("status", "published")
+        .order("published_at", { ascending: false })
+        .limit(50),
+    ]);
+    if (approvedResult.error || publishedResult.error) {
+      publicationError = "خواندن فهرست انتشار انجام نشد. migration انتشار باید در همین پایگاه داده اعمال شده باشد.";
+    } else {
+      approvedRows = Array.isArray(approvedResult.data) ? approvedResult.data : [];
+      publishedRows = Array.isArray(publishedResult.data) ? publishedResult.data : [];
+    }
+  } catch {
+    publicationError = "ارتباط امن برای خواندن وضعیت انتشار برقرار نشد.";
+  }
+
   return (
     <div className="admin-shell" dir="rtl">
       <aside className="admin-sidebar">
@@ -121,11 +150,12 @@ export default async function MavisArticlesPage({ searchParams }) {
           </section>
           <MavisSourceDiscovery />
           <MavisReviewQueue rows={reviewRows} error={reviewError} />
+          <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
           <MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} />
           <MavisArticleCatalog articles={articles} />
           <section className="admin-help">
             <strong>وضعیت این مرحله</strong>
-            <p>جست‌وجوی منابع و ساخت پیش‌نویس فراداده‌ای فعال است. پیش‌نویس پس از ذخیره نسخه مشخص می‌تواند وارد صف بازبینی شود. تصمیم بازبین به همان نسخه متصل است؛ تأیید مقاله هنوز به معنی انتشار نیست و انتشار عمومی در مرحله بعدی پیاده‌سازی خواهد شد.</p>
+            <p>جست‌وجوی منابع و ساخت پیش‌نویس فراداده‌ای فعال است. پیش‌نویس پس از ذخیره نسخه مشخص می‌تواند وارد صف بازبینی شود. تصمیم بازبین به همان نسخه متصل است؛ انتشار و لغو انتشار نیز عملیات جداگانه مدیر و نسخه‌محور هستند. صفحه عمومی فعلی تا تکمیل مسیر دیتابیسی بدون تغییر باقی می‌ماند.</p>
           </section>
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>
