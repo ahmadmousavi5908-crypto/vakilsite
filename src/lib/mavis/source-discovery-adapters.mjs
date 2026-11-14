@@ -148,13 +148,10 @@ function buildRequest(provider, query, limit, env) {
   }
 
   if (provider === "openAlex") {
-    if (!env.OPENALEX_API_KEY || !(Number(env.MAVIS_OPENALEX_MAX_COST_USD) > 0) || env.MAVIS_OPENALEX_BUDGET_ENFORCEMENT !== "true") {
-      return { disabled: true, reason: "OpenAlex remains disabled until API credentials and enforced usage-budget accounting are configured." };
-    }
-    url.searchParams.set("search", query);
-    url.searchParams.set("per-page", String(limit));
-    url.searchParams.set("select", "id,doi,title,publication_date,authorships,primary_location");
-    headers.Authorization = `Bearer ${env.OPENALEX_API_KEY}`;
+    return {
+      disabled: true,
+      reason: "OpenAlex remains disabled until a server-enforced usage-budget ledger is implemented and reviewed.",
+    };
   }
 
   return { url, headers };
