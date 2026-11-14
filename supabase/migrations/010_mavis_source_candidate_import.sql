@@ -62,7 +62,7 @@ begin
 
   if jsonb_typeof(p_candidate->'sourceUrl') is distinct from 'string'
     or length(btrim(p_candidate->>'sourceUrl')) not between 8 and 2000
-    or btrim(p_candidate->>'sourceUrl') !~ '^https://[A-Za-z0-9.-]+(:[0-9]{1,5})?([/?#][^[:space:]]*)?
+    or btrim(p_candidate->>'sourceUrl') !~ '^https://[A-Za-z0-9.-]+(:[0-9]{1,5})?(/[^[:space:]]*)?$'
     or btrim(p_candidate->>'sourceUrl') ~ '^https://[^/]*@' then
     raise exception using errcode = '22023', message = 'Invalid HTTPS source URL';
   end if;
