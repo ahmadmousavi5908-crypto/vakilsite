@@ -97,7 +97,7 @@ select ok((select published_at is null from public.mavis_articles where id=curre
 select is((public.publish_mavis_article(current_setting('test.article_id')::uuid,2)->>'status'),'published','restored approved version can be explicitly republished');
 
 select throws_ok(
-  $select public.rollback_mavis_article_version(current_setting('test.article_id')::uuid,2,1,'Rollback verification')$,
+  $q$select public.rollback_mavis_article_version(current_setting('test.article_id')::uuid,2,1,'Rollback verification')$q$,
   '55000','Published article must be unpublished before rollback','published article must be explicitly unpublished before rollback'
 );
 select is((public.unpublish_mavis_article(current_setting('test.article_id')::uuid,2)->>'status'),'approved','published article must first be explicitly unpublished');
