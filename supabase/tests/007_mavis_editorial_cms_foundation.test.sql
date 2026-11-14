@@ -1,8 +1,9 @@
 begin;
 
-select plan(32);
+select plan(33);
 
 select has_table('public', 'mavis_articles', 'CMS articles table exists');
+select ok(to_regclass('public.mavis_articles_editable_updated_idx') is not null, 'editable draft keyset pagination has a dedicated partial index');
 select has_table('public', 'mavis_sources', 'CMS source registry table exists');
 select has_table('public', 'mavis_article_sources', 'CMS article-source relation table exists');
 select has_table('public', 'mavis_article_versions', 'CMS article versions table exists');
