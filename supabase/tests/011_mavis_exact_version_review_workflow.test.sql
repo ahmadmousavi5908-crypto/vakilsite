@@ -1,5 +1,5 @@
 begin;
-select plan(28);
+select plan(29);
 
 select has_function('public', 'submit_mavis_article_for_review', array['uuid','integer'], 'review submission RPC exists');
 select has_function('public', 'decide_mavis_article_review', array['uuid','integer','text','text'], 'review decision RPC exists');
@@ -92,6 +92,10 @@ select throws_ok(
 select is(
  (public.submit_mavis_article_for_review((select article_id from review_fixtures where kind='changes'),1)->>'status'),
  'in_review','second draft can enter review'
+);
+select throws_ok(
+ $select public.decide_mavis_article_review((select article_id from review_fixtures where kind='changes'),1,'changes_requested',null)$,
+ '22023','A review note is required for this decision','requesting changes requires an explanatory note'
 );
 select is(
  (public.decide_mavis_article_review((select article_id from review_fixtures where kind='changes'),1,'changes_requested','ارجاع برای اصلاح')->>'status'),
