@@ -55,7 +55,7 @@ Run the focused public article mapping and pagination tests:
 node --test tests/mavis/public-article-mapper.test.mjs tests/mavis/published-article-cursor.test.mjs tests/mavis/published-article-sitemap.test.mjs
 ```
 
-The repository CI also runs the isolated Supabase database/RLS suite, ESLint, and the production build.
+The repository CI also runs the isolated Supabase database/RLS suite, ESLint, and the production build. Its production HTTP smoke test fetches `/sitemap.xml` and verifies that a known static article URL is present.
 
 ## Not included
 
