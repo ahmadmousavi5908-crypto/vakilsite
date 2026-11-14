@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { articles } from "../../../data/articles";
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
+import { getPublishedMavisArticleBySlug } from "../../../lib/mavis/public-article-data.js";
 
 export function generateStaticParams() {
   return articles.map((article) => ({ slug: article.slug }));
@@ -10,12 +11,14 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const staticArticle = articles.find((item) => item.slug === slug);
+  const databaseArticle = staticArticle ? null : await getPublishedMavisArticleBySlug(slug);
+  const article = staticArticle || databaseArticle;
   if (!article) return { title: "مطلب پیدا نشد" };
   const canonicalPath = "/articles/" + article.slug;
   return {
     title: article.metaTitle || article.title,
-    description: article.excerpt,
+    description: article.seoDescription || article.excerpt,
     alternates: { canonical: canonicalPath },
     openGraph: {
       type: "article",
@@ -29,7 +32,9 @@ export async function generateMetadata({ params }) {
 
 export default async function ArticleDetailPage({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const staticArticle = articles.find((item) => item.slug === slug);
+  const databaseArticle = staticArticle ? null : await getPublishedMavisArticleBySlug(slug);
+  const article = staticArticle || databaseArticle;
   if (!article) notFound();
 
   const siteUrl = getSiteUrl();
@@ -42,6 +47,12 @@ export default async function ArticleDetailPage({ params }) {
         description: article.excerpt,
         inLanguage: "fa-IR",
         articleSection: article.category,
+        author: {
+          "@type": "Person",
+          name: article.author || "سید احمد موسوی",
+        },
+        datePublished: article.publishedAt || undefined,
+        dateModified: article.updatedAt || article.publishedAt || undefined,
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": articleUrl,
@@ -65,7 +76,7 @@ export default async function ArticleDetailPage({ params }) {
           <span className="section-kicker">راهنمای حقوقی · قوانین ایران</span>
           <h1>{article.title}</h1>
           <p>{article.excerpt}</p>
-          <div className="article-meta article-detail-meta"><span>{article.readTime} مطالعه</span><span>ویژه قوانین ایران</span></div>
+          <div className="article-meta article-detail-meta"><span>{article.readTime} دقیقه مطالعه</span><span>{article.author || "ویژه قوانین ایران"}</span></div>
         </div>
       </section>
       <div className="container article-detail-layout">
@@ -82,11 +93,13 @@ export default async function ArticleDetailPage({ params }) {
             <ul>{article.checklist.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
           </div>
           <div className="article-legal-note"><b>نکته مهم</b><p>{article.warning}</p></div>
-          <section className="article-sources">
-            <h2>مستندات و منابع قانونی</h2>
-            <p>برای مطالعه متن قوانین و تطبیق آخرین اصلاحات، از منابع زیر استفاده کنید:</p>
-            <ul>{article.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul>
-          </section>
+          {Array.isArray(article.sources) && article.sources.length ? (
+            <section className="article-sources">
+              <h2>مستندات و منابع قانونی</h2>
+              <p>برای مطالعه متن منابع و بررسی مستندات مرتبط، از پیوندهای زیر استفاده کنید:</p>
+              <ul>{article.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul>
+            </section>
+          ) : null}
           <div className="article-next-actions">
             <Link href="/articles">← بازگشت به همه مقالات</Link>
             <Link href="/#contact">درخواست بررسی موضوع من <span>←</span></Link>
