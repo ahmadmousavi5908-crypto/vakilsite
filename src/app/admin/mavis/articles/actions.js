@@ -257,6 +257,23 @@ function revalidatePublicMavisArticlePaths() {
   revalidatePath("/sitemap.xml");
 }
 
+async function notifyMavisArticleIndexNow(access, articleId) {
+  try {
+    const { data, error } = await access.supabase
+      .from("mavis_articles")
+      .select("slug")
+      .eq("id", articleId)
+      .maybeSingle();
+    if (error || typeof data?.slug !== "string" || !data.slug) {
+      return { state: "skipped", reason: "article_slug_unavailable" };
+    }
+    const { submitIndexNowUrls } = await import("../../../../lib/indexnow-client.mjs");
+    return await submitIndexNowUrls(["/articles/" + data.slug]);
+  } catch {
+    return { state: "unavailable" };
+  }
+}
+
 async function runMavisPublicationAction(action, articleId, expectedVersion) {
   if (typeof articleId !== "string" || !ARTICLE_UUID_PATTERN.test(articleId)
     || !Number.isInteger(expectedVersion) || expectedVersion < 1) {
@@ -292,7 +309,8 @@ async function runMavisPublicationAction(action, articleId, expectedVersion) {
     }
 
     revalidatePublicMavisArticlePaths();
-    return { ok: true, status: data.status };
+    const indexNow = await notifyMavisArticleIndexNow(access, articleId);
+    return { ok: true, status: data.status, indexNow };
   } catch {
     return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
   }

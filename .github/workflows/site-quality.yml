@@ -41,6 +41,8 @@ jobs:
         run: npm run test:site-url
       - name: Test IndexNow key and URL validation
         run: npm run test:indexnow
+      - name: Test automatic IndexNow notifications
+        run: npm run test:indexnow-client
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
