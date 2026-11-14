@@ -3,8 +3,8 @@
 create table if not exists public.mavis_provider_usage_daily (
   provider text not null check (provider in ('openalex')),
   usage_date date not null,
-  request_count integer not null default 0 check (request_count >= 0),
-  reserved_usd numeric(10, 4) not null default 0 check (reserved_usd >= 0),
+  request_count integer not null default 0 check (request_count between 0 and 50),
+  reserved_usd numeric(10, 4) not null default 0 check (reserved_usd between 0 and 0.0500),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   primary key (provider, usage_date)
