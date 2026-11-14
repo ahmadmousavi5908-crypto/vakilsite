@@ -91,4 +91,4 @@ jobs:
           }
           NODE
 
-          npx wrangler deploy
+          npx wrangler deploy --keep-vars
