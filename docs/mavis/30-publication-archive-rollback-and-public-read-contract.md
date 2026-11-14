@@ -8,7 +8,7 @@
 - `published` is visible to anonymous readers through the existing published-only RLS policy.
 - `archived` is never publicly visible.
 - Restoring an archived article that was previously `approved` or `published` returns it to `approved` only when an append-only approval record exists for the exact current immutable version; otherwise it returns to `draft`. Any restore clears `published_at`, and a restored approved article still requires an explicit new publish action.
-- Rollback copies a historical immutable snapshot into a new version, changes the article to `draft`, clears `published_at`, and requires review and publication again.
+- Rollback is blocked while an article is published; the administrator must explicitly unpublish it first. It then copies a historical immutable snapshot into a new version, changes the article to `draft`, clears `published_at`, and requires review and publication again.
 
 ## Atomic operations
 
@@ -37,6 +37,7 @@ The public source RPC is intentionally read-only and returns only title, canonic
 - CMS detail routes query by slug **and** `status=published`; a draft, rejected, approved, or archived row cannot be rendered by the public page.
 - Public queries use a dedicated anonymous Supabase client configured with the publishable key and disabled session persistence. RLS remains the access boundary; no service-role or secret key is used.
 - Structured data uses visible article content, category, author, and publication/update timestamps.
+- The sitemap includes published CMS slugs through bounded, paginated anonymous reads; it uses hourly fallback revalidation and is invalidated after publication lifecycle changes.
 
 ## Safety constraints
 
@@ -51,7 +52,7 @@ The public source RPC is intentionally read-only and returns only title, canonic
 Run the focused public article mapping and pagination tests:
 
 ```sh
-node --test tests/mavis/public-article-mapper.test.mjs tests/mavis/published-article-cursor.test.mjs
+node --test tests/mavis/public-article-mapper.test.mjs tests/mavis/published-article-cursor.test.mjs tests/mavis/published-article-sitemap.test.mjs
 ```
 
 The repository CI also runs the isolated Supabase database/RLS suite, ESLint, and the production build.
