@@ -57,7 +57,7 @@ function verifyPreservedArticleExtension(file) {
     const cmsEnd = headReturn.indexOf(cmsEndMarker, cmsStart);
     if (cmsStart < 0 || cmsEnd < cmsStart) return false;
 
-    const cmsBlockStart = headReturn.lastIndexOf("\\n", cmsStart - 1) + 1;
+    const cmsBlockStart = headReturn.lastIndexOf("\n", cmsStart - 1) + 1;
     const cmsSection = headReturn.slice(cmsStart, cmsEnd + cmsEndMarker.length);
     if (countMarker(cmsSection, libraryLinkStartMarker) !== 1 ||
         countMarker(cmsSection, libraryLinkEndMarker) !== 1 ||
