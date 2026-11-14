@@ -10,7 +10,7 @@ const ALLOWED_CHANGE_FREQUENCIES = new Set([
   "never",
 ]);
 
-const MAX_SITEMAP_URLS = 50000;
+export const MAX_SITEMAP_URLS = 50000;
 
 export function buildSitemapEntries(entries, siteOrigin) {
   const base = getSiteUrl(
@@ -80,6 +80,17 @@ export function buildSitemapEntries(entries, siteOrigin) {
       throw new Error(`Invalid sitemap priority for path: ${path}`);
     }
 
+    let lastModified;
+    if (entry.lastModified !== undefined) {
+      if (typeof entry.lastModified !== "string" && !(entry.lastModified instanceof Date)) {
+        throw new Error(`Invalid sitemap lastModified for path: ${path}`);
+      }
+      lastModified = entry.lastModified instanceof Date ? new Date(entry.lastModified.getTime()) : new Date(entry.lastModified);
+      if (Number.isNaN(lastModified.getTime())) {
+        throw new Error(`Invalid sitemap lastModified for path: ${path}`);
+      }
+    }
+
     if (seen.has(url.href)) continue;
     seen.add(url.href);
 
@@ -87,6 +98,7 @@ export function buildSitemapEntries(entries, siteOrigin) {
       url: url.href,
       changeFrequency: entry.changeFrequency,
       priority: entry.priority,
+      ...(lastModified ? { lastModified } : {}),
     });
   }
 
