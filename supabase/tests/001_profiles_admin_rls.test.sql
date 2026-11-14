@@ -1,6 +1,6 @@
 begin;
 
-select plan(14);
+select plan(15);
 
 select ok(
   (select relrowsecurity from pg_class where oid = 'public.profiles'::regclass),
@@ -154,10 +154,14 @@ reset role;
 set local role anon;
 reset request.jwt.claim.sub;
 
-select is(
-  public.is_site_admin(),
-  false,
-  'anonymous request context never satisfies the administrator predicate'
+select ok(
+  not has_function_privilege('anon', 'public.is_site_admin()', 'EXECUTE'),
+  'anonymous role has no effective EXECUTE privilege on the admin predicate'
+);
+
+select ok(
+  not has_function_privilege('service_role', 'public.is_site_admin()', 'EXECUTE'),
+  'service role has no effective EXECUTE privilege on the admin predicate'
 );
 
 select results_eq(
