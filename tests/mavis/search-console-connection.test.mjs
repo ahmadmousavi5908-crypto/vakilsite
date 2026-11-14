@@ -41,7 +41,9 @@ test("builds an API client from encrypted stored credentials without exposing th
   const client = await createSearchConsoleClientFromStoredConnection({ supabase, env });
   assert.equal(client.source, "google_search_console");
   assert.equal(client.scope, "https://www.googleapis.com/auth/webmasters.readonly");
-  assert.equal(supabase.calls.length, 1);
+  const reusedClient = await createSearchConsoleClientFromStoredConnection({ supabase, env });
+  assert.equal(reusedClient, client);
+  assert.equal(supabase.calls.length, 2);
 });
 
 test("fails closed when stored property or server credentials do not match", async () => {
