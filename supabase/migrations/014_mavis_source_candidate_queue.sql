@@ -208,7 +208,9 @@ begin
       'id',v_id,'provider',v_provider,'providerRecordId',v_record_id,'doi',v_doi,
       'title',v_title,'authors',to_jsonb(v_authors),'publisher',v_item->>'publisher',
       'venue',v_item->>'venue','publicationDate',v_date,'sourceUrl',v_url,
-      'sourceType','academic','rightsStatus','unknown','state',v_state,'created',v_new
+      'sourceType','academic','rightsStatus','unknown','state',v_state,'created',v_new,
+      'articleId',(select imported_article_id from public.mavis_source_candidates where id=v_id),
+      'sourceId',(select imported_source_id from public.mavis_source_candidates where id=v_id)
     ));
   end loop;
   return jsonb_build_object('candidates',v_result);
