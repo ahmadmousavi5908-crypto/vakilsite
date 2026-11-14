@@ -170,3 +170,18 @@ Not yet implemented:
 - Production load, security, and model-quality evaluations.
 
 No production migration, deployment, PR merge, or public-site visual change is authorized by this specification.
+
+
+## 10. First orchestrator policy core added
+
+A deterministic, provider-independent policy module now exists at `src/lib/mavis/orchestrator-policy.mjs`.
+
+It maps four task classes to isolated arms:
+- `public_legal_question` → `public_intake`
+- `legal_research` → `legal_research`
+- `growth_analysis` → `growth_intelligence`
+- `editorial_management` → `editorial_cms`
+
+Important trust boundary: actor role, data classification, and consent scope are supplied through a trusted server context. They are deliberately ignored if supplied in the request envelope. Public actors cannot route to internal arms or internal/confidential data. Contact-detail collection requires a trusted `contact_processing` consent scope. No arm receives publication or external side-effect permission.
+
+The module is a policy foundation, not yet connected to public routes or model providers. The 15-test suite covers arm isolation, role spoofing, consent, data classification, and blocked side effects. It is added to the required site-quality CI checks.
