@@ -3,6 +3,7 @@ import test from "node:test";
 import {
   estimateMavisArticleReadTime,
   mapPublishedMavisArticle,
+  mapPublishedMavisArticleSummary,
 } from "../../src/lib/mavis/public-article-mapper.mjs";
 
 const row = {
@@ -41,4 +42,24 @@ test("estimates reading time and rejects malformed records", () => {
   assert.equal(estimateMavisArticleReadTime({ title: "عنوان" }), 1);
   assert.equal(mapPublishedMavisArticle(null), null);
   assert.equal(mapPublishedMavisArticle({ slug: "missing-title" }), null);
+});
+
+
+test("maps a lightweight public article summary without requiring full content", () => {
+  const summary = mapPublishedMavisArticleSummary({
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt,
+    category: row.category,
+    content: row.content,
+  });
+  assert.deepEqual(summary, {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt,
+    category: row.category,
+  });
+  assert.equal(mapPublishedMavisArticleSummary({ slug: "missing-title" }), null);
 });
