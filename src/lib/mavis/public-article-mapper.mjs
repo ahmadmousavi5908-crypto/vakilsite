@@ -50,3 +50,15 @@ export function mapPublishedMavisArticle(row, sources = []) {
       : typeof row.excerpt === "string" ? row.excerpt : "",
   };
 }
+
+
+export function mapPublishedMavisArticleSummary(row) {
+  if (!row || typeof row !== "object" || typeof row.slug !== "string" || typeof row.title !== "string") return null;
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    excerpt: typeof row.excerpt === "string" ? row.excerpt : "",
+    category: typeof row.category === "string" ? row.category : "مقالات حقوقی",
+  };
+}
