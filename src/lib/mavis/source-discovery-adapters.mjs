@@ -148,10 +148,12 @@ function buildRequest(provider, query, limit, env) {
   }
 
   if (provider === "openAlex") {
-    return {
-      disabled: true,
-      reason: "OpenAlex remains disabled until a server-enforced usage-budget ledger is implemented and reviewed.",
-    };
+    url.searchParams.set("search", query);
+    url.searchParams.set("per_page", String(limit));
+    url.searchParams.set("select", "id,doi,title,authorships,primary_location,publication_date");
+    const apiKey = cleanText(env.OPENALEX_API_KEY, 300);
+    if (apiKey) headers.Authorization = `Bearer ${apiKey}`;
+    headers["User-Agent"] = "MAVISSourceDiscovery/1.0 (metadata-only)";
   }
 
   return { url, headers };
