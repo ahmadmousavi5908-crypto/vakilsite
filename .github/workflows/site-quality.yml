@@ -60,6 +60,9 @@ jobs:
       - name: Run MAVIS editorial cursor tests
         run: node --test tests/mavis/editorial-cursor.test.mjs
 
+      - name: Run MAVIS academic source adapter tests
+        run: node --test tests/mavis/academic-source-adapters.test.mjs
+
       - name: Run MAVIS orchestrator policy tests
         run: node --test tests/mavis/orchestrator-policy.test.mjs
 
