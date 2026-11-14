@@ -1,5 +1,5 @@
 begin;
-select plan(24);
+select plan(28);
 
 select has_function('public', 'submit_mavis_article_for_review', array['uuid','integer'], 'review submission RPC exists');
 select has_function('public', 'decide_mavis_article_review', array['uuid','integer','text','text'], 'review decision RPC exists');
