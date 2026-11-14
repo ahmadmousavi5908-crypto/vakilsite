@@ -134,6 +134,7 @@ export default function MavisSourceDiscovery() {
           <p>یک درگاه واحد برای جست‌وجوی آنلاین منابع علمی و جست‌وجوی آفلاین در آرشیو ذخیره‌شده MAVIS.</p>
         </div>
         <span className={styles.readOnly}>جست‌وجوی امن · فقط فراداده</span>
+        <a className={styles.offlineLink} href="/mavis-offline/index.html">کتابخانه عمومی آفلاین MAVIS ↗</a>
       </header>
 
       <div className={styles.modeTabs} role="group" aria-label="نوع جست‌وجو">
