@@ -148,8 +148,8 @@ function buildRequest(provider, query, limit, env) {
   }
 
   if (provider === "openAlex") {
-    if (!env.OPENALEX_API_KEY || !(Number(env.MAVIS_OPENALEX_MAX_COST_USD) > 0)) {
-      return { disabled: true, reason: "OpenAlex requires an API key and an explicit positive usage budget." };
+    if (!env.OPENALEX_API_KEY || !(Number(env.MAVIS_OPENALEX_MAX_COST_USD) > 0) || env.MAVIS_OPENALEX_BUDGET_ENFORCEMENT !== "true") {
+      return { disabled: true, reason: "OpenAlex remains disabled until API credentials and enforced usage-budget accounting are configured." };
     }
     url.searchParams.set("search", query);
     url.searchParams.set("per-page", String(limit));
