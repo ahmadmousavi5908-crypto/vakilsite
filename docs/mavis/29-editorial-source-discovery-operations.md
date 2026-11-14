@@ -26,7 +26,10 @@ Never place provider keys in browser variables, URLs, source files, logs, or PR 
 - Discovery does not grant permission to republish or reproduce an abstract, PDF, image, or full text.
 - Academic discovery records are research leads, not Iranian legal authority.
 - For Iranian legal claims, the editorial workflow must prioritize current primary legal sources and verify amendments, repeals, binding unifying opinions, and dates separately.
-- The current UI supports review and copying metadata only. It does not import or publish candidates.
+- The administrator can explicitly import a selected candidate into a metadata-only draft. The atomic import stores source provenance, an immutable version-one snapshot, and an audit event.
+- The import RPC ignores client-supplied rights claims and always stores `rights_status=unknown`. It never fetches or copies source text, abstracts, PDFs, or images.
+- Re-importing a source with an existing generated draft returns that draft rather than creating a duplicate.
+- Imported drafts are marked `origin_type=metadata_only`, remain in `draft`, and contain an explicit editorial-completion warning. They cannot be approved or published by this operation.
 
 ## Security and reliability
 
@@ -57,8 +60,7 @@ npm run build
 
 ## Not yet implemented
 
-- Persistent source candidate import and duplicate resolution against `mavis_sources`.
-- Atomic source-to-draft import with source provenance and audit event.
+- Candidate queue with durable discovery history and administrator triage states.
 - Cross-provider distributed leases and global provider concurrency coordination.
 - AI-assisted metadata/content completion.
 - Review/approval, publication, archive, rollback, and public database-backed article pages.
