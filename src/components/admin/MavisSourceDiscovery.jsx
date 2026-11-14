@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { searchMavisEditorialSources } from "../../app/admin/mavis/articles/actions";
+import { importMavisSourceCandidate, searchMavisEditorialSources } from "../../app/admin/mavis/articles/actions";
 import styles from "./MavisSourceDiscovery.module.css";
 
 const PROVIDER_LABELS = {
@@ -32,6 +32,8 @@ export default function MavisSourceDiscovery() {
   const [error, setError] = useState("");
   const [providerFilter, setProviderFilter] = useState("all");
   const [copiedKey, setCopiedKey] = useState("");
+  const [importingKey, setImportingKey] = useState("");
+  const [importedArticles, setImportedArticles] = useState({});
 
   const results = useMemo(() => {
     if (!response?.results) return [];
@@ -58,6 +60,25 @@ export default function MavisSourceDiscovery() {
       setError("ارتباط امن با سرور برقرار نشد. دوباره تلاش کنید.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function importCandidate(item) {
+    const key = candidateKey(item);
+    if (importingKey || importedArticles[key]) return;
+    setImportingKey(key);
+    setError("");
+    try {
+      const result = await importMavisSourceCandidate(item);
+      if (!result?.ok) {
+        setError(result?.error || "ساخت پیش‌نویس انجام نشد.");
+        return;
+      }
+      setImportedArticles((current) => ({ ...current, [key]: result.articleId }));
+    } catch {
+      setError("ارتباط امن با سرور برقرار نشد. دوباره تلاش کنید.");
+    } finally {
+      setImportingKey("");
     }
   }
 
@@ -135,14 +156,24 @@ export default function MavisSourceDiscovery() {
                       <td>{item.publisher || item.venue || "نامشخص"}</td>
                       <td>{item.publicationDate || "نامشخص"}</td>
                       <td><span className={styles.sourceTag}>{PROVIDER_LABELS[item.provider] || item.provider}</span><small className={styles.rights}>حقوق نشر: بررسی‌نشده</small></td>
-                      <td className={styles.actions}><a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">مشاهده منبع</a><button type="button" onClick={() => copyMetadata(item)}>{copiedKey === candidateKey(item) ? "کپی شد" : "کپی فراداده"}</button></td>
+                      <td className={styles.actions}>
+                        <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">مشاهده منبع</a>
+                        <button type="button" onClick={() => copyMetadata(item)}>{copiedKey === candidateKey(item) ? "کپی شد" : "کپی فراداده"}</button>
+                        {importedArticles[candidateKey(item)] ? (
+                          <a href={`/admin/mavis/articles/${importedArticles[candidateKey(item)]}/edit`}>بازکردن پیش‌نویس</a>
+                        ) : (
+                          <button type="button" disabled={Boolean(importingKey)} onClick={() => importCandidate(item)}>
+                            {importingKey === candidateKey(item) ? "در حال ساخت..." : "ساخت پیش‌نویس"}
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : <div className={styles.empty}>نتیجه‌ای برای این فیلتر پیدا نشد.</div>}
-          <p className={styles.disclaimer}>این نتایج صرفاً سرنخ پژوهشی هستند؛ منبع علمی به‌تنهایی مرجع معتبر حقوق ایران محسوب نمی‌شود و وضعیت مجوز استفاده باید جداگانه بررسی شود.</p>
+          <p className={styles.disclaimer}>این نتایج صرفاً سرنخ پژوهشی هستند؛ ساخت پیش‌نویس فقط فراداده و پیوند منبع را ثبت می‌کند. متن مقاله باید توسط مدیر تکمیل شود و حقوق نشر همچنان نامشخص می‌ماند.</p>
         </div>
       ) : null}
     </section>
