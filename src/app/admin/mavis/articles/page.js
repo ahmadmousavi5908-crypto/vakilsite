@@ -98,7 +98,7 @@ export default async function MavisArticlesPage({ searchParams }) {
             <div>
               <span className="admin-eyebrow">MAVIS · CONTENT WORKSPACE</span>
               <h1>مدیریت و بازبینی مقالات</h1>
-              <p>فهرست یکپارچه محتوای فعلی سایت برای جست‌وجو، بررسی ساختار و مشاهده منابع.</p>
+              <p>مدیریت پیش‌نویس‌های دیتابیسی در کنار فهرست فقط‌خواندنی مقالات فعلی سایت.</p>
             </div>
             <div className="admin-status"><i /> دسترسی مدیر تأیید شده</div>
           </section>
@@ -106,7 +106,7 @@ export default async function MavisArticlesPage({ searchParams }) {
           <MavisArticleCatalog articles={articles} />
           <section className="admin-help">
             <strong>وضعیت این مرحله</strong>
-            <p>این پیش‌نمایش به‌صورت فقط‌خواندنی از داده فعلی سایت استفاده می‌کند. اتصال به دیتابیس، ورود منابع بیرونی، ویرایش، تأیید، انتشار و آرشیو تا تکمیل کنترل‌های امنیتی و آزمون مستقل غیرفعال هستند.</p>
+            <p>پیش‌نویس‌های دیتابیسی با نسخه‌بندی و کنترل هم‌زمانی قابل ایجاد و ویرایش هستند. فهرست مقالات فعلی سایت همچنان فقط‌خواندنی است؛ کشف و ورود منابع، تکمیل هوشمند، تأیید حقوقی، انتشار و آرشیو هنوز فعال نشده‌اند.</p>
           </section>
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>
