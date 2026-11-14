@@ -92,6 +92,7 @@ begin
     select nullif(string_agg(btrim(value), ', ' order by ordinal), '')
       into v_author_name
       from jsonb_array_elements_text(p_candidate->'authors') with ordinality as authors(value, ordinal);
+    v_author_name := left(v_author_name, 180);
   end if;
 
   v_publisher := nullif(left(btrim(coalesce(p_candidate->>'publisher', p_candidate->>'venue', '')), 300), '');
