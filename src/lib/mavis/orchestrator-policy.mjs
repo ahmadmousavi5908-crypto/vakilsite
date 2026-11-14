@@ -51,12 +51,26 @@ function isPlainObject(value) {
   return prototype === Object.prototype || prototype === null;
 }
 
-export function routeMavisTask(envelope) {
+/**
+ * actorRole, dataClassification, and consentScope must come from trusted
+ * server-side authorization/classification/consent services, never request JSON.
+ */
+export function routeMavisTask(envelope, trustedContext = {}) {
   if (!isPlainObject(envelope)) {
     return { ok: false, code: "INVALID_ENVELOPE" };
   }
 
-  const { taskType, actorRole, dataClassification = "public", consentScope = [] } = envelope;
+  if (!isPlainObject(trustedContext)) {
+    return { ok: false, code: "INVALID_TRUST_CONTEXT" };
+  }
+
+  const { taskType } = envelope;
+  const {
+    actorRole,
+    dataClassification = "public",
+    consentScope = [],
+  } = trustedContext;
+
   if (typeof taskType !== "string" || !TASK_ARMS[taskType]) {
     return { ok: false, code: "UNKNOWN_TASK_TYPE" };
   }
@@ -89,6 +103,7 @@ export function routeMavisTask(envelope) {
 
   return {
     ok: true,
+    policyVersion: 1,
     arm,
     taskType,
     actorRole,
@@ -101,8 +116,9 @@ export function routeMavisTask(envelope) {
   };
 }
 
-export function canInvokeMavisCapability(route, capability) {
-  if (!route?.ok || typeof capability !== "string") return false;
+export function canInvokeMavisCapability(envelope, capability, trustedContext = {}) {
+  const route = routeMavisTask(envelope, trustedContext);
+  if (!route.ok || typeof capability !== "string") return false;
   return route.allowedCapabilities.includes(capability);
 }
 
