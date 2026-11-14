@@ -74,27 +74,23 @@ test("OpenAlex remains disabled without key and explicit usage budget", async ()
   assert.equal(called, false);
 });
 
-test("OpenAlex uses selected metadata fields and bearer authentication", async () => {
-  let request;
+test("OpenAlex stays disabled even when a key and budget flags are configured without a ledger", async () => {
+  let called = false;
   const adapters = createMavisSourceDiscoveryAdapters({
-    env: { OPENALEX_API_KEY: "private-test-key", MAVIS_OPENALEX_MAX_COST_USD: "0.05", MAVIS_OPENALEX_BUDGET_ENFORCEMENT: "true" },
-    fetchImpl: async (url, options) => {
-      request = { url: new URL(url), options };
-      return response({ results: [{
-        id: "https://openalex.org/W123",
-        doi: "https://doi.org/10.5555/example",
-        title: "OpenAlex title",
-        publication_date: "2021-09-14",
-        authorships: [{ author: { display_name: "Researcher" } }],
-      }] });
+    env: {
+      OPENALEX_API_KEY: "private-test-key",
+      MAVIS_OPENALEX_MAX_COST_USD: "0.05",
+      MAVIS_OPENALEX_BUDGET_ENFORCEMENT: "true",
+    },
+    fetchImpl: async () => {
+      called = true;
+      return response({ results: [] });
     },
   });
   const result = await adapters.searchOpenAlex("law");
-  assert.equal(result.ok, true);
-  assert.equal(result.candidates[0].doi, "10.5555/example");
-  assert.equal(result.candidates[0].publicationDate, "2021-09-14");
-  assert.equal(request.options.headers.Authorization, "Bearer private-test-key");
-  assert.equal(request.url.searchParams.has("api_key"), false);
+  assert.equal(result.ok, false);
+  assert.equal(result.error, "PROVIDER_DISABLED");
+  assert.equal(called, false);
 });
 
 test("adapter bounds query and result count", async () => {
