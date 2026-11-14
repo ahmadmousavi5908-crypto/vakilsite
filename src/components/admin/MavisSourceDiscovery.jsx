@@ -125,14 +125,14 @@ export default function MavisSourceDiscovery() {
 
       <div className={styles.modeTabs} role="group" aria-label="نوع جست‌وجو">
         <button type="button" className={mode === "online" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("online")}>جست‌وجوی آنلاین منابع</button>
-        <button type="button" className={mode === "offline" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("offline")}>جست‌وجو در آرشیو آفلاین</button>
+        <button type="button" className={mode === "offline" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("offline")}>جست‌وجو در آرشیو داخلی</button>
       </div>
 
       <form className={styles.searchForm} onSubmit={handleSearch}>
         <label htmlFor="mavis-source-query">موضوع، عنوان مقاله یا کلیدواژه</label>
         <div className={styles.searchRow}>
           <input id="mavis-source-query" value={query} onChange={(event) => setQuery(event.target.value)} minLength={2} maxLength={160} placeholder="مثلاً مسئولیت مدنی ناشی از تقصیر..." required />
-          <button type="submit" disabled={loading || query.trim().length < 2}>{loading ? "در حال جست‌وجو..." : mode === "offline" ? "جست‌وجو در آرشیو" : "جست‌وجوی منابع آنلاین"}</button>
+          <button type="submit" disabled={loading || query.trim().length < 2}>{loading ? "در حال جست‌وجو..." : mode === "offline" ? "جست‌وجو در آرشیو داخلی" : "جست‌وجوی منابع آنلاین"}</button>
         </div>
         <small>{mode === "offline" ? "بدون اتصال به سرویس خارجی؛ جست‌وجو در مقالات، منابع و نتایج ذخیره‌شده داخل MAVIS." : "جست‌وجو در منابع علمی آنلاین با درخواست‌های محدود و کنترل‌شده."}</small>
       </form>
@@ -142,7 +142,7 @@ export default function MavisSourceDiscovery() {
       {mode === "offline" && localResponse ? (
         <div className={styles.resultsArea}>
           <div className={styles.resultsToolbar}>
-            <div><strong>{localResponse.results.length.toLocaleString("fa-IR")} نتیجه در آرشیو داخلی</strong><small>جست‌وجوی آفلاین: «{localResponse.query}»</small></div>
+            <div><strong>{localResponse.results.length.toLocaleString("fa-IR")} نتیجه در آرشیو داخلی</strong><small>جست‌وجوی آرشیو داخلی: «{localResponse.query}»</small></div>
             <span className={styles.sourceTag}>بدون API خارجی</span>
           </div>
           {localResponse.results.length ? (
@@ -166,7 +166,7 @@ export default function MavisSourceDiscovery() {
               </table>
             </div>
           ) : <div className={styles.empty}>در آرشیو ذخیره‌شده نتیجه‌ای پیدا نشد. برای دریافت مقاله تازه، جست‌وجوی آنلاین را انتخاب کنید.</div>}
-          <p className={styles.disclaimer}>این حالت فقط داده‌هایی را جست‌وجو می‌کند که قبلاً در MAVIS ذخیره شده‌اند. برای جست‌وجوی متن کامل PDFها و اسناد واردشده، مخزن اسناد محلی مرحله بعدی است.</p>
+          <p className={styles.disclaimer}>این حالت بدون فراخوانی API خارجی، داده‌های ذخیره‌شده در پایگاه داده MAVIS را جست‌وجو می‌کند و برای استفاده همچنان به اتصال پنل و دیتابیس نیاز دارد. برای جست‌وجوی متن کامل PDFها و اسناد واردشده، مخزن اسناد محلی مرحله بعدی است.</p>
         </div>
       ) : null}
 
