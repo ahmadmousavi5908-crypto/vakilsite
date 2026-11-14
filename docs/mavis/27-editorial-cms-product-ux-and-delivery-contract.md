@@ -177,8 +177,8 @@ A CMS phase is not complete until:
 
 1. Finalize schema and state-transition design against the current repository.
 2. Add isolated migration and pgTAP security/workflow tests.
-3. Implement server-side DAL and admin APIs with fail-closed authorization.
-4. Implement admin editorial workspace and structured editor.
+3. Implement server-side DAL and admin APIs with fail-closed authorization. (Initial authenticated draft read/write paths are now implemented.)
+4. Implement admin editorial workspace and structured editor. (Initial manual-save editor, version-aware editing, and database draft inventory are implemented; review and workflow actions remain pending.)
 5. Implement source discovery/import adapters with rights-aware draft creation.
 6. Add field-level AI assistance behind validated provider adapters and cost/time budgets.
 7. Implement review/version/approval/publish operations.
@@ -188,9 +188,11 @@ A CMS phase is not complete until:
 
 ## 11. Current baseline facts
 
-- PR #109 currently contains a read-only admin catalog preview backed by the existing static `src/data/articles.js` dataset.
-- Existing public routes are `/articles` and `/articles/[slug]`; they currently read the static dataset.
+- PR #109 contains the read-only admin catalog preview backed by the existing static `src/data/articles.js` dataset, plus an initial structured draft editor.
+- Existing public routes are `/articles` and `/articles/[slug]`; they still read the static dataset and have not been switched to database content.
 - The current public listing already uses expandable `details/summary` rows and individual article URLs. Preserve and improve this visual language rather than replacing it wholesale.
-- The current admin preview filters/searches the static dataset in the client and is not suitable as the final thousands-of-articles data path.
-- The CMS schema described in `docs/mavis/22-article-cms-data-model-and-security.md` is still a proposal; no CMS tables or production migrations exist.
+- The admin now has an authenticated database-backed inventory for editable draft states, bounded to 25 rows per page with a compound keyset cursor over `updated_at` and `id`.
+- Administrators can create and edit draft records through the `save_mavis_article_draft` RPC. Updates require the expected version; the RPC writes the article, immutable snapshot, and audit event atomically.
+- The editor currently uses explicit manual save, not autosave. Source discovery/import, AI field completion, review/approval, guarded publication, archive/rollback UI, and public database-backed article routes remain unimplemented.
+- Migrations `007_mavis_editorial_cms_foundation.sql` and `008_mavis_editorial_draft_write_rpc.sql` exist on PR #109 and have passed isolated local Supabase tests. They have not been applied to Production.
 - No public route switch, production migration, import, or publication is authorized by this specification.
