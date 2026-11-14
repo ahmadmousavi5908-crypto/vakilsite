@@ -32,13 +32,17 @@ const isAllowedMetadataRoute = (file) =>
 const isAllowedAdminApiRoute = (file) =>
   file.startsWith("src/app/api/admin/mavis/search-console/");
 
+const isAllowedPublicArticleLibrarySurface = (file) =>
+  file === "src/app/articles/library/page.js" ||
+  file === "src/app/articles/library/page.module.css";
+
 function verifyPreservedArticleExtension(file) {
   const base = readAtRef(baseRef, file);
   const head = readAtRef(headRef, file);
 
   if (file === "src/app/articles/page.js") {
-    const startMarker = "          {/* MAVIS_PUBLISHED_CMS_SECTION_START */}";
-    const endMarker = "          {/* MAVIS_PUBLISHED_CMS_SECTION_END */}";
+    const startMarker = "                {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START */}";
+    const endMarker = "                {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_END */}";
     const baseReturnIndex = base.indexOf("  return (");
     const headReturnIndex = head.indexOf("  return (");
     if (baseReturnIndex < 0 || headReturnIndex < 0) return false;
@@ -89,6 +93,7 @@ const protectedFiles = changedFiles.filter((file) => {
   if (isAllowedAdminSurface(file)) return false;
   if (isAllowedAdminApiRoute(file)) return false;
   if (isAllowedMetadataRoute(file)) return false;
+  if (isAllowedPublicArticleLibrarySurface(file)) return false;
   if (articleExtensionFiles.has(file) && verifyPreservedArticleExtension(file)) return false;
 
   return (
