@@ -83,14 +83,18 @@ begin
   if v_actor is null or not public.is_site_admin() then
     raise exception using errcode='42501', message='Administrator access required';
   end if;
-  if p_candidates is null or jsonb_typeof(p_candidates) is distinct from 'array'
-    or jsonb_array_length(p_candidates)>15 then
+  if p_candidates is null or jsonb_typeof(p_candidates) is distinct from 'array' then
+    raise exception using errcode='22023', message='Candidate batch must be a JSON array';
+  end if;
+  if jsonb_array_length(p_candidates)>15 then
     raise exception using errcode='22023', message='Candidate batch must contain at most 15 records';
   end if;
 
   for v_item in select value from jsonb_array_elements(p_candidates) loop
-    if jsonb_typeof(v_item) is distinct from 'object'
-      or v_item - array['provider','providerRecordId','doi','title','authors','publisher','venue','publicationDate','sourceUrl','sourceType','rightsStatus']::text[] <> '{}'::jsonb then
+    if jsonb_typeof(v_item) is distinct from 'object' then
+      raise exception using errcode='22023', message='Candidate must be a JSON object';
+    end if;
+    if v_item - array['provider','providerRecordId','doi','title','authors','publisher','venue','publicationDate','sourceUrl','sourceType','rightsStatus']::text[] <> '{}'::jsonb then
       raise exception using errcode='22023', message='Candidate contains unsupported fields';
     end if;
 
@@ -119,7 +123,10 @@ begin
 
     v_authors := '{}'::text[];
     if v_item ? 'authors' then
-      if jsonb_typeof(v_item->'authors') is distinct from 'array' or jsonb_array_length(v_item->'authors')>30 then
+      if jsonb_typeof(v_item->'authors') is distinct from 'array' then
+        raise exception using errcode='22023', message='Invalid candidate authors';
+      end if;
+      if jsonb_array_length(v_item->'authors')>30 then
         raise exception using errcode='22023', message='Invalid candidate authors';
       end if;
       if exists (
