@@ -53,7 +53,7 @@ select is(
 );
 select is((select state from public.mavis_source_candidates where id=current_setting('test.candidate_id')::uuid),'discovered','new candidate starts in discovered state');
 select is((select rights_status from public.mavis_source_candidates where id=current_setting('test.candidate_id')::uuid),'unknown','client rights claims cannot override unknown rights');
-select is((select publication_date_precision from public.mavis_source_candidates where id=current_setting('test.candidate_id')::uuid),'year','year-only publication date precision is preserved');
+select is((select publication_date_precision from public.mavis_source_candidates where id=current_setting('test.candidate_id')::uuid),'month','more precise month-level publication date supersedes year-only precision');
 select is((select jsonb_array_length(provider_aliases) from public.mavis_source_candidates where id=current_setting('test.candidate_id')::uuid),2,'cross-provider aliases are retained');
 select is((select count(*)::integer from public.mavis_source_candidate_events where candidate_id=current_setting('test.candidate_id')::uuid),2,'discovery and refresh events are recorded');
 
@@ -105,9 +105,8 @@ select throws_ok(
 );
 
 reset role;
-set local role anon;
-select is((select count(*)::integer from public.mavis_source_candidates),0,'anonymous role cannot read source candidates');
-select is((select count(*)::integer from public.mavis_source_candidate_events),0,'anonymous role cannot read candidate event history');
+select ok(not has_table_privilege('anon','public.mavis_source_candidates','SELECT'),'anonymous role has no direct privilege on candidate queue');
+select ok(not has_table_privilege('anon','public.mavis_source_candidate_events','SELECT'),'anonymous role has no direct privilege on candidate event history');
 
 select * from finish();
 rollback;
