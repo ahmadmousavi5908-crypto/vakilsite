@@ -158,7 +158,7 @@ Implemented/verified in the current PR branch:
 - Read-only article catalog preview and CMS data/security specification.
 - Fail-closed admin helper with ten isolated unit tests.
 - Admin login RPC exception handling.
-- Initial profile/admin RLS pgTAP test and additive migration 006 to revoke excess direct EXECUTE grants on the admin predicate; corrected rerun is pending.
+- Initial profile/admin RLS pgTAP test and additive migration 006 to revoke excess direct EXECUTE grants on the admin predicate; a local Supabase run passed all 36 database assertions. The additional migration-001 fresh-install hardening is being rechecked on the latest branch head.
 - Local Supabase CLI config, local-only pgTAP seed, and database-test workflow added.
 - Deterministic orchestrator policy core for four arms, with 15 tests covering trusted server context, arm isolation, consent, data classification, and blocked side effects.
 - CI guard rejects changes to public UI and static assets outside the admin surfaces.
