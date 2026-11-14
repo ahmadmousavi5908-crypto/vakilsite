@@ -16,7 +16,7 @@
     "validate:mavis-offline": "node scripts/mavis/generate-offline-published-articles.mjs && node scripts/mavis/validate-offline-bundle.mjs",
     "pretest:mavis-offline": "node scripts/mavis/generate-offline-published-articles.mjs",
     "test:mavis-offline": "node --test tests/mavis/offline-search.test.mjs tests/mavis/offline-answer.test.mjs tests/mavis/offline-shell.test.mjs tests/mavis/offline-intake.test.mjs",
-    "test:mavis-search-console": "node --test tests/mavis/search-console-adapter.test.mjs tests/mavis/search-console-client.test.mjs tests/mavis/search-console-handler.test.mjs tests/mavis/search-console-oauth.test.mjs tests/mavis/search-console-connection.test.mjs tests/mavis/growth-metrics.test.mjs",
+    "test:mavis-search-console": "node --test tests/mavis/search-console-adapter.test.mjs tests/mavis/search-console-client.test.mjs tests/mavis/search-console-handler.test.mjs tests/mavis/search-console-oauth.test.mjs tests/mavis/search-console-connection.test.mjs tests/mavis/search-console-tools.test.mjs tests/mavis/growth-metrics.test.mjs",
     "test:site-url": "node --test tests/site-url/*.test.mjs",
     "test:indexnow": "node --test scripts/indexnow-validation.test.mjs"
   },
