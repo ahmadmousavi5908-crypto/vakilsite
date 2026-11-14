@@ -12,9 +12,8 @@
 
 ## Atomic operations
 
-Migration 012 adds guarded RPCs:
+Migration 012 adds explicit publish/unpublish RPCs. Migration 013 adds archive, restore, rollback, and safe public citation RPCs:
 
-- `publish_mavis_article(article_id, expected_version)`
 - `archive_mavis_article(article_id, expected_version, note)`
 - `restore_mavis_article(article_id, expected_version)`
 - `rollback_mavis_article_version(article_id, expected_current_version, target_version, note)`
