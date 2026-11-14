@@ -2,6 +2,7 @@
 
 import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
+import { safeExternalHttpUrl } from "../../lib/mavis/request-guards.mjs";
 import styles from "./MavisArticleCatalog.module.css";
 
 function normalize(value) {
@@ -106,13 +107,17 @@ export default function MavisArticleCatalog({ articles }) {
                           <strong>سرفصل‌ها</strong>
                           <ul>{(article.sections || []).map((section, index) => <li key={section.heading || index}>{section.heading}</li>)}</ul>
                           <strong>منابع ثبت‌شده</strong>
-                          <ul>{(article.sources || []).map((source, index) => (
-                            <li key={source.url || index}>
-                              {source.url?.startsWith("https://")
-                                ? <a href={source.url} target="_blank" rel="noopener noreferrer">{source.label || "مشاهده منبع"}</a>
-                                : <span>پیوند منبع نامعتبر است</span>}
-                            </li>
-                          ))}</ul>
+                          <ul>{(article.sources || []).map((source, index) => {
+                            const url = safeExternalHttpUrl(source.url);
+                            const secureUrl = url?.startsWith("https://") ? url : null;
+                            return (
+                              <li key={source.url || index}>
+                                {secureUrl
+                                  ? <a href={secureUrl} target="_blank" rel="noopener noreferrer">{source.label || "مشاهده منبع"}</a>
+                                  : <span>پیوند منبع نامعتبر است</span>}
+                              </li>
+                            );
+                          })}</ul>
                           <p className={styles.notice}>{article.warning}</p>
                         </td>
                       </tr>
