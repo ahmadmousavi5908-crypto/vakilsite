@@ -48,6 +48,43 @@ export async function saveMavisArticleDraft(formData) {
 }
 
 
+export async function searchMavisLocalArchive(rawQuery) {
+  const query = typeof rawQuery === "string" ? rawQuery.trim().replace(/\\s+/g, " ") : "";
+  if (query.length < 2 || query.length > 200) {
+    return { ok: false, error: "عبارت جست‌وجو باید بین ۲ تا ۲۰۰ نویسه باشد." };
+  }
+
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, error: "جست‌وجوی آرشیو داخلی فقط برای مدیر مجاز است." };
+  }
+
+  try {
+    const { data, error } = await access.supabase.rpc("search_mavis_local_archive", {
+      p_query: query,
+      p_limit: 40,
+    });
+    if (error?.code === "42501") return { ok: false, error: "دسترسی مدیر برای جست‌وجوی آرشیو تأیید نشد." };
+    if (error?.code === "22023") return { ok: false, error: "عبارت جست‌وجو معتبر نیست." };
+    if (error?.code === "42883" || error?.code === "PGRST202") {
+      return { ok: false, error: "موتور جست‌وجوی آفلاین هنوز روی پایگاه داده فعال نشده است؛ مهاجرت شماره ۰۱۷ لازم است." };
+    }
+    if (error || !Array.isArray(data)) {
+      return { ok: false, error: "جست‌وجو در آرشیو داخلی انجام نشد." };
+    }
+    return { ok: true, query, results: data, searchedAt: new Date().toISOString(), offline: true };
+  } catch {
+    return { ok: false, error: "ارتباط امن با آرشیو داخلی برقرار نشد." };
+  }
+}
+
+
 export async function searchMavisEditorialSources(rawQuery) {
   const query = typeof rawQuery === "string" ? rawQuery.trim().replace(/\s+/g, " ") : "";
   if (query.length < 2 || query.length > 160) {
