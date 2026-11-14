@@ -60,7 +60,7 @@ The database migration `014_mavis_search_console_oauth_storage.sql` must be appl
 6. Confirm that the panel reports an active connection.
 7. Request a bounded date-range report. Verify that clicks, impressions, CTR, average position, and the privacy-redaction count are returned from the API.
 
-If Google reports an unverified OAuth application during private testing, keep the consent screen restricted to the configured test users. Public OAuth verification requirements depend on the app's user type and requested scopes.
+If Google reports an unverified OAuth application during private testing, keep the consent screen restricted to the configured test users. Public OAuth verification requirements depend on the app's user type and requested scopes. Google documents that refresh tokens for an external OAuth consent screen left in **Testing** can expire after seven days for scopes beyond basic identity scopes; for durable operation, complete the appropriate app publishing and verification steps rather than relying on test-mode tokens.
 
 ## Security and operational limits
 
