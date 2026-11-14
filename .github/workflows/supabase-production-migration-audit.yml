@@ -60,7 +60,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          supabase migration list --remote 2>&1 | tee "$RUNNER_TEMP/production-migration-history.txt"
+          supabase migration list --linked 2>&1 | tee "$RUNNER_TEMP/production-migration-history.txt"
           echo
           echo "Audit complete. This workflow only links the checkout and reads migration history."
           echo "No migration apply, repair, push, pull, or database write command is executed."
