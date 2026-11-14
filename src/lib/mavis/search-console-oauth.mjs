@@ -172,11 +172,13 @@ export async function exchangeSearchConsoleAuthorizationCode({
       throw new Error("Google authorization code exchange failed.");
     }
 
-    const grantedScopes = typeof payload?.scope === "string" ? payload.scope.split(/\s+/) : [];
+    const grantedScopes = typeof payload?.scope === "string" && payload.scope.trim()
+      ? payload.scope.trim().split(/\s+/)
+      : [];
     if (typeof payload?.refresh_token !== "string" || payload.refresh_token.length < 10 ||
         typeof payload?.access_token !== "string" ||
-        !grantedScopes.includes(SEARCH_CONSOLE_READ_ONLY_SCOPE)) {
-      throw new Error("Google did not grant the required offline read-only Search Console access.");
+        grantedScopes.length !== 1 || grantedScopes[0] !== SEARCH_CONSOLE_READ_ONLY_SCOPE) {
+      throw new Error("Google did not grant the exact offline read-only Search Console scope.");
     }
 
     return {
