@@ -2,7 +2,7 @@ name: Supabase database tests
 
 on:
   pull_request:
-    branches: [main, work/mother-two-updated-mavis-20261110]
+    branches: [main, work/mother-two-updated-mavis-20261110, "feature/**"]
     paths:
       - "supabase/**"
       - ".github/workflows/supabase-database-tests.yml"
