@@ -21,6 +21,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
+      - name: Protect approved public UI baseline
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch --no-tags origin "$BASE_SHA" --depth=1
+          node scripts/mavis/verify-public-ui-boundary.mjs "$BASE_SHA" "$GITHUB_SHA"
+
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
