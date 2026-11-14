@@ -1,6 +1,6 @@
 begin;
 
-select plan(19);
+select plan(22);
 
 select has_function('public', 'save_mavis_article_draft', array['jsonb', 'uuid', 'integer', 'text'], 'guarded draft save function exists');
 
@@ -130,6 +130,41 @@ select is(
    where a.slug = 'secure-draft-test'),
   2,
   'updating preserves both immutable snapshots'
+);
+
+reset role;
+update public.mavis_articles
+set status = 'changes_requested'
+where slug = 'secure-draft-test';
+
+set local role authenticated;
+select is(
+  public.save_mavis_article_draft(
+    '{"slug":"secure-draft-test","title":"Secure draft test after review","excerpt":"A sufficiently long excerpt after review for this test.","category":"Test","tags":["test"],"content":{"intro":"A sufficiently long introduction after review for this test.","sections":[{"heading":"Reviewed heading","body":"A sufficiently long reviewed section body for this test."}]}}'::jsonb,
+    (select id from public.mavis_articles where slug = 'secure-draft-test'),
+    2,
+    'Preserve requested changes status'
+  ),
+  (select id from public.mavis_articles where slug = 'secure-draft-test'),
+  'administrator can update a changes-requested draft'
+);
+
+select is(
+  (select status from public.mavis_articles where slug = 'secure-draft-test'),
+  'changes_requested',
+  'editing does not silently change the editorial status'
+);
+
+select is(
+  (select count(*)::integer from public.mavis_article_audit_events e
+   join public.mavis_articles a on a.id = e.article_id
+   where a.slug = 'secure-draft-test'
+     and e.event_type = 'article_updated'
+     and e.previous_status = 'changes_requested'
+     and e.next_status = 'changes_requested'
+     and e.article_version = 3),
+  1,
+  'audit event records the actual unchanged status for version three'
 );
 
 select throws_ok(
