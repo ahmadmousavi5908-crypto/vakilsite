@@ -77,6 +77,9 @@ jobs:
           tests/mavis/legal-research-dossier.test.mjs
       - name: Run MAVIS source discovery adapter tests
         run: node --test tests/mavis/source-discovery-adapters.test.mjs
+
+      - name: Run MAVIS public article mapping and cursor tests
+        run: node --test tests/mavis/public-article-mapper.test.mjs tests/mavis/published-article-cursor.test.mjs
       - name: Run ESLint
         run: npm run lint
       - name: Build production site
