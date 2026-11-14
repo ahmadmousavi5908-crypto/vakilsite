@@ -96,9 +96,14 @@ begin
 
   v_publisher := nullif(left(btrim(coalesce(p_candidate->>'publisher', p_candidate->>'venue', '')), 300), '');
 
-  if coalesce(p_candidate->>'publicationDate', '') ~ '^\d{4}-\d{2}-\d{2}$'
-    and to_char(to_date(p_candidate->>'publicationDate', 'YYYY-MM-DD'), 'YYYY-MM-DD') = p_candidate->>'publicationDate' then
-    v_publication_date := (p_candidate->>'publicationDate')::date;
+  if coalesce(p_candidate->>'publicationDate', '') ~ '^\\d{4}-\\d{2}-\\d{2}$' then
+    begin
+      if to_char(to_date(p_candidate->>'publicationDate', 'YYYY-MM-DD'), 'YYYY-MM-DD') = p_candidate->>'publicationDate' then
+        v_publication_date := (p_candidate->>'publicationDate')::date;
+      end if;
+    exception when others then
+      v_publication_date := null;
+    end;
   end if;
 
   -- DOI is the stable canonical identity when available; otherwise retain the provider URL.
