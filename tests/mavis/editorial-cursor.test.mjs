@@ -25,3 +25,16 @@ test("does not encode invalid database rows", () => {
   assert.equal(encodeMavisArticleCursor({ ...row, id: "not-a-uuid" }), null);
   assert.equal(encodeMavisArticleCursor({ ...row, updated_at: "not-a-date" }), null);
 });
+
+
+test("preserves database timestamp precision for stable pagination", () => {
+  const preciseRow = {
+    ...row,
+    updated_at: "2026-11-14T12:30:00.123456+00:00",
+  };
+  const cursor = encodeMavisArticleCursor(preciseRow);
+  assert.deepEqual(decodeMavisArticleCursor(cursor), {
+    updatedAt: preciseRow.updated_at,
+    id: row.id,
+  });
+});
