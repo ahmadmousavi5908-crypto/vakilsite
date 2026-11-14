@@ -71,7 +71,7 @@ begin
   end loop;
 
   if jsonb_typeof(p_payload->'content') is distinct from 'object'
-    or (p_payload->'content' - array['intro', 'sections', 'checklist', 'warning']::text[]) <> '{}'::jsonb
+    or ((p_payload->'content') - array['intro', 'sections', 'checklist', 'warning']::text[]) <> '{}'::jsonb
     or jsonb_typeof(p_payload->'content'->'intro') is distinct from 'string'
     or length(btrim(p_payload->'content'->>'intro')) not between 10 and 8000
     or jsonb_typeof(p_payload->'content'->'sections') is distinct from 'array'
