@@ -118,7 +118,7 @@ export default function MavisSourceDiscovery() {
         <div>
           <span className={styles.eyebrow}>MAVIS · SOURCE INTELLIGENCE</span>
           <h2 id="mavis-source-title">موتور کشف و جست‌وجوی منابع</h2>
-          <p>جست‌وجوی فراداده علمی در Crossref، Semantic Scholar و OpenAlex؛ برای OpenAlex سقف سراسری ۰٫۰۵ دلار در روز اعمال می‌شود.</p>
+          <p>یک درگاه واحد برای جست‌وجوی آنلاین منابع علمی و جست‌وجوی آفلاین در آرشیو ذخیره‌شده MAVIS.</p>
         </div>
         <span className={styles.readOnly}>جست‌وجوی امن · فقط فراداده</span>
       </header>
@@ -132,7 +132,7 @@ export default function MavisSourceDiscovery() {
         <label htmlFor="mavis-source-query">موضوع، عنوان مقاله یا کلیدواژه</label>
         <div className={styles.searchRow}>
           <input id="mavis-source-query" value={query} onChange={(event) => setQuery(event.target.value)} minLength={2} maxLength={160} placeholder="مثلاً مسئولیت مدنی ناشی از تقصیر..." required />
-          <button type="submit" disabled={loading || query.trim().length < 2}>{loading ? "در حال جست‌وجو..." : "جست‌وجوی منابع"}</button>
+          <button type="submit" disabled={loading || query.trim().length < 2}>{loading ? "در حال جست‌وجو..." : mode === "offline" ? "جست‌وجو در آرشیو" : "جست‌وجوی منابع آنلاین"}</button>
         </div>
         <small>{mode === "offline" ? "بدون اتصال به سرویس خارجی؛ جست‌وجو در مقالات، منابع و نتایج ذخیره‌شده داخل MAVIS." : "جست‌وجو در منابع علمی آنلاین با درخواست‌های محدود و کنترل‌شده."}</small>
       </form>
