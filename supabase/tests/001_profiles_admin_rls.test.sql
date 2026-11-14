@@ -1,6 +1,6 @@
 begin;
 
-select plan(12);
+select plan(14);
 
 select ok(
   (select relrowsecurity from pg_class where oid = 'public.profiles'::regclass),
@@ -20,8 +20,15 @@ select ok(
 );
 
 select ok(
-  not has_function_privilege('anon', 'public.is_site_admin()', 'EXECUTE'),
-  'anonymous role cannot execute is_site_admin'
+  not exists (
+    select 1
+    from pg_proc p
+    cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) acl
+    where p.oid = 'public.is_site_admin()'::regprocedure
+      and acl.grantee = 'anon'::regrole
+      and acl.privilege_type = 'EXECUTE'
+  ),
+  'anonymous role has no direct EXECUTE grant on is_site_admin'
 );
 
 select ok(
@@ -30,8 +37,27 @@ select ok(
 );
 
 select ok(
-  not has_function_privilege('service_role', 'public.is_site_admin()', 'EXECUTE'),
-  'service_role has no explicit execute grant on is_site_admin'
+  not exists (
+    select 1
+    from pg_proc p
+    cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) acl
+    where p.oid = 'public.is_site_admin()'::regprocedure
+      and acl.grantee = 'service_role'::regrole
+      and acl.privilege_type = 'EXECUTE'
+  ),
+  'service_role has no direct EXECUTE grant on is_site_admin'
+);
+
+select ok(
+  not exists (
+    select 1
+    from pg_proc p
+    cross join lateral aclexplode(coalesce(p.proacl, acldefault('f', p.proowner))) acl
+    where p.oid = 'public.is_site_admin()'::regprocedure
+      and acl.grantee = 0::oid
+      and acl.privilege_type = 'EXECUTE'
+  ),
+  'is_site_admin is not executable through the PUBLIC pseudo-role'
 );
 
 select ok(
@@ -127,6 +153,12 @@ select results_eq(
 reset role;
 set local role anon;
 reset request.jwt.claim.sub;
+
+select is(
+  public.is_site_admin(),
+  false,
+  'anonymous request context never satisfies the administrator predicate'
+);
 
 select results_eq(
   $$select count(*)::bigint
