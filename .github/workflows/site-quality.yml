@@ -2,7 +2,7 @@ name: Site quality checks
 
 on:
   pull_request:
-    branches: [main, work/mother-two-updated-mavis-20261110]
+    branches: [main, work/mother-two-updated-mavis-20261110, "feature/**"]
   push:
     branches:
       - main
