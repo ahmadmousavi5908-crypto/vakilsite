@@ -46,6 +46,16 @@ The public source RPC is intentionally read-only and returns only title, canonic
 - Public source metadata is restricted to citation-like relations. Image and dataset links are excluded until explicit rights handling exists.
 - Static public pages remain intact if the CMS environment is unavailable or migrations are not yet applied.
 
+## Verification
+
+Run the focused public article mapping and pagination tests:
+
+```sh
+node --test tests/mavis/public-article-mapper.test.mjs tests/mavis/published-article-cursor.test.mjs
+```
+
+The repository CI also runs the isolated Supabase database/RLS suite, ESLint, and the production build.
+
 ## Not included
 
 - Production migration execution, merge, or deployment.
