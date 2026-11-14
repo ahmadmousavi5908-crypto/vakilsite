@@ -252,3 +252,14 @@ The pgTAP suite now checks:
 
 
 The original migration `001_social_links.sql` was also hardened for fresh database installations so it revokes the default direct EXECUTE grants immediately. Migration 006 remains necessary for databases where migration 001 was already applied before this correction. Both statements are idempotent; existing hosted databases must receive migration 006 through the normal reviewed migration process.
+
+
+### First successful isolated PostgreSQL run
+
+GitHub Actions run `43598124241` on commit `5996106d94e3ace6d1b039919629ce44be986419` completed successfully:
+
+- `001_profiles_admin_rls.test.sql`: PASS (15 assertions)
+- `005_mavis_knowledge_search_rate_limit.test.sql`: PASS (21 assertions)
+- Total: **36 assertions, Result: PASS**
+
+This run applied migration 006 over the original migration 001, proving the additive correction for an already-initialized database. The later defensive update to migration 001 for fresh installations is being rechecked separately on the current branch head.
