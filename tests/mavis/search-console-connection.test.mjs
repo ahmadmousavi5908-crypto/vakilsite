@@ -80,7 +80,7 @@ test("removes the local connection even when provider token revocation fails", a
     env,
     revokeToken: async () => { throw new Error("Google unavailable"); },
   });
-  assert.deepEqual(result, { connected: false, revoked: false, revocationPending: true });
+  assert.deepEqual(result, { connected: false, revoked: false, revocationFailed: true });
   assert.deepEqual(calls, ["get_mavis_search_console_connection", "disconnect_mavis_search_console"]);
 });
 
@@ -102,7 +102,7 @@ test("reports successful provider revocation and removes the local connection", 
     env,
     revokeToken: async ({ refreshToken }) => { revokedToken = refreshToken; },
   });
-  assert.deepEqual(result, { connected: false, revoked: true, revocationPending: false });
+  assert.deepEqual(result, { connected: false, revoked: true, revocationFailed: false });
   assert.equal(revokedToken, "google-refresh-token-secret");
   assert.deepEqual(calls, ["get_mavis_search_console_connection", "disconnect_mavis_search_console"]);
 });
