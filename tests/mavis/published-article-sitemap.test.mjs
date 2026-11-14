@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { buildSitemapEntries } from "../../src/lib/sitemap.mjs";
 import {
   getPublishedMavisArticleSitemapEntries,
   PublishedMavisSitemapCapacityError,
@@ -120,4 +121,21 @@ test("rejects unbounded or invalid pagination settings", async () => {
     getPublishedMavisArticleSitemapEntries(client, { maxEntries: 50001 }),
     RangeError,
   );
+});
+
+
+test("builds sitemap entries with validated last-modified timestamps", () => {
+  const entries = buildSitemapEntries([{
+    path: "/articles/dated-article",
+    changeFrequency: "monthly",
+    priority: 0.7,
+    lastModified: "2026-11-14T10:00:00Z",
+  }], "https://example.org");
+  assert.equal(entries[0].lastModified.toISOString(), "2026-11-14T10:00:00.000Z");
+  assert.throws(() => buildSitemapEntries([{
+    path: "/articles/invalid-date",
+    changeFrequency: "monthly",
+    priority: 0.7,
+    lastModified: "not-a-date",
+  }], "https://example.org"), /Invalid sitemap lastModified/);
 });
