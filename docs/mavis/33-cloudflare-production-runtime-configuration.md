@@ -69,7 +69,7 @@ The workflow runs only `supabase link` in its temporary runner checkout and `sup
 
 1. Keep PR #119 in Draft until the approved diff, CI, and production prerequisites are reviewed.
 2. Verify the production Supabase migration history against the repository. Use the supported read-only migration-list operation first; do not repair migration history to make the lists look aligned.
-3. Run `supabase db push --dry-run --remote` and inspect the complete pending migration set. Do not run the actual push without explicit production approval.
+3. With the audit workflow's pinned Supabase CLI 2.84.2, run `supabase db push --dry-run --linked` and inspect the complete pending migration set. (The `--remote` form belongs to the newer CLI v3 syntax.) Do not run the actual push without explicit production approval.
 4. Confirm the Cloudflare Worker runtime variables and secrets above. Keep the encryption key stable.
 5. Configure a dedicated Google Cloud OAuth project for MAVIS Search Console. Register the exact callback URL:
    `https://vakilahmadmousavi.ir/api/admin/mavis/search-console/callback`.
