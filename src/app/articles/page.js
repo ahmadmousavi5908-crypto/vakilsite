@@ -2,7 +2,7 @@ import Link from "next/link";
 import { articles } from "../../data/articles";
 import { createPublicContentClient } from "../../lib/supabase/public-content";
 import { decodePublishedArticleCursor, encodePublishedArticleCursor } from "../../lib/mavis/published-article-cursor.mjs";
-import { mapPublishedMavisArticle } from "../../lib/mavis/public-article-mapper.mjs";
+import { mapPublishedMavisArticleSummary } from "../../lib/mavis/public-article-mapper.mjs";
 
 export const metadata = {
   title: "راهنماها و مقالات حقوقی | سید احمد موسوی",
@@ -25,7 +25,7 @@ export default async function ArticlesPage({ searchParams }) {
     if (!supabase) throw new Error("Public CMS is not configured");
     let query = supabase
       .from("mavis_articles")
-      .select("id, slug, title, author_name, excerpt, category, content, tags, seo_title, seo_description, published_at, updated_at")
+      .select("id, slug, title, excerpt, category, published_at")
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .order("id", { ascending: false })
@@ -40,9 +40,9 @@ export default async function ArticlesPage({ searchParams }) {
       const visibleRows = data.filter((row) => !staticSlugs.has(row.slug));
       if (visibleRows.length > 25) {
         nextCursor = encodePublishedArticleCursor(visibleRows[24]);
-        publishedArticles = visibleRows.slice(0, 25).map((row) => mapPublishedMavisArticle(row)).filter(Boolean);
+        publishedArticles = visibleRows.slice(0, 25).map((row) => mapPublishedMavisArticleSummary(row)).filter(Boolean);
       } else {
-        publishedArticles = visibleRows.map((row) => mapPublishedMavisArticle(row)).filter(Boolean);
+        publishedArticles = visibleRows.map((row) => mapPublishedMavisArticleSummary(row)).filter(Boolean);
       }
     }
   } catch {
@@ -102,7 +102,7 @@ export default async function ArticlesPage({ searchParams }) {
                   <details className="editorial-accordion" key={article.id}>
                     <summary>
                       <span className="editorial-accordion-number">{String(index + 1).padStart(2, "0")}</span>
-                      <span className="editorial-accordion-title"><strong>{article.title}</strong><small>{article.category} · {article.readTime} دقیقه مطالعه</small></span>
+                      <span className="editorial-accordion-title"><strong>{article.title}</strong><small>{article.category} · مقاله منتشرشده</small></span>
                       <b aria-hidden="true">+</b>
                     </summary>
                     <div className="editorial-accordion-panel">
