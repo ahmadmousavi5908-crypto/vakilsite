@@ -160,6 +160,38 @@ function validateSearch(query, limit) {
   return normalized;
 }
 
+async function readBoundedResponseBody(response) {
+  const reader = response?.body?.getReader?.();
+  if (!reader) return "";
+  const chunks = [];
+  let totalBytes = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    totalBytes += value.byteLength;
+    if (totalBytes > MAX_RESPONSE_BYTES) {
+      try {
+        await reader.cancel();
+      } catch {
+        // The response is already rejected; cancellation is best-effort.
+      }
+      const error = new Error("Academic source provider response exceeded the size limit.");
+      error.code = "PROVIDER_RESPONSE_TOO_LARGE";
+      throw error;
+    }
+    chunks.push(value);
+  }
+
+  const bytes = new Uint8Array(totalBytes);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder().decode(bytes);
+}
+
 function createRequest(fetchImpl, timeoutMs) {
   return async function requestJson(url, headers = {}) {
     const controller = new AbortController();
@@ -177,12 +209,7 @@ function createRequest(fetchImpl, timeoutMs) {
         error.code = response?.status === 429 ? "PROVIDER_RATE_LIMITED" : "PROVIDER_UNAVAILABLE";
         throw error;
       }
-      const body = await response.text();
-      if (new TextEncoder().encode(body).byteLength > MAX_RESPONSE_BYTES) {
-        const error = new Error("Academic source provider response exceeded the size limit.");
-        error.code = "PROVIDER_RESPONSE_TOO_LARGE";
-        throw error;
-      }
+      const body = await readBoundedResponseBody(response);
       try {
         return JSON.parse(body);
       } catch {
