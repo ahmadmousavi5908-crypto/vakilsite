@@ -1,11 +1,23 @@
 function safePublicSource(source) {
   if (!source || typeof source !== "object") return null;
-  if (typeof source.url !== "string" || !/^https?:\/\//i.test(source.url)) return null;
+  if (typeof source.url !== "string" || source.url.length > 2048 || source.url !== source.url.trim()) return null;
+
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(source.url);
+  } catch {
+    return null;
+  }
+  if (!["http:", "https:"].includes(parsedUrl.protocol)
+    || !parsedUrl.hostname
+    || parsedUrl.username
+    || parsedUrl.password) return null;
+
   return {
     label: typeof source.label === "string" && source.label.trim()
       ? source.label.trim()
       : typeof source.title === "string" ? source.title : "مشاهده منبع",
-    url: source.url,
+    url: parsedUrl.toString(),
     sourceType: typeof source.sourceType === "string" ? source.sourceType : "other",
   };
 }
@@ -50,7 +62,6 @@ export function mapPublishedMavisArticle(row, sources = []) {
       : typeof row.excerpt === "string" ? row.excerpt : "",
   };
 }
-
 
 export function mapPublishedMavisArticleSummary(row) {
   if (!row || typeof row !== "object" || typeof row.slug !== "string" || typeof row.title !== "string") return null;
