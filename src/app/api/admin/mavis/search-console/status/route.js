@@ -17,10 +17,12 @@ export async function GET() {
   }
 
   try {
-    const [connection, client] = await Promise.all([
-      readStoredSearchConsoleConnection(access.supabase),
-      createSearchConsoleClientFromStoredConnection({ supabase: access.supabase, env: process.env }),
-    ]);
+    const connection = await readStoredSearchConsoleConnection(access.supabase);
+    const client = await createSearchConsoleClientFromStoredConnection({
+      supabase: access.supabase,
+      env: process.env,
+      storedConnection: connection,
+    });
     return Response.json({
       connected: Boolean(connection && client),
       siteUrl: connection?.siteUrl || null,
