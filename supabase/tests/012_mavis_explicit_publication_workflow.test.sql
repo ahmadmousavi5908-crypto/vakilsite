@@ -1,5 +1,5 @@
 begin;
-select plan(26);
+select plan(30);
 
 select has_function('public', 'publish_mavis_article', array['uuid','integer'], 'publish RPC exists');
 select has_function('public', 'unpublish_mavis_article', array['uuid','integer'], 'unpublish RPC exists');
@@ -75,8 +75,19 @@ select is(
  (select count(*)::integer from public.mavis_article_audit_events where article_id=(select article_id from publication_fixture) and event_type='article_published' and article_version=1),
  1,'publication creates an audit event for the exact version'
 );
+select set_config('test.publication_article_id', (select article_id::text from publication_fixture), true);
+reset role;
+set local role anon;
+select is(
+ (select count(*)::integer from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
+ 1,'anonymous readers can access an explicitly published article'
+);
+reset role;
+set local role authenticated;
+set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
+
 select throws_ok(
- $$select public.publish_mavis_article((select article_id from publication_fixture),1)$$,
+ $select public.publish_mavis_article((select article_id from publication_fixture),1)$,
  '55000','Article is not approved for publication','already published article cannot be published twice'
 );
 
@@ -100,8 +111,18 @@ select is(
  (select count(*)::integer from public.mavis_article_audit_events where article_id=(select article_id from publication_fixture) and event_type='article_unpublished' and article_version=1),
  1,'unpublishing creates an audit event for the exact version'
 );
+reset role;
+set local role anon;
+select is(
+ (select count(*)::integer from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
+ 0,'anonymous readers lose access after unpublishing'
+);
+reset role;
+set local role authenticated;
+set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
+
 select throws_ok(
- $$select public.unpublish_mavis_article((select article_id from publication_fixture),1)$$,
+ $select public.unpublish_mavis_article((select article_id from publication_fixture),1)$,
  '55000','Article is not currently published','already unpublished article cannot be unpublished twice'
 );
 
