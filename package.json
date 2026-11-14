@@ -19,7 +19,8 @@
     "test:mavis-search-console": "node --test tests/mavis/search-console-adapter.test.mjs tests/mavis/search-console-client.test.mjs tests/mavis/search-console-handler.test.mjs tests/mavis/search-console-oauth.test.mjs tests/mavis/search-console-connection.test.mjs tests/mavis/search-console-tools.test.mjs tests/mavis/growth-metrics.test.mjs",
     "test:site-url": "node --test tests/site-url/*.test.mjs",
     "test:indexnow": "node --test scripts/indexnow-validation.test.mjs",
-    "test:mavis-editorial-export": "node --test tests/mavis/editorial-spreadsheet-export.test.mjs"
+    "test:mavis-editorial-export": "node --test tests/mavis/editorial-spreadsheet-export.test.mjs",
+    "test:indexnow-client": "node --test tests/indexnow-client.test.mjs"
   },
   "dependencies": {
     "next": "16.4.6",
