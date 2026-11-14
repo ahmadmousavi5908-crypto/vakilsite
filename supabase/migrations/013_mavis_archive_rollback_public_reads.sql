@@ -204,7 +204,11 @@ begin
     raise exception using errcode = '40001', message = 'Article version changed; refresh before rollback';
   end if;
 
-  if v_status not in ('published', 'approved', 'draft', 'changes_requested', 'needs_update') then
+  if v_status = 'published' then
+    raise exception using errcode = '55000', message = 'Published article must be unpublished before rollback';
+  end if;
+
+  if v_status not in ('approved', 'draft', 'changes_requested', 'needs_update') then
     raise exception using errcode = '55000', message = 'Article cannot be rolled back from its current state';
   end if;
 
@@ -257,7 +261,7 @@ begin
   )
   values (
     p_article_id, v_actor,
-    case when v_status = 'published' then 'article_unpublished' else 'article_updated' end,
+    'article_updated',
     v_status, 'draft', v_next_version,
     jsonb_build_object('rollback_of_version', p_target_version, 'new_version', v_next_version, 'note', nullif(btrim(coalesce(p_note, '')), ''))
   );
@@ -318,6 +322,6 @@ grant execute on function public.get_public_mavis_article_sources(uuid)
   to anon, authenticated;
 
 comment on function public.rollback_mavis_article_version(uuid, integer, integer, text) is
-  'Copies a prior immutable version into a new draft version and unpublishes the current article. It never republishes automatically.';
+  'Requires a published article to be explicitly unpublished first, then copies a prior immutable version into a new draft version. It never republishes automatically.';
 comment on function public.get_public_mavis_article_sources(uuid) is
   'Returns safe source citation metadata only when the associated article is currently published.';
