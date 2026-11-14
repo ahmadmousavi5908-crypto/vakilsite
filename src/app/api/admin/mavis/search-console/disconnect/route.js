@@ -1,6 +1,5 @@
 import { requireAdmin } from "../../../../../../lib/supabase/admin";
-import { decryptSearchConsoleRefreshToken, revokeSearchConsoleRefreshToken } from "../../../../../../lib/mavis/search-console-oauth.mjs";
-import { readStoredSearchConsoleConnection } from "../../../../../../lib/mavis/search-console-connection.mjs";
+import { disconnectStoredSearchConsoleConnection } from "../../../../../../lib/mavis/search-console-connection.mjs";
 import { matchesRequestOrigin } from "../../../../../../lib/mavis/request-guards.mjs";
 
 export const dynamic = "force-dynamic";
@@ -22,18 +21,15 @@ export async function POST(request) {
   }
 
   try {
-    const connection = await readStoredSearchConsoleConnection(access.supabase);
-    if (connection) {
-      const refreshToken = decryptSearchConsoleRefreshToken(connection.encryptedRefreshToken, process.env);
-      await revokeSearchConsoleRefreshToken({ refreshToken });
-    }
-    const { error } = await access.supabase.rpc("disconnect_mavis_search_console");
-    if (error) throw new Error("Disconnect failed.");
-    return Response.json({ connected: false, revoked: Boolean(connection) }, {
+    const result = await disconnectStoredSearchConsoleConnection({
+      supabase: access.supabase,
+      env: process.env,
+    });
+    return Response.json(result, {
       headers: { "Cache-Control": "no-store" },
     });
   } catch {
-    return Response.json({ error: "قطع امن اتصال Search Console انجام نشد؛ اتصال محلی حفظ شد." }, {
+    return Response.json({ error: "حذف اتصال محلی Search Console انجام نشد." }, {
       status: 503,
       headers: { "Cache-Control": "no-store" },
     });
