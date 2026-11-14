@@ -9,6 +9,7 @@ on:
       - redesign/persian-ux-typography
       - feat/legal-library-discovery-20261102
       - integration/mavis-knowledge-retrieval-mother-two-20261110
+      - "feature/**"
 
 permissions:
   contents: read
