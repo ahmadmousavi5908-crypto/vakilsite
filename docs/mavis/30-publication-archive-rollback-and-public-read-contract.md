@@ -7,7 +7,7 @@
 - `approved` can be published only when an append-only approval record exists for the exact current version.
 - `published` is visible to anonymous readers through the existing published-only RLS policy.
 - `archived` is never publicly visible.
-- Restoring an archived article that was previously published returns it to `approved`, clears `published_at`, and requires an explicit new publish action.
+- Restoring an archived article that was previously `approved` or `published` returns it to `approved` only when an append-only approval record exists for the exact current immutable version; otherwise it returns to `draft`. Any restore clears `published_at`, and a restored approved article still requires an explicit new publish action.
 - Rollback copies a historical immutable snapshot into a new version, changes the article to `draft`, clears `published_at`, and requires review and publication again.
 
 ## Atomic operations
