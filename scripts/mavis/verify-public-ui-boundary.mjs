@@ -32,27 +32,26 @@ const isAllowedMetadataRoute = (file) =>
 const isAllowedAdminApiRoute = (file) =>
   file.startsWith("src/app/api/admin/mavis/search-console/");
 
+const isAllowedPublicArticleLibrarySurface = (file) =>
+  file === "src/app/articles/library/page.js" ||
+  file === "src/app/articles/library/page.module.css";
+
 function verifyPreservedArticleExtension(file) {
   const base = readAtRef(baseRef, file);
   const head = readAtRef(headRef, file);
 
   if (file === "src/app/articles/page.js") {
-    const startMarker = "          {/* MAVIS_PUBLISHED_CMS_SECTION_START */}";
-    const endMarker = "          {/* MAVIS_PUBLISHED_CMS_SECTION_END */}";
+    const startMarker = "                {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START */}";
+    const endMarker = "                {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_END */}";
     const baseReturnIndex = base.indexOf("  return (");
     const headReturnIndex = head.indexOf("  return (");
     if (baseReturnIndex < 0 || headReturnIndex < 0) return false;
 
     let headReturn = head.slice(headReturnIndex);
-    const start = headReturn.indexOf(startMarker);
-    const end = headReturn.indexOf(endMarker, start);
-    if (start < 0 || end < 0 || headReturn.indexOf(startMarker, start + 1) >= 0) return false;
+    const linkBlock = /\n[ \t]*\{\/\* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START \*\/\}[ \t]*\n[\s\S]*?\n[ \t]*\{\/\* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_END \*\/\}[ \t]*\n/;
+    if (!linkBlock.test(headReturn) || (headReturn.match(/MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START/g) || []).length !== 1) return false;
 
-    let afterMarker = end + endMarker.length;
-    if (headReturn.slice(afterMarker, afterMarker + 2) === "\r\n") afterMarker += 2;
-    else if (headReturn[afterMarker] === "\n") afterMarker += 1;
-
-    headReturn = headReturn.slice(0, start) + headReturn.slice(afterMarker);
+    headReturn = headReturn.replace(linkBlock, "\n");
     return base.slice(baseReturnIndex) === headReturn;
   }
 
@@ -89,6 +88,7 @@ const protectedFiles = changedFiles.filter((file) => {
   if (isAllowedAdminSurface(file)) return false;
   if (isAllowedAdminApiRoute(file)) return false;
   if (isAllowedMetadataRoute(file)) return false;
+  if (isAllowedPublicArticleLibrarySurface(file)) return false;
   if (articleExtensionFiles.has(file) && verifyPreservedArticleExtension(file)) return false;
 
   return (
