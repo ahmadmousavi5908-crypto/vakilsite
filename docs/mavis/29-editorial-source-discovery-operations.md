@@ -8,7 +8,8 @@
 - Search requests are sequential, bounded to 5 candidates per provider, and use the existing authenticated admin session.
 - A dedicated durable per-admin fixed-window limiter allows at most 30 discovery requests per 60 seconds.
 - The UI merges duplicate DOI records, filters by provider, displays provenance and rights status, and lets the administrator copy metadata or explicitly create a draft.
-- The draft inventory provides in-page text/category/slug filtering and sortable columns while preserving server-side keyset pagination.
+- The draft inventory provides in-page text/category/slug filtering, sortable columns, server-side keyset pagination, and a UTF-8 Excel-compatible TSV export of the currently loaded filtered rows.
+- Discovery results are persisted in the administrator-only source-candidate queue by migration 015. Candidates can be filtered by state, imported into metadata-only drafts, or ignored; each transition is audited.
 - Drafts can be submitted for review only against their current immutable version. The review queue displays the exact version snapshot and its linked source rights metadata.
 - Review decisions (`approved`, `changes_requested`, `rejected`) are append-only and bind to the exact current version. Change requests and rejections require an explanatory note.
 - Approval only changes the editorial status to `approved`; it does not publish the article.
@@ -72,7 +73,6 @@ npm run build
 
 ## Not yet implemented
 
-- Persistent discovery candidate triage queue.
 - Cross-provider distributed leases and global provider concurrency coordination.
 - AI-assisted metadata/content completion.
-- Production migration/deployment and runtime verification remain pending.
+- Production migrations/deployment and runtime verification remain pending.
