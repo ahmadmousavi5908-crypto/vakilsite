@@ -100,6 +100,7 @@ declare
   v_actor uuid := auth.uid();
   v_archived_from_status text;
   v_current_version integer;
+  v_has_current_approval boolean;
   v_next_status text;
 begin
   if v_actor is null or not public.is_site_admin() then
@@ -124,8 +125,17 @@ begin
     raise exception using errcode = '40001', message = 'Article version changed; refresh before restoring';
   end if;
 
+  select exists (
+    select 1
+    from public.mavis_article_approvals
+    where article_id = p_article_id
+      and article_version = v_current_version
+      and decision = 'approved'
+  ) into v_has_current_approval;
+
   v_next_status := case
-    when v_archived_from_status = 'published' then 'approved'
+    when v_archived_from_status in ('published', 'approved') and v_has_current_approval then 'approved'
+    when v_archived_from_status in ('published', 'approved') then 'draft'
     when v_archived_from_status in ('in_review', 'rejected') then 'draft'
     else coalesce(v_archived_from_status, 'draft')
   end;
@@ -145,7 +155,7 @@ begin
   values (
     p_article_id, v_actor, 'article_restored', 'archived', v_next_status,
     p_expected_version,
-    jsonb_build_object('restored_from_status', v_archived_from_status, 'requires_republication', v_next_status = 'approved')
+    jsonb_build_object('restored_from_status', v_archived_from_status, 'has_current_approval', v_has_current_approval, 'requires_republication', v_next_status = 'approved')
   );
 
   return jsonb_build_object(
