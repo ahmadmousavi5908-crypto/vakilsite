@@ -37,92 +37,101 @@ begin
     raise exception using errcode = '22023', message = 'Article payload contains unsupported fields';
   end if;
 
-  if jsonb_typeof(p_payload->'slug') <> 'string'
+  if jsonb_typeof(p_payload->'slug') is distinct from 'string'
     or length(p_payload->>'slug') not between 3 and 180
     or (p_payload->>'slug') !~ '^[a-z0-9]+([a-z0-9-]*[a-z0-9])?$' then
     raise exception using errcode = '22023', message = 'Invalid article slug';
   end if;
 
-  if jsonb_typeof(p_payload->'title') <> 'string'
+  if jsonb_typeof(p_payload->'title') is distinct from 'string'
     or length(btrim(p_payload->>'title')) not between 3 and 300 then
     raise exception using errcode = '22023', message = 'Invalid article title';
   end if;
 
-  if jsonb_typeof(p_payload->'excerpt') <> 'string'
+  if jsonb_typeof(p_payload->'excerpt') is distinct from 'string'
     or length(btrim(p_payload->>'excerpt')) not between 10 and 1200 then
     raise exception using errcode = '22023', message = 'Invalid article excerpt';
   end if;
 
-  if jsonb_typeof(p_payload->'category') <> 'string'
+  if jsonb_typeof(p_payload->'category') is distinct from 'string'
     or length(btrim(p_payload->>'category')) not between 2 and 100 then
     raise exception using errcode = '22023', message = 'Invalid article category';
   end if;
 
-  if jsonb_typeof(p_payload->'tags') <> 'array'
+  if jsonb_typeof(p_payload->'tags') is distinct from 'array'
     or jsonb_array_length(p_payload->'tags') > 40 then
     raise exception using errcode = '22023', message = 'Article tags must be an array of at most 40 items';
   end if;
 
   for v_tag in select value from jsonb_array_elements(p_payload->'tags')
   loop
-    if jsonb_typeof(v_tag) <> 'string' or length(btrim(v_tag #>> '{}')) not between 1 and 60 then
+    if jsonb_typeof(v_tag) is distinct from 'string' or length(btrim(v_tag #>> '{}')) not between 1 and 60 then
       raise exception using errcode = '22023', message = 'Invalid article tag';
     end if;
   end loop;
 
-  if jsonb_typeof(p_payload->'content') <> 'object'
+  if jsonb_typeof(p_payload->'content') is distinct from 'object'
     or (p_payload->'content' - array['intro', 'sections', 'checklist', 'warning']) <> '{}'::jsonb
-    or jsonb_typeof(p_payload->'content'->'intro') <> 'string'
+    or jsonb_typeof(p_payload->'content'->'intro') is distinct from 'string'
     or length(btrim(p_payload->'content'->>'intro')) not between 10 and 8000
-    or jsonb_typeof(p_payload->'content'->'sections') <> 'array'
+    or jsonb_typeof(p_payload->'content'->'sections') is distinct from 'array'
     or jsonb_array_length(p_payload->'content'->'sections') not between 1 and 80 then
     raise exception using errcode = '22023', message = 'Invalid structured article content';
   end if;
 
   for v_section in select value from jsonb_array_elements(p_payload->'content'->'sections')
   loop
-    if jsonb_typeof(v_section) <> 'object'
+    if jsonb_typeof(v_section) is distinct from 'object'
       or (v_section - array['heading', 'body']) <> '{}'::jsonb
-      or jsonb_typeof(v_section->'heading') <> 'string'
+      or jsonb_typeof(v_section->'heading') is distinct from 'string'
       or length(btrim(v_section->>'heading')) not between 2 and 240
-      or jsonb_typeof(v_section->'body') <> 'string'
+      or jsonb_typeof(v_section->'body') is distinct from 'string'
       or length(btrim(v_section->>'body')) not between 10 and 12000 then
       raise exception using errcode = '22023', message = 'Invalid article section';
     end if;
   end loop;
 
-  if p_payload->'content' ? 'checklist'
-    and (jsonb_typeof(p_payload->'content'->'checklist') <> 'array'
-      or jsonb_array_length(p_payload->'content'->'checklist') > 60) then
-    raise exception using errcode = '22023', message = 'Invalid article checklist';
+  if p_payload->'content' ? 'checklist' then
+    if jsonb_typeof(p_payload->'content'->'checklist') is distinct from 'array'
+      or jsonb_array_length(p_payload->'content'->'checklist') > 60 then
+      raise exception using errcode = '22023', message = 'Invalid article checklist';
+    end if;
+
+    for v_tag in select value from jsonb_array_elements(p_payload->'content'->'checklist')
+    loop
+      if jsonb_typeof(v_tag) is distinct from 'string'
+        or length(btrim(v_tag #>> '{}')) not between 1 and 500 then
+        raise exception using errcode = '22023', message = 'Invalid article checklist item';
+      end if;
+    end loop;
   end if;
 
   if p_payload->'content' ? 'warning'
-    and (jsonb_typeof(p_payload->'content'->'warning') <> 'string'
+    and (jsonb_typeof(p_payload->'content'->'warning') is distinct from 'string'
       or length(p_payload->'content'->>'warning') > 2000) then
     raise exception using errcode = '22023', message = 'Invalid article warning';
   end if;
 
   if p_payload ? 'author_name'
-    and (jsonb_typeof(p_payload->'author_name') <> 'string'
+    and (jsonb_typeof(p_payload->'author_name') is distinct from 'string'
       or length(p_payload->>'author_name') > 180) then
     raise exception using errcode = '22023', message = 'Invalid article author';
   end if;
 
   if p_payload ? 'seo_title'
-    and (jsonb_typeof(p_payload->'seo_title') <> 'string'
+    and (jsonb_typeof(p_payload->'seo_title') is distinct from 'string'
       or length(p_payload->>'seo_title') > 300) then
     raise exception using errcode = '22023', message = 'Invalid SEO title';
   end if;
 
   if p_payload ? 'seo_description'
-    and (jsonb_typeof(p_payload->'seo_description') <> 'string'
+    and (jsonb_typeof(p_payload->'seo_description') is distinct from 'string'
       or length(p_payload->>'seo_description') > 500) then
     raise exception using errcode = '22023', message = 'Invalid SEO description';
   end if;
 
   if p_payload ? 'content_schema_version'
-    and (jsonb_typeof(p_payload->'content_schema_version') <> 'number'
+    and (jsonb_typeof(p_payload->'content_schema_version') is distinct from 'number'
       or (p_payload->>'content_schema_version')::integer <> 1) then
     raise exception using errcode = '22023', message = 'Unsupported content schema version';
   end if;
