@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import styles from "./MavisDraftList.module.css";
+import { createEditorialSpreadsheetTsv } from "../../lib/mavis/editorial-spreadsheet-export.mjs";
 
 const STATUS_LABELS = {
   draft: "پیش‌نویس",
@@ -30,6 +31,31 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
         return sortDirection === "asc" ? comparison : -comparison;
       });
   }, [rows, query, statusFilter, sortBy, sortDirection]);
+
+  function downloadSpreadsheet() {
+    const exportRows = [
+      ["عنوان مقاله", "نامک", "دسته‌بندی", "وضعیت", "نسخه", "آخرین به‌روزرسانی"],
+      ...visibleRows.map((article) => [
+        article.title,
+        article.slug,
+        article.category,
+        STATUS_LABELS[article.status] || article.status,
+        article.current_version,
+        article.updated_at,
+      ]),
+    ];
+    const blob = new Blob(["\uFEFF", createEditorialSpreadsheetTsv(exportRows)], {
+      type: "text/tab-separated-values;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "mavis-articles-" + new Date().toISOString().slice(0, 10) + ".tsv";
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  }
 
   function changeSort(key) {
     if (sortBy === key) setSortDirection((value) => value === "asc" ? "desc" : "asc");
@@ -79,6 +105,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
               </select>
             </label>
             <span className={styles.filteredCount}>{visibleRows.length.toLocaleString("fa-IR")} ردیف نمایش داده می‌شود</span>
+            <button type="button" className={styles.exportButton} onClick={downloadSpreadsheet} disabled={!visibleRows.length}>خروجی Excel · همین نتایج</button>
           </div>
           {visibleRows.length ? (
             <>
