@@ -142,7 +142,175 @@ begin
     v_date := nullif(btrim(coalesce(v_item->>'publicationDate','')),'');
     v_precision := 'unknown';
     if v_date is not null then
-      if v_date ~ '^[0-9]{4}$' then
+      if v_date ~ '^[0-9]{4}' and substring(v_date,1,4)::integer not between 1000 and 9999 then
+        raise exception using errcode='22023', message='Invalid candidate publication date';
+      end if;
+      if v_date ~ '^[0-9]{4}
+        v_precision := 'year';
+      elsif v_date ~ '^[0-9]{4}-[0-9]{2}$' and substring(v_date,6,2)::integer between 1 and 12 then
+        v_precision := 'month';
+      elsif v_date ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' then
+        begin
+          if to_char(v_date::date,'YYYY-MM-DD') <> v_date then
+            raise exception using errcode='22023', message='Invalid candidate publication date';
+          end if;
+          v_precision := 'day';
+        exception when others then
+          raise exception using errcode='22023', message='Invalid candidate publication date';
+        end;
+      else
+        raise exception using errcode='22023', message='Invalid candidate publication date';
+      end if;
+    end if;
+
+    v_alias := jsonb_build_object('provider',v_provider,'providerRecordId',v_record_id,'sourceUrl',v_url);
+    perform pg_advisory_xact_lock(hashtextextended(v_provider || ':' || v_record_id,0));
+    if v_doi is not null then
+      perform pg_advisory_xact_lock(hashtextextended('doi:' || v_doi,0));
+    end if;
+
+    select id,state into v_id,v_state
+    from public.mavis_source_candidates
+    where (v_doi is not null and doi_normalized=v_doi)
+       or (provider=v_provider and provider_record_id=v_record_id)
+    order by case when v_doi is not null and doi_normalized=v_doi then 0 else 1 end
+    limit 1 for update;
+    v_new := not found;
+
+    if v_new then
+      insert into public.mavis_source_candidates(
+        provider,provider_record_id,provider_aliases,doi,title,authors,publisher,venue,
+        publication_date_text,publication_date_precision,canonical_url,source_type,
+        rights_status,state,metadata,discovered_by
+      ) values (
+        v_provider,v_record_id,jsonb_build_array(v_alias),v_doi,v_title,v_authors,
+        nullif(left(btrim(coalesce(v_item->>'publisher','')),300),''),
+        nullif(left(btrim(coalesce(v_item->>'venue','')),300),''),
+        v_date,v_precision,v_url,'academic','unknown','discovered',
+        jsonb_build_object('rightsStatus','unknown'),v_actor
+      ) returning id into v_id;
+      v_state := 'discovered';
+      insert into public.mavis_source_candidate_events(candidate_id,actor_id,event_type,metadata)
+      values(v_id,v_actor,'discovered',jsonb_build_object('provider',v_provider));
+    else
+      update public.mavis_source_candidates
+      set provider_aliases=case when provider_aliases @> jsonb_build_array(v_alias) then provider_aliases else provider_aliases || jsonb_build_array(v_alias) end,
+          title=v_title,
+          authors=case when cardinality(v_authors)>0 then v_authors else authors end,
+          publisher=coalesce(nullif(left(btrim(coalesce(v_item->>'publisher','')),300),''),publisher),
+          venue=coalesce(nullif(left(btrim(coalesce(v_item->>'venue','')),300),''),venue),
+          publication_date_text=case
+            when v_date is null or v_precision='unknown' then publication_date_text
+            when publication_date_precision='day' and v_precision in ('year','month') then publication_date_text
+            when publication_date_precision='month' and v_precision='year' then publication_date_text
+            else v_date
+          end,
+          publication_date_precision=case
+            when v_precision='unknown' then publication_date_precision
+            when publication_date_precision='day' and v_precision in ('year','month') then publication_date_precision
+            when publication_date_precision='month' and v_precision='year' then publication_date_precision
+            else v_precision
+          end,
+          updated_at=now()
+      where id=v_id;
+      insert into public.mavis_source_candidate_events(candidate_id,actor_id,event_type,metadata)
+      values(v_id,v_actor,'refreshed',jsonb_build_object('provider',v_provider));
+    end if;
+
+    v_result := v_result || jsonb_build_array(jsonb_build_object(
+      'id',v_id,'provider',v_provider,'providerRecordId',v_record_id,'doi',v_doi,
+      'title',v_title,'authors',to_jsonb(v_authors),'publisher',v_item->>'publisher',
+      'venue',v_item->>'venue','publicationDate',v_date,'sourceUrl',v_url,
+      'sourceType','academic','rightsStatus','unknown','state',v_state,'created',v_new,
+      'articleId',(select imported_article_id from public.mavis_source_candidates where id=v_id),
+      'sourceId',(select imported_source_id from public.mavis_source_candidates where id=v_id)
+    ));
+  end loop;
+  return jsonb_build_object('candidates',v_result);
+end;
+$function$;
+
+create or replace function public.import_mavis_source_candidate_from_queue(p_candidate_id uuid)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_actor uuid := auth.uid();
+  v_candidate public.mavis_source_candidates%rowtype;
+  v_import jsonb;
+begin
+  if v_actor is null or not public.is_site_admin() then
+    raise exception using errcode='42501', message='Administrator access required';
+  end if;
+  select * into v_candidate from public.mavis_source_candidates where id=p_candidate_id for update;
+  if not found then raise exception using errcode='P0002', message='Source candidate not found'; end if;
+  if v_candidate.state='ignored' then raise exception using errcode='55000', message='Ignored candidate cannot be imported'; end if;
+  if v_candidate.state='imported' then
+    return jsonb_build_object('candidateId',v_candidate.id,'articleId',v_candidate.imported_article_id,'sourceId',v_candidate.imported_source_id,'created',false,'status','existing');
+  end if;
+
+  v_import := public.import_mavis_source_candidate(jsonb_build_object(
+    'provider',v_candidate.provider,
+    'providerRecordId',v_candidate.provider_record_id,
+    'doi',v_candidate.doi,
+    'title',v_candidate.title,
+    'authors',to_jsonb(v_candidate.authors),
+    'publisher',coalesce(v_candidate.publisher,v_candidate.venue),
+    'publicationDate',v_candidate.publication_date_text,
+    'sourceUrl',v_candidate.canonical_url,
+    'sourceType',v_candidate.source_type,
+    'rightsStatus','unknown'
+  ));
+
+  update public.mavis_source_candidates
+  set state='imported',
+      imported_source_id=(v_import->>'sourceId')::uuid,
+      imported_article_id=(v_import->>'articleId')::uuid,
+      updated_at=now()
+  where id=v_candidate.id;
+  insert into public.mavis_source_candidate_events(candidate_id,actor_id,event_type,metadata)
+  values(v_candidate.id,v_actor,'imported',jsonb_build_object('article_id',v_import->>'articleId','source_id',v_import->>'sourceId'));
+  return v_import || jsonb_build_object('candidateId',v_candidate.id,'status','imported');
+end;
+$function$;
+
+create or replace function public.ignore_mavis_source_candidate(p_candidate_id uuid,p_note text default null)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $function$
+declare
+  v_actor uuid := auth.uid();
+  v_state text;
+begin
+  if v_actor is null or not public.is_site_admin() then
+    raise exception using errcode='42501', message='Administrator access required';
+  end if;
+  if length(coalesce(p_note,''))>1000 then
+    raise exception using errcode='22023', message='Candidate note is too long';
+  end if;
+  select state into v_state from public.mavis_source_candidates where id=p_candidate_id for update;
+  if not found then raise exception using errcode='P0002', message='Source candidate not found'; end if;
+  if v_state='imported' then raise exception using errcode='55000', message='Imported candidate cannot be ignored'; end if;
+  if v_state<>'ignored' then
+    update public.mavis_source_candidates set state='ignored',updated_at=now() where id=p_candidate_id;
+    insert into public.mavis_source_candidate_events(candidate_id,actor_id,event_type,metadata)
+    values(p_candidate_id,v_actor,'ignored',jsonb_build_object('note',nullif(btrim(coalesce(p_note,'')),'')));
+  end if;
+  return jsonb_build_object('candidateId',p_candidate_id,'status','ignored');
+end;
+$function$;
+
+revoke all on function public.store_mavis_source_candidates(jsonb) from public,anon,service_role;
+revoke all on function public.import_mavis_source_candidate_from_queue(uuid) from public,anon,service_role;
+revoke all on function public.ignore_mavis_source_candidate(uuid,text) from public,anon,service_role;
+grant execute on function public.store_mavis_source_candidates(jsonb) to authenticated;
+grant execute on function public.import_mavis_source_candidate_from_queue(uuid) to authenticated;
+grant execute on function public.ignore_mavis_source_candidate(uuid,text) to authenticated;
+ then
         v_precision := 'year';
       elsif v_date ~ '^[0-9]{4}-[0-9]{2}$' and substring(v_date,6,2)::integer between 1 and 12 then
         v_precision := 'month';
