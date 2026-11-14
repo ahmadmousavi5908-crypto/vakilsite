@@ -88,6 +88,6 @@ export async function disconnectStoredSearchConsoleConnection({
   return {
     connected: false,
     revoked,
-    revocationPending: Boolean(connection) && !revoked,
+    revocationFailed: Boolean(connection) && !revoked,
   };
 }
