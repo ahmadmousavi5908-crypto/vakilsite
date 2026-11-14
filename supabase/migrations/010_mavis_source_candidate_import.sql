@@ -96,7 +96,7 @@ begin
 
   v_publisher := nullif(left(btrim(coalesce(p_candidate->>'publisher', p_candidate->>'venue', '')), 300), '');
 
-  if coalesce(p_candidate->>'publicationDate', '') ~ '^\\d{4}-\\d{2}-\\d{2}$' then
+  if coalesce(p_candidate->>'publicationDate', '') ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' then
     begin
       if to_char(to_date(p_candidate->>'publicationDate', 'YYYY-MM-DD'), 'YYYY-MM-DD') = p_candidate->>'publicationDate' then
         v_publication_date := (p_candidate->>'publicationDate')::date;
