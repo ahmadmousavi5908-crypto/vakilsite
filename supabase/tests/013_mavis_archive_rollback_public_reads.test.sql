@@ -1,5 +1,5 @@
 begin;
-select plan(40);
+select plan(43);
 select has_function('public','publish_mavis_article',array['uuid','integer'],'publish RPC exists');
 select has_function('public','archive_mavis_article',array['uuid','integer','text'],'archive RPC exists');
 select has_function('public','restore_mavis_article',array['uuid','integer'],'restore RPC exists');
@@ -96,11 +96,17 @@ select is((select status from public.mavis_articles where id=current_setting('te
 select ok((select published_at is null from public.mavis_articles where id=current_setting('test.article_id')::uuid),'restore clears the previous publication timestamp');
 select is((public.publish_mavis_article(current_setting('test.article_id')::uuid,2)->>'status'),'published','restored approved version can be explicitly republished');
 
+select throws_ok(
+  $select public.rollback_mavis_article_version(current_setting('test.article_id')::uuid,2,1,'Rollback verification')$,
+  '55000','Published article must be unpublished before rollback','published article must be explicitly unpublished before rollback'
+);
+select is((public.unpublish_mavis_article(current_setting('test.article_id')::uuid,2)->>'status'),'approved','published article must first be explicitly unpublished');
 select is((public.rollback_mavis_article_version(current_setting('test.article_id')::uuid,2,1,'Rollback verification')->>'status'),'draft','rollback creates a new draft rather than republishing the old version');
 select is((select current_version from public.mavis_articles where id=current_setting('test.article_id')::uuid),3,'rollback increments the version number');
 select is((select title from public.mavis_articles where id=current_setting('test.article_id')::uuid),'Publication lifecycle version one','rollback restores the selected immutable content');
-select ok((select published_at is null from public.mavis_articles where id=current_setting('test.article_id')::uuid),'rollback unpublishes the current public article');
-select is((select count(*)::integer from public.mavis_article_audit_events where article_id=current_setting('test.article_id')::uuid and event_type='article_unpublished' and article_version=3),1,'rollback records an unpublish audit event for the new version');
+select ok((select published_at is null from public.mavis_articles where id=current_setting('test.article_id')::uuid),'rollback leaves the article unpublished');
+select is((select count(*)::integer from public.mavis_article_audit_events where article_id=current_setting('test.article_id')::uuid and event_type='article_unpublished' and article_version=2),1,'explicit unpublish is recorded against the published version');
+select is((select count(*)::integer from public.mavis_article_audit_events where article_id=current_setting('test.article_id')::uuid and event_type='article_updated' and article_version=3),1,'rollback is recorded as a new version update');
 
 reset role;
 set local role anon;
