@@ -1,6 +1,6 @@
 # MAVIS Unified Research Search Engine
 
-**Status:** Architecture baseline plus first local-index implementation in PR #119.  
+**Status:** Architecture baseline plus local-index implementation and unified local/online search interface in PR #119.  
 **Decision:** MAVIS owns the search experience, local archive, normalized records, ranking, provenance, and editorial workflow. External providers are replaceable discovery inputs, not the search engine itself.
 
 ## Product goal
@@ -96,7 +96,7 @@ Unknown values remain unknown. Do not fabricate dates, publishers, author affili
 
 ## Delivery sequence
 
-1. **Completed in this branch:** admin-only local full-text index and RPC over existing article/source/candidate records; separate UI mode from online discovery.
+1. **Implemented in this branch:** admin-only local full-text index and RPC over existing article/source/candidate records; unified search mode queries the local archive and online providers from one search field, with local-only and online-only filters.
 2. **Next:** field-level provenance model and spreadsheet-style comparison/editing of selected candidates.
 3. **Next:** true device-local PWA collection with encrypted IndexedDB, import/export, and offline search.
 4. **Next:** PDF extraction and permitted document ingestion, only after library and rights review.
