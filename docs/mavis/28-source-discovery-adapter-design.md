@@ -11,7 +11,7 @@ Use independent provider adapters behind one normalized metadata contract. Prefe
 Initial provider order:
 1. Crossref Works: DOI, title, author, journal, publisher, and publication metadata.
 2. Semantic Scholar Academic Graph: scholarly paper metadata and author identifiers.
-3. OpenAlex Works: broad scholarly discovery, enabled only after an explicit API-key and usage-budget configuration.
+3. OpenAlex Works: broad scholarly discovery, enabled behind an atomic shared USD 0.05 UTC daily budget; an API key is optional for low-volume use and may be configured server-side.
 
 Provider results are candidates, not verified legal authority and not permission to republish.
 
@@ -44,8 +44,8 @@ Official references:
 
 ### OpenAlex
 - Works API supports text search, filters, selected fields, and pagination.
-- The current API documentation describes usage-based pricing and API keys. Do not assume that an unkeyed endpoint is an unlimited free production dependency.
-- Enable only when `OPENALEX_API_KEY` and an explicit per-request usage budget are configured. Send the key through the Authorization header.
+- OpenAlex documents a free USD 1/day budget with a verified key and USD 0.10/day without a key; text search costs USD 1 per 1,000 calls. A key is optional for low-volume use.
+- MAVIS reserves USD 0.001 per search through a server-side atomic ledger with a shared USD 0.05/day ceiling. The optional `OPENALEX_API_KEY` is sent only as a Bearer header; never expose it to the browser.
 - Search and semantic search have different costs/limits; semantic search is not the default discovery path.
 - Select only the metadata fields required for the candidate card.
 
@@ -121,11 +121,12 @@ The source insert and draft creation should be one atomic database operation. Di
 ## 8. Implemented baseline and remaining sequence
 
 Implemented and covered by application/database tests:
-1. Crossref and Semantic Scholar metadata normalizers and fixed-endpoint adapters with bounded timeout, response-size limits, redirect rejection, and safe upstream error mapping.
-2. Admin-only source search with a durable per-admin rate limiter and sequential provider requests.
-3. Persisted candidate queue, duplicate-aware metadata-only import, atomic source/draft creation, rights defaulting to `unknown`, and audit events.
-4. Explicit draft, review, approval, publication, unpublication, archive, restore, and rollback transitions bound to immutable versions.
-5. Spreadsheet-compatible TSV export for the currently loaded filtered draft inventory.
+1. Crossref, Semantic Scholar, and OpenAlex metadata normalizers and fixed-endpoint adapters with bounded timeout, response-size limits, redirect rejection, and safe upstream error mapping.
+2. OpenAlex search is gated by an atomic, cross-admin USD 0.05 UTC daily usage ledger (USD 0.001 reserved per text-search request).
+3. Admin-only source search with a durable per-admin rate limiter and sequential provider requests.
+4. Persisted candidate queue, duplicate-aware metadata-only import, atomic source/draft creation, rights defaulting to `unknown`, and audit events.
+5. Explicit draft, review, approval, publication, unpublication, archive, restore, and rollback transitions bound to immutable versions.
+6. Spreadsheet-compatible TSV export for the currently loaded filtered draft inventory.
 
 Remaining engineering sequence:
 1. Add cross-instance provider concurrency coordination and provider circuit-breakers before increasing search throughput.
