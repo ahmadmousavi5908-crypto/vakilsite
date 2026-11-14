@@ -42,6 +42,7 @@ AI is an editorial assistant, not an autonomous publisher or legal authority.
 
 ### Candidate discovery
 - Initial adapters: OpenAlex, Crossref, Semantic Scholar, selected RSS feeds/journals, and manually supplied URLs.
+- Provider constraints, rights boundaries, metadata contract, duplicate signals, and network safety requirements are specified in `docs/mavis/28-source-discovery-adapter-design.md`.
 - Adapters must be modular, timeout-bounded, retry-safe, and rate-limited.
 - Persist external identifiers and canonical URL hashes for deduplication.
 - A failed adapter must not block other sources.
