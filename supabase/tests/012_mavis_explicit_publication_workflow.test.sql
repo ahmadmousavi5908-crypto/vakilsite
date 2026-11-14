@@ -60,7 +60,7 @@ reset role;
 set local role anon;
 select set_config(
  'test.anon_visibility',
- (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
+ (select count(id)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
  true
 );
 reset role;
@@ -92,7 +92,7 @@ reset role;
 set local role anon;
 select set_config(
  'test.anon_visibility',
- (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
+ (select count(id)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
  true
 );
 reset role;
@@ -129,7 +129,7 @@ reset role;
 set local role anon;
 select set_config(
  'test.anon_visibility',
- (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
+ (select count(id)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
  true
 );
 reset role;
