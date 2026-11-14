@@ -63,7 +63,7 @@ To run it without sharing credentials in chat or Termux:
 3. Select `feature/mavis-indexnow-publication-notify-20261114` as the branch and run it.
 4. Inspect the `LOCAL` and `REMOTE` columns in the job log. The workflow targets only Production project ref `jroflcmiczfwtmiaxmpd`.
 
-The workflow runs only `supabase link` in its temporary runner checkout and `supabase migration list --remote`. It does not run `db push`, `migration repair`, `db pull`, or any schema/data mutation. If either repository secret is missing, it stops before connecting.
+The workflow runs only `supabase link` in its temporary runner checkout and `supabase migration list --linked` (CLI 2.x syntax). It does not run `db push`, `migration repair`, `db pull`, or any schema/data mutation. If either repository secret is missing, it stops before connecting.
 
 ## Safe activation sequence
 
