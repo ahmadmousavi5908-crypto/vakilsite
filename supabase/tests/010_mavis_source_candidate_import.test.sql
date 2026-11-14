@@ -140,14 +140,14 @@ select is(
 );
 
 select throws_ok(
-  $$select public.import_mavis_source_candidate('{"provider":"untrusted","providerRecordId":"x","title":"Invalid provider","sourceUrl":"https://example.org/source"}'::jsonb)$$,
+  $$select public.import_mavis_source_candidate('{"provider":"untrusted","providerRecordId":"x","title":"Invalid provider","sourceType":"academic","sourceUrl":"https://example.org/source"}'::jsonb)$$,
   '22023',
   'Unsupported source provider',
   'unrecognized providers are rejected'
 );
 
 select throws_ok(
-  $$select public.import_mavis_source_candidate('{"provider":"crossref","providerRecordId":"x","title":"Invalid source URL","sourceUrl":"http://example.org/source"}'::jsonb)$$,
+  $$select public.import_mavis_source_candidate('{"provider":"crossref","providerRecordId":"x","title":"Invalid source URL","sourceType":"academic","sourceUrl":"http://example.org/source"}'::jsonb)$$,
   '22023',
   'Invalid HTTPS source URL',
   'non-HTTPS source URLs are rejected'
