@@ -52,7 +52,6 @@ test("maps a lightweight public article summary without requiring full content",
     title: row.title,
     excerpt: row.excerpt,
     category: row.category,
-    content: row.content,
   });
   assert.deepEqual(summary, {
     id: row.id,
