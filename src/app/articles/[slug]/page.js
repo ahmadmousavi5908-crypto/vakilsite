@@ -76,7 +76,7 @@ export default async function ArticleDetailPage({ params }) {
           <span className="section-kicker">راهنمای حقوقی · قوانین ایران</span>
           <h1>{article.title}</h1>
           <p>{article.excerpt}</p>
-          <div className="article-meta article-detail-meta"><span>{article.readTime} دقیقه مطالعه</span><span>{article.author || "ویژه قوانین ایران"}</span></div>
+          <div className="article-meta article-detail-meta"><span>{article.readTime} مطالعه</span><span>ویژه قوانین ایران</span></div>
         </div>
       </section>
       <div className="container article-detail-layout">
@@ -93,13 +93,11 @@ export default async function ArticleDetailPage({ params }) {
             <ul>{article.checklist.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
           </div>
           <div className="article-legal-note"><b>نکته مهم</b><p>{article.warning}</p></div>
-          {Array.isArray(article.sources) && article.sources.length ? (
-            <section className="article-sources">
-              <h2>مستندات و منابع قانونی</h2>
-              <p>برای مطالعه متن منابع و بررسی مستندات مرتبط، از پیوندهای زیر استفاده کنید:</p>
-              <ul>{article.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul>
-            </section>
-          ) : null}
+          <section className="article-sources">
+            <h2>مستندات و منابع قانونی</h2>
+            <p>برای مطالعه متن قوانین و تطبیق آخرین اصلاحات، از منابع زیر استفاده کنید:</p>
+            <ul>{article.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul>
+          </section>
           <div className="article-next-actions">
             <Link href="/articles">← بازگشت به همه مقالات</Link>
             <Link href="/#contact">درخواست بررسی موضوع من <span>←</span></Link>
