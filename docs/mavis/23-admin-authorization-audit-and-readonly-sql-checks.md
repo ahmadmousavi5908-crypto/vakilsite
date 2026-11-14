@@ -230,3 +230,22 @@ The first isolated run successfully applied all four tracked migrations and exec
 The profile suite is being corrected to inspect `pg_proc.proacl` through `aclexplode()` for direct grants to `anon`, `service_role`, and `PUBLIC`, while separately testing the anonymous request's actual result from `is_site_admin()`. The test count is now 14. This is a test-precision correction, not a relaxation of the authorization policy.
 
 The first run also exposed a seed path typo: Supabase resolved `./supabase/seed.sql` as `supabase/supabase/seed.sql`. The config now uses `./seed.sql`, relative to the Supabase directory. The rerun is the acceptance gate.
+
+
+## 8. Confirmed ACL finding and corrective migration
+
+The isolated Supabase run confirmed that the initial `public.is_site_admin()` function ACL includes direct EXECUTE grants for `anon` and `service_role` in addition to the intended authenticated grant. The first test used effective privilege checks; the corrected test inspects direct ACL entries with `aclexplode()`, which confirmed the excess grants.
+
+A new additive migration is present:
+
+`supabase/migrations/006_harden_is_site_admin_execute_acl.sql`
+
+It revokes direct EXECUTE from `PUBLIC`, `anon`, and `service_role`, then grants it to `authenticated`. The migration is idempotent and does not alter the function body or any public-site behavior.
+
+The pgTAP suite now checks:
+- No direct EXECUTE ACL for `anon`, `service_role`, or `PUBLIC`.
+- The authenticated role retains EXECUTE.
+- An anonymous request context cannot satisfy the admin predicate.
+- Existing profile RLS behavior for editor, administrator, and anonymous roles.
+
+**Status:** Migration is committed only to the Draft PR branch. It has not been applied to production or any hosted Supabase project. The corrected local pgTAP rerun is required before the finding can be marked resolved.
