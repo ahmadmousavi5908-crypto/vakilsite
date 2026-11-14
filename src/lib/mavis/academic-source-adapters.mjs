@@ -7,7 +7,7 @@ const MAX_AUTHORS = 20;
 
 function cleanText(value, max = 500) {
   if (typeof value !== "string") return null;
-  const normalized = value.replace(/\\s+/g, " ").trim();
+  const normalized = value.replace(/\s+/g, " ").trim();
   return normalized ? normalized.slice(0, max) : null;
 }
 
@@ -24,8 +24,8 @@ function safeHttpUrl(value) {
 
 function normalizeDoi(value) {
   if (typeof value !== "string") return null;
-  const doi = value.trim().replace(/^https?:\\/\\/(?:dx\\.)?doi\\.org\\//i, "").replace(/^doi:/i, "");
-  return /^10\\.\\d{4,9}\\/[\\S]+$/i.test(doi) ? doi.toLowerCase() : null;
+  const doi = value.trim().replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, "").replace(/^doi:/i, "");
+  return /^10\.\d{4,9}\/[\S]+$/i.test(doi) ? doi.toLowerCase() : null;
 }
 
 function normalizeDateParts(parts) {
@@ -50,7 +50,7 @@ function normalizeDateParts(parts) {
 }
 
 function normalizeIsoDate(value, year) {
-  if (typeof value === "string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(value)) {
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
     const parsed = new Date(value + "T00:00:00Z");
     if (!Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value) {
       return { date: value, precision: "day" };
@@ -213,7 +213,7 @@ function normalizeTimeout(timeoutMs) {
 
 export function createCrossrefAdapter({ mailto, fetchImpl = globalThis.fetch, timeoutMs } = {}) {
   const contact = cleanText(mailto, 200);
-  if (!contact || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(contact) || typeof fetchImpl !== "function") {
+  if (!contact || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact) || typeof fetchImpl !== "function") {
     throw new Error("Crossref adapter requires a valid contact email and fetch implementation.");
   }
   const requestJson = createRequest(fetchImpl, normalizeTimeout(timeoutMs));
