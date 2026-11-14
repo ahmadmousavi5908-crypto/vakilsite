@@ -96,6 +96,7 @@ export default async function ArticlesPage({ searchParams }) {
               <div className="editorial-section-heading editorial-all-heading">
                 <div><span className="section-kicker">LATEST PUBLISHED ARTICLES</span><h2>مقالات منتشرشده</h2></div>
                 <p>مطالبی که پس از تکمیل و بازبینی مدیر منتشر شده‌اند.</p>
+                <Link className="editorial-read-link" href="/articles/library">فهرست کامل و جست‌وجوی مقالات ←</Link>
               </div>
               <div className="editorial-accordion-list">
                 {publishedArticles.map((article, index) => (
