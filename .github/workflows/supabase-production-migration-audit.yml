@@ -62,5 +62,8 @@ jobs:
           set -euo pipefail
           supabase migration list --linked 2>&1 | tee "$RUNNER_TEMP/production-migration-history.txt"
           echo
-          echo "Audit complete. This workflow only links the checkout and reads migration history."
-          echo "No migration apply, repair, push, pull, or database write command is executed."
+          echo "Migration history captured. Starting a read-only migration apply preview."
+          supabase db push --dry-run --linked 2>&1 | tee "$RUNNER_TEMP/production-migration-dry-run.txt"
+          echo
+          echo "Read-only audit and dry-run preview complete."
+          echo "No migration apply, repair, pull, or database write command is executed."
