@@ -14,8 +14,7 @@ test("neutralizes formula-like and control-prefixed cells", () => {
   const output = createEditorialSpreadsheetTsv([
     ["=1+1", "+SUM(A1:A2)", "-1+1", "@cmd", "\t=1+1", "＝1+1"],
   ]);
-  const cells = output.trimEnd().split("\t").map((cell) => JSON.parse(cell));
-  assert.deepEqual(cells, ["'=1+1", "'+SUM(A1:A2)", "'-1+1", "'@cmd", "'\t=1+1", "'＝1+1"]);
+  assert.equal(output, "\"'=1+1\"\t\"'+SUM(A1:A2)\"\t\"'-1+1\"\t\"'@cmd\"\t\"'\t=1+1\"\t\"'＝1+1\"\r\n");
 });
 
 test("quotes embedded tabs and newlines so they remain inside one cell", () => {
