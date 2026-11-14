@@ -8,6 +8,7 @@ on:
       - fix/cloudflare-workers-edge-runtime-20261113
   pull_request:
     branches:
+      - main
       - work/mother-two-updated-mavis-20261110
     paths:
       - "src/**"
