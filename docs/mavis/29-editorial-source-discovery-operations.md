@@ -11,7 +11,9 @@
 - The draft inventory provides in-page text/category/slug filtering and sortable columns while preserving server-side keyset pagination.
 - Drafts can be submitted for review only against their current immutable version. The review queue displays the exact version snapshot and its linked source rights metadata.
 - Review decisions (`approved`, `changes_requested`, `rejected`) are append-only and bind to the exact current version. Change requests and rejections require an explanatory note.
-- Approval only changes the editorial status to `approved`; it does not publish or expose the article publicly.
+- Approval only changes the editorial status to `approved`; it does not publish the article.
+- A separate administrator action can publish only the exact current immutable version with an `approved` decision record.
+- Unpublishing returns the article to `approved`, clears `published_at`, and records an audit event; the public RLS policy then stops exposing it.
 
 ## Runtime configuration
 
@@ -51,6 +53,7 @@ Never place provider keys in browser variables, URLs, source files, logs, or PR 
 - Source discovery panel appears above the database draft grid.
 - The draft grid is spreadsheet-like: quick search, status filter, sortable title/category/version/update columns, and server-side keyset pagination.
 - The review queue is available on the same admin page; each item opens a read-only immutable snapshot before a decision is recorded.
+- A separate publication queue lists approved and published articles. Publish/unpublish actions require a second explicit confirmation and are version-bound.
 - Public `/articles` remains the existing editorial accordion page and is not changed in this slice. Database-backed public listing/detail routes must wait until the CMS schema and publication workflow are approved and applied in the target environment.
 
 ## Verification commands
@@ -67,4 +70,4 @@ npm run build
 - Candidate queue with durable discovery history and administrator triage states.
 - Cross-provider distributed leases and global provider concurrency coordination.
 - AI-assisted metadata/content completion.
-- Publication, archive, rollback, and public database-backed article pages.
+- Archive, rollback, and public database-backed article pages.
