@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import styles from "./MavisDraftList.module.css";
 
 const STATUS_LABELS = {
@@ -8,15 +11,49 @@ const STATUS_LABELS = {
 };
 
 export default function MavisDraftList({ rows = [], nextCursor = null, error = null }) {
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("updated_at");
+  const [sortDirection, setSortDirection] = useState("desc");
+
+  const visibleRows = useMemo(() => {
+    const normalized = query.trim().toLocaleLowerCase();
+    return [...rows]
+      .filter((article) => statusFilter === "all" || article.status === statusFilter)
+      .filter((article) => !normalized || [article.title, article.slug, article.category].some((value) => String(value || "").toLocaleLowerCase().includes(normalized)))
+      .sort((a, b) => {
+        const left = a[sortBy] ?? "";
+        const right = b[sortBy] ?? "";
+        const comparison = typeof left === "number" && typeof right === "number"
+          ? left - right
+          : String(left).localeCompare(String(right), "fa");
+        return sortDirection === "asc" ? comparison : -comparison;
+      });
+  }, [rows, query, statusFilter, sortBy, sortDirection]);
+
+  function changeSort(key) {
+    if (sortBy === key) setSortDirection((value) => value === "asc" ? "desc" : "asc");
+    else {
+      setSortBy(key);
+      setSortDirection(key === "updated_at" ? "desc" : "asc");
+    }
+  }
+
+  const sortLabel = (key, label) => (
+    <button type="button" className={styles.sortButton} onClick={() => changeSort(key)} aria-label={`مرتب‌سازی بر اساس ${label}`}>
+      {label}{sortBy === key ? (sortDirection === "asc" ? " ↑" : " ↓") : ""}
+    </button>
+  );
+
   return (
     <section className={styles.panel} aria-labelledby="mavis-draft-list-title">
       <header className={styles.header}>
         <div>
           <span className={styles.eyebrow}>DATABASE EDITORIAL RECORDS</span>
-          <h2 id="mavis-draft-list-title">پیش‌نویس‌های ذخیره‌شده</h2>
-          <p>این فهرست از دیتابیس و با دسترسی مدیر خوانده می‌شود؛ فقط وضعیت‌های قابل ویرایش نمایش داده می‌شوند.</p>
+          <h2 id="mavis-draft-list-title">کاربرگ مقالات و پیش‌نویس‌ها</h2>
+          <p>جدول قابل جست‌وجو و مرتب‌سازی؛ داده‌ها از دیتابیس و با صفحه‌بندی امن دریافت می‌شوند.</p>
         </div>
-        <strong className={styles.count}>{rows.length.toLocaleString("fa-IR")} مورد</strong>
+        <strong className={styles.count}>{rows.length.toLocaleString("fa-IR")} مورد در این صفحه</strong>
       </header>
 
       {error ? (
@@ -25,29 +62,47 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
           <p>{error}</p>
           <small>تا زمان اعمال migrationهای CMS، پیش‌نمایش محتوای فعلی سایت همچنان جداگانه قابل مشاهده است.</small>
         </div>
-      ) : rows.length ? (
-        <>
-          <div className={styles.tableWrap}>
-            <table className={styles.table}>
-              <thead><tr><th>عنوان</th><th>دسته‌بندی</th><th>وضعیت</th><th>نسخه</th><th>آخرین تغییر</th><th>عملیات</th></tr></thead>
-              <tbody>
-                {rows.map((article) => (
-                  <tr key={article.id}>
-                    <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
-                    <td>{article.category}</td>
-                    <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
-                    <td>{Number(article.current_version).toLocaleString("fa-IR")}</td>
-                    <td><time dateTime={article.updated_at}>{new Date(article.updated_at).toLocaleString("fa-IR")}</time></td>
-                    <td><Link href={`/admin/mavis/articles/${article.id}/edit`}>ویرایش پیش‌نویس</Link></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {nextCursor ? <nav className={styles.pagination} aria-label="صفحه‌بندی پیش‌نویس‌ها"><Link href={`/admin/mavis/articles?cursor=${encodeURIComponent(nextCursor)}`}>پیش‌نویس‌های قدیمی‌تر ←</Link></nav> : null}
-        </>
       ) : (
-        <div className={styles.empty}>هنوز پیش‌نویس قابل ویرایشی در دیتابیس ثبت نشده است.</div>
+        <>
+          <div className={styles.toolbar}>
+            <label className={styles.searchField}>
+              <span>جست‌وجوی سریع</span>
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="عنوان، نامک یا دسته‌بندی..." />
+            </label>
+            <label className={styles.filterField}>
+              <span>وضعیت</span>
+              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+                <option value="all">همه وضعیت‌ها</option>
+                <option value="draft">پیش‌نویس</option>
+                <option value="changes_requested">نیازمند اصلاح</option>
+                <option value="needs_update">نیازمند به‌روزرسانی</option>
+              </select>
+            </label>
+            <span className={styles.filteredCount}>{visibleRows.length.toLocaleString("fa-IR")} ردیف نمایش داده می‌شود</span>
+          </div>
+          {visibleRows.length ? (
+            <>
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead><tr><th>{sortLabel("title", "عنوان مقاله")}</th><th>{sortLabel("category", "دسته‌بندی")}</th><th>وضعیت</th><th>{sortLabel("current_version", "نسخه")}</th><th>{sortLabel("updated_at", "آخرین تغییر")}</th><th>عملیات</th></tr></thead>
+                  <tbody>
+                    {visibleRows.map((article) => (
+                      <tr key={article.id}>
+                        <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
+                        <td>{article.category}</td>
+                        <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
+                        <td>{Number(article.current_version).toLocaleString("fa-IR")}</td>
+                        <td><time dateTime={article.updated_at}>{new Date(article.updated_at).toLocaleString("fa-IR")}</time></td>
+                        <td><Link href={`/admin/mavis/articles/${article.id}/edit`}>ویرایش</Link></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {nextCursor && !query && statusFilter === "all" ? <nav className={styles.pagination} aria-label="صفحه‌بندی پیش‌نویس‌ها"><Link href={`/admin/mavis/articles?cursor=${encodeURIComponent(nextCursor)}`}>ردیف‌های قدیمی‌تر ←</Link></nav> : null}
+            </>
+          ) : <div className={styles.empty}>با این عبارت یا فیلتر، ردیفی در صفحه فعلی پیدا نشد.</div>}
+        </>
       )}
     </section>
   );
