@@ -38,13 +38,13 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
                     <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
                     <td>{Number(article.current_version).toLocaleString("fa-IR")}</td>
                     <td><time dateTime={article.updated_at}>{new Date(article.updated_at).toLocaleString("fa-IR")}</time></td>
-                    <td><Link href={\`/admin/mavis/articles/\${article.id}/edit\`}>ویرایش پیش‌نویس</Link></td>
+                    <td><Link href={`/admin/mavis/articles/\${article.id}/edit`}>ویرایش پیش‌نویس</Link></td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          {nextCursor ? <nav className={styles.pagination} aria-label="صفحه‌بندی پیش‌نویس‌ها"><Link href={\`/admin/mavis/articles?cursor=\${encodeURIComponent(nextCursor)}\`}>پیش‌نویس‌های قدیمی‌تر ←</Link></nav> : null}
+          {nextCursor ? <nav className={styles.pagination} aria-label="صفحه‌بندی پیش‌نویس‌ها"><Link href={`/admin/mavis/articles?cursor=\${encodeURIComponent(nextCursor)}`}>پیش‌نویس‌های قدیمی‌تر ←</Link></nav> : null}
         </>
       ) : (
         <div className={styles.empty}>هنوز پیش‌نویس قابل ویرایشی در دیتابیس ثبت نشده است.</div>
