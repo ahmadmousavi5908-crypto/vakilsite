@@ -62,7 +62,7 @@ select ok((select search_vector @@ plainto_tsquery('simple','offline remedy') fr
 select ok((select search_vector @@ plainto_tsquery('simple','offline remedy') from public.mavis_source_candidates where id='00000000-0000-4000-8000-000000000095'),'candidate insert trigger indexes candidate metadata');
 
 update public.mavis_articles
-set content='{"intro":"Revised archive trigger verification"}'::jsonb
+set content='{"intro":"Specific performance; revised archive trigger verification"}'::jsonb
 where id='00000000-0000-4000-8000-000000000093';
 select ok((select search_vector @@ plainto_tsquery('simple','revised archive') from public.mavis_articles where id='00000000-0000-4000-8000-000000000093'),'article update trigger refreshes the local search vector');
 
