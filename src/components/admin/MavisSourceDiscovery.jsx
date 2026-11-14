@@ -133,7 +133,7 @@ export default function MavisSourceDiscovery() {
                 <option value="all">همه منابع</option>
                 <option value="crossref">Crossref</option>
                 <option value="semantic_scholar">Semantic Scholar</option>
-                <option value="openalex">OpenAlex (فعلاً غیرفعال)</option>
+                <option value="openalex" disabled>OpenAlex (فعلاً غیرفعال)</option>
               </select>
             </label>
           </div>
