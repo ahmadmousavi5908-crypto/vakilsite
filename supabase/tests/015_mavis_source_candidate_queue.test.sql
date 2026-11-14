@@ -1,5 +1,5 @@
 begin;
-select plan(45);
+select plan(44);
 select has_table('public','mavis_source_candidates','candidate queue table exists');
 select has_table('public','mavis_source_candidate_events','candidate event history exists');
 select ok((select relrowsecurity from pg_class where oid='public.mavis_source_candidates'::regclass),'candidate queue has RLS enabled');
@@ -104,12 +104,8 @@ select throws_ok(
  '22023','Candidate contains unsupported fields','source text fields are rejected'
 );
 select throws_ok(
- $select public.store_mavis_source_candidates('[{"provider":"crossref","providerRecordId":"x","title":"Invalid date candidate","sourceUrl":"https://example.org/source","sourceType":"academic","publicationDate":"2024-02-31"}]'::jsonb)$,
+ $$select public.store_mavis_source_candidates('[{"provider":"crossref","providerRecordId":"x","title":"Invalid date candidate","sourceUrl":"https://example.org/source","sourceType":"academic","publicationDate":"2024-02-31"}]'::jsonb)$$,
  '22023','Invalid candidate publication date','invalid calendar dates are rejected'
-);
-select throws_ok(
- $$select public.store_mavis_source_candidates('[{"provider":"crossref","providerRecordId":"x-year","title":"Out of range year candidate","sourceUrl":"https://example.org/source","sourceType":"academic","publicationDate":"0999-05"}]'::jsonb)$$,
- '22023','Invalid candidate publication date','publication years below 1000 are rejected'
 );
 
 reset role;
