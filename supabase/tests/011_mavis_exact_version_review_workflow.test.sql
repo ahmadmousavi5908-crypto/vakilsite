@@ -1,5 +1,5 @@
 begin;
-select plan(29);
+select plan(30);
 
 select has_function('public', 'submit_mavis_article_for_review', array['uuid','integer'], 'review submission RPC exists');
 select has_function('public', 'decide_mavis_article_review', array['uuid','integer','text','text'], 'review decision RPC exists');
@@ -46,8 +46,18 @@ select 'changes', public.save_mavis_article_draft(
  '{"slug":"review-exact-version-changes","title":"Exact version review changes test","author_name":"Editorial Team","excerpt":"This is a valid excerpt for changes requested testing.","category":"حقوق مدنی","tags":[],"content":{"intro":"A complete enough introduction for the database workflow test.","sections":[{"heading":"Review test section","body":"This is a sufficiently long body for the exact-version review test."}]},"content_schema_version":1}'::jsonb
 );
 
+insert into review_fixtures
+select 'metadata', (public.import_mavis_source_candidate(
+ '{"provider":"crossref","providerRecordId":"metadata-review-gate","title":"Metadata-only review gate test","sourceType":"academic","sourceUrl":"https://example.org/metadata-review"}'::jsonb
+)->>'articleId')::uuid;
+
 select throws_ok(
- $$select public.submit_mavis_article_for_review((select article_id from review_fixtures where kind='approval'),2)$$,
+ $select public.submit_mavis_article_for_review((select article_id from review_fixtures where kind='metadata'),1)$,
+ '55000','Metadata-only draft requires editorial completion','metadata-only placeholder drafts cannot enter review'
+);
+
+select throws_ok(
+ $select public.submit_mavis_article_for_review((select article_id from review_fixtures where kind='approval'),2)$,
  '40001','Article version changed; refresh before review','stale version cannot be submitted'
 );
 
