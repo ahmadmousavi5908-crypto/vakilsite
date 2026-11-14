@@ -1,6 +1,6 @@
 begin;
 
-select plan(23);
+select plan(25);
 
 select has_function('public', 'import_mavis_source_candidate', array['jsonb'], 'source candidate import function exists');
 select ok(
@@ -178,6 +178,20 @@ select throws_ok(
   '22023',
   'Invalid publication date',
   'invalid calendar dates are rejected instead of aborting migration execution'
+);
+
+select is(
+  (public.import_mavis_source_candidate(
+    '{"provider":"crossref","providerRecordId":"year-precision-test","title":"A source with year-only publication date","publicationDate":"2020","sourceUrl":"https://example.org/paper?id=year","sourceType":"academic"}'::jsonb
+  )->>'created')::boolean,
+  true,
+  'year-only publication metadata can be imported'
+);
+
+select is(
+  (select published_on from public.mavis_sources where canonical_url = 'https://example.org/paper?id=year'),
+  '2020-01-01'::date,
+  'year-only publication date is stored with explicit year precision fallback'
 );
 
 select * from finish();
