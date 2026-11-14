@@ -1,6 +1,6 @@
 begin;
 
-select plan(20);
+select plan(21);
 
 select has_function('public', 'import_mavis_source_candidate', array['jsonb'], 'source candidate import function exists');
 select ok(
