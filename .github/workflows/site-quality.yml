@@ -104,4 +104,10 @@ jobs:
             exit 1
           fi
 
+          curl --fail --silent http://127.0.0.1:3000/sitemap.xml > /tmp/vakilsite-sitemap.xml
+          if ! grep -Fq "https://vakilsite-ci.example/articles/civil-claim-checklist" /tmp/vakilsite-sitemap.xml; then
+            cat /tmp/vakilsite-sitemap.xml
+            exit 1
+          fi
+
           npm run test:legal-library-http
