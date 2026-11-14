@@ -66,6 +66,7 @@ export default function MavisArticleCatalog({ articles }) {
             <p>جست‌وجو و بازبینی محتوای موجود؛ این نسخه هیچ تغییری در مقالات منتشرشده ایجاد نمی‌کند.</p>
           </div>
           <strong className={styles.count}>{visible.length.toLocaleString("fa-IR")} از {articles.length.toLocaleString("fa-IR")}</strong>
+          <Link href="/admin/mavis/articles/new" className={styles.createButton}>ایجاد پیش‌نویس جدید</Link>
         </header>
 
         <div className={styles.filters}>
