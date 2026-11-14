@@ -32,6 +32,7 @@ export default async function MavisAdminPage() {
           <Link href="/admin">داشبورد</Link>
           <Link className="active" href="/admin/mavis">مرکز دانش MAVIS</Link>
           <Link href="/admin/mavis/growth">ممیزی محتوا و هوشمندی رشد</Link>
+          <Link href="/admin/mavis/articles">کتابخانه مقالات</Link>
           <a href="#knowledge-search">پژوهش حقوقی</a>
           <a href="#growth-intelligence">هوشمندی رشد</a>
         </nav>
