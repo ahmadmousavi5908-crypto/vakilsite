@@ -1,6 +1,16 @@
 -- Atomic, draft-only import of normalized scholarly source candidates.
 -- No source text is fetched and unknown reuse rights are never upgraded.
 
+alter table public.mavis_sources
+  add column if not exists publication_date_precision text not null default 'unknown';
+
+alter table public.mavis_sources
+  drop constraint if exists mavis_sources_publication_date_precision;
+
+alter table public.mavis_sources
+  add constraint mavis_sources_publication_date_precision
+  check (publication_date_precision in ('unknown', 'year', 'month', 'day'));
+
 create or replace function public.import_mavis_source_candidate(p_candidate jsonb)
 returns jsonb
 language plpgsql
@@ -19,6 +29,7 @@ declare
   v_publisher text;
   v_publication_date date;
   v_publication_date_text text;
+  v_publication_date_precision text := 'unknown';
   v_source_id uuid;
   v_article_id uuid;
   v_slug text;
@@ -109,13 +120,16 @@ begin
     begin
       if length(v_publication_date_text) = 4 then
         v_publication_date := (v_publication_date_text || '-01-01')::date;
+        v_publication_date_precision := 'year';
       elsif length(v_publication_date_text) = 7 then
         v_publication_date := (v_publication_date_text || '-01')::date;
+        v_publication_date_precision := 'month';
         if to_char(v_publication_date, 'YYYY-MM') <> v_publication_date_text then
           raise exception using errcode = '22023', message = 'Invalid publication date';
         end if;
       else
         v_publication_date := v_publication_date_text::date;
+        v_publication_date_precision := 'day';
         if to_char(v_publication_date, 'YYYY-MM-DD') <> v_publication_date_text then
           raise exception using errcode = '22023', message = 'Invalid publication date';
         end if;
@@ -133,17 +147,18 @@ begin
 
   insert into public.mavis_sources (
     canonical_url, source_type, external_id, title, author_name, publisher,
-    published_on, rights_status
+    published_on, publication_date_precision, rights_status
   )
   values (
     v_canonical_url, 'academic', v_provider || ':' || v_provider_record_id,
-    v_title, v_author_name, v_publisher, v_publication_date, 'unknown'
+    v_title, v_author_name, v_publisher, v_publication_date, v_publication_date_precision, 'unknown'
   )
   on conflict (canonical_url) do update
     set title = excluded.title,
         author_name = coalesce(excluded.author_name, public.mavis_sources.author_name),
         publisher = coalesce(excluded.publisher, public.mavis_sources.publisher),
         published_on = coalesce(excluded.published_on, public.mavis_sources.published_on),
+        publication_date_precision = coalesce(nullif(excluded.publication_date_precision, 'unknown'), public.mavis_sources.publication_date_precision),
         updated_at = now()
   returning id into v_source_id;
 
