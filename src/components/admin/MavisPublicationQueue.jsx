@@ -38,10 +38,17 @@ export default function MavisPublicationQueue({ approvedRows = [], publishedRows
         setConfirmingKey("");
         return;
       }
-      setFeedback({
-        type: "success",
-        message: action === "publish" ? "مقاله منتشر شد." : "انتشار مقاله لغو شد و مقاله به وضعیت تأییدشده بازگشت.",
-      });
+      const publicationMessage = action === "publish"
+        ? "مقاله منتشر شد."
+        : "انتشار مقاله لغو شد و مقاله به وضعیت تأییدشده بازگشت.";
+      const indexNowMessage = result.indexNow?.state === "accepted"
+        ? (result.indexNow.status === 202
+          ? " اعلان IndexNow دریافت شد و بررسی کلید ممکن است ادامه داشته باشد."
+          : " اعلان IndexNow پذیرفته شد؛ ایندکس‌شدن صفحه تضمین نمی‌شود.")
+        : result.indexNow?.state === "skipped"
+          ? " اعلان خودکار IndexNow در محیط انتشار هنوز تنظیم نشده است."
+          : " اعلان IndexNow ارسال نشد؛ خود عملیات انتشار با موفقیت انجام شد.";
+      setFeedback({ type: "success", message: publicationMessage + indexNowMessage });
       setConfirmingKey("");
       router.refresh();
     } catch {

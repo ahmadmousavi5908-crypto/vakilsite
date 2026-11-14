@@ -108,7 +108,7 @@ export default function MavisSourceDiscovery() {
         <div>
           <span className={styles.eyebrow}>MAVIS · SOURCE INTELLIGENCE</span>
           <h2 id="mavis-source-title">موتور کشف و جست‌وجوی منابع</h2>
-          <p>جست‌وجوی هم‌زمان فراداده علمی در سه منبع معتبر؛ بدون دریافت متن کامل یا مجوز بازنشر.</p>
+          <p>جست‌وجوی فراداده علمی در Crossref و Semantic Scholar؛ OpenAlex تا زمان پیاده‌سازی کنترل واقعی هزینه غیرفعال است.</p>
         </div>
         <span className={styles.readOnly}>جست‌وجوی امن · فقط فراداده</span>
       </header>
@@ -133,7 +133,7 @@ export default function MavisSourceDiscovery() {
                 <option value="all">همه منابع</option>
                 <option value="crossref">Crossref</option>
                 <option value="semantic_scholar">Semantic Scholar</option>
-                <option value="openalex">OpenAlex</option>
+                <option value="openalex">OpenAlex (فعلاً غیرفعال)</option>
               </select>
             </label>
           </div>
