@@ -1,5 +1,5 @@
 import { requireAdmin } from "../../../../../lib/supabase/admin";
-import { createSearchConsoleClientFromEnv } from "../../../../../lib/mavis/search-console-client.mjs";
+import { createSearchConsoleClientFromStoredConnection } from "../../../../../lib/mavis/search-console-connection.mjs";
 import { createSearchConsoleHandler } from "../../../../../lib/mavis/search-console-handler.mjs";
 import {
   isJsonContentType,
@@ -10,11 +10,12 @@ import { parseKnowledgeSearchRateLimit } from "../../../../../lib/mavis/rate-lim
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const searchConsoleClient = createSearchConsoleClientFromEnv(process.env);
-
 export const POST = createSearchConsoleHandler({
   requireAdmin,
-  client: searchConsoleClient,
+  getClient: (access) => createSearchConsoleClientFromStoredConnection({
+    supabase: access.supabase,
+    env: process.env,
+  }),
   isJsonContentType,
   matchesRequestOrigin,
   parseKnowledgeSearchRateLimit,
