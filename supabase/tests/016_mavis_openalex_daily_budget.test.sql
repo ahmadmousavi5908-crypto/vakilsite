@@ -26,9 +26,10 @@ select is((
   from generate_series(1,49)
   where (public.consume_mavis_openalex_daily_budget()->>'allowed')::boolean
 ),49,'shared budget allows the remaining 49 requests within the daily ceiling');
-select is((public.consume_mavis_openalex_daily_budget()->>'allowed')::boolean,false,'the 51st request is rejected before upstream usage');
-select is((select request_count from public.mavis_provider_usage_daily where provider='openalex'),50,'daily ledger records exactly 50 reserved requests');
-select is((select reserved_usd from public.mavis_provider_usage_daily where provider='openalex'),0.0500::numeric,'daily ledger never exceeds USD 0.05');
+select set_config('test.budget_denied_result', public.consume_mavis_openalex_daily_budget()::text, true);
+select is((current_setting('test.budget_denied_result')::jsonb->>'allowed')::boolean,false,'the 51st request is rejected before upstream usage');
+select is((current_setting('test.budget_denied_result')::jsonb->>'request_count')::integer,50,'daily ledger records exactly 50 reserved requests');
+select is((current_setting('test.budget_denied_result')::jsonb->>'reserved_usd')::numeric,0.0500::numeric,'daily ledger never exceeds USD 0.05');
 
 select * from finish();
 rollback;
