@@ -1,5 +1,9 @@
+import { createHash } from "node:crypto";
 import { createSearchConsoleClient, normalizeSearchConsoleSiteUrl } from "./search-console-client.mjs";
 import { decryptSearchConsoleRefreshToken } from "./search-console-oauth.mjs";
+
+let cachedClient = null;
+let cachedClientFingerprint = null;
 
 export async function readStoredSearchConsoleConnection(supabase) {
   if (!supabase || typeof supabase.rpc !== "function") {
@@ -19,8 +23,11 @@ export async function readStoredSearchConsoleConnection(supabase) {
 export async function createSearchConsoleClientFromStoredConnection({
   supabase,
   env = process.env,
+  storedConnection,
 } = {}) {
-  const connection = await readStoredSearchConsoleConnection(supabase);
+  const connection = storedConnection === undefined
+    ? await readStoredSearchConsoleConnection(supabase)
+    : storedConnection;
   if (!connection) return null;
 
   const clientId = typeof env.MAVIS_GSC_CLIENT_ID === "string" ? env.MAVIS_GSC_CLIENT_ID.trim() : "";
@@ -32,11 +39,22 @@ export async function createSearchConsoleClientFromStoredConnection({
     throw new Error("Search Console server configuration does not match the saved connection.");
   }
 
+  const fingerprint = createHash("sha256")
+    .update(connection.encryptedRefreshToken)
+    .update("\\0")
+    .update(clientId)
+    .update("\\0")
+    .update(storedSiteUrl)
+    .digest("hex");
+  if (cachedClient && cachedClientFingerprint === fingerprint) return cachedClient;
+
   const refreshToken = decryptSearchConsoleRefreshToken(connection.encryptedRefreshToken, env);
-  return createSearchConsoleClient({
+  cachedClient = createSearchConsoleClient({
     clientId,
     clientSecret,
     refreshToken,
     siteUrl: storedSiteUrl,
   });
+  cachedClientFingerprint = fingerprint;
+  return cachedClient;
 }
