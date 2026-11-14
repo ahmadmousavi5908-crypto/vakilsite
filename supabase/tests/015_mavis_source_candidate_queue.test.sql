@@ -108,7 +108,7 @@ select throws_ok(
  '22023','Invalid candidate publication date','invalid calendar dates are rejected'
 );
 select throws_ok(
- $select public.store_mavis_source_candidates('[{"provider":"crossref","providerRecordId":"x-year","title":"Out of range year candidate","sourceUrl":"https://example.org/source","sourceType":"academic","publicationDate":"0999-05"}]'::jsonb)$,
+ $$select public.store_mavis_source_candidates('[{"provider":"crossref","providerRecordId":"x-year","title":"Out of range year candidate","sourceUrl":"https://example.org/source","sourceType":"academic","publicationDate":"0999-05"}]'::jsonb)$$,
  '22023','Invalid candidate publication date','publication years below 1000 are rejected'
 );
 
