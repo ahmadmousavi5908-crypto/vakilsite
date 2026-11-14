@@ -38,6 +38,7 @@ test("requests only Search Console read-only access with offline consent", () =>
   assert.equal(url.searchParams.get("scope"), SEARCH_CONSOLE_READ_ONLY_SCOPE);
   assert.equal(url.searchParams.get("access_type"), "offline");
   assert.equal(url.searchParams.get("prompt"), "consent");
+  assert.equal(url.searchParams.has("include_granted_scopes"), false);
   assert.equal(url.searchParams.get("state"), state);
 });
 
