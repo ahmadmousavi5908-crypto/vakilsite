@@ -191,7 +191,7 @@ export function createMavisSourceDiscoveryAdapters({
 } = {}) {
   async function search(provider, rawQuery, rawLimit = 10) {
     if (!Object.hasOwn(PROVIDERS, provider)) return { ok: false, provider, error: "UNSUPPORTED_PROVIDER" };
-    const normalizedQuery = typeof rawQuery === "string" ? rawQuery.replace(/\\s+/g, " ").trim() : "";
+    const normalizedQuery = typeof rawQuery === "string" ? rawQuery.replace(/\s+/g, " ").trim() : "";
     if (normalizedQuery.length < 2 || normalizedQuery.length > MAX_QUERY_LENGTH) return { ok: false, provider, error: "INVALID_QUERY" };
     const query = cleanText(normalizedQuery, MAX_QUERY_LENGTH);
     if (typeof fetchImpl !== "function") return { ok: false, provider, error: "FETCH_UNAVAILABLE" };
