@@ -141,7 +141,7 @@ as $function$
 declare
   v_actor uuid := auth.uid();
   v_query tsquery;
-  v_term text := btrim(coalesce(p_query, ''));
+  v_term text := public.mavis_normalize_search_text(btrim(coalesce(p_query, '')));
   v_limit integer := least(greatest(coalesce(p_limit, 30), 1), 50);
 begin
   if v_actor is null or not public.is_site_admin() then
