@@ -70,6 +70,8 @@ jobs:
           wrangler@4.161.0
 
       - name: Build Next.js for Cloudflare Workers
+        env:
+          NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi.ir
         shell: bash
         run: |
           set -o pipefail
