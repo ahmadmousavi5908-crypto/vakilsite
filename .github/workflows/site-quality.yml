@@ -54,6 +54,8 @@ jobs:
         run: node --test tests/mavis/offline-intake.test.mjs
       - name: Run MAVIS admin authorization tests
         run: node --test tests/mavis/admin-auth.test.mjs
+      - name: Run MAVIS article draft input tests
+        run: node --test tests/mavis/article-draft-input.test.mjs
 
       - name: Run MAVIS orchestrator policy tests
         run: node --test tests/mavis/orchestrator-policy.test.mjs
