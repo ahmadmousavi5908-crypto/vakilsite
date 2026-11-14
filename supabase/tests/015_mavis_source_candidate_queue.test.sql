@@ -1,5 +1,5 @@
 begin;
-select plan(42);
+select plan(43);
 select has_table('public','mavis_source_candidates','candidate queue table exists');
 select has_table('public','mavis_source_candidate_events','candidate event history exists');
 select ok((select relrowsecurity from pg_class where oid='public.mavis_source_candidates'::regclass),'candidate queue has RLS enabled');
@@ -58,9 +58,11 @@ select is((select jsonb_array_length(provider_aliases) from public.mavis_source_
 select is((select count(*)::integer from public.mavis_source_candidate_events where candidate_id=current_setting('test.candidate_id')::uuid),2,'discovery and refresh events are recorded');
 
 select set_config('test.refresh_result', public.store_mavis_source_candidates(
- '[{"provider":"crossref","providerRecordId":"10.5555/queue-test","doi":"10.5555/queue-test","title":"Persistent legal research candidate refreshed","sourceUrl":"https://doi.org/10.5555/queue-test","sourceType":"academic"}]'::jsonb
+ '[{"provider":"crossref","providerRecordId":"10.5555/queue-test","doi":"10.5555/queue-test","title":"Persistent legal research candidate refreshed","publicationDate":"2025","sourceUrl":"https://doi.org/10.5555/queue-test","sourceType":"academic"}]'::jsonb
  )::text,true);
 select is((current_setting('test.refresh_result')::jsonb->'candidates'->0->>'created'),'false','repeated discovery does not create a duplicate candidate');
+select is((select publication_date_precision from public.mavis_source_candidates where id=current_setting('test.candidate_id')::uuid),'month','less precise refresh cannot downgrade publication date precision');
+
 
 select set_config('test.import_result', public.import_mavis_source_candidate_from_queue(current_setting('test.candidate_id')::uuid)::text,true);
 select is((current_setting('test.import_result')::jsonb->>'status'),'imported','stored candidate imports atomically into a draft');
