@@ -56,6 +56,7 @@ export default function MavisSourceDiscovery() {
     setLoading(true);
     setError("");
     setResponse(null);
+    setLocalResponse(null);
     try {
       if (mode === "offline") {
         const result = await searchMavisLocalArchive(query);
