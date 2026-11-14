@@ -227,7 +227,7 @@ The test intentionally does not mutate any existing migration or production data
 
 The first isolated run successfully applied all four tracked migrations and executed 33 pgTAP assertions. The rate-limit suite passed all 21 assertions. Two profile-test assertions failed because `has_function_privilege()` reports **effective** privileges, including inherited role memberships; it does not prove a direct ACL grant.
 
-The profile suite is being corrected to inspect `pg_proc.proacl` through `aclexplode()` for direct grants to `anon`, `service_role`, and `PUBLIC`, while separately testing the anonymous request's actual result from `is_site_admin()`. The test count is now 14. This is a test-precision correction, not a relaxation of the authorization policy.
+The profile suite is being corrected to inspect `pg_proc.proacl` through `aclexplode()` for direct grants to `anon`, `service_role`, and `PUBLIC`, while separately testing the anonymous request's actual result from `is_site_admin()`. The test count is now 15. This is a test-precision correction, not a relaxation of the authorization policy.
 
 The first run also exposed a seed path typo: Supabase resolved `./supabase/seed.sql` as `supabase/supabase/seed.sql`. The config now uses `./seed.sql`, relative to the Supabase directory. The rerun is the acceptance gate.
 
@@ -245,7 +245,10 @@ It revokes direct EXECUTE from `PUBLIC`, `anon`, and `service_role`, then grants
 The pgTAP suite now checks:
 - No direct EXECUTE ACL for `anon`, `service_role`, or `PUBLIC`.
 - The authenticated role retains EXECUTE.
-- An anonymous request context cannot satisfy the admin predicate.
+- Neither `anon` nor `service_role` has effective EXECUTE privilege after the correction.
 - Existing profile RLS behavior for editor, administrator, and anonymous roles.
 
 **Status:** Migration is committed only to the Draft PR branch. It has not been applied to production or any hosted Supabase project. The corrected local pgTAP rerun is required before the finding can be marked resolved.
+
+
+The original migration `001_social_links.sql` was also hardened for fresh database installations so it revokes the default direct EXECUTE grants immediately. Migration 006 remains necessary for databases where migration 001 was already applied before this correction. Both statements are idempotent; existing hosted databases must receive migration 006 through the normal reviewed migration process.
