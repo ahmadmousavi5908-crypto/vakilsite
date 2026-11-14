@@ -44,7 +44,7 @@ export async function saveMavisArticleDraft(formData) {
 
 
 export async function searchMavisEditorialSources(rawQuery) {
-  const query = typeof rawQuery === "string" ? rawQuery.trim().replace(/\\s+/g, " ") : "";
+  const query = typeof rawQuery === "string" ? rawQuery.trim().replace(/\s+/g, " ") : "";
   if (query.length < 2 || query.length > 160) {
     return { ok: false, error: "عبارت جست‌وجو باید بین ۲ تا ۱۶۰ نویسه باشد." };
   }
@@ -61,7 +61,7 @@ export async function searchMavisEditorialSources(rawQuery) {
   }
 
   try {
-    const { data: limitRows, error: limitError } = await access.supabase.rpc("consume_mavis_knowledge_search_limit");
+    const { data: limitRows, error: limitError } = await access.supabase.rpc("consume_mavis_source_discovery_limit");
     if (limitError) {
       return { ok: false, error: "سرویس کنترل تعداد درخواست‌ها در دسترس نیست؛ برای حفظ امنیت، جست‌وجو متوقف شد." };
     }
