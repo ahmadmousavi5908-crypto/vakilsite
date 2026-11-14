@@ -46,21 +46,31 @@ Migration 017 adds trigger-maintained PostgreSQL full-text vectors and GIN index
 
 The admin-only `search_mavis_local_archive` RPC searches those records without contacting an external provider. GIN indexes support the local full-text query. This mode still requires access to the hosted MAVIS application and database; it is provider-independent, not disconnected-device offline mode.
 
-### 4. True offline research workspace (next implementation phase)
+### 4. Existing offline PWA and private research collection
 
-A genuinely offline workspace must continue working after network access is lost. It must not silently label a remote database query as offline.
+MAVIS already has a genuine disconnected-device baseline at `/mavis-offline/`:
+- The service worker precaches the offline page, search/answer modules, `knowledge.json`, and `published-articles.json`.
+- The local search module normalizes Persian/Arabic letter variants, digits, diacritics, and ZWNJ, then ranks records deterministically in the browser.
+- The offline corpus includes the canonical Iranian legal library and public published-article records.
+- The offline shell explicitly reports that it must be opened once with internet and that office submissions do not work while disconnected.
 
-Proposed design:
-- Installable PWA shell with only the minimum research workspace assets cached.
-- Device-local IndexedDB collection for documents, extracted text, metadata, tags, and the local inverted index.
-- Encryption at rest for private research collections; unlock with a user-held passphrase and Web Crypto-derived key. Never persist the passphrase or raw encryption key.
-- Import/export of a portable encrypted research bundle for backup and transfer between devices.
-- Explicit distinction between device-local records and records synchronized to the hosted CMS.
-- Conflict-aware sync after reconnection; local edits must not overwrite a newer server version silently.
-- First document formats: TXT, Markdown, and text/HTML exports. Add PDF parsing only after selecting and testing a maintained parser and reviewing its licensing, bundle size, and browser memory behavior.
-- No caching of admin credentials, access tokens, private CMS responses, or unpublished article bodies in the service worker cache.
+This is a real offline reader/search experience, not the hosted database search added by migration 017.
 
-Offline mode must show its storage location and last synchronization time. If the device-local collection is empty, it must not imply that the full cloud archive is available.
+Current limitations:
+- The PWA corpus is a curated public bundle; it does not include private admin drafts, the online candidate queue, or documents the researcher imports.
+- It does not yet provide a private local research collection or local PDF/document ingestion.
+- The existing offline shell intentionally does not persist arbitrary user content in localStorage, sessionStorage, or IndexedDB.
+
+Next implementation phase should extend this existing PWA rather than create a second offline shell:
+- Add a separate device-local research collection for user-imported documents, extracted text, metadata, tags, and an inverted index.
+- Encrypt private collection data at rest; unlock with a user-held passphrase and Web Crypto-derived key. Never persist the passphrase or raw encryption key. Cryptographic design requires specialist review before claiming security.
+- Import/export a portable encrypted research bundle for backup and transfer between devices.
+- Keep device-local records distinct from hosted CMS records and public offline knowledge.
+- Make synchronization optional and conflict-aware; local edits must not overwrite a newer server version silently.
+- Start with TXT, Markdown, and text/HTML exports. Add PDF parsing only after selecting and testing a maintained parser and reviewing its licence, bundle size, and browser memory behavior.
+- Never cache admin credentials, access tokens, private CMS responses, or unpublished article bodies in the service worker cache.
+
+The PWA must show which collection is local, its storage location, and its last synchronization time. If the private collection is empty, it must not imply that the full cloud archive is available.
 
 ## Result and metadata model
 
