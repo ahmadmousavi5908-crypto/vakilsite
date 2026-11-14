@@ -1,5 +1,5 @@
 begin;
-select plan(17);
+select plan(16);
 
 select has_column('public','mavis_articles','search_vector','article content has a local full-text search vector');
 select has_column('public','mavis_sources','search_vector','source registry has a local search vector');
