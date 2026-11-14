@@ -1,34 +1,102 @@
 -- Build an administrator-only offline search index over MAVIS records already stored locally.
+-- Trigger-maintained vectors avoid generated-column volatility differences across PostgreSQL builds.
 -- This migration does not contact external providers or ingest copyrighted full text.
 
 alter table public.mavis_articles
-  add column if not exists search_vector tsvector
-  generated always as (
-    setweight(to_tsvector('simple'::regconfig, coalesce(title, '')), 'A') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(excerpt, '')), 'B') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(content::text, '')), 'C') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(array_to_string(tags, ' '), '')), 'B')
-  ) stored;
-
+  add column if not exists search_vector tsvector;
 alter table public.mavis_sources
-  add column if not exists search_vector tsvector
-  generated always as (
-    setweight(to_tsvector('simple'::regconfig, coalesce(title, '')), 'A') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(author_name, '')), 'B') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(publisher, '')), 'C') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(canonical_url, '')), 'D')
-  ) stored;
-
+  add column if not exists search_vector tsvector;
 alter table public.mavis_source_candidates
-  add column if not exists search_vector tsvector
-  generated always as (
-    setweight(to_tsvector('simple'::regconfig, coalesce(title, '')), 'A') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(array_to_string(authors, ' '), '')), 'B') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(venue, '')), 'C') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(publisher, '')), 'C') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(doi, '')), 'D') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(canonical_url, '')), 'D')
-  ) stored;
+  add column if not exists search_vector tsvector;
+
+create or replace function public.refresh_mavis_article_search_vector()
+returns trigger
+language plpgsql
+set search_path = ''
+as $function$
+begin
+  new.search_vector :=
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.title, '')), 'A') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.excerpt, '')), 'B') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.content::text, '')), 'C') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(array_to_string(new.tags, ' '), '')), 'B');
+  return new;
+end;
+$function$;
+
+create or replace function public.refresh_mavis_source_search_vector()
+returns trigger
+language plpgsql
+set search_path = ''
+as $function$
+begin
+  new.search_vector :=
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.title, '')), 'A') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.author_name, '')), 'B') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.publisher, '')), 'C') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.canonical_url, '')), 'D');
+  return new;
+end;
+$function$;
+
+create or replace function public.refresh_mavis_source_candidate_search_vector()
+returns trigger
+language plpgsql
+set search_path = ''
+as $function$
+begin
+  new.search_vector :=
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.title, '')), 'A') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(array_to_string(new.authors, ' '), '')), 'B') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.venue, '')), 'C') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.publisher, '')), 'C') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.doi, '')), 'D') ||
+    setweight(to_tsvector('simple'::regconfig, coalesce(new.canonical_url, '')), 'D');
+  return new;
+end;
+$function$;
+
+drop trigger if exists mavis_articles_refresh_search_vector on public.mavis_articles;
+create trigger mavis_articles_refresh_search_vector
+  before insert or update of title, excerpt, tags, content
+  on public.mavis_articles
+  for each row execute function public.refresh_mavis_article_search_vector();
+
+drop trigger if exists mavis_sources_refresh_search_vector on public.mavis_sources;
+create trigger mavis_sources_refresh_search_vector
+  before insert or update of title, author_name, publisher, canonical_url
+  on public.mavis_sources
+  for each row execute function public.refresh_mavis_source_search_vector();
+
+drop trigger if exists mavis_source_candidates_refresh_search_vector on public.mavis_source_candidates;
+create trigger mavis_source_candidates_refresh_search_vector
+  before insert or update of title, authors, venue, publisher, doi, canonical_url
+  on public.mavis_source_candidates
+  for each row execute function public.refresh_mavis_source_candidate_search_vector();
+
+-- Backfill records that existed before this index was introduced.
+update public.mavis_articles
+set search_vector =
+  setweight(to_tsvector('simple'::regconfig, coalesce(title, '')), 'A') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(excerpt, '')), 'B') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(content::text, '')), 'C') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(array_to_string(tags, ' '), '')), 'B');
+
+update public.mavis_sources
+set search_vector =
+  setweight(to_tsvector('simple'::regconfig, coalesce(title, '')), 'A') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(author_name, '')), 'B') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(publisher, '')), 'C') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(canonical_url, '')), 'D');
+
+update public.mavis_source_candidates
+set search_vector =
+  setweight(to_tsvector('simple'::regconfig, coalesce(title, '')), 'A') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(array_to_string(authors, ' '), '')), 'B') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(venue, '')), 'C') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(publisher, '')), 'C') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(doi, '')), 'D') ||
+  setweight(to_tsvector('simple'::regconfig, coalesce(canonical_url, '')), 'D');
 
 create index if not exists mavis_articles_search_vector_gin_idx
   on public.mavis_articles using gin (search_vector);
@@ -155,4 +223,4 @@ grant execute on function public.search_mavis_local_archive(text, integer)
   to authenticated;
 
 comment on function public.search_mavis_local_archive(text, integer) is
-  'Searches the locally stored MAVIS article, source, and candidate metadata index. Admin-only, offline-capable, and independent of external providers.';
+  'Searches the locally stored MAVIS article, source, and candidate metadata index. Admin-only, provider-independent, and does not call external search providers.';
