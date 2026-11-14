@@ -41,3 +41,64 @@ export async function saveMavisArticleDraft(formData) {
     return { ok: false, error: "ارتباط امن با پایگاه داده برقرار نشد." };
   }
 }
+
+
+export async function searchMavisEditorialSources(rawQuery) {
+  const query = typeof rawQuery === "string" ? rawQuery.trim().replace(/\\s+/g, " ") : "";
+  if (query.length < 2 || query.length > 160) {
+    return { ok: false, error: "عبارت جست‌وجو باید بین ۲ تا ۱۶۰ نویسه باشد." };
+  }
+
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, error: "برای جست‌وجوی منابع، ورود با حساب مدیر الزامی است." };
+  }
+
+  try {
+    const { data: limitRows, error: limitError } = await access.supabase.rpc("consume_mavis_knowledge_search_limit");
+    if (limitError) {
+      return { ok: false, error: "سرویس کنترل تعداد درخواست‌ها در دسترس نیست؛ برای حفظ امنیت، جست‌وجو متوقف شد." };
+    }
+    const limit = Array.isArray(limitRows) ? limitRows[0] : limitRows;
+    if (!limit?.allowed) {
+      return { ok: false, error: "تعداد جست‌وجوها به سقف مجاز رسیده است. کمی بعد دوباره تلاش کنید.", retryAfterSeconds: limit?.retry_after_seconds || 60 };
+    }
+  } catch {
+    return { ok: false, error: "کنترل امنیتی جست‌وجو انجام نشد؛ درخواست اجرا نشد." };
+  }
+
+  const { createMavisSourceDiscoveryAdapters } = await import("../../../../lib/mavis/source-discovery-adapters.mjs");
+  const adapters = createMavisSourceDiscoveryAdapters();
+  const providers = [
+    ["crossref", adapters.searchCrossref],
+    ["semantic_scholar", adapters.searchSemanticScholar],
+    ["openalex", adapters.searchOpenAlex],
+  ];
+  const results = [];
+  const providerErrors = [];
+
+  // Keep requests sequential to respect provider concurrency limits.
+  for (const [provider, search] of providers) {
+    try {
+      const result = await search(query, 5);
+      if (result.ok) results.push(...result.candidates);
+      else providerErrors.push({ provider, error: result.error });
+    } catch {
+      providerErrors.push({ provider, error: "UPSTREAM_UNAVAILABLE" });
+    }
+  }
+
+  return {
+    ok: true,
+    query,
+    results: results.slice(0, 15),
+    providerErrors,
+    searchedAt: new Date().toISOString(),
+  };
+}
