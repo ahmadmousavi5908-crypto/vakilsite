@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { articles } from "../../../../data/articles";
 import MavisArticleCatalog from "../../../../components/admin/MavisArticleCatalog";
 import MavisDraftList from "../../../../components/admin/MavisDraftList";
+import MavisSourceDiscovery from "../../../../components/admin/MavisSourceDiscovery";
 import { decodeMavisArticleCursor, encodeMavisArticleCursor } from "../../../../lib/mavis/editorial-cursor.mjs";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { signOut } from "../../../admin/actions";
@@ -102,11 +103,12 @@ export default async function MavisArticlesPage({ searchParams }) {
             </div>
             <div className="admin-status"><i /> دسترسی مدیر تأیید شده</div>
           </section>
+          <MavisSourceDiscovery />
           <MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} />
           <MavisArticleCatalog articles={articles} />
           <section className="admin-help">
             <strong>وضعیت این مرحله</strong>
-            <p>پیش‌نویس‌های دیتابیسی با نسخه‌بندی و کنترل هم‌زمانی قابل ایجاد و ویرایش هستند. فهرست مقالات فعلی سایت همچنان فقط‌خواندنی است؛ کشف و ورود منابع، تکمیل هوشمند، تأیید حقوقی، انتشار و آرشیو هنوز فعال نشده‌اند.</p>
+            <p>جست‌وجوی فراداده از Crossref، Semantic Scholar و OpenAlex فعال است. نتایج فعلاً فقط برای بررسی و کپی فراداده هستند؛ ورود اتمیک منبع به پیش‌نویس، تکمیل هوشمند، تأیید حقوقی، انتشار و آرشیو هنوز فعال نشده‌اند.</p>
           </section>
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>
