@@ -58,10 +58,13 @@ select is(
 select set_config('test.publication_article_id', (select article_id::text from publication_fixture), true);
 reset role;
 set local role anon;
-select is(
- (select count(*)::integer from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
- 0,'anonymous readers cannot access an approved but unpublished article'
+select set_config(
+ 'test.anon_visibility',
+ (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
+ true
 );
+reset role;
+select is(current_setting('test.anon_visibility'), '0', 'anonymous readers cannot access an approved but unpublished article');
 reset role;
 set local role authenticated;
 set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
@@ -88,10 +91,13 @@ select is(
 );
 reset role;
 set local role anon;
-select is(
- (select count(*)::integer from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
- 1,'anonymous readers can access an explicitly published article'
+select set_config(
+ 'test.anon_visibility',
+ (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
+ true
 );
+reset role;
+select is(current_setting('test.anon_visibility'), '1', 'anonymous readers can access an explicitly published article');
 reset role;
 set local role authenticated;
 set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
@@ -123,10 +129,13 @@ select is(
 );
 reset role;
 set local role anon;
-select is(
- (select count(*)::integer from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
- 0,'anonymous readers lose access after unpublishing'
+select set_config(
+ 'test.anon_visibility',
+ (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
+ true
 );
+reset role;
+select is(current_setting('test.anon_visibility'), '0', 'anonymous readers lose access after unpublishing');
 reset role;
 set local role authenticated;
 set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
