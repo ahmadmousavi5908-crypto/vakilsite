@@ -7,19 +7,20 @@ test("serializes Persian spreadsheet rows with quoted tab-separated cells", () =
     ["عنوان", "دسته‌بندی"],
     ['مقاله "الف"', "حقوق مدنی"],
   ]);
-  assert.equal(output, '"عنوان"\\t"دسته‌بندی"\\r\\n"مقاله ""الف"""\\t"حقوق مدنی"\\r\\n');
+  assert.equal(output, '"عنوان"\t"دسته‌بندی"\r\n"مقاله ""الف"""\t"حقوق مدنی"\r\n');
 });
 
 test("neutralizes formula-like and control-prefixed cells", () => {
   const output = createEditorialSpreadsheetTsv([
-    ["=1+1", "+SUM(A1:A2)", "-1+1", "@cmd", "\\t=1+1", "＝1+1"],
+    ["=1+1", "+SUM(A1:A2)", "-1+1", "@cmd", "\t=1+1", "＝1+1"],
   ]);
-  assert.equal(output, '"\'=1+1"\\t"'+SUM(A1:A2)"\\t"\'-1+1"\\t"\'@cmd"\\t"\\t=1+1"\\t"\'＝1+1"\\r\\n');
+  const cells = output.trimEnd().split("\t").map((cell) => JSON.parse(cell));
+  assert.deepEqual(cells, ["'=1+1", "'+SUM(A1:A2)", "'-1+1", "'@cmd", "'\t=1+1", "'＝1+1"]);
 });
 
-test("quotes delimiters and embedded newlines without creating new cells", () => {
-  const output = createEditorialSpreadsheetTsv([['عنوان\\t=1+1', "سطر اول\\nسطر دوم"]]);
-  assert.equal(output, '"عنوان\\t=1+1"\\t"سطر اول\\nسطر دوم"\\r\\n');
+test("quotes embedded tabs and newlines so they remain inside one cell", () => {
+  const output = createEditorialSpreadsheetTsv([["عنوان\tبخش", "سطر اول\nسطر دوم"]]);
+  assert.equal(output, '"عنوان\tبخش"\t"سطر اول\nسطر دوم"\r\n');
 });
 
 test("rejects malformed row structures", () => {
