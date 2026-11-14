@@ -41,11 +41,11 @@ select public.save_mavis_article_draft(
 );
 select throws_ok(
  $$select public.publish_mavis_article(current_setting('test.article_id')::uuid,1)$$,
- '40001','Article version changed; refresh before publishing','stale version cannot be published'
+ '40001','Article version changed; refresh before publication','stale version cannot be published'
 );
 select throws_ok(
  $$select public.publish_mavis_article(current_setting('test.article_id')::uuid,2)$$,
- '55000','Only an approved article can be published','draft cannot be published without approval'
+ '55000','Article is not approved for publication','draft cannot be published without approval'
 );
 select is((public.submit_mavis_article_for_review(current_setting('test.article_id')::uuid,2)->>'status'),'in_review','version two enters review');
 select is((public.decide_mavis_article_review(current_setting('test.article_id')::uuid,2,'approved',null)->>'status'),'approved','exact version two is approved');
