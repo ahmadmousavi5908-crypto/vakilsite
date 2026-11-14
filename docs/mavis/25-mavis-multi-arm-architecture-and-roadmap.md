@@ -187,3 +187,21 @@ It maps four task classes to isolated arms:
 Important trust boundary: actor role, data classification, and consent scope are supplied through a trusted server context. They are deliberately ignored if supplied in the request envelope. Public actors cannot route to internal arms or internal/confidential data. Contact-detail collection requires a trusted `contact_processing` consent scope. No arm receives publication or external side-effect permission.
 
 The module is a policy foundation, not yet connected to public routes or model providers. The 15-test suite covers arm isolation, role spoofing, consent, data classification, and blocked side effects. It is added to the required site-quality CI checks.
+
+
+## 11. Evidence-aware retrieval ranking added
+
+The internal knowledge retriever now applies a deterministic evidence-aware reranking pass after lexical retrieval:
+
+- Verified primary evidence receives a bounded priority boost.
+- A trusted primary-source citation that still needs legal review receives a smaller boost and remains visibly unverified.
+- Secondary references receive only a small relevance-preserving adjustment.
+- Partially repealed and outdated records are deprioritized, not deleted, so historical research remains possible.
+- Strong lexical relevance can still outrank weak evidence priority; the ranker does not turn source quality into a claim of legal correctness.
+
+Implementation:
+- `src/lib/mavis/evidence-ranker.mjs`
+- Integrated into `src/lib/mavis/knowledge-retrieval.mjs`
+- Nine direct ranking tests plus an integration regression test.
+
+This remains deterministic lexical retrieval plus evidence-aware reranking. It is **not** a vector/hybrid retrieval engine and does not use an LLM to validate law. Vector retrieval, reranking models, and model-based synthesis remain separate future phases requiring Persian-language benchmark data.
