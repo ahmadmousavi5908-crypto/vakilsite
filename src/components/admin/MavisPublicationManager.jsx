@@ -42,7 +42,7 @@ export default function MavisPublicationManager({ article, versions = [], approv
   );
   const rollbackVersions = versions.filter((version) => version.version < article.current_version);
   const canArchive = ["draft", "approved", "published", "changes_requested", "rejected", "needs_update"].includes(article.status);
-  const canRollback = ["draft", "approved", "published", "changes_requested", "needs_update"].includes(article.status) && rollbackVersions.length > 0;
+  const canRollback = ["draft", "approved", "changes_requested", "needs_update"].includes(article.status) && rollbackVersions.length > 0;
 
   async function runAction(key, action, confirmation) {
     if (pending) return;
@@ -111,7 +111,7 @@ export default function MavisPublicationManager({ article, versions = [], approv
             <label><span>نسخه مقصد</span><select value={targetVersion} onChange={(event) => setTargetVersion(event.target.value)}><option value="">انتخاب نسخه</option>{rollbackVersions.map((version) => <option key={version.version} value={version.version}>نسخه {version.version.toLocaleString("fa-IR")} · {new Date(version.created_at).toLocaleString("fa-IR")}</option>)}</select></label>
             <button type="button" disabled={Boolean(pending) || !targetVersion} onClick={() => runAction("rollback", () => rollbackMavisArticleVersion(article.id, article.current_version, Number(targetVersion), note.trim()), "نسخه انتخاب‌شده به‌عنوان نسخه جدید کپی شود؟ مقاله از انتشار خارج و به پیش‌نویس برمی‌گردد.")}>{pending === "rollback" ? "در حال بازگردانی..." : "ساخت نسخه جدید از نسخه انتخاب‌شده"}</button>
           </>
-        ) : <p>برای وضعیت فعلی، نسخه قبلی قابل بازگردانی نیست یا نسخه قدیمی‌تری وجود ندارد.</p>}
+        ) : article.status === "published" ? <p>برای بازگردانی نسخه، ابتدا انتشار مقاله را از صف انتشار لغو کنید. پس از لغو انتشار، امکان ساخت نسخه جدید از نسخه قبلی فعال می‌شود.</p> : <p>برای وضعیت فعلی، نسخه قبلی قابل بازگردانی نیست یا نسخه قدیمی‌تری وجود ندارد.</p>}
       </section>
 
       <section className={styles.history}>
