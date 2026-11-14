@@ -64,8 +64,8 @@ function verifyPreservedArticleExtension(file) {
         !cmsSection.includes('href="/articles/library"')) return false;
 
     let afterMarker = cmsEnd + cmsEndMarker.length;
-    if (headReturn.slice(afterMarker, afterMarker + 2) === "\\r\\n") afterMarker += 2;
-    else if (headReturn[afterMarker] === "\\n") afterMarker += 1;
+    if (headReturn.slice(afterMarker, afterMarker + 2) === "\r\n") afterMarker += 2;
+    else if (headReturn[afterMarker] === "\n") afterMarker += 1;
 
     headReturn = headReturn.slice(0, cmsStart) + headReturn.slice(afterMarker);
     return base.slice(baseReturnIndex) === headReturn;
