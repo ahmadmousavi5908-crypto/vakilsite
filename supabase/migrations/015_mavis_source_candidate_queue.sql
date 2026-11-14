@@ -145,7 +145,8 @@ begin
       if v_date ~ '^[0-9]{4}' and substring(v_date,1,4)::integer not between 1000 and 9999 then
         raise exception using errcode='22023', message='Invalid candidate publication date';
       end if;
-      if v_date ~ '^[0-9]{4}
+      if v_date ~ '^[0-9]{4}$' then
+        v_precision := 'year';
         v_precision := 'year';
       elsif v_date ~ '^[0-9]{4}-[0-9]{2}$' and substring(v_date,6,2)::integer between 1 and 12 then
         v_precision := 'month';
