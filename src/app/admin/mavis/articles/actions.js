@@ -102,3 +102,45 @@ export async function searchMavisEditorialSources(rawQuery) {
     searchedAt: new Date().toISOString(),
   };
 }
+
+
+export async function importMavisSourceCandidate(candidate) {
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) {
+    return { ok: false, error: "اطلاعات منبع معتبر نیست." };
+  }
+
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, error: "برای واردکردن منبع، ورود با حساب مدیر الزامی است." };
+  }
+
+  try {
+    const { data, error } = await access.supabase.rpc("import_mavis_source_candidate", {
+      p_candidate: candidate,
+    });
+
+    if (error?.code === "42501") return { ok: false, error: "دسترسی مدیر برای واردکردن منبع تأیید نشد." };
+    if (error?.code === "22023") return { ok: false, error: "فراداده منبع معتبر نیست یا ساختار آن پشتیبانی نمی‌شود." };
+    if (error?.code === "42883" || error?.code === "PGRST202") {
+      return { ok: false, error: "قابلیت واردکردن منبع هنوز روی پایگاه داده فعال نشده است." };
+    }
+    if (error) return { ok: false, error: "ساخت پیش‌نویس انجام نشد. وضعیت پایگاه داده را بررسی کنید." };
+    if (!data || typeof data.articleId !== "string" || typeof data.created !== "boolean") {
+      return { ok: false, error: "پاسخ پایگاه داده برای واردکردن منبع معتبر نبود." };
+    }
+
+    return {
+      ok: true,
+      articleId: data.articleId,
+      created: data.created,
+    };
+  } catch {
+    return { ok: false, error: "ارتباط امن با پایگاه داده برقرار نشد." };
+  }
+}
