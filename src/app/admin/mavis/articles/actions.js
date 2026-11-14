@@ -220,3 +220,54 @@ export async function decideMavisArticleReview(articleId, articleVersion, decisi
     return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
   }
 }
+
+
+const ARTICLE_UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+async function runMavisPublicationAction(action, articleId, expectedVersion) {
+  if (typeof articleId !== "string" || !ARTICLE_UUID_PATTERN.test(articleId)
+    || !Number.isInteger(expectedVersion) || expectedVersion < 1) {
+    return { ok: false, error: "شناسه یا نسخه مقاله معتبر نیست." };
+  }
+
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, error: "برای تغییر وضعیت انتشار، ورود با حساب مدیر الزامی است." };
+  }
+
+  try {
+    const { data, error } = await access.supabase.rpc(action, {
+      p_article_id: articleId,
+      p_expected_version: expectedVersion,
+    });
+
+    if (error?.code === "40001") return { ok: false, error: "نسخه مقاله تغییر کرده است. فهرست را تازه‌سازی و دوباره بررسی کنید." };
+    if (error?.code === "55000") return { ok: false, error: "وضعیت مقاله برای این عملیات مجاز نیست یا تأیید نسخه معتبر پیدا نشد." };
+    if (error?.code === "P0002") return { ok: false, error: "مقاله پیدا نشد." };
+    if (error?.code === "42883" || error?.code === "PGRST202") return { ok: false, error: "گردش‌کار انتشار هنوز روی پایگاه داده فعال نشده است." };
+    if (error) return { ok: false, error: "تغییر وضعیت انتشار انجام نشد." };
+
+    const expectedStatus = action === "publish_mavis_article" ? "published" : "approved";
+    if (!data || data.articleVersion !== expectedVersion || data.status !== expectedStatus) {
+      return { ok: false, error: "پاسخ پایگاه داده برای تغییر وضعیت معتبر نبود." };
+    }
+
+    return { ok: true, status: data.status };
+  } catch {
+    return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
+  }
+}
+
+export async function publishMavisArticle(articleId, expectedVersion) {
+  return runMavisPublicationAction("publish_mavis_article", articleId, expectedVersion);
+}
+
+export async function unpublishMavisArticle(articleId, expectedVersion) {
+  return runMavisPublicationAction("unpublish_mavis_article", articleId, expectedVersion);
+}
