@@ -89,6 +89,7 @@ declare
   v_current_version integer;
   v_next_status text;
   v_note text := nullif(btrim(coalesce(p_decision_note, '')), '');
+  
 begin
   if v_actor is null or not public.is_site_admin() then
     raise exception using errcode = '42501', message = 'Administrator access required';
@@ -104,6 +105,10 @@ begin
 
   if length(coalesce(p_decision_note, '')) > 2000 then
     raise exception using errcode = '22023', message = 'Review note is too long';
+  end if;
+
+  if p_decision in ('changes_requested', 'rejected') and v_note is null then
+    raise exception using errcode = '22023', message = 'A review note is required for this decision';
   end if;
 
   select status, current_version
