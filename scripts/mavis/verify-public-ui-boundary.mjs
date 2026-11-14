@@ -57,6 +57,7 @@ function verifyPreservedArticleExtension(file) {
     const cmsEnd = headReturn.indexOf(cmsEndMarker, cmsStart);
     if (cmsStart < 0 || cmsEnd < cmsStart) return false;
 
+    const cmsBlockStart = headReturn.lastIndexOf("\\n", cmsStart - 1) + 1;
     const cmsSection = headReturn.slice(cmsStart, cmsEnd + cmsEndMarker.length);
     if (countMarker(cmsSection, libraryLinkStartMarker) !== 1 ||
         countMarker(cmsSection, libraryLinkEndMarker) !== 1 ||
@@ -67,7 +68,7 @@ function verifyPreservedArticleExtension(file) {
     if (headReturn.slice(afterMarker, afterMarker + 2) === "\r\n") afterMarker += 2;
     else if (headReturn[afterMarker] === "\n") afterMarker += 1;
 
-    headReturn = headReturn.slice(0, cmsStart) + headReturn.slice(afterMarker);
+    headReturn = headReturn.slice(0, cmsBlockStart) + headReturn.slice(afterMarker);
     return base.slice(baseReturnIndex) === headReturn;
   }
 
