@@ -1,8 +1,8 @@
 # MAVIS Source Discovery — Adapter and Rights-Safe Design
 
-**Status:** Research-backed implementation contract; no provider adapter is active yet.  
-**Priority:** Next CMS vertical slice after authenticated draft inventory/editor.  
-**Scope:** Metadata discovery only. No full-text or PDF fetching, importing, approval, or publication.
+**Status:** Implemented metadata-discovery baseline; this document now records the provider contract and remaining hardening work.  
+**Priority:** Complete the end-to-end editorial experience and production-grade provider coordination.  
+**Scope:** Crossref and Semantic Scholar metadata search, candidate persistence, explicit metadata-only import, and draft-first editorial workflow. Full-text/PDF ingestion is not implemented and is not implied by metadata discovery.
 
 ## 1. Design decision
 
@@ -23,7 +23,7 @@ Provider results are candidates, not verified legal authority and not permission
 - The current Crossref access/authentication page lists the polite pool as 10 requests/second with concurrency 3. A Crossref community update from December 2025 reports concurrency 5, so the published sources are not fully aligned.
 - Include a valid `mailto` parameter or `agent` header to use the polite pool.
 - A 429 response means the adapter must honor rate-limit guidance and retry only within a bounded policy.
-- Initial implementation deliberately avoids depending on the disputed ceiling: one in-flight request per process and bounded retries.
+- Current adapter requests are sequential in the discovery action and bounded; the per-admin durable rate limiter is enforced separately. Cross-instance provider concurrency coordination remains outstanding.
 - Crossref metadata may include abstracts that are subject to copyright. Do not fetch or store abstract/full text by default.
 
 Official references:
@@ -105,9 +105,9 @@ Do not discard a candidate solely because its title resembles another record. Pr
 
 ## 7. Persistence and workflow
 
-Discovery is read-only. Search results remain transient until an administrator explicitly selects a candidate.
+Provider search itself is read-only. Search candidates are persisted in the administrator-only candidate queue; an administrator must explicitly select a candidate before import.
 
-The future import action must:
+The implemented import action must:
 1. Re-check administrator authorization.
 2. Re-check provider identity and candidate shape server-side.
 3. Resolve duplicate signals against existing `mavis_sources` and `mavis_articles`.
@@ -118,15 +118,21 @@ The future import action must:
 
 The source insert and draft creation should be one atomic database operation. Direct browser writes to CMS tables remain prohibited.
 
-## 8. Implementation sequence
+## 8. Implemented baseline and remaining sequence
 
-1. Build pure provider normalizers and fixtures.
-2. Add injected-fetch adapters with timeout, response-size, and retry guards.
-3. Add provider-specific tests for empty results, malformed JSON, 429, 5xx, timeout, invalid fields, and partial provider failure.
-4. Add an admin-only search action with per-provider enablement and server-side rate limits.
-5. Add transient candidate cards and explicit metadata-only import.
-6. Add an atomic import RPC and pgTAP tests for duplicate handling, rights defaults, audit events, and draft-first invariants.
-7. Only after the above, evaluate any AI-assisted field completion. AI suggestions remain editable and never publish.
+Implemented and covered by application/database tests:
+1. Crossref and Semantic Scholar metadata normalizers and fixed-endpoint adapters with bounded timeout, response-size limits, redirect rejection, and safe upstream error mapping.
+2. Admin-only source search with a durable per-admin rate limiter and sequential provider requests.
+3. Persisted candidate queue, duplicate-aware metadata-only import, atomic source/draft creation, rights defaulting to `unknown`, and audit events.
+4. Explicit draft, review, approval, publication, unpublication, archive, restore, and rollback transitions bound to immutable versions.
+5. Spreadsheet-compatible TSV export for the currently loaded filtered draft inventory.
+
+Remaining engineering sequence:
+1. Add cross-instance provider concurrency coordination and provider circuit-breakers before increasing search throughput.
+2. Improve the editorial workspace into one coherent, keyboard-accessible RTL data workspace with clear bulk-safe actions, saved filters, and responsive detail editing.
+3. Add richer field provenance and per-field AI-assisted completion with editable suggestions and human review.
+4. Add a legally reviewed, SSRF-safe document retrieval pipeline only for sources whose licences or permissions explicitly allow it; do not infer rights from public availability.
+5. Complete production migration parity, live provider checks, end-to-end publication tests, and scale benchmarks before declaring the editorial arm production-ready.
 
 ## 9. Explicit non-goals
 
