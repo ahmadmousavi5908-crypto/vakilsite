@@ -1,0 +1,64 @@
+# MAVIS Editorial Source Discovery: Operational Notes
+
+## Scope implemented in this slice
+
+- Admin-only source search is embedded in `/admin/mavis/articles`.
+- Search adapters are metadata-only and use fixed provider endpoints: Crossref Works, Semantic Scholar Paper Search, and OpenAlex Works.
+- Crossref and Semantic Scholar can be queried when upstream services are available. OpenAlex is intentionally disabled until a real usage-budget ledger is implemented and explicitly enabled.
+- Search requests are sequential, bounded to 5 candidates per provider, and use the existing authenticated admin session.
+- A dedicated durable per-admin fixed-window limiter allows at most 30 discovery requests per 60 seconds.
+- The UI merges duplicate DOI records, filters by provider, displays provenance and rights status, and lets the administrator copy normalized metadata.
+- The draft inventory provides in-page text/category/slug filtering and sortable columns while preserving server-side keyset pagination.
+
+## Runtime configuration
+
+- `MAVIS_CROSSREF_MAILTO`: optional valid contact email used for Crossref's polite pool.
+- `SEMANTIC_SCHOLAR_API_KEY`: optional server-side key, sent only in the `x-api-key` header.
+- `OPENALEX_API_KEY`: server-side key; not sufficient by itself to enable OpenAlex.
+- `MAVIS_OPENALEX_MAX_COST_USD`: configured positive budget value; not currently enforced by a usage ledger.
+- `MAVIS_OPENALEX_BUDGET_ENFORCEMENT=true`: must remain unset until cost accounting and hard budget enforcement are implemented and reviewed.
+
+Never place provider keys in browser variables, URLs, source files, logs, or PR descriptions.
+
+## Rights and legal-source policy
+
+- Every candidate starts with `rightsStatus: unknown`.
+- Discovery does not grant permission to republish or reproduce an abstract, PDF, image, or full text.
+- Academic discovery records are research leads, not Iranian legal authority.
+- For Iranian legal claims, the editorial workflow must prioritize current primary legal sources and verify amendments, repeals, binding unifying opinions, and dates separately.
+- The current UI supports review and copying metadata only. It does not import or publish candidates.
+
+## Security and reliability
+
+- Fixed provider URLs only; no arbitrary URL fetching.
+- Redirects are rejected.
+- Query length, result count, timeout, and upstream response bytes are bounded.
+- Streaming responses are cancelled immediately when the byte cap is exceeded.
+- Provider errors are mapped to safe public messages; upstream response bodies and credentials are not returned.
+- Rate-limit storage is private, RLS-enabled, and inaccessible for direct table access.
+- Admin identity is checked server-side before the rate-limit RPC and upstream calls.
+- Provider calls run sequentially. A cross-user distributed provider lease/queue is still a required hardening step before high-volume production use.
+
+## User interface
+
+- Admin route: `/admin/mavis/articles`.
+- Source discovery panel appears above the database draft grid.
+- The draft grid is spreadsheet-like: quick search, status filter, sortable title/category/version/update columns, and server-side keyset pagination.
+- Public `/articles` remains the existing editorial accordion page and is not changed in this slice. Database-backed public listing/detail routes must wait until the CMS schema and publication workflow are approved and applied in the target environment.
+
+## Verification commands
+
+```sh
+node --test tests/mavis/source-discovery-adapters.test.mjs
+supabase test db
+npm run lint
+npm run build
+```
+
+## Not yet implemented
+
+- Persistent source candidate import and duplicate resolution against `mavis_sources`.
+- Atomic source-to-draft import with source provenance and audit event.
+- Cross-provider distributed leases and global provider concurrency coordination.
+- AI-assisted metadata/content completion.
+- Review/approval, publication, archive, rollback, and public database-backed article pages.
