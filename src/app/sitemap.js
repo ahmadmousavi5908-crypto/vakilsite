@@ -19,6 +19,7 @@ export default async function sitemap() {
     { path: "/lawyer-cooperation", changeFrequency: "monthly", priority: 0.6 },
     { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
     { path: "/articles", changeFrequency: "weekly", priority: 0.8 },
+    { path: "/articles/library", changeFrequency: "weekly", priority: 0.75 },
     { path: "/services", changeFrequency: "monthly", priority: 0.9 },
     { path: "/about", changeFrequency: "monthly", priority: 0.8 },
     { path: "/locations/khuzestan", changeFrequency: "monthly", priority: 0.8 },
