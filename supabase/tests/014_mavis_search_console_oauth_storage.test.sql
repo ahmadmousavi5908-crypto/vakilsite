@@ -1,5 +1,5 @@
 begin;
-select plan(33);
+select plan(32);
 
 select has_table('public', 'mavis_search_console_connections', 'Search Console connection storage exists');
 select ok((select relrowsecurity from pg_class where oid='public.mavis_search_console_connections'::regclass), 'connection storage has RLS enabled');
