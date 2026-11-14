@@ -16,7 +16,14 @@ select ok((select relrowsecurity from pg_class where oid = 'public.mavis_article
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_article_approvals'::regclass), 'approval table has RLS enabled');
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_article_audit_events'::regclass), 'audit table has RLS enabled');
 
-select ok(has_table_privilege('anon', 'public.mavis_articles', 'SELECT'), 'anonymous role has article SELECT privilege for published-only RLS');
+select ok(
+  has_column_privilege('anon', 'public.mavis_articles', 'slug', 'SELECT')
+  and has_column_privilege('anon', 'public.mavis_articles', 'content', 'SELECT')
+  and not has_column_privilege('anon', 'public.mavis_articles', 'created_by', 'SELECT')
+  and not has_column_privilege('anon', 'public.mavis_articles', 'updated_by', 'SELECT')
+  and not has_column_privilege('anon', 'public.mavis_articles', 'last_change_note', 'SELECT'),
+  'anonymous role can read public article fields but not internal editorial metadata'
+);
 select ok(not has_table_privilege('anon', 'public.mavis_sources', 'SELECT'), 'anonymous role cannot select source/rights records');
 select ok(has_table_privilege('authenticated', 'public.mavis_sources', 'SELECT'), 'authenticated role has SELECT privilege gated by admin RLS');
 select ok(not has_table_privilege('anon', 'public.mavis_article_sources', 'SELECT'), 'anonymous role cannot enumerate article-source records');
