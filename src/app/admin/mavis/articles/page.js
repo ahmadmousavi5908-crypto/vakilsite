@@ -4,6 +4,7 @@ import { articles } from "../../../../data/articles";
 import MavisArticleCatalog from "../../../../components/admin/MavisArticleCatalog";
 import MavisDraftList from "../../../../components/admin/MavisDraftList";
 import MavisSourceDiscovery from "../../../../components/admin/MavisSourceDiscovery";
+import MavisReviewQueue from "../../../../components/admin/MavisReviewQueue";
 import { decodeMavisArticleCursor, encodeMavisArticleCursor } from "../../../../lib/mavis/editorial-cursor.mjs";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { signOut } from "../../../admin/actions";
@@ -71,6 +72,21 @@ export default async function MavisArticlesPage({ searchParams }) {
     }
   }
 
+  let reviewRows = [];
+  let reviewError = null;
+  try {
+    const { data, error } = await access.supabase
+      .from("mavis_articles")
+      .select("id, slug, title, category, current_version, updated_at")
+      .eq("status", "in_review")
+      .order("updated_at", { ascending: false })
+      .limit(50);
+    if (error) reviewError = "خواندن صف بازبینی انجام نشد. اتصال پایگاه داده را بررسی کنید.";
+    else reviewRows = Array.isArray(data) ? data : [];
+  } catch {
+    reviewError = "ارتباط امن با پایگاه داده برقرار نشد.";
+  }
+
   return (
     <div className="admin-shell" dir="rtl">
       <aside className="admin-sidebar">
@@ -104,11 +120,12 @@ export default async function MavisArticlesPage({ searchParams }) {
             <div className="admin-status"><i /> دسترسی مدیر تأیید شده</div>
           </section>
           <MavisSourceDiscovery />
+          <MavisReviewQueue rows={reviewRows} error={reviewError} />
           <MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} />
           <MavisArticleCatalog articles={articles} />
           <section className="admin-help">
             <strong>وضعیت این مرحله</strong>
-            <p>جست‌وجوی فراداده از Crossref، Semantic Scholar و OpenAlex فعال است. نتایج فعلاً فقط برای بررسی و کپی فراداده هستند؛ ورود اتمیک منبع به پیش‌نویس، تکمیل هوشمند، تأیید حقوقی، انتشار و آرشیو هنوز فعال نشده‌اند.</p>
+            <p>جست‌وجوی منابع و ساخت پیش‌نویس فراداده‌ای فعال است. پیش‌نویس پس از ذخیره نسخه مشخص می‌تواند وارد صف بازبینی شود. تصمیم بازبین به همان نسخه متصل است؛ تأیید مقاله هنوز به معنی انتشار نیست و انتشار عمومی در مرحله بعدی پیاده‌سازی خواهد شد.</p>
           </section>
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>
