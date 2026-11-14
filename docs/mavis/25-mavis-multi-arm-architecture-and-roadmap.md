@@ -28,19 +28,18 @@ Capabilities:
 
 Safety boundary: public intake cannot access private case files, internal lawyer notes, admin CMS controls, or Growth Intelligence data.
 
-### B. Lawyer Legal Research Copilot
+### B. Public Web-Assisted Intake (Deferred)
 
-Purpose: support the lawyer's research and drafting work with traceable Iranian legal evidence.
+Purpose: extend the existing offline public intake with limited, source-grounded web retrieval. This is not a legal-advice chatbot, a lawyer copilot, or an open-ended companion.
 
 Capabilities:
-- Search current statutes, amendments, repeal status, binding unifying opinions, published judicial decisions, advisory opinions, official notices, and reputable academic material.
-- Track source publisher, original URL, document identifier, publication date, retrieval time, effective period, jurisdiction, authority level, and integrity hash where feasible.
-- Separate binding authority, persuasive authority, commentary, and unverified material.
-- Detect amendments, repeal, conflicting provisions, inconsistent decisions, missing full text, and temporal validity issues.
-- Produce issue trees, fact-to-rule matrices, counterarguments, evidence gaps, procedural timelines, and draft structures.
-- Attach a source citation to every material legal proposition. If evidence is unavailable, explicitly abstain instead of inventing a citation.
+- Keep the same single conversation and predefined intake/handoff flow as Public Legal Intake.
+- Use the offline legal library first; optionally search a bounded allowlist of approved internet sources when useful.
+- Show a short neutral summary, source title/publisher/URL/date, verification status, and a clear limitation.
+- Return the visitor to the predefined intake form and office handoff path.
+- Keep responses concise; no extended legal analysis, case strategy, outcome prediction, pleadings, or personalized advice.
 
-Safety boundary: no automatic filing, sending, signature, publication, or final legal opinion. Drafts require lawyer review.
+Safety boundary: no confidential case documents, no unnecessary sensitive data collection, no autonomous messaging or external writes. Public activation is blocked until the exact flow, disclosures, consent, retention, and lead handoff are reviewed against applicable Iranian law and current professional rules. The detailed restart specification is in `docs/mavis/26-public-web-assisted-intake-deferred.md`.
 
 ### C. Growth Intelligence
 
@@ -143,12 +142,12 @@ A model or prompt change that reduces legal evidence quality or access-control s
 ## 8. Delivery sequence
 
 1. **Foundation:** authorization contract, isolated local Supabase stack, pgTAP CI, application negative tests, baseline visual protection.
-2. **Knowledge engine:** source registry, normalized metadata, retrieval evaluation, evidence ledger, freshness and conflict handling.
-3. **Legal Copilot:** research dossiers, source-aware synthesis, abstention, lawyer review.
-4. **Public Intake:** single conversation orchestration, progressive intake, consent, structured handoff.
-5. **Growth Intelligence:** first-party analytics connectors, competitor/keyword adapters, prioritized experiments.
-6. **Editorial CMS:** rights-aware ingestion, immutable versions, approval and publication gates.
-7. **Model gateway and operations:** provider adapters, task routing, tracing, cost budgets, evaluation and rollback.
+2. **Editorial CMS (current priority):** rights-aware discovery/import, editable article workspace, immutable versions, review/approval, guarded publication, and public article-library integration.
+3. **Public Intake preservation:** keep the offline library and predefined intake/handoff behavior stable; only fix defects needed by the agreed scope.
+4. **Growth Intelligence:** first-party analytics connectors, competitor/keyword adapters, and measured content opportunities, without autonomous publication.
+5. **Public Web-Assisted Intake (deferred):** bounded source search added to the offline intake flow after professional-compliance review; see `docs/mavis/26-public-web-assisted-intake-deferred.md`.
+6. **Optional internal legal research capability:** any lawyer-only research tooling remains separate from the public assistant and is not the deferred public Arm Two.
+7. **Model gateway and operations:** provider adapters, task routing, tracing, cost budgets, evaluation, and rollback, introduced only where a concrete CMS/intake workflow requires them.
 
 Each phase has its own tests and feature flag. No phase is considered complete because a UI exists; it is complete only after data, security, failure, and quality tests pass.
 
@@ -166,9 +165,10 @@ Implemented/verified in the current PR branch:
 Not yet implemented:
 - Production CMS tables and controlled mutation RPCs.
 - Source ingestion adapters and evidence ledger.
-- Legal Copilot orchestration and model gateway.
-- Public intake orchestration and structured handoff.
+- Public web-assisted intake and approved web-search adapter (deferred; not yet implemented).
+- Any optional internal lawyer-only research copilot (separate future scope).
 - Growth Intelligence data integrations and experiment engine.
+- Provider/model gateway integration; no external model provider is currently connected.
 - Production load, security, and model-quality evaluations.
 
 No production migration, deployment, PR merge, or public-site visual change is authorized by this specification.
