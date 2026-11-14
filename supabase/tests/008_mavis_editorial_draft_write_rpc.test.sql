@@ -154,9 +154,9 @@ select throws_ok(
 );
 
 select throws_ok(
-  $select public.save_mavis_article_draft(
+  $$select public.save_mavis_article_draft(
     '{"slug":"missing-tags-test","title":"Missing tags test","excerpt":"A sufficiently long excerpt for this test.","category":"Test","content":{"intro":"A sufficiently long introduction for this test.","sections":[{"heading":"Heading","body":"A sufficiently long section body for this test."}]}}'::jsonb
-  )$,
+  )$$,
   '22023',
   'Article tags must be an array of at most 40 items',
   'missing required tags are rejected instead of being silently accepted'
