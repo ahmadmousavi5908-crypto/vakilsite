@@ -34,11 +34,15 @@ export default function MavisArticleCatalog({ articles }) {
       if (!needle) return true;
       return normalize([
         article.title,
+        article.metaTitle,
         article.slug,
         article.category,
         article.excerpt,
         article.intro,
-        ...(article.sections || []).map((section) => section.heading),
+        article.warning,
+        ...(article.sections || []).flatMap((section) => [section.heading, section.body]),
+        ...(article.checklist || []),
+        ...(article.sources || []).flatMap((source) => [source.label, source.url]),
       ].join(" ")).includes(needle);
     });
   }, [articles, category, query]);
