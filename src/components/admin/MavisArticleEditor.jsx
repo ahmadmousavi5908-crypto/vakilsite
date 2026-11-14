@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { saveMavisArticleDraft } from "../../app/admin/mavis/articles/actions";
+import { saveMavisArticleDraft, submitMavisArticleForReview } from "../../app/admin/mavis/articles/actions";
 import styles from "./MavisArticleEditor.module.css";
 
 const emptySection = () => ({ heading: "", body: "" });
@@ -13,7 +14,9 @@ export default function MavisArticleEditor({ initialArticle = null }) {
       ? initialArticle.content.sections.map((section) => ({ heading: section.heading || "", body: section.body || "" }))
       : [emptySection()]
   );
+  const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [submittingReview, setSubmittingReview] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [articleId, setArticleId] = useState(initialArticle?.id || "");
   const [expectedVersion, setExpectedVersion] = useState(initialArticle?.current_version || 0);
@@ -50,6 +53,28 @@ export default function MavisArticleEditor({ initialArticle = null }) {
       setFeedback({ type: "error", message: "ارتباط با سرور برقرار نشد. دوباره تلاش کنید." });
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleSubmitForReview() {
+    if (!articleId || !Number.isInteger(expectedVersion) || expectedVersion < 1 || saving || submittingReview) {
+      setFeedback({ type: "error", message: "ابتدا پیش‌نویس را ذخیره کنید تا نسخه مشخصی برای بازبینی وجود داشته باشد." });
+      return;
+    }
+    setSubmittingReview(true);
+    setFeedback(null);
+    try {
+      const result = await submitMavisArticleForReview(articleId, expectedVersion);
+      if (!result?.ok) {
+        setFeedback({ type: "error", message: result?.error || "ارسال برای بازبینی انجام نشد." });
+        return;
+      }
+      router.push("/admin/mavis/articles?review=submitted");
+      router.refresh();
+    } catch {
+      setFeedback({ type: "error", message: "ارتباط با سرور برقرار نشد. وضعیت مقاله را دوباره بررسی کنید." });
+    } finally {
+      setSubmittingReview(false);
     }
   }
 
@@ -107,7 +132,10 @@ export default function MavisArticleEditor({ initialArticle = null }) {
 
         <div className={styles.footer}>
           <p>وضعیت: <strong>{isEditing ? "پیش‌نویس نسخه‌بندی‌شده" : "پیش‌نویس"}</strong>. تأیید حقوقی، بررسی مجوز منابع و انتشار در این مرحله فعال نیست.</p>
-          <button type="submit" className={styles.saveButton} disabled={saving}>{saving ? "در حال ذخیره..." : isEditing ? "ذخیره نسخه جدید" : "ذخیره پیش‌نویس"}</button>
+          <div className={styles.footerActions}>
+            <button type="submit" className={styles.saveButton} disabled={saving || submittingReview}>{saving ? "در حال ذخیره..." : isEditing ? "ذخیره نسخه جدید" : "ذخیره پیش‌نویس"}</button>
+            <button type="button" className={styles.reviewButton} onClick={handleSubmitForReview} disabled={!isEditing || saving || submittingReview}>{submittingReview ? "در حال ارسال..." : "ارسال نسخه ذخیره‌شده برای بازبینی"}</button>
+          </div>
         </div>
         {feedback ? <div className={styles.feedback} data-state={feedback.type} role="status" aria-live="polite"><strong>{feedback.message}</strong>{feedback.articleId ? <small dir="ltr">شناسه مقاله: {feedback.articleId}</small> : null}</div> : null}
       </form>
