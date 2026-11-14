@@ -1,5 +1,8 @@
 import { requireAdmin } from "../../../../../../lib/supabase/admin";
-import { readStoredSearchConsoleConnection } from "../../../../../../lib/mavis/search-console-connection.mjs";
+import {
+  createSearchConsoleClientFromStoredConnection,
+  readStoredSearchConsoleConnection,
+} from "../../../../../../lib/mavis/search-console-connection.mjs";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -14,9 +17,12 @@ export async function GET() {
   }
 
   try {
-    const connection = await readStoredSearchConsoleConnection(access.supabase);
+    const [connection, client] = await Promise.all([
+      readStoredSearchConsoleConnection(access.supabase),
+      createSearchConsoleClientFromStoredConnection({ supabase: access.supabase, env: process.env }),
+    ]);
     return Response.json({
-      connected: Boolean(connection),
+      connected: Boolean(connection && client),
       siteUrl: connection?.siteUrl || null,
       connectedAt: connection?.connectedAt || null,
     }, { headers: { "Cache-Control": "no-store" } });
