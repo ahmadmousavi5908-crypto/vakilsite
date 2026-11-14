@@ -14,6 +14,7 @@
 - Review decisions (`approved`, `changes_requested`, `rejected`) are append-only and bind to the exact current version. Change requests and rejections require an explanatory note.
 - Approval only changes the editorial status to `approved`; it does not publish the article.
 - A separate administrator action can publish only the exact current immutable version with an `approved` decision record.
+- After publish or unpublish, the server attempts a bounded IndexNow notification for the article URL. The action succeeds independently of notification delivery; the admin queue reports whether IndexNow accepted, skipped, or could not deliver the notification. This uses the existing `INDEXNOW_KEY` and `/indexnow-key.txt` verification file; no new credential or dependency is introduced.
 - Unpublishing returns the article to `approved`, clears `published_at`, and records an audit event; the public RLS policy then stops exposing it.
 - Archive, restore, and rollback operations are version-checked and audited. Restoring a previously published article returns it to `approved`, not `published`.
 - Rollback copies a selected historical snapshot into a new version, changes status to `draft`, clears `published_at`, and requires review and publication again.
@@ -27,6 +28,20 @@
 - `MAVIS_OPENALEX_BUDGET_ENFORCEMENT=true`: must remain unset until cost accounting and hard budget enforcement are implemented and reviewed.
 
 Never place provider keys in browser variables, URLs, source files, logs, or PR descriptions.
+
+## Search-engine integration status
+
+- Google Search Console uses the read-only OAuth integration and URL Inspection/Sitemap inventory described in PRs 113 and 114.
+- Published and unpublished article URLs are notified through the existing IndexNow key file after the publication action succeeds. IndexNow acceptance is a crawl notification, not an indexing guarantee.
+- Bing Webmaster's official documentation recommends IndexNow for automated URL changes. Its OAuth documentation describes the `webmaster.read` scope, but a Microsoft Q&A report dated 14 October 2026 documents newly issued OAuth tokens being rejected by the API with `InvalidToken`; the moderator directed the report to Bing Webmaster support without confirming a fix. A direct Bing Webmaster OAuth connector is therefore deferred until Microsoft confirms service recovery and a live read-only test passes.
+- Do not use the legacy SOAP/POX endpoints; Microsoft documents their retirement on 31 August 2026.
+
+References:
+- https://learn.microsoft.com/en-us/bingwebmaster/
+- https://learn.microsoft.com/en-us/bingwebmaster/oauth2
+- https://learn.microsoft.com/en-us/answers/questions/6036910/webmaster-api-rejects-every-oauth-access-token-wit
+- https://www.indexnow.org/documentation
+- https://www.bing.com/webmasters/help/?topicid=62f2860b
 
 ## Rights and legal-source policy
 
