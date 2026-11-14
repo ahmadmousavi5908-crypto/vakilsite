@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
 import styles from "./MavisArticleCatalog.module.css";
 
@@ -84,36 +84,40 @@ export default function MavisArticleCatalog({ articles }) {
               {visible.map((article) => {
                 const open = Boolean(expanded[article.slug]);
                 return (
-                  <tr key={article.slug}>
-                    <td>
-                      <strong>{article.title}</strong>
-                      <small dir="ltr">/{article.slug}</small>
-                    </td>
-                    <td>{article.category || "بدون دسته"}</td>
-                    <td>{(article.sections || []).length.toLocaleString("fa-IR")} بخش</td>
-                    <td>{(article.sources || []).length.toLocaleString("fa-IR")} منبع</td>
-                    <td><span className={styles.readonly}>فهرست فعلی</span></td>
-                    <td className={styles.actions}>
-                      <button type="button" aria-expanded={open} onClick={() => setExpanded((current) => ({ ...current, [article.slug]: !current[article.slug] }))}>{open ? "بستن" : "جزئیات"}</button>
-                      <Link href={`/articles/${encodeURIComponent(article.slug)}`} target="_blank" rel="noopener noreferrer">صفحه عمومی</Link>
-                    </td>
-                    {open && (
-                      <td className={styles.detail} colSpan={6}>
-                        <p>{article.excerpt}</p>
-                        <strong>سرفصل‌ها</strong>
-                        <ul>{(article.sections || []).map((section, index) => <li key={section.heading || index}>{section.heading}</li>)}</ul>
-                        <strong>منابع ثبت‌شده</strong>
-                        <ul>{(article.sources || []).map((source, index) => (
-                          <li key={source.url || index}>
-                            {source.url?.startsWith("https://")
-                              ? <a href={source.url} target="_blank" rel="noopener noreferrer">{source.label || "مشاهده منبع"}</a>
-                              : <span>پیوند منبع نامعتبر است</span>}
-                          </li>
-                        ))}</ul>
-                        <p className={styles.notice}>{article.warning}</p>
+                  <Fragment key={article.slug}>
+                    <tr>
+                      <td>
+                        <strong>{article.title}</strong>
+                        <small dir="ltr">/{article.slug}</small>
                       </td>
+                      <td>{article.category || "بدون دسته"}</td>
+                      <td>{(article.sections || []).length.toLocaleString("fa-IR")} بخش</td>
+                      <td>{(article.sources || []).length.toLocaleString("fa-IR")} منبع</td>
+                      <td><span className={styles.readonly}>فهرست فعلی</span></td>
+                      <td className={styles.actions}>
+                        <button type="button" aria-expanded={open} onClick={() => setExpanded((current) => ({ ...current, [article.slug]: !current[article.slug] }))}>{open ? "بستن" : "جزئیات"}</button>
+                        <Link href={`/articles/${encodeURIComponent(article.slug)}`} target="_blank" rel="noopener noreferrer">صفحه عمومی</Link>
+                      </td>
+                    </tr>
+                    {open && (
+                      <tr>
+                        <td className={styles.detail} colSpan={6}>
+                          <p>{article.excerpt}</p>
+                          <strong>سرفصل‌ها</strong>
+                          <ul>{(article.sections || []).map((section, index) => <li key={section.heading || index}>{section.heading}</li>)}</ul>
+                          <strong>منابع ثبت‌شده</strong>
+                          <ul>{(article.sources || []).map((source, index) => (
+                            <li key={source.url || index}>
+                              {source.url?.startsWith("https://")
+                                ? <a href={source.url} target="_blank" rel="noopener noreferrer">{source.label || "مشاهده منبع"}</a>
+                                : <span>پیوند منبع نامعتبر است</span>}
+                            </li>
+                          ))}</ul>
+                          <p className={styles.notice}>{article.warning}</p>
+                        </td>
+                      </tr>
                     )}
-                  </tr>
+                  </Fragment>
                 );
               })}
               {visible.length === 0 && <tr><td colSpan={6} className={styles.empty}>مقاله‌ای با این جست‌وجو پیدا نشد.</td></tr>}
