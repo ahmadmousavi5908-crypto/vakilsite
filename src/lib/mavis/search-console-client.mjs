@@ -41,8 +41,7 @@ function normalizeInspectionUrl(value, siteUrl) {
     } else {
       const property = new URL(siteUrl);
       const prefix = property.pathname.endsWith("/") ? property.pathname : property.pathname + "/";
-      if (url.origin !== property.origin ||
-          !(url.pathname === property.pathname.slice(0, -1) || url.pathname.startsWith(prefix))) return null;
+      if (url.origin !== property.origin || !url.pathname.startsWith(prefix)) return null;
     }
     return url.href;
   } catch {
