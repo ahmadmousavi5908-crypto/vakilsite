@@ -101,3 +101,33 @@ test("refuses token responses without refresh token or the exact read-only scope
     } }),
   }));
 });
+
+
+test("revokes a stored refresh token through Google's server-side revocation endpoint", async () => {
+  const { revokeSearchConsoleRefreshToken } = await import("../../src/lib/mavis/search-console-oauth.mjs");
+  let received;
+  const result = await revokeSearchConsoleRefreshToken({
+    refreshToken: "google-refresh-token-secret",
+    fetchImpl: async (url, options) => {
+      received = { url, options };
+      return { ok: true, status: 200 };
+    },
+  });
+  assert.equal(received.url, "https://oauth2.googleapis.com/revoke");
+  assert.equal(received.options.method, "POST");
+  assert.match(received.options.body, /token=google-refresh-token-secret/);
+  assert.deepEqual(result, { revoked: true, alreadyRevoked: false });
+});
+
+test("treats an already-revoked Google token as safely disconnected", async () => {
+  const { revokeSearchConsoleRefreshToken } = await import("../../src/lib/mavis/search-console-oauth.mjs");
+  const result = await revokeSearchConsoleRefreshToken({
+    refreshToken: "google-refresh-token-secret",
+    fetchImpl: async () => ({
+      ok: false,
+      status: 400,
+      async json() { return { error: "invalid_token" }; },
+    }),
+  });
+  assert.deepEqual(result, { revoked: true, alreadyRevoked: true });
+});
