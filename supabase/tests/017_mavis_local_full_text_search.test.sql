@@ -1,5 +1,5 @@
 begin;
-select plan(20);
+select plan(22);
 
 select has_column('public','mavis_articles','search_vector','article content has a local full-text search vector');
 select has_column('public','mavis_sources','search_vector','source registry has a local search vector');
@@ -7,6 +7,7 @@ select has_column('public','mavis_source_candidates','search_vector','candidate 
 select ok(to_regclass('public.mavis_articles_search_vector_gin_idx') is not null,'article full-text search has a GIN index');
 select ok(to_regclass('public.mavis_sources_search_vector_gin_idx') is not null,'source full-text search has a GIN index');
 select ok(to_regclass('public.mavis_source_candidates_search_vector_gin_idx') is not null,'candidate full-text search has a GIN index');
+select has_function('public','mavis_normalize_search_text',array['text'],'Persian and Arabic search text normalizer exists');
 select has_function('public','search_mavis_local_archive',array['text','integer'],'local archive search RPC exists');
 select ok((select prosecdef from pg_proc where oid='public.search_mavis_local_archive(text,integer)'::regprocedure),'local search RPC is SECURITY DEFINER');
 select ok((select coalesce(proconfig @> array['search_path=""'],false) from pg_proc where oid='public.search_mavis_local_archive(text,integer)'::regprocedure),'local search RPC has empty search_path');
@@ -62,7 +63,7 @@ select ok((select search_vector @@ plainto_tsquery('simple','offline remedy') fr
 select ok((select search_vector @@ plainto_tsquery('simple','offline remedy') from public.mavis_source_candidates where id='00000000-0000-4000-8000-000000000095'),'candidate insert trigger indexes candidate metadata');
 
 update public.mavis_articles
-set content='{"intro":"Specific performance; revised archive trigger verification"}'::jsonb
+set content='{"intro":"Specific performance; revised archive trigger verification; مسئولیت مدنی"}'::jsonb
 where id='00000000-0000-4000-8000-000000000093';
 select ok((select search_vector @@ plainto_tsquery('simple','revised archive') from public.mavis_articles where id='00000000-0000-4000-8000-000000000093'),'article update trigger refreshes the local search vector');
 
@@ -83,6 +84,11 @@ select is(
   (select count(*)::integer from public.search_mavis_local_archive('offline remedy',30) where record_type='source'),
   1,
   'admin search finds the local source registry'
+);
+select is(
+  (select count(*)::integer from public.search_mavis_local_archive('مسئوليت مدني',30) where record_type='article'),
+  1,
+  'local search normalizes Arabic Yeh to Persian Yeh for Persian legal terms'
 );
 
 reset role;
