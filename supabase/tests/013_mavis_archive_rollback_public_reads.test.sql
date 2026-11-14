@@ -52,6 +52,7 @@ select is((public.decide_mavis_article_review(current_setting('test.article_id')
 select is((public.publish_mavis_article(current_setting('test.article_id')::uuid,2)->>'status'),'published','approved version two can be published');
 select is((select status from public.mavis_articles where id=current_setting('test.article_id')::uuid),'published','published status is persisted');
 select ok((select published_at is not null from public.mavis_articles where id=current_setting('test.article_id')::uuid),'publication timestamp is recorded');
+reset role;
 with new_source as (
   insert into public.mavis_sources (canonical_url, source_type, title, rights_status)
   values ('https://example.org/public-citation-test', 'official_law', 'Public citation test source', 'unknown')
@@ -63,6 +64,9 @@ insert into public.mavis_article_sources (article_id, source_id, relation_type, 
 values
   (current_setting('test.article_id')::uuid, current_setting('test.source_id')::uuid, 'primary_authority', 'منبع رسمی آزمایشی'),
   (current_setting('test.article_id')::uuid, current_setting('test.source_id')::uuid, 'image', 'تصویر دارای مجوز نامشخص');
+
+set local role authenticated;
+set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
 
 select is(
   jsonb_array_length(public.get_public_mavis_article_sources(current_setting('test.article_id')::uuid)),
