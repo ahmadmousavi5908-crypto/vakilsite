@@ -2,7 +2,6 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "../../../../../../lib/supabase/admin";
 import {
-  decryptSearchConsoleRefreshToken,
   encryptSearchConsoleRefreshToken,
   exchangeSearchConsoleAuthorizationCode,
   getSearchConsoleOAuthConfig,
