@@ -6,6 +6,7 @@ import MavisDraftList from "../../../../components/admin/MavisDraftList";
 import MavisSourceDiscovery from "../../../../components/admin/MavisSourceDiscovery";
 import MavisReviewQueue from "../../../../components/admin/MavisReviewQueue";
 import MavisPublicationQueue from "../../../../components/admin/MavisPublicationQueue";
+import MavisArchiveQueue from "../../../../components/admin/MavisArchiveQueue";
 import { decodeMavisArticleCursor, encodeMavisArticleCursor } from "../../../../lib/mavis/editorial-cursor.mjs";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { signOut } from "../../../admin/actions";
@@ -116,6 +117,21 @@ export default async function MavisArticlesPage({ searchParams }) {
     publicationError = "ارتباط امن برای خواندن وضعیت انتشار برقرار نشد.";
   }
 
+  let archivedRows = [];
+  let archiveError = null;
+  try {
+    const { data, error } = await access.supabase
+      .from("mavis_articles")
+      .select("id, slug, title, current_version, updated_at")
+      .eq("status", "archived")
+      .order("updated_at", { ascending: false })
+      .limit(50);
+    if (error) archiveError = "خواندن فهرست آرشیو انجام نشد.";
+    else archivedRows = Array.isArray(data) ? data : [];
+  } catch {
+    archiveError = "ارتباط امن با پایگاه داده برقرار نشد.";
+  }
+
   return (
     <div className="admin-shell" dir="rtl">
       <aside className="admin-sidebar">
@@ -151,11 +167,12 @@ export default async function MavisArticlesPage({ searchParams }) {
           <MavisSourceDiscovery />
           <MavisReviewQueue rows={reviewRows} error={reviewError} />
           <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
+          <MavisArchiveQueue rows={archivedRows} error={archiveError} />
           <MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} />
           <MavisArticleCatalog articles={articles} />
           <section className="admin-help">
             <strong>وضعیت این مرحله</strong>
-            <p>جست‌وجوی منابع و ساخت پیش‌نویس فراداده‌ای فعال است. پیش‌نویس پس از ذخیره نسخه مشخص می‌تواند وارد صف بازبینی شود. تصمیم بازبین به همان نسخه متصل است؛ انتشار و لغو انتشار نیز عملیات جداگانه مدیر و نسخه‌محور هستند. صفحه عمومی فعلی تا تکمیل مسیر دیتابیسی بدون تغییر باقی می‌ماند.</p>
+            <p>جست‌وجوی منابع و ساخت پیش‌نویس فراداده‌ای فعال است. پیش‌نویس پس از ذخیره نسخه مشخص می‌تواند وارد صف بازبینی شود. تصمیم بازبین به همان نسخه متصل است؛ انتشار و لغو انتشار نیز عملیات جداگانه مدیر و نسخه‌محور هستند. صفحه عمومی فعلی تا تکمیل مسیر دیتابیسی بدون تغییر باقی می‌ماند. آرشیو و بازگردانی نسخه‌ها از فهرست آرشیو مدیریت می‌شود.</p>
           </section>
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>

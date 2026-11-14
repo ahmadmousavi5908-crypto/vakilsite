@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { articles } from "../../../data/articles";
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
+import { getPublishedMavisArticleBySlug } from "../../../lib/mavis/public-article-data.js";
 
 export function generateStaticParams() {
   return articles.map((article) => ({ slug: article.slug }));
@@ -10,12 +11,14 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const staticArticle = articles.find((item) => item.slug === slug);
+  const databaseArticle = staticArticle ? null : await getPublishedMavisArticleBySlug(slug);
+  const article = staticArticle || databaseArticle;
   if (!article) return { title: "مطلب پیدا نشد" };
   const canonicalPath = "/articles/" + article.slug;
   return {
     title: article.metaTitle || article.title,
-    description: article.excerpt,
+    description: article.seoDescription || article.excerpt,
     alternates: { canonical: canonicalPath },
     openGraph: {
       type: "article",
@@ -29,7 +32,9 @@ export async function generateMetadata({ params }) {
 
 export default async function ArticleDetailPage({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const staticArticle = articles.find((item) => item.slug === slug);
+  const databaseArticle = staticArticle ? null : await getPublishedMavisArticleBySlug(slug);
+  const article = staticArticle || databaseArticle;
   if (!article) notFound();
 
   const siteUrl = getSiteUrl();
@@ -42,6 +47,12 @@ export default async function ArticleDetailPage({ params }) {
         description: article.excerpt,
         inLanguage: "fa-IR",
         articleSection: article.category,
+        author: {
+          "@type": "Person",
+          name: article.author || "سید احمد موسوی",
+        },
+        datePublished: article.publishedAt || undefined,
+        dateModified: article.updatedAt || article.publishedAt || undefined,
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": articleUrl,

@@ -1,11 +1,16 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "../../../../lib/supabase/admin";
+import { articles as publicStaticArticles } from "../../../../data/articles";
 import { parseMavisArticleDraftInput } from "../../../../lib/mavis/article-draft-input.mjs";
 
 export async function saveMavisArticleDraft(formData) {
   const parsed = parseMavisArticleDraftInput(formData);
   if (!parsed.ok) return { ok: false, error: parsed.error };
+  if (publicStaticArticles.some((article) => article.slug === parsed.payload.slug)) {
+    return { ok: false, error: "این نامک متعلق به یکی از راهنماهای ثابت سایت است. برای مقاله جدید، نامک دیگری انتخاب کنید." };
+  }
 
   let access;
   try {
@@ -224,6 +229,12 @@ export async function decideMavisArticleReview(articleId, articleVersion, decisi
 
 const ARTICLE_UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+function revalidatePublicMavisArticlePaths() {
+  revalidatePath("/articles");
+  revalidatePath("/articles/[slug]", "page");
+  revalidatePath("/sitemap.xml");
+}
+
 async function runMavisPublicationAction(action, articleId, expectedVersion) {
   if (typeof articleId !== "string" || !ARTICLE_UUID_PATTERN.test(articleId)
     || !Number.isInteger(expectedVersion) || expectedVersion < 1) {
@@ -258,6 +269,7 @@ async function runMavisPublicationAction(action, articleId, expectedVersion) {
       return { ok: false, error: "پاسخ پایگاه داده برای تغییر وضعیت معتبر نبود." };
     }
 
+    revalidatePublicMavisArticlePaths();
     return { ok: true, status: data.status };
   } catch {
     return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
@@ -270,4 +282,83 @@ export async function publishMavisArticle(articleId, expectedVersion) {
 
 export async function unpublishMavisArticle(articleId, expectedVersion) {
   return runMavisPublicationAction("unpublish_mavis_article", articleId, expectedVersion);
+}
+
+
+async function runMavisArticleLifecycleAction(rpcName, args, expectedStatus) {
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, error: "برای این عملیات، ورود با حساب مدیر الزامی است." };
+  }
+
+  try {
+    const { data, error } = await access.supabase.rpc(rpcName, args);
+    if (error?.code === "42501") return { ok: false, error: "دسترسی مدیر تأیید نشد." };
+    if (error?.code === "40001") return { ok: false, error: "نسخه مقاله تغییر کرده است. صفحه را تازه‌سازی و دوباره بررسی کنید." };
+    if (error?.code === "P0002") return { ok: false, error: "مقاله یا نسخه موردنظر پیدا نشد." };
+    if (error?.code === "55000") return { ok: false, error: error.message || "مقاله در وضعیت مناسب این عملیات نیست." };
+    if (error?.code === "22023") return { ok: false, error: "اطلاعات عملیات معتبر نیست." };
+    if (error?.code === "42883" || error?.code === "PGRST202") return { ok: false, error: "گردش‌کار انتشار هنوز روی پایگاه داده فعال نشده است." };
+    if (error) return { ok: false, error: "عملیات انجام نشد. وضعیت پایگاه داده را بررسی کنید." };
+    if (!data || (expectedStatus && data.status !== expectedStatus)) {
+      return { ok: false, error: "پاسخ پایگاه داده برای این عملیات معتبر نبود." };
+    }
+    revalidatePublicMavisArticlePaths();
+    return { ok: true, data };
+  } catch {
+    return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
+  }
+}
+
+export async function archiveMavisArticle(articleId, expectedVersion, note = "") {
+  if (typeof articleId !== "string" || !/^[0-9a-f-]{36}$/i.test(articleId)
+    || !Number.isInteger(expectedVersion) || expectedVersion < 1
+    || typeof note !== "string" || note.length > 1000) {
+    return { ok: false, error: "اطلاعات آرشیو معتبر نیست." };
+  }
+  const result = await runMavisArticleLifecycleAction("archive_mavis_article", {
+    p_article_id: articleId,
+    p_expected_version: expectedVersion,
+    p_note: note,
+  }, "archived");
+  return result.ok ? { ok: true, status: result.data.status } : result;
+}
+
+export async function restoreMavisArticle(articleId, expectedVersion) {
+  if (typeof articleId !== "string" || !/^[0-9a-f-]{36}$/i.test(articleId)
+    || !Number.isInteger(expectedVersion) || expectedVersion < 1) {
+    return { ok: false, error: "شناسه یا نسخه مقاله معتبر نیست." };
+  }
+  const result = await runMavisArticleLifecycleAction("restore_mavis_article", {
+    p_article_id: articleId,
+    p_expected_version: expectedVersion,
+  });
+  return result.ok ? { ok: true, status: result.data.status } : result;
+}
+
+export async function rollbackMavisArticleVersion(articleId, expectedCurrentVersion, targetVersion, note = "") {
+  if (typeof articleId !== "string" || !/^[0-9a-f-]{36}$/i.test(articleId)
+    || !Number.isInteger(expectedCurrentVersion) || expectedCurrentVersion < 1
+    || !Number.isInteger(targetVersion) || targetVersion < 1
+    || targetVersion >= expectedCurrentVersion
+    || typeof note !== "string" || note.length > 1000) {
+    return { ok: false, error: "نسخه انتخاب‌شده برای بازگردانی معتبر نیست." };
+  }
+  const result = await runMavisArticleLifecycleAction("rollback_mavis_article_version", {
+    p_article_id: articleId,
+    p_expected_current_version: expectedCurrentVersion,
+    p_target_version: targetVersion,
+    p_note: note,
+  }, "draft");
+  return result.ok ? {
+    ok: true,
+    status: result.data.status,
+    articleVersion: result.data.articleVersion,
+    rollbackOfVersion: result.data.rollbackOfVersion,
+  } : result;
 }

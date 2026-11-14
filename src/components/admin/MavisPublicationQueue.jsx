@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { publishMavisArticle, unpublishMavisArticle } from "../../app/admin/mavis/articles/actions";
 import styles from "./MavisPublicationQueue.module.css";
@@ -78,6 +79,7 @@ export default function MavisPublicationQueue({ approvedRows = [], publishedRows
                       {pending ? "در حال ثبت..." : confirming ? "تأیید نهایی" : action === "publish" ? "انتشار مقاله" : "لغو انتشار"}
                     </button>
                     {confirming ? <small className={styles.confirmHint}>برای اجرای عملیات، دوباره تأیید کنید.</small> : null}
+                    <Link className={styles.manageLink} href={"/admin/mavis/articles/" + article.id + "/manage"}>مدیریت نسخه‌ها</Link>
                   </td>
                 </tr>
               );

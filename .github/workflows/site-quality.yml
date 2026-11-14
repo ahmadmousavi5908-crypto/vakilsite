@@ -77,6 +77,9 @@ jobs:
           tests/mavis/legal-research-dossier.test.mjs
       - name: Run MAVIS source discovery adapter tests
         run: node --test tests/mavis/source-discovery-adapters.test.mjs
+
+      - name: Run MAVIS public article mapping, cursor, and sitemap tests
+        run: node --test tests/mavis/public-article-mapper.test.mjs tests/mavis/published-article-cursor.test.mjs tests/mavis/published-article-sitemap.test.mjs
       - name: Run ESLint
         run: npm run lint
       - name: Build production site
@@ -98,6 +101,12 @@ jobs:
 
           if [ "$READY" -ne 1 ]; then
             cat /tmp/vakilsite-next.log
+            exit 1
+          fi
+
+          curl --fail --silent http://127.0.0.1:3000/sitemap.xml > /tmp/vakilsite-sitemap.xml
+          if ! grep -Fq "https://vakilsite-ci.example/articles/civil-claim-checklist" /tmp/vakilsite-sitemap.xml; then
+            cat /tmp/vakilsite-sitemap.xml
             exit 1
           fi
 
