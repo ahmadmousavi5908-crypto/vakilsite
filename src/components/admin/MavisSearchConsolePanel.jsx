@@ -62,7 +62,9 @@ export default function MavisSearchConsolePanel() {
       setConnection({ loading: false, connected: false, siteUrl: null, error: "" });
       setResult(null);
       setState("idle");
-      setMessage("اتصال Search Console قطع شد.");
+      setMessage(payload.revocationFailed
+        ? "اتصال محلی حذف شد، اما لغو دسترسی گوگل ناموفق بود. دسترسی برنامه را از تنظیمات حساب Google نیز لغو کنید."
+        : "اتصال Search Console قطع شد.");
     } catch {
       setConnection((current) => ({ ...current, loading: false, error: "قطع اتصال انجام نشد." }));
     }
