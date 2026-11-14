@@ -1,5 +1,5 @@
 begin;
-select plan(43);
+select plan(46);
 select has_function('public','publish_mavis_article',array['uuid','integer'],'publish RPC exists');
 select has_function('public','archive_mavis_article',array['uuid','integer','text'],'archive RPC exists');
 select has_function('public','restore_mavis_article',array['uuid','integer'],'restore RPC exists');
@@ -126,6 +126,21 @@ select throws_ok(
 select is((public.archive_mavis_article(current_setting('test.article_id')::uuid,3,'Archive draft test')->>'status'),'archived','draft can be archived');
 select is((public.restore_mavis_article(current_setting('test.article_id')::uuid,3)->>'status'),'draft','restoring an archived draft returns it to draft');
 select is((select count(*)::integer from public.mavis_article_audit_events where article_id=current_setting('test.article_id')::uuid and event_type='article_restored'),2,'each restore operation is audited');
+
+select set_config('test.article_without_approval_id', public.save_mavis_article_draft(
+ '{"slug":"restore-without-approval-test","title":"Restore without approval","author_name":"Editorial Team","excerpt":"A valid excerpt for a restore approval guard test.","category":"حقوق مدنی","tags":["بازیابی"],"content":{"intro":"A separate article used to verify fail-closed restore behavior.","sections":[{"heading":"Approval guard","body":"An article with an approved status but no exact approval record must return to draft."}]},"content_schema_version":1}'::jsonb
+)::text, true);
+
+reset role;
+update public.mavis_articles
+set status = 'approved'
+where id = current_setting('test.article_without_approval_id')::uuid;
+
+set local role authenticated;
+set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
+select is((public.archive_mavis_article(current_setting('test.article_without_approval_id')::uuid,1,'Approval guard test')->>'status'),'archived','article without approval can be archived');
+select is((public.restore_mavis_article(current_setting('test.article_without_approval_id')::uuid,1)->>'status'),'draft','restore fails closed without an exact current-version approval');
+select is((select status from public.mavis_articles where id=current_setting('test.article_without_approval_id')::uuid),'draft','unapproved restored article is persisted as draft');
 
 select * from finish();
 rollback;
