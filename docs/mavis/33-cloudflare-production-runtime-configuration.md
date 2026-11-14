@@ -52,6 +52,19 @@ Optional provider configuration, only when deliberately enabled later:
 
 OpenAlex remains disabled until a server-enforced usage-budget ledger is implemented and reviewed. Do not configure an OpenAlex key as a workaround.
 
+## Automated read-only migration audit
+
+The repository includes `.github/workflows/supabase-production-migration-audit.yml`, a manually triggered GitHub Actions workflow pinned to Supabase CLI 2.84.2 and the known Production project ref.
+
+To run it without sharing credentials in chat or Termux:
+
+1. Add GitHub repository Actions secrets named `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD`. Never place their values in files or logs.
+2. Open **Actions → Read-only Supabase production migration audit → Run workflow**.
+3. Select `feature/mavis-indexnow-publication-notify-20261114` as the branch and run it.
+4. Inspect the `LOCAL` and `REMOTE` columns in the job log. The workflow targets only Production project ref `jroflcmiczfwtmiaxmpd`.
+
+The workflow runs only `supabase link` in its temporary runner checkout and `supabase migration list --remote`. It does not run `db push`, `migration repair`, `db pull`, or any schema/data mutation. If either repository secret is missing, it stops before connecting.
+
 ## Safe activation sequence
 
 1. Keep PR #119 in Draft until the approved diff, CI, and production prerequisites are reviewed.
