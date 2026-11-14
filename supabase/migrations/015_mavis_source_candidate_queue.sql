@@ -196,8 +196,18 @@ begin
           authors=case when cardinality(v_authors)>0 then v_authors else authors end,
           publisher=coalesce(nullif(left(btrim(coalesce(v_item->>'publisher','')),300),''),publisher),
           venue=coalesce(nullif(left(btrim(coalesce(v_item->>'venue','')),300),''),venue),
-          publication_date_text=coalesce(v_date,publication_date_text),
-          publication_date_precision=case when v_precision='unknown' then publication_date_precision else v_precision end,
+          publication_date_text=case
+            when v_date is null or v_precision='unknown' then publication_date_text
+            when publication_date_precision='day' and v_precision in ('year','month') then publication_date_text
+            when publication_date_precision='month' and v_precision='year' then publication_date_text
+            else v_date
+          end,
+          publication_date_precision=case
+            when v_precision='unknown' then publication_date_precision
+            when publication_date_precision='day' and v_precision in ('year','month') then publication_date_precision
+            when publication_date_precision='month' and v_precision='year' then publication_date_precision
+            else v_precision
+          end,
           updated_at=now()
       where id=v_id;
       insert into public.mavis_source_candidate_events(candidate_id,actor_id,event_type,metadata)
