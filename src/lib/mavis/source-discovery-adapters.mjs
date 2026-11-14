@@ -163,8 +163,40 @@ function buildRequest(provider, query, limit, env) {
 async function readJsonBounded(response, maxBytes) {
   const declaredLength = Number(response.headers?.get?.("content-length") || 0);
   if (declaredLength > maxBytes) throw new Error("UPSTREAM_RESPONSE_TOO_LARGE");
-  const body = await response.text();
-  if (new TextEncoder().encode(body).byteLength > maxBytes) throw new Error("UPSTREAM_RESPONSE_TOO_LARGE");
+
+  let body;
+  if (response.body && typeof response.body.getReader === "function") {
+    const reader = response.body.getReader();
+    const chunks = [];
+    let totalBytes = 0;
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalBytes += value.byteLength;
+        if (totalBytes > maxBytes) {
+          await reader.cancel();
+          throw new Error("UPSTREAM_RESPONSE_TOO_LARGE");
+        }
+        chunks.push(value);
+      }
+    } finally {
+      reader.releaseLock?.();
+    }
+    const merged = new Uint8Array(totalBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+      merged.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    body = new TextDecoder().decode(merged);
+  } else {
+    body = await response.text();
+    if (new TextEncoder().encode(body).byteLength > maxBytes) {
+      throw new Error("UPSTREAM_RESPONSE_TOO_LARGE");
+    }
+  }
+
   try {
     return JSON.parse(body);
   } catch {
