@@ -196,7 +196,12 @@ revoke all on table
 from public, anon, authenticated, service_role;
 
 -- Public article data is readable only when its status is published.
-grant select on public.mavis_articles to anon, authenticated;
+grant select on public.mavis_articles to authenticated;
+grant select (
+  id, slug, title, author_name, excerpt, category, tags, content,
+  content_schema_version, seo_title, seo_description, status,
+  current_version, created_at, updated_at, published_at
+) on public.mavis_articles to anon;
 create policy "Public can read published MAVIS articles"
   on public.mavis_articles
   for select
