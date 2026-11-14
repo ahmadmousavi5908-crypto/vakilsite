@@ -98,7 +98,7 @@ begin
     v_record_id := btrim(coalesce(v_item->>'providerRecordId',''));
     v_title := btrim(coalesce(v_item->>'title',''));
     v_url := btrim(coalesce(v_item->>'sourceUrl',''));
-    if v_provider not in ('crossref','semantic_scholar','openalex')
+    if v_provider is null or v_provider not in ('crossref','semantic_scholar','openalex')
       or v_item->>'sourceType' is distinct from 'academic' then
       raise exception using errcode='22023', message='Unsupported source provider or type';
     end if;
@@ -108,7 +108,7 @@ begin
     if length(v_title) not between 3 and 500 then
       raise exception using errcode='22023', message='Invalid candidate title';
     end if;
-    if v_url !~ '^https://[A-Za-z0-9.-]+(:[0-9]{1,5})?([/?#][^[:space:]]*)?$' then
+    if length(v_url)>2000 or v_url !~ '^https://[A-Za-z0-9.-]+(:[0-9]{1,5})?([/?#][^[:space:]]*)?$' then
       raise exception using errcode='22023', message='Invalid HTTPS source URL';
     end if;
 
