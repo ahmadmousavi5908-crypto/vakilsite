@@ -5,12 +5,37 @@ export async function requireAdmin() {
   try {
     supabase = await createClient();
   } catch {
-    return { supabase: null, user: null, isAdmin: false, configured: false };
+    return {
+      supabase: null,
+      user: null,
+      isAdmin: false,
+      configured: false,
+      authenticationAvailable: false,
+      adminCheckAvailable: false,
+    };
   }
 
   const { data, error } = await supabase.auth.getClaims();
-  if (error || !data?.claims?.sub) {
-    return { supabase, user: null, isAdmin: false, configured: true };
+  if (error) {
+    return {
+      supabase,
+      user: null,
+      isAdmin: false,
+      configured: true,
+      authenticationAvailable: false,
+      adminCheckAvailable: false,
+    };
+  }
+
+  if (!data?.claims?.sub) {
+    return {
+      supabase,
+      user: null,
+      isAdmin: false,
+      configured: true,
+      authenticationAvailable: true,
+      adminCheckAvailable: false,
+    };
   }
 
   const { data: isAdmin, error: adminError } = await supabase.rpc("is_site_admin");
@@ -20,5 +45,7 @@ export async function requireAdmin() {
     user: data.claims,
     isAdmin: !adminError && isAdmin === true,
     configured: true,
+    authenticationAvailable: true,
+    adminCheckAvailable: !adminError,
   };
 }
