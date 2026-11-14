@@ -18,6 +18,7 @@ declare
   v_current_version integer;
   v_next_version integer;
   v_current_status text;
+  v_next_status text;
   v_snapshot jsonb;
   v_section jsonb;
   v_tag jsonb;
@@ -168,6 +169,7 @@ begin
       v_actor,
       v_actor
     );
+    v_next_status := 'draft';
   else
     if p_expected_version is null or p_expected_version < 1 then
       raise exception using errcode = '22023', message = 'Expected version is required when updating a draft';
@@ -193,6 +195,7 @@ begin
 
     v_article_id := p_article_id;
     v_next_version := v_current_version + 1;
+    v_next_status := v_current_status;
 
     update public.mavis_articles
     set slug = p_payload->>'slug',
@@ -246,7 +249,7 @@ begin
     v_article_id, v_actor,
     case when p_article_id is null then 'article_created' else 'article_updated' end,
     v_current_status,
-    'draft',
+    v_next_status,
     v_next_version,
     jsonb_build_object('change_note', nullif(btrim(coalesce(p_change_note, '')), ''))
   );
