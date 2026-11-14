@@ -1,5 +1,5 @@
 begin;
-select plan(14);
+select plan(15);
 
 select has_table('public','mavis_provider_usage_daily','provider daily usage ledger exists');
 select ok((select relrowsecurity from pg_class where oid='public.mavis_provider_usage_daily'::regclass),'provider usage ledger has RLS enabled');
@@ -27,7 +27,7 @@ select is((
   where (public.consume_mavis_openalex_daily_budget()->>'allowed')::boolean
 ),49,'shared budget allows the remaining 49 requests within the daily ceiling');
 select is((public.consume_mavis_openalex_daily_budget()->>'allowed')::boolean,false,'the 51st request is rejected before upstream usage');
-select is((select request_count from public.mavis_provider_usage_daily where provider='openalex'),'50','daily ledger records exactly 50 reserved requests');
+select is((select request_count from public.mavis_provider_usage_daily where provider='openalex'),50,'daily ledger records exactly 50 reserved requests');
 select is((select reserved_usd from public.mavis_provider_usage_daily where provider='openalex'),0.0500::numeric,'daily ledger never exceeds USD 0.05');
 
 select * from finish();
