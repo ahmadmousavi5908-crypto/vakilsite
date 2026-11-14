@@ -82,7 +82,7 @@ set local role anon;
 reset request.jwt.claim.sub;
 
 select results_eq(
-  $$select count(*)::bigint from public.mavis_articles$$,
+  $$select count(slug)::bigint from public.mavis_articles$$,
   array[1::bigint],
   'anonymous visitors can read only published articles'
 );
@@ -92,7 +92,7 @@ set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-4000-8000-000000000011';
 
 select results_eq(
-  $$select count(*)::bigint from public.mavis_articles$$,
+  $$select count(slug)::bigint from public.mavis_articles$$,
   array[1::bigint],
   'authenticated non-admin users can read only published articles'
 );
@@ -108,7 +108,7 @@ set local role authenticated;
 set local request.jwt.claim.sub = '00000000-0000-4000-8000-000000000012';
 
 select results_eq(
-  $$select count(*)::bigint from public.mavis_articles$$,
+  $$select count(slug)::bigint from public.mavis_articles$$,
   array[2::bigint],
   'site administrators can read both published and draft articles'
 );
