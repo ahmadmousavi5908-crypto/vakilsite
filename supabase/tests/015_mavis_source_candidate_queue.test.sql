@@ -1,5 +1,5 @@
 begin;
-select plan(43);
+select plan(44);
 select has_table('public','mavis_source_candidates','candidate queue table exists');
 select has_table('public','mavis_source_candidate_events','candidate event history exists');
 select ok((select relrowsecurity from pg_class where oid='public.mavis_source_candidates'::regclass),'candidate queue has RLS enabled');
@@ -62,6 +62,8 @@ select set_config('test.refresh_result', public.store_mavis_source_candidates(
  )::text,true);
 select is((current_setting('test.refresh_result')::jsonb->'candidates'->0->>'created'),'false','repeated discovery does not create a duplicate candidate');
 select is((select publication_date_precision from public.mavis_source_candidates where id=current_setting('test.candidate_id')::uuid),'month','less precise refresh cannot downgrade publication date precision');
+select is((select publication_date_text from public.mavis_source_candidates where id=current_setting('test.candidate_id')::uuid),'2024-05','less precise refresh cannot overwrite the more precise publication date');
+
 
 
 select set_config('test.import_result', public.import_mavis_source_candidate_from_queue(current_setting('test.candidate_id')::uuid)::text,true);
