@@ -56,3 +56,40 @@ test("rejects short section bodies and malformed forms", () => {
   assert.equal(parseMavisArticleDraftInput(formWith({ section_body: "کوتاه" })).ok, false);
   assert.equal(parseMavisArticleDraftInput(null).ok, false);
 });
+
+
+test("preserves warning and checklist fields when editing a draft", () => {
+  const result = parseMavisArticleDraftInput(formWith({
+    warning: "این متن صرفاً آموزشی است.",
+    checklist: "بررسی منبع رسمی\nکنترل تاریخ اصلاح",
+  }));
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.payload.content.checklist, ["بررسی منبع رسمی", "کنترل تاریخ اصلاح"]);
+  assert.equal(result.payload.content.warning, "این متن صرفاً آموزشی است.");
+});
+
+test("requires a valid article id and expected version together", () => {
+  const missingVersion = parseMavisArticleDraftInput(formWith({
+    article_id: "4a0d8f64-5b2a-4f2a-8a10-4a1d0d7b6f90",
+  }));
+  assert.equal(missingVersion.ok, false);
+
+  const invalidId = parseMavisArticleDraftInput(formWith({
+    article_id: "not-a-uuid",
+    expected_version: "1",
+  }));
+  assert.equal(invalidId.ok, false);
+
+  const valid = parseMavisArticleDraftInput(formWith({
+    article_id: "4a0d8f64-5b2a-4f2a-8a10-4a1d0d7b6f90",
+    expected_version: "3",
+  }));
+  assert.equal(valid.ok, true);
+  assert.equal(valid.articleId, "4a0d8f64-5b2a-4f2a-8a10-4a1d0d7b6f90");
+  assert.equal(valid.expectedVersion, 3);
+});
+
+test("rejects oversized warning and checklist", () => {
+  assert.equal(parseMavisArticleDraftInput(formWith({ warning: "x".repeat(2001) })).ok, false);
+  assert.equal(parseMavisArticleDraftInput(formWith({ checklist: Array.from({ length: 61 }, () => "item").join("\n") })).ok, false);
+});
