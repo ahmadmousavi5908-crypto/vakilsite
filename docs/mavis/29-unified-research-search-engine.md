@@ -39,7 +39,7 @@ Do not add providers merely to increase their count. Add one only when a demonst
 
 ### 3. Connected local archive (implemented first)
 
-Migration 017 adds PostgreSQL full-text indexes over:
+Migration 017 adds trigger-maintained PostgreSQL full-text vectors and GIN indexes over:
 - MAVIS article title, excerpt, tags, and structured article content.
 - Registered source metadata.
 - Persisted source-discovery candidates.
