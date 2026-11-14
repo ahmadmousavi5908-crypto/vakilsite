@@ -232,6 +232,7 @@ const ARTICLE_UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0
 function revalidatePublicMavisArticlePaths() {
   revalidatePath("/articles");
   revalidatePath("/articles/[slug]", "page");
+  revalidatePath("/sitemap.xml");
 }
 
 async function runMavisPublicationAction(action, articleId, expectedVersion) {
