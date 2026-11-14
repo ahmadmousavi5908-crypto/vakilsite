@@ -1,3 +1,5 @@
+import { rankMavisEvidenceResults } from "./evidence-ranker.mjs";
+
 function validateDependencies(dependencies) {
   const required = [
     "searchMavisKnowledge",
@@ -56,10 +58,6 @@ export function createMavisKnowledgeRetriever(dependencies) {
       ...record,
       source_class: resolveSourceClass(record),
     }));
-    const researchDossier = buildLegalResearchDossier({
-      topic: normalizedQuery,
-      records: dossierRecords,
-    });
     const results = dossierRecords.map((record) => ({
       evidence: buildLegalEvidence(record),
       id: record.id,
@@ -79,11 +77,19 @@ export function createMavisKnowledgeRetriever(dependencies) {
       search_score: record.search_score,
       matched_field: record.matched_field,
     }));
+    const rankedResults = rankMavisEvidenceResults(results, limit);
+    const recordsById = new Map(dossierRecords.map((record) => [record.id, record]));
+    const researchDossier = buildLegalResearchDossier({
+      topic: normalizedQuery,
+      records: rankedResults
+        .map((result) => recordsById.get(result.id))
+        .filter(Boolean),
+    });
 
     return {
       query: normalizedQuery,
-      count: results.length,
-      results,
+      count: rankedResults.length,
+      results: rankedResults,
       researchDossier,
       notice: "این خروجی فقط بازیابی از کتابخانه موجود است؛ نظر حقوقی، بررسی اعتبار روز قانون یا تحلیل پرونده محسوب نمی‌شود.",
     };

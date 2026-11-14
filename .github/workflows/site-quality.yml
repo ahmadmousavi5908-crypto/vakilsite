@@ -9,6 +9,7 @@ on:
       - redesign/persian-ux-typography
       - feat/legal-library-discovery-20261102
       - integration/mavis-knowledge-retrieval-mother-two-20261110
+      - "feature/**"
 
 permissions:
   contents: read
@@ -21,6 +22,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
+      - name: Protect approved public UI baseline
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch --no-tags origin "$BASE_SHA" --depth=1
+          node scripts/mavis/verify-public-ui-boundary.mjs "$BASE_SHA" "$GITHUB_SHA"
+
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
@@ -44,6 +53,18 @@ jobs:
         run: npm run test:mavis-offline
       - name: Run MAVIS offline intake tests
         run: node --test tests/mavis/offline-intake.test.mjs
+      - name: Run MAVIS admin authorization tests
+        run: node --test tests/mavis/admin-auth.test.mjs
+      - name: Run MAVIS article draft input tests
+        run: node --test tests/mavis/article-draft-input.test.mjs
+      - name: Run MAVIS editorial cursor tests
+        run: node --test tests/mavis/editorial-cursor.test.mjs
+
+      - name: Run MAVIS orchestrator policy tests
+        run: node --test tests/mavis/orchestrator-policy.test.mjs
+
+      - name: Run MAVIS evidence ranking tests
+        run: node --test tests/mavis/evidence-ranker.test.mjs
       - name: Run MAVIS Search Console tests
         run: npm run test:mavis-search-console
       - name: Run MAVIS knowledge retrieval tests

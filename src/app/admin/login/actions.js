@@ -16,13 +16,34 @@ export async function signIn(formData) {
     redirect("/admin/login?error=config");
   }
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) redirect("/admin/login?error=credentials");
+  let signInResult;
+  try {
+    signInResult = await supabase.auth.signInWithPassword({ email, password });
+  } catch {
+    redirect("/admin/login?error=credentials");
+  }
 
-  const { data: isAdmin, error: adminError } = await supabase.rpc("is_site_admin");
+  if (signInResult?.error) redirect("/admin/login?error=credentials");
 
+  let adminResult;
+  try {
+    adminResult = await supabase.rpc("is_site_admin");
+  } catch {
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // The request remains denied even if session cleanup is temporarily unavailable.
+    }
+    redirect("/admin/login?error=unauthorized");
+  }
+
+  const { data: isAdmin, error: adminError } = adminResult || {};
   if (adminError || isAdmin !== true) {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // The request remains denied even if session cleanup is temporarily unavailable.
+    }
     redirect("/admin/login?error=unauthorized");
   }
 

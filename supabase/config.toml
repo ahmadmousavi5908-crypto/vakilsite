@@ -1,0 +1,8 @@
+project_id = "vakilsite-mavis-local"
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[studio]
+enabled = false
