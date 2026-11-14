@@ -176,24 +176,26 @@ A CMS phase is not complete until:
 
 ## 10. Delivery order
 
-1. Finalize schema and state-transition design against the current repository.
-2. Add isolated migration and pgTAP security/workflow tests.
-3. Implement server-side DAL and admin APIs with fail-closed authorization. (Initial authenticated draft read/write paths are now implemented.)
-4. Implement admin editorial workspace and structured editor. (Initial manual-save editor, version-aware editing, and database draft inventory are implemented; review and workflow actions remain pending.)
-5. Implement source discovery/import adapters with rights-aware draft creation.
-6. Add field-level AI assistance behind validated provider adapters and cost/time budgets.
-7. Implement review/version/approval/publish operations.
-8. Connect public pages to published-only data while preserving legacy URLs and appearance.
-9. Add search, categories, pagination, sitemap, structured data, and article detail polish.
-10. Run scale, security, accessibility, SEO, and restore tests before any production rollout.
+1. Finalize schema and state-transition design against the current repository. (Implemented across migrations 007–015; production parity remains unverified.)
+2. Add isolated migration and pgTAP security/workflow tests. (Implemented and passing in the isolated Supabase CI workflow.)
+3. Implement server-side DAL and admin APIs with fail-closed authorization. (Draft writes, source discovery/import, review decisions, publication, unpublish, archive, restore, and rollback actions are implemented.)
+4. Implement admin editorial workspace and structured editor. (Manual-save, version-aware editor and source, review, publication, and archive queues are implemented; autosave remains outstanding.)
+5. Implement source discovery/import adapters with rights-aware draft creation. (Crossref and Semantic Scholar metadata discovery plus persistent candidate queue/import are implemented; OpenAlex remains disabled pending enforced budget accounting.)
+6. Add field-level AI assistance behind validated provider adapters and cost/time budgets. (Not implemented.)
+7. Implement review/version/approval/publish operations. (Implemented with immutable version-bound decisions and separate explicit publication.)
+8. Connect public pages to published-only data while preserving legacy URLs and appearance. (Implemented for the published-article section on `/articles`, paginated `/articles/library`, and dynamic published-only detail reads on `/articles/[slug]`; legacy static articles retain precedence.)
+9. Add search, categories, pagination, sitemap, structured data, and article detail polish. (Pagination, title/category filters, sitemap entries, canonical metadata, and article structured data are implemented. Full-text/excerpt search, richer category navigation, and broader editorial polish remain outstanding.)
+10. Run scale, security, accessibility, SEO, and restore tests before any production rollout. (Isolated security/workflow tests exist; 500/700/5,000/20,000-article benchmarks, production restore verification, and complete visual/accessibility regression evidence remain outstanding.)
 
 ## 11. Current baseline facts
 
-- PR #109 contains the read-only admin catalog preview backed by the existing static `src/data/articles.js` dataset, plus an initial structured draft editor.
-- Existing public routes are `/articles` and `/articles/[slug]`; they still read the static dataset and have not been switched to database content.
-- The current public listing already uses expandable `details/summary` rows and individual article URLs. Preserve and improve this visual language rather than replacing it wholesale.
-- The admin now has an authenticated database-backed inventory for editable draft states, bounded to 25 rows per page with a compound keyset cursor over `updated_at` and `id`.
-- Administrators can create and edit draft records through the `save_mavis_article_draft` RPC. Updates require the expected version; the RPC writes the article, immutable snapshot, and audit event atomically.
-- The editor currently uses explicit manual save, not autosave. Source discovery/import, AI field completion, review/approval, guarded publication, archive/rollback UI, and public database-backed article routes remain unimplemented.
-- Migrations `007_mavis_editorial_cms_foundation.sql` and `008_mavis_editorial_draft_write_rpc.sql` exist on PR #109 and have passed isolated local Supabase tests. They have not been applied to Production.
-- No public route switch, production migration, import, or publication is authorized by this specification.
+- PR #109 introduced the read-only admin catalog preview backed by the static `src/data/articles.js` dataset and the initial structured draft editor.
+- The current `/articles` route preserves the static editorial guides and additionally reads a bounded page of published CMS article summaries. The dedicated `/articles/library` route provides server-side pagination with title and exact-category filters.
+- The `/articles/[slug]` route gives static articles precedence and otherwise reads only CMS records whose status is `published`. Public source relations are fetched through the restricted public citation RPC and normalized before rendering.
+- The admin workspace provides a 25-row keyset-paginated draft inventory, source discovery, a persistent candidate queue, review queue, publication queue, and archive queue. Admin routes and server actions use the existing fail-closed administrator authorization.
+- Administrators create and edit drafts through `save_mavis_article_draft`. Updates require the expected version; the RPC writes the article, immutable snapshot, and audit event atomically. The editor uses explicit manual save, not autosave.
+- Crossref and Semantic Scholar metadata discovery, candidate persistence/import, version-bound review decisions, separate explicit publication, unpublish, archive, restore, and rollback are implemented. Imported candidates remain metadata-only drafts with unknown rights and are never approved or published automatically.
+- Dynamic sitemap generation includes published CMS article URLs in bounded pages. Publication and unpublication actions attempt IndexNow notification; notification delivery is reported separately from the editorial state transition.
+- Field-level AI content assistance, RSS/manual-URL intake, cross-provider distributed provider leases, full-text public search, large-corpus benchmarks, and verified backup/restore remain outstanding. OpenAlex must remain disabled until server-enforced usage-budget accounting exists.
+- Migrations 007–015 and isolated Supabase tests are present on the current feature branch. CI has passed on the previously verified branch head, but Production migration parity and runtime configuration have not yet been verified.
+- Production migrations, Worker deployment, Google OAuth connection, source imports, and public article publication remain gated by explicit release approval.
