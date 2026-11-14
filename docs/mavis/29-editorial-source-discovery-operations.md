@@ -14,6 +14,8 @@
 - Approval only changes the editorial status to `approved`; it does not publish the article.
 - A separate administrator action can publish only the exact current immutable version with an `approved` decision record.
 - Unpublishing returns the article to `approved`, clears `published_at`, and records an audit event; the public RLS policy then stops exposing it.
+- Archive, restore, and rollback operations are version-checked and audited. Restoring a previously published article returns it to `approved`, not `published`.
+- Rollback copies a selected historical snapshot into a new version, changes status to `draft`, clears `published_at`, and requires review and publication again.
 
 ## Runtime configuration
 
@@ -54,7 +56,10 @@ Never place provider keys in browser variables, URLs, source files, logs, or PR 
 - The draft grid is spreadsheet-like: quick search, status filter, sortable title/category/version/update columns, and server-side keyset pagination.
 - The review queue is available on the same admin page; each item opens a read-only immutable snapshot before a decision is recorded.
 - A separate publication queue lists approved and published articles. Publish/unpublish actions require a second explicit confirmation and are version-bound.
-- Public `/articles` remains the existing editorial accordion page and is not changed in this slice. Database-backed public listing/detail routes must wait until the CMS schema and publication workflow are approved and applied in the target environment.
+- A separate archive queue links to version management for restore and rollback.
+- Public `/articles` retains its existing editorial accordion design and static guides, with a separate paginated section for database-backed published articles.
+- Dynamic detail pages render only records with `status=published`; legacy static slugs retain precedence and are reserved by the editor.
+- Public reads use a dedicated anonymous Supabase client with the publishable key and RLS. The public citation RPC exposes only textual citation relations for published articles and omits image/dataset relations.
 
 ## Verification commands
 
@@ -70,4 +75,7 @@ npm run build
 - Candidate queue with durable discovery history and administrator triage states.
 - Cross-provider distributed leases and global provider concurrency coordination.
 - AI-assisted metadata/content completion.
-- Archive, rollback, and public database-backed article pages.
+- Persistent discovery candidate triage queue.
+- Cross-provider distributed leases and global provider concurrency coordination.
+- AI-assisted metadata/content completion.
+- Production migration/deployment and runtime verification remain pending.
