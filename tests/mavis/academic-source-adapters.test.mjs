@@ -9,11 +9,7 @@ import {
 } from "../../src/lib/mavis/academic-source-adapters.mjs";
 
 function response(payload, status = 200) {
-  return {
-    ok: status >= 200 && status < 300,
-    status,
-    async text() { return JSON.stringify(payload); },
-  };
+  return new Response(JSON.stringify(payload), { status });
 }
 
 test("Crossref adapter requests bounded metadata and preserves date precision", async () => {
@@ -162,12 +158,12 @@ test("provider failures are isolated and returned without leaking upstream detai
 
 test("provider response size and malformed JSON are rejected safely", async () => {
   const oversized = createSemanticScholarAdapter({
-    fetchImpl: async () => ({ ok: true, status: 200, async text() { return " ".repeat(1024 * 1024 + 1); } }),
+    fetchImpl: async () => new Response(" ".repeat(1024 * 1024 + 1)),
   });
   await assert.rejects(oversized.search("valid query"), { code: "PROVIDER_RESPONSE_TOO_LARGE" });
 
   const malformed = createSemanticScholarAdapter({
-    fetchImpl: async () => ({ ok: true, status: 200, async text() { return "not-json"; } }),
+    fetchImpl: async () => new Response("not-json"),
   });
   await assert.rejects(malformed.search("valid query"), { code: "PROVIDER_INVALID_RESPONSE" });
 });
