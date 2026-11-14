@@ -10,10 +10,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: supabase-db-tests-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   database-tests:
     runs-on: ubuntu-latest
