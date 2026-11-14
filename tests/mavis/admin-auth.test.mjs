@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { requireAdmin } from "../../src/lib/supabase/admin.js";
+import { requireAdminWithClient } from "../../src/lib/supabase/admin-core.mjs";
 
 function createSupabase({ claimsResult, claimsError, claimsThrow, rpcResult, rpcError, rpcThrow } = {}) {
   return {
@@ -8,24 +8,24 @@ function createSupabase({ claimsResult, claimsError, claimsThrow, rpcResult, rpc
       async getClaims() {
         if (claimsThrow) throw claimsThrow;
         if (claimsError) return { data: null, error: claimsError };
-        return claimsResult ?? { data: { claims: { sub: "user-123", email: "admin@example.test" } }, error: null };
+        return claimsResult !== undefined
+          ? claimsResult
+          : { data: { claims: { sub: "user-123", email: "admin@example.test" } }, error: null };
       },
     },
     async rpc(name) {
       assert.equal(name, "is_site_admin");
       if (rpcThrow) throw rpcThrow;
       if (rpcError) return { data: null, error: rpcError };
-      return rpcResult ?? { data: true, error: null };
+      return rpcResult !== undefined ? rpcResult : { data: true, error: null };
     },
   };
 }
 
 async function runWith(clientOrFactory) {
-  return requireAdmin({
-    createClientImpl: typeof clientOrFactory === "function"
-      ? clientOrFactory
-      : async () => clientOrFactory,
-  });
+  return requireAdminWithClient(
+    typeof clientOrFactory === "function" ? clientOrFactory : async () => clientOrFactory
+  );
 }
 
 test("denies access when Supabase client creation throws", async () => {
@@ -38,8 +38,7 @@ test("denies access when Supabase client creation throws", async () => {
 });
 
 test("denies access when claims retrieval throws", async () => {
-  const supabase = createSupabase({ claimsThrow: new Error("auth unavailable") });
-  const result = await runWith(supabase);
+  const result = await runWith(createSupabase({ claimsThrow: new Error("auth unavailable") }));
   assert.equal(result.configured, true);
   assert.equal(result.authenticationAvailable, false);
   assert.equal(result.adminCheckAvailable, false);
