@@ -134,3 +134,27 @@ test("adapter treats redirects as errors and does not expose upstream payloads",
   assert.equal(result.error, "UPSTREAM_NETWORK_ERROR");
   assert.equal(JSON.stringify(result).includes("upstream secret body"), false);
 });
+
+
+test("adapter stops reading streamed responses as soon as the byte limit is exceeded", async () => {
+  let cancelled = false;
+  const payload = new TextEncoder().encode('{"message":{"items":[]}}');
+  const adapters = createMavisSourceDiscoveryAdapters({
+    maxResponseBytes: 8,
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      headers: { get: () => null },
+      body: {
+        getReader: () => ({
+          read: async () => ({ done: false, value: payload }),
+          cancel: async () => { cancelled = true; },
+          releaseLock: () => {},
+        }),
+      },
+    }),
+  });
+  const result = await adapters.searchCrossref("stream test");
+  assert.equal(result.error, "UPSTREAM_RESPONSE_TOO_LARGE");
+  assert.equal(cancelled, true);
+});
