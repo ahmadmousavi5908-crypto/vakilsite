@@ -15,7 +15,10 @@ export const runtime = "nodejs";
 export async function GET() {
   const access = await requireAdmin();
   if (!access.configured || !access.user || !access.isAdmin) {
-    return NextResponse.redirect(new URL("/admin/login", process.env.NEXT_PUBLIC_SITE_URL || "https://vakilahmadmousavi.ir"));
+    return NextResponse.json({ error: "دسترسی مدیر تأیید نشد." }, {
+      status: 403,
+      headers: { "Cache-Control": "no-store" },
+    });
   }
 
   let config;
