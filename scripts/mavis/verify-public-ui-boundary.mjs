@@ -48,15 +48,10 @@ function verifyPreservedArticleExtension(file) {
     if (baseReturnIndex < 0 || headReturnIndex < 0) return false;
 
     let headReturn = head.slice(headReturnIndex);
-    const start = headReturn.indexOf(startMarker);
-    const end = headReturn.indexOf(endMarker, start);
-    if (start < 0 || end < 0 || headReturn.indexOf(startMarker, start + 1) >= 0) return false;
+    const linkBlock = /\n[ \t]*\{\/\* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START \*\/\}[ \t]*\n[\s\S]*?\n[ \t]*\{\/\* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_END \*\/\}[ \t]*\n/;
+    if (!linkBlock.test(headReturn) || (headReturn.match(/MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START/g) || []).length !== 1) return false;
 
-    let afterMarker = end + endMarker.length;
-    if (headReturn.slice(afterMarker, afterMarker + 2) === "\r\n") afterMarker += 2;
-    else if (headReturn[afterMarker] === "\n") afterMarker += 1;
-
-    headReturn = headReturn.slice(0, start) + headReturn.slice(afterMarker);
+    headReturn = headReturn.replace(linkBlock, "\n");
     return base.slice(baseReturnIndex) === headReturn;
   }
 
