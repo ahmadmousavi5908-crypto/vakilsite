@@ -40,7 +40,11 @@ begin
   end if;
 
   v_provider := p_candidate->>'provider';
-  if v_provider not in ('crossref', 'semantic_scholar', 'openalex') then
+  if p_candidate->>'sourceType' is distinct from 'academic' then
+    raise exception using errcode = '22023', message = 'Unsupported source type';
+  end if;
+
+  if v_provider is null or v_provider not in ('crossref', 'semantic_scholar', 'openalex') then
     raise exception using errcode = '22023', message = 'Unsupported source provider';
   end if;
 
