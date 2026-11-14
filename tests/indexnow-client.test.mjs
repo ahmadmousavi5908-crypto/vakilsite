@@ -49,7 +49,7 @@ test("rejects external, private, query, and malformed URLs before network access
     "/admin",
     "/api/private",
     "/articles/example?draft=1",
-    "not a url",
+    "http://[::1",
   ]) {
     const result = await submitIndexNowUrls([url], {
       env,
