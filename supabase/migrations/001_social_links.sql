@@ -19,8 +19,12 @@ as $$
   );
 $$;
 
-revoke all on function public.is_site_admin() from public;
-grant execute on function public.is_site_admin() to authenticated;
+-- Remove Supabase default EXECUTE grants from roles that do not need the admin predicate.
+revoke all on function public.is_site_admin()
+  from public, anon, service_role;
+
+grant execute on function public.is_site_admin()
+  to authenticated;
 
 create table if not exists public.social_links (
   id uuid primary key default gen_random_uuid(),
