@@ -9,6 +9,20 @@ alter table public.mavis_sources
 alter table public.mavis_source_candidates
   add column if not exists search_vector tsvector;
 
+create or replace function public.mavis_normalize_search_text(p_value text)
+returns text
+language sql
+immutable
+parallel safe
+set search_path = ''
+as $function$
+  select translate(
+    translate(coalesce(p_value, ''), 'يىكۀةؤإأٱ', 'ییکههوااا'),
+    'ًٌٍَُِّْٰـ',
+    ''
+  );
+$function$;
+
 create or replace function public.refresh_mavis_article_search_vector()
 returns trigger
 language plpgsql
@@ -16,10 +30,10 @@ set search_path = ''
 as $function$
 begin
   new.search_vector :=
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.title, '')), 'A') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.excerpt, '')), 'B') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.content::text, '')), 'C') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(array_to_string(new.tags, ' '), '')), 'B');
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.title)), 'A') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.excerpt)), 'B') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.content::text)), 'C') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(array_to_string(new.tags, ' '))), 'B');
   return new;
 end;
 $function$;
@@ -31,10 +45,10 @@ set search_path = ''
 as $function$
 begin
   new.search_vector :=
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.title, '')), 'A') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.author_name, '')), 'B') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.publisher, '')), 'C') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.canonical_url, '')), 'D');
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.title)), 'A') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.author_name)), 'B') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.publisher)), 'C') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.canonical_url)), 'D');
   return new;
 end;
 $function$;
@@ -46,12 +60,12 @@ set search_path = ''
 as $function$
 begin
   new.search_vector :=
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.title, '')), 'A') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(array_to_string(new.authors, ' '), '')), 'B') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.venue, '')), 'C') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.publisher, '')), 'C') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.doi, '')), 'D') ||
-    setweight(to_tsvector('simple'::regconfig, coalesce(new.canonical_url, '')), 'D');
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.title)), 'A') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(array_to_string(new.authors, ' '))), 'B') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.venue)), 'C') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.publisher)), 'C') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.doi)), 'D') ||
+    setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(new.canonical_url)), 'D');
   return new;
 end;
 $function$;
@@ -77,26 +91,26 @@ create trigger mavis_source_candidates_refresh_search_vector
 -- Backfill records that existed before this index was introduced.
 update public.mavis_articles
 set search_vector =
-  setweight(to_tsvector('simple'::regconfig, coalesce(title, '')), 'A') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(excerpt, '')), 'B') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(content::text, '')), 'C') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(array_to_string(tags, ' '), '')), 'B');
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(title)), 'A') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(excerpt)), 'B') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(content::text)), 'C') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(array_to_string(tags, ' '))), 'B');
 
 update public.mavis_sources
 set search_vector =
-  setweight(to_tsvector('simple'::regconfig, coalesce(title, '')), 'A') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(author_name, '')), 'B') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(publisher, '')), 'C') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(canonical_url, '')), 'D');
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(title)), 'A') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(author_name)), 'B') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(publisher)), 'C') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(canonical_url)), 'D');
 
 update public.mavis_source_candidates
 set search_vector =
-  setweight(to_tsvector('simple'::regconfig, coalesce(title, '')), 'A') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(array_to_string(authors, ' '), '')), 'B') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(venue, '')), 'C') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(publisher, '')), 'C') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(doi, '')), 'D') ||
-  setweight(to_tsvector('simple'::regconfig, coalesce(canonical_url, '')), 'D');
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(title)), 'A') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(array_to_string(authors, ' '))), 'B') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(venue)), 'C') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(publisher)), 'C') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(doi)), 'D') ||
+  setweight(to_tsvector('simple'::regconfig, public.mavis_normalize_search_text(canonical_url)), 'D');
 
 create index if not exists mavis_articles_search_vector_gin_idx
   on public.mavis_articles using gin (search_vector);
