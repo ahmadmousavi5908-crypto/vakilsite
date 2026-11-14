@@ -1,4 +1,5 @@
-const LIMITS = { title: 300, slug: 180, excerpt: 1200, category: 100, author: 180, seoTitle: 300, seoDescription: 500, intro: 8000, heading: 240, body: 12000, tag: 60, tags: 40, sections: 80 };
+const LIMITS = { title: 300, slug: 180, excerpt: 1200, category: 100, author: 180, seoTitle: 300, seoDescription: 500, intro: 8000, heading: 240, body: 12000, tag: 60, tags: 40, sections: 80, warning: 2000, checklist: 60, checklistItem: 500 };
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function text(form, key) {
   const value = form.get(key);
@@ -22,9 +23,14 @@ export function parseMavisArticleDraftInput(form) {
   const author = text(form, "author_name");
   const seoTitle = text(form, "seo_title");
   const seoDescription = text(form, "seo_description");
+  const warning = text(form, "warning");
+  const checklist = text(form, "checklist").split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   const tags = [...new Set(text(form, "tags").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
   const headings = form.getAll("section_heading");
   const bodies = form.getAll("section_body");
+  const articleId = text(form, "article_id");
+  const expectedVersionText = text(form, "expected_version");
+  const expectedVersion = expectedVersionText ? Number(expectedVersionText) : null;
 
   if (!between(title, 3, LIMITS.title)) return { ok: false, error: "عنوان باید بین ۳ تا ۳۰۰ نویسه باشد." };
   if (!between(slug, 3, LIMITS.slug) || !/^[a-z0-9]+([a-z0-9-]*[a-z0-9])?$/.test(slug)) {
@@ -36,11 +42,18 @@ export function parseMavisArticleDraftInput(form) {
   if (author.length > LIMITS.author || seoTitle.length > LIMITS.seoTitle || seoDescription.length > LIMITS.seoDescription) {
     return { ok: false, error: "یکی از فیلدهای نویسنده یا سئو بیش از حد مجاز است." };
   }
+  if (warning.length > LIMITS.warning || checklist.length > LIMITS.checklist || checklist.some((item) => !between(item, 1, LIMITS.checklistItem))) {
+    return { ok: false, error: "هشدار حداکثر ۲۰۰۰ نویسه و چک‌لیست حداکثر ۶۰ مورد دارد." };
+  }
   if (tags.length > LIMITS.tags || tags.some((item) => !between(item, 1, LIMITS.tag))) {
     return { ok: false, error: "حداکثر ۴۰ برچسب و ۶۰ نویسه برای هر برچسب مجاز است." };
   }
   if (headings.length !== bodies.length || headings.length < 1 || headings.length > LIMITS.sections) {
     return { ok: false, error: "مقاله باید حداقل یک بخش معتبر داشته باشد." };
+  }
+  if (Boolean(articleId) !== Boolean(expectedVersionText)
+    || (articleId && (!UUID_PATTERN.test(articleId) || !Number.isSafeInteger(expectedVersion) || expectedVersion < 1))) {
+    return { ok: false, error: "شناسه یا شماره نسخه پیش‌نویس معتبر نیست." };
   }
 
   const sections = headings.map((heading, index) => ({
@@ -51,9 +64,13 @@ export function parseMavisArticleDraftInput(form) {
     return { ok: false, error: "عنوان هر بخش باید ۲ تا ۲۴۰ و متن آن ۱۰ تا ۱۲۰۰۰ نویسه باشد." };
   }
 
-  const payload = { slug, title, excerpt, category, tags, content: { intro, sections } };
+  const content = { intro, sections };
+  if (warning) content.warning = warning;
+  if (checklist.length) content.checklist = checklist;
+
+  const payload = { slug, title, excerpt, category, tags, content };
   if (author) payload.author_name = author;
   if (seoTitle) payload.seo_title = seoTitle;
   if (seoDescription) payload.seo_description = seoDescription;
-  return { ok: true, payload };
+  return { ok: true, payload, articleId: articleId || null, expectedVersion };
 }
