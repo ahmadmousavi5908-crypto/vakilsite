@@ -1,6 +1,6 @@
 begin;
 
-select plan(14);
+select plan(12);
 
 select ok(
   (select relrowsecurity from pg_class where oid = 'public.profiles'::regclass),
