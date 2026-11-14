@@ -8,7 +8,7 @@ import styles from "./MavisArticleEditor.module.css";
 
 const emptySection = () => ({ heading: "", body: "" });
 
-export default function MavisArticleEditor({ initialArticle = null }) {
+export default function MavisArticleEditor({ initialArticle = null, initialSources = [], sourceLoadError = "" }) {
   const [sections, setSections] = useState(() =>
     Array.isArray(initialArticle?.content?.sections) && initialArticle.content.sections.length
       ? initialArticle.content.sections.map((section) => ({ heading: section.heading || "", body: section.body || "" }))
@@ -91,6 +91,31 @@ export default function MavisArticleEditor({ initialArticle = null }) {
         </div>
         <Link href="/admin/mavis/articles" className={styles.backLink}>بازگشت به کتابخانه</Link>
       </header>
+
+      {sourceLoadError ? <p className={styles.sourceError} role="status">{sourceLoadError}</p> : null}
+      {initialSources.length ? (
+        <section className={styles.sourcePanel} aria-labelledby="mavis-source-metadata-title">
+          <header><div><span className={styles.eyebrow}>SOURCE PROVENANCE · READ ONLY</span><h3 id="mavis-source-metadata-title">فراداده و منابع واردشده</h3><p>این اطلاعات از رکورد منبع آمده‌اند؛ تغییر متن مقاله، مجوز بازنشر را تغییر نمی‌دهد.</p></div><span className={styles.sourceCount}>{initialSources.length.toLocaleString("fa-IR")} منبع</span></header>
+          <div className={styles.sourceList}>
+            {initialSources.map((source) => (
+              <article className={styles.sourceCard} key={source.id}>
+                <div className={styles.sourceTitle}><strong>{source.title}</strong><span>{source.relation_type === "research_background" ? "پیشینه پژوهش" : source.relation_type === "primary_authority" ? "مستند اولیه" : "ارجاع علمی"}</span></div>
+                <dl>
+                  <div><dt>نویسنده</dt><dd>{source.author_name || "ثبت نشده"}</dd></div>
+                  <div><dt>ناشر</dt><dd>{source.publisher || "ثبت نشده"}</dd></div>
+                  <div><dt>تاریخ انتشار</dt><dd>{source.published_on ? source.publication_date_precision === "year" ? source.published_on.slice(0, 4) : source.publication_date_precision === "month" ? source.published_on.slice(0, 7) : source.published_on : "نامشخص"}</dd></div>
+                  <div><dt>شناسه منبع</dt><dd dir="ltr">{source.external_id || "ثبت نشده"}</dd></div>
+                  <div><dt>حقوق استفاده</dt><dd data-rights={source.rights_status}>{source.rights_status === "licensed" ? "دارای مجوز ثبت‌شده" : source.rights_status === "public_domain" ? "مالکیت عمومی تأییدشده" : source.rights_status === "permission_denied" ? "عدم اجازه بازنشر" : source.rights_status === "metadata_only" ? "فقط فراداده" : source.rights_status === "link_only" ? "فقط پیوند و ارجاع" : "نامشخص · نیازمند بررسی"}</dd></div>
+                  {source.license_name ? <div><dt>مجوز</dt><dd>{source.license_name}</dd></div> : null}
+                </dl>
+                <a href={source.canonical_url} target="_blank" rel="noopener noreferrer">مشاهده رکورد اصلی ↗</a>
+                {source.permission_evidence_ref ? <small className={styles.sourceEvidence}>مدرک مجوز: {source.permission_evidence_ref}</small> : null}
+                {source.rights_review_note ? <small className={styles.sourceEvidence}>یادداشت بررسی: {source.rights_review_note}</small> : null}
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <form className={styles.form} onSubmit={handleSubmit}>
         <input type="hidden" name="article_id" value={articleId} />
