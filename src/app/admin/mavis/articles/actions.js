@@ -99,13 +99,35 @@ export async function searchMavisEditorialSources(rawQuery) {
     }
   }
 
-  return {
-    ok: true,
-    query,
-    results: results.slice(0, 15),
-    providerErrors,
-    searchedAt: new Date().toISOString(),
-  };
+  const normalizedCandidates = results.slice(0, 15);
+  if (!normalizedCandidates.length) {
+    return { ok: true, query, results: [], providerErrors, searchedAt: new Date().toISOString() };
+  }
+
+  try {
+    const { data, error } = await access.supabase.rpc("store_mavis_source_candidates", {
+      p_candidates: normalizedCandidates,
+    });
+    if (error?.code === "42501") return { ok: false, error: "دسترسی مدیر برای ذخیره نتایج جست‌وجو تأیید نشد." };
+    if (error?.code === "22023") return { ok: false, error: "فراداده دریافتی از منابع معتبر نبود و در صف ذخیره نشد." };
+    if (error?.code === "42883" || error?.code === "PGRST202") {
+      return { ok: false, error: "صف پایدار منابع هنوز روی پایگاه داده فعال نشده است." };
+    }
+    if (error || !Array.isArray(data?.candidates)) {
+      return { ok: false, error: "نتایج جست‌وجو ذخیره نشدند؛ برای جلوگیری از گم‌شدن منابع، آن‌ها را موقت نمایش نمی‌دهیم." };
+    }
+
+    return {
+      ok: true,
+      query,
+      results: data.candidates,
+      providerErrors,
+      searchedAt: new Date().toISOString(),
+      persisted: true,
+    };
+  } catch {
+    return { ok: false, error: "ذخیره امن نتایج جست‌وجو در صف منابع انجام نشد." };
+  }
 }
 
 
@@ -361,4 +383,62 @@ export async function rollbackMavisArticleVersion(articleId, expectedCurrentVers
     articleVersion: result.data.articleVersion,
     rollbackOfVersion: result.data.rollbackOfVersion,
   } : result;
+}
+
+export async function importMavisSourceCandidateById(candidateId) {
+  if (typeof candidateId !== "string" || !/^[0-9a-f-]{36}$/i.test(candidateId)) {
+    return { ok: false, error: "شناسه منبع معتبر نیست." };
+  }
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, error: "برای واردکردن منبع، ورود با حساب مدیر الزامی است." };
+  }
+  try {
+    const { data, error } = await access.supabase.rpc("import_mavis_source_candidate_from_queue", {
+      p_candidate_id: candidateId,
+    });
+    if (error?.code === "42501") return { ok: false, error: "دسترسی مدیر برای واردکردن منبع تأیید نشد." };
+    if (error?.code === "55000") return { ok: false, error: "این منبع در وضعیت قابل واردکردن نیست." };
+    if (error?.code === "P0002") return { ok: false, error: "منبع در صف پیدا نشد." };
+    if (error?.code === "42883" || error?.code === "PGRST202") return { ok: false, error: "واردکردن از صف منابع هنوز فعال نشده است." };
+    if (error || !data || typeof data.articleId !== "string") return { ok: false, error: "ساخت پیش‌نویس از منبع انجام نشد." };
+    return { ok: true, articleId: data.articleId, created: data.created === true, status: data.status };
+  } catch {
+    return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
+  }
+}
+
+export async function ignoreMavisSourceCandidate(candidateId, note = "") {
+  if (typeof candidateId !== "string" || !/^[0-9a-f-]{36}$/i.test(candidateId)
+    || typeof note !== "string" || note.length > 1000) {
+    return { ok: false, error: "اطلاعات بایگانی منبع معتبر نیست." };
+  }
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, error: "برای بایگانی منبع، ورود با حساب مدیر الزامی است." };
+  }
+  try {
+    const { data, error } = await access.supabase.rpc("ignore_mavis_source_candidate", {
+      p_candidate_id: candidateId,
+      p_note: note,
+    });
+    if (error?.code === "42501") return { ok: false, error: "دسترسی مدیر تأیید نشد." };
+    if (error?.code === "55000") return { ok: false, error: "منبع واردشده قابل بایگانی نیست." };
+    if (error?.code === "P0002") return { ok: false, error: "منبع در صف پیدا نشد." };
+    if (error?.code === "42883" || error?.code === "PGRST202") return { ok: false, error: "بایگانی منبع هنوز فعال نشده است." };
+    if (error || data?.status !== "ignored") return { ok: false, error: "بایگانی منبع انجام نشد." };
+    return { ok: true, status: data.status };
+  } catch {
+    return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
+  }
 }

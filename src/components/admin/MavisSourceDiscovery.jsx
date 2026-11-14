@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { importMavisSourceCandidate, searchMavisEditorialSources } from "../../app/admin/mavis/articles/actions";
+import { importMavisSourceCandidateById, searchMavisEditorialSources } from "../../app/admin/mavis/articles/actions";
 import styles from "./MavisSourceDiscovery.module.css";
 
 const PROVIDER_LABELS = {
@@ -22,7 +22,7 @@ const PROVIDER_ERRORS = {
 };
 
 function candidateKey(item) {
-  return item.doi ? `doi:${item.doi.toLowerCase()}` : `${item.provider}:${item.providerRecordId}`;
+  return item.id || (item.doi ? `doi:${item.doi.toLowerCase()}` : `${item.provider}:${item.providerRecordId}`);
 }
 
 export default function MavisSourceDiscovery() {
@@ -69,7 +69,7 @@ export default function MavisSourceDiscovery() {
     setImportingKey(key);
     setError("");
     try {
-      const result = await importMavisSourceCandidate(item);
+      const result = await importMavisSourceCandidateById(item.id);
       if (!result?.ok) {
         setError(result?.error || "ساخت پیش‌نویس انجام نشد.");
         return;
@@ -159,7 +159,11 @@ export default function MavisSourceDiscovery() {
                       <td className={styles.actions}>
                         <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">مشاهده منبع</a>
                         <button type="button" onClick={() => copyMetadata(item)}>{copiedKey === candidateKey(item) ? "کپی شد" : "کپی فراداده"}</button>
-                        {importedArticles[candidateKey(item)] ? (
+                        {item.state === "imported" && item.articleId ? (
+                          <a href={`/admin/mavis/articles/${item.articleId}/edit`}>بازکردن پیش‌نویس</a>
+                        ) : item.state === "ignored" ? (
+                          <span className={styles.rights}>بایگانی‌شده</span>
+                        ) : importedArticles[candidateKey(item)] ? (
                           <a href={`/admin/mavis/articles/${importedArticles[candidateKey(item)]}/edit`}>بازکردن پیش‌نویس</a>
                         ) : (
                           <button type="button" disabled={Boolean(importingKey)} onClick={() => importCandidate(item)}>

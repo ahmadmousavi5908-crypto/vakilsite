@@ -4,6 +4,7 @@ import { articles } from "../../../../data/articles";
 import MavisArticleCatalog from "../../../../components/admin/MavisArticleCatalog";
 import MavisDraftList from "../../../../components/admin/MavisDraftList";
 import MavisSourceDiscovery from "../../../../components/admin/MavisSourceDiscovery";
+import MavisSourceCandidateQueue from "../../../../components/admin/MavisSourceCandidateQueue";
 import MavisReviewQueue from "../../../../components/admin/MavisReviewQueue";
 import MavisPublicationQueue from "../../../../components/admin/MavisPublicationQueue";
 import MavisArchiveQueue from "../../../../components/admin/MavisArchiveQueue";
@@ -132,6 +133,50 @@ export default async function MavisArticlesPage({ searchParams }) {
     archiveError = "ارتباط امن با پایگاه داده برقرار نشد.";
   }
 
+
+  const candidateCursorValue = typeof params?.candidateCursor === "string" ? params.candidateCursor : "";
+  const candidateCursor = decodeMavisArticleCursor(candidateCursorValue);
+  const requestedCandidateState = typeof params?.candidateState === "string" ? params.candidateState : "all";
+  const candidateState = ["discovered", "imported", "ignored"].includes(requestedCandidateState) ? requestedCandidateState : "all";
+  let candidateRows = [];
+  let nextCandidateCursor = null;
+  let candidateError = null;
+
+  if (candidateCursorValue && !candidateCursor) {
+    candidateError = "نشانی صفحه‌بندی صف منابع معتبر نیست. از صفحه اول شروع کنید.";
+  } else {
+    try {
+      let candidateQuery = access.supabase
+        .from("mavis_source_candidates")
+        .select("id, provider, provider_record_id, doi, title, authors, publisher, venue, publication_date_text, state, canonical_url, imported_article_id, updated_at")
+        .order("updated_at", { ascending: false })
+        .order("id", { ascending: false })
+        .limit(26);
+
+      if (candidateState !== "all") candidateQuery = candidateQuery.eq("state", candidateState);
+      if (candidateCursor) {
+        candidateQuery = candidateQuery.or(`updated_at.lt.${candidateCursor.updatedAt},and(updated_at.eq.${candidateCursor.updatedAt},id.lt.${candidateCursor.id})`);
+      }
+
+      const { data, error } = await candidateQuery;
+      if (error) {
+        candidateError = error.code === "42P01" || error.code === "PGRST205"
+          ? "صف پایدار منابع هنوز روی این پایگاه داده فعال نشده است؛ migration شماره ۰۱۵ باید اعمال شود."
+          : "خواندن صف منابع انجام نشد. اتصال پایگاه داده و دسترسی مدیر را بررسی کنید.";
+      } else {
+        const rows = Array.isArray(data) ? data : [];
+        if (rows.length > 25) {
+          nextCandidateCursor = encodeMavisArticleCursor(rows[24]);
+          candidateRows = rows.slice(0, 25);
+        } else {
+          candidateRows = rows;
+        }
+      }
+    } catch {
+      candidateError = "ارتباط امن با پایگاه داده برای خواندن صف منابع برقرار نشد.";
+    }
+  }
+
   return (
     <div className="admin-shell" dir="rtl">
       <aside className="admin-sidebar">
@@ -165,6 +210,7 @@ export default async function MavisArticlesPage({ searchParams }) {
             <div className="admin-status"><i /> دسترسی مدیر تأیید شده</div>
           </section>
           <MavisSourceDiscovery />
+          <MavisSourceCandidateQueue rows={candidateRows} nextCursor={nextCandidateCursor} stateFilter={candidateState} error={candidateError} />
           <MavisReviewQueue rows={reviewRows} error={reviewError} />
           <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
           <MavisArchiveQueue rows={archivedRows} error={archiveError} />
