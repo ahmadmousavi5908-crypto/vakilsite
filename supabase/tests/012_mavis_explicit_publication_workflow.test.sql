@@ -1,5 +1,5 @@
 begin;
-select plan(30);
+select plan(31);
 
 select has_function('public', 'publish_mavis_article', array['uuid','integer'], 'publish RPC exists');
 select has_function('public', 'unpublish_mavis_article', array['uuid','integer'], 'unpublish RPC exists');
@@ -55,8 +55,19 @@ select is(
  'approved','article remains approved before explicit publication'
 );
 
+select set_config('test.publication_article_id', (select article_id::text from publication_fixture), true);
+reset role;
+set local role anon;
+select is(
+ (select count(*)::integer from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
+ 0,'anonymous readers cannot access an approved but unpublished article'
+);
+reset role;
+set local role authenticated;
+set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
+
 select throws_ok(
- $$select public.publish_mavis_article((select article_id from publication_fixture),2)$$,
+ $select public.publish_mavis_article((select article_id from publication_fixture),2)$,
  '40001','Article version changed; refresh before publication','stale version cannot be published'
 );
 select is(
@@ -75,7 +86,6 @@ select is(
  (select count(*)::integer from public.mavis_article_audit_events where article_id=(select article_id from publication_fixture) and event_type='article_published' and article_version=1),
  1,'publication creates an audit event for the exact version'
 );
-select set_config('test.publication_article_id', (select article_id::text from publication_fixture), true);
 reset role;
 set local role anon;
 select is(
