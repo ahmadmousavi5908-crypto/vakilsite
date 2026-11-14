@@ -90,6 +90,7 @@ export default async function ArticlesPage({ searchParams }) {
               </div>
             </details>)}
           </div>
+          {/* MAVIS_PUBLISHED_CMS_SECTION_START */}
           {publishedArticles.length ? (
             <>
               <div className="editorial-section-heading editorial-all-heading">
@@ -114,6 +115,7 @@ export default async function ArticlesPage({ searchParams }) {
               {nextCursor ? <nav className="editorial-db-pagination" aria-label="صفحه‌بندی مقالات منتشرشده"><Link href={"/articles?cursor=" + encodeURIComponent(nextCursor)}>مقالات قدیمی‌تر ←</Link></nav> : null}
             </>
           ) : null}
+          {/* MAVIS_PUBLISHED_CMS_SECTION_END */}
           <aside className="editorial-disclaimer"><span>نکته مهم</span><p>این مطالب برای آگاهی عمومی‌اند و جایگزین بررسی اختصاصی پرونده نیستند. قوانین و رویه‌ها ممکن است تغییر کنند؛ تصمیم درباره هر پرونده باید با توجه به اسناد، تاریخ‌ها، مرجع صالح و شرایط همان موضوع گرفته شود.</p></aside>
         </div>
       </section>
