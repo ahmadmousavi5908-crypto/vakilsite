@@ -1,16 +1,16 @@
 # MAVIS Article CMS — Data Model and Security Design
 
-**Status:** Design proposal only. No migration has been created or applied.
+**Status:** Initial schema and guarded draft-write foundation implemented in migrations 007–008 and covered by local pgTAP tests. Production remains unchanged.
 **Target branch:** `feature/mavis-cms-inventory-preview-20261114`
 **Scope:** Editorial articles and their source/provenance records. This design does not cover private client files, legal casework, or public intake conversations.
 
 ## 1. Decisions and non-negotiable boundaries
 
 1. The existing `src/data/articles.js` remains the public content source until a database-backed read path is separately implemented, tested, and explicitly released.
-2. The current admin catalog remains read-only. This document does not authorize editing, importing, approving, publishing, archiving, migration, or deployment.
+2. The current admin catalog remains read-only until the authenticated draft editor and its end-to-end tests are delivered. Migration 008 adds only an administrator-checked draft save operation; it does not import, approve, publish, archive, or deploy content.
 3. Imported legacy articles start as `draft`. Importing a row must never imply legal review, copyright permission, approval, or publication.
 4. Every publication requires an explicit approval record for the exact current article version. A status update alone is not approval.
-5. No CMS write path may use a Supabase secret/service-role key. Server-side code uses the signed-in administrator's session and database authorization. A service-role credential bypasses RLS and is not an authorization boundary.
+5. No CMS write path may use a Supabase secret/service-role key. The guarded draft RPC uses the signed-in administrator's JWT, checks the database admin predicate, and atomically writes the draft, immutable version, and audit event. A service-role credential bypasses RLS and is not an authorization boundary.
 6. Public reads are limited to published rows. Admin reads and mutations are independently authorized in both the server data-access layer and PostgreSQL.
 7. Article content, source metadata, permission evidence, approval, version history, and audit events are separate concepts. A source URL alone is not proof of a republication licence.
 8. Public-site styling and existing article URLs must remain unchanged during the CMS backend rollout.
