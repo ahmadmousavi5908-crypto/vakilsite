@@ -54,7 +54,9 @@ test("encrypts refresh tokens with authenticated encryption and rejects tamperin
   const encrypted = encryptSearchConsoleRefreshToken("google-refresh-token-secret", env);
   assert.notEqual(encrypted, "google-refresh-token-secret");
   assert.equal(decryptSearchConsoleRefreshToken(encrypted, env), "google-refresh-token-secret");
-  assert.throws(() => decryptSearchConsoleRefreshToken(encrypted.slice(0, -1) + "A", env));
+  const parts = encrypted.split(".");
+  parts[2] = (parts[2][0] === "A" ? "B" : "A") + parts[2].slice(1);
+  assert.throws(() => decryptSearchConsoleRefreshToken(parts.join("."), env));
   assert.throws(() => decryptSearchConsoleRefreshToken(encrypted, { ...env, MAVIS_GSC_TOKEN_ENCRYPTION_KEY: "b".repeat(64) }));
 });
 
