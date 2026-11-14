@@ -2,9 +2,16 @@ import { articles } from "../data/articles";
 import { practiceAreas } from "../data/practice-areas";
 import { getIndexableLegalRecords } from "../lib/legal-library";
 import { getSiteUrl } from "../lib/site-url.mjs";
-import { buildSitemapEntries } from "../lib/sitemap.mjs";
+import { createPublicContentClient } from "../lib/supabase/public-content.js";
+import {
+  getPublishedMavisArticleSitemapEntries,
+  PublishedMavisSitemapCapacityError,
+} from "../lib/mavis/published-article-sitemap.mjs";
+import { buildSitemapEntries, MAX_SITEMAP_URLS } from "../lib/sitemap.mjs";
 
-export default function sitemap() {
+export const revalidate = 3600;
+
+export default async function sitemap() {
   const siteUrl = getSiteUrl(process.env, { required: true });
   const entries = [
     { path: "/", changeFrequency: "weekly", priority: 1 },
@@ -34,6 +41,19 @@ export default function sitemap() {
       priority: 0.7,
     })),
   ];
+
+  const publicClient = createPublicContentClient();
+  if (publicClient) {
+    try {
+      const availableSlots = MAX_SITEMAP_URLS - entries.length;
+      entries.push(...await getPublishedMavisArticleSitemapEntries(publicClient, {
+        maxEntries: availableSlots,
+      }));
+    } catch (error) {
+      if (error instanceof PublishedMavisSitemapCapacityError) throw error;
+      console.warn("MAVIS CMS sitemap entries are unavailable; retaining static sitemap entries.");
+    }
+  }
 
   return buildSitemapEntries(entries, siteUrl);
 }
