@@ -187,3 +187,37 @@ Do not create or apply the CMS migration until:
 - Supabase Row Level Security: https://supabase.com/docs/guides/database/postgres/row-level-security
 - Supabase Securing the Data API: https://supabase.com/docs/guides/api/securing-your-api
 - Supabase pgTAP RLS testing: https://supabase.com/docs/guides/database/postgres/testing-row-level-security
+
+
+## 7. pgTAP regression test added
+
+A transaction-scoped test file now exists at:
+
+`supabase/tests/001_profiles_admin_rls.test.sql`
+
+It contains 12 assertions covering:
+
+- RLS enabled on `public.profiles`.
+- `is_site_admin()` SECURITY DEFINER and empty `search_path`.
+- Effective EXECUTE privileges for anon, authenticated, and service_role.
+- Absence of profile INSERT/UPDATE/DELETE/ALL policies.
+- Editor cannot be identified as an administrator and sees only their own profile.
+- Administrator is identified correctly and can read both seeded profiles.
+- Anonymous role cannot read the seeded profiles.
+
+The test inserts synthetic users and profiles inside a transaction and rolls everything back.
+
+### Execution status and command
+
+The repository currently has no `supabase/config.toml` and no database-test workflow. Therefore the SQL test has been added but **has not been executed** against PostgreSQL. Do not treat it as a passing database test.
+
+After initializing/configuring a local Supabase stack in an isolated development workspace, run:
+
+```sh
+supabase start
+supabase test db
+```
+
+Review the output for the specific file and `Result: PASS`. Do not run `supabase db reset` against any shared or production database; it recreates the local database and can destroy its data.
+
+The test intentionally does not mutate any existing migration or production database. If it exposes a missing table grant or policy mismatch, inspect the failure first; do not weaken the test or add broad grants merely to make it pass.
