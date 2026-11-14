@@ -20,14 +20,16 @@ Provider results are candidates, not verified legal authority and not permission
 ### Crossref
 - REST base: `https://api.crossref.org`; Works search is metadata discovery.
 - Public pool currently documents 5 requests/second and concurrency 1.
-- Polite pool currently documents 10 requests/second and concurrency 5; include a valid `mailto` parameter or `agent` header.
+- The current Crossref access/authentication page lists the polite pool as 10 requests/second with concurrency 3. A Crossref community update from December 2025 reports concurrency 5, so the published sources are not fully aligned.
+- Include a valid `mailto` parameter or `agent` header to use the polite pool.
 - A 429 response means the adapter must honor rate-limit guidance and retry only within a bounded policy.
-- Initial implementation should be more conservative than the published ceiling: one in-flight request per process and bounded retries.
+- Initial implementation deliberately avoids depending on the disputed ceiling: one in-flight request per process and bounded retries.
 - Crossref metadata may include abstracts that are subject to copyright. Do not fetch or store abstract/full text by default.
 
 Official references:
 - https://www.crossref.org/documentation/retrieve-metadata/rest-api
 - https://www.crossref.org/documentation/retrieve-metadata/rest-api/access-and-authentication
+- https://community.crossref.org/t/updates-to-rest-api-rate-limits/14872
 
 ### Semantic Scholar
 - Academic Graph API supports paper relevance search and explicit field selection.
