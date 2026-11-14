@@ -52,12 +52,12 @@ select 'metadata', (public.import_mavis_source_candidate(
 )->>'articleId')::uuid;
 
 select throws_ok(
- $select public.submit_mavis_article_for_review((select article_id from review_fixtures where kind='metadata'),1)$,
+ $$select public.submit_mavis_article_for_review((select article_id from review_fixtures where kind='metadata'),1)$$,
  '55000','Metadata-only draft requires editorial completion','metadata-only placeholder drafts cannot enter review'
 );
 
 select throws_ok(
- $select public.submit_mavis_article_for_review((select article_id from review_fixtures where kind='approval'),2)$,
+ $$select public.submit_mavis_article_for_review((select article_id from review_fixtures where kind='approval'),2)$$,
  '40001','Article version changed; refresh before review','stale version cannot be submitted'
 );
 
