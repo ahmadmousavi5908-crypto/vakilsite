@@ -221,3 +221,12 @@ supabase test db
 Review the output for the specific file and `Result: PASS`. Do not run `supabase db reset` against any shared or production database; it recreates the local database and can destroy its data.
 
 The test intentionally does not mutate any existing migration or production database. If it exposes a missing table grant or policy mismatch, inspect the failure first; do not weaken the test or add broad grants merely to make it pass.
+
+
+### Correction after the first real local PostgreSQL run
+
+The first isolated run successfully applied all four tracked migrations and executed 33 pgTAP assertions. The rate-limit suite passed all 21 assertions. Two profile-test assertions failed because `has_function_privilege()` reports **effective** privileges, including inherited role memberships; it does not prove a direct ACL grant.
+
+The profile suite is being corrected to inspect `pg_proc.proacl` through `aclexplode()` for direct grants to `anon`, `service_role`, and `PUBLIC`, while separately testing the anonymous request's actual result from `is_site_admin()`. The test count is now 14. This is a test-precision correction, not a relaxation of the authorization policy.
+
+The first run also exposed a seed path typo: Supabase resolved `./supabase/seed.sql` as `supabase/supabase/seed.sql`. The config now uses `./seed.sql`, relative to the Supabase directory. The rerun is the acceptance gate.
