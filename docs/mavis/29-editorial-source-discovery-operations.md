@@ -7,8 +7,11 @@
 - Crossref and Semantic Scholar can be queried when upstream services are available. OpenAlex is intentionally disabled until a real usage-budget ledger is implemented and explicitly enabled.
 - Search requests are sequential, bounded to 5 candidates per provider, and use the existing authenticated admin session.
 - A dedicated durable per-admin fixed-window limiter allows at most 30 discovery requests per 60 seconds.
-- The UI merges duplicate DOI records, filters by provider, displays provenance and rights status, and lets the administrator copy normalized metadata.
+- The UI merges duplicate DOI records, filters by provider, displays provenance and rights status, and lets the administrator copy metadata or explicitly create a draft.
 - The draft inventory provides in-page text/category/slug filtering and sortable columns while preserving server-side keyset pagination.
+- Drafts can be submitted for review only against their current immutable version. The review queue displays the exact version snapshot and its linked source rights metadata.
+- Review decisions (`approved`, `changes_requested`, `rejected`) are append-only and bind to the exact current version. Change requests and rejections require an explanatory note.
+- Approval only changes the editorial status to `approved`; it does not publish or expose the article publicly.
 
 ## Runtime configuration
 
@@ -29,7 +32,7 @@ Never place provider keys in browser variables, URLs, source files, logs, or PR 
 - The administrator can explicitly import a selected candidate into a metadata-only draft. The atomic import stores source provenance, an immutable version-one snapshot, and an audit event.
 - The import RPC ignores client-supplied rights claims and always stores `rights_status=unknown`. It never fetches or copies source text, abstracts, PDFs, or images.
 - Re-importing a source with an existing generated draft returns that draft rather than creating a duplicate.
-- Imported drafts are marked `origin_type=metadata_only`, remain in `draft`, and contain an explicit editorial-completion warning. They cannot be approved or published by this operation.
+- Imported drafts are marked `origin_type=metadata_only`, remain in `draft`, and contain an explicit editorial-completion warning. Import never approves or publishes.
 
 ## Security and reliability
 
@@ -47,6 +50,7 @@ Never place provider keys in browser variables, URLs, source files, logs, or PR 
 - Admin route: `/admin/mavis/articles`.
 - Source discovery panel appears above the database draft grid.
 - The draft grid is spreadsheet-like: quick search, status filter, sortable title/category/version/update columns, and server-side keyset pagination.
+- The review queue is available on the same admin page; each item opens a read-only immutable snapshot before a decision is recorded.
 - Public `/articles` remains the existing editorial accordion page and is not changed in this slice. Database-backed public listing/detail routes must wait until the CMS schema and publication workflow are approved and applied in the target environment.
 
 ## Verification commands
@@ -63,4 +67,4 @@ npm run build
 - Candidate queue with durable discovery history and administrator triage states.
 - Cross-provider distributed leases and global provider concurrency coordination.
 - AI-assisted metadata/content completion.
-- Review/approval, publication, archive, rollback, and public database-backed article pages.
+- Publication, archive, rollback, and public database-backed article pages.
