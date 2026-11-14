@@ -9,6 +9,12 @@
 - The automatic production workflow is `.github/workflows/deploy-cloudflare.yml`. It deploys on pushes to `main`.
 - The manual workflow `.github/workflows/deploy-cloudflare-production.yml` currently checks out the older `work/mother-two-updated-mavis-20261110` branch. Do not use that manual workflow to release the MAVIS aggregate PR; it can deploy an older application revision.
 
+## Observed production baseline
+
+The latest main-branch Cloudflare production deployment visible during this review was workflow run #16, for commit `4fea2058a6c521391dff3a80e72f5be84149654a`, completed successfully on 2026-11-13. Its log reported a 1.51 MiB compressed Worker bundle and a 19 ms Worker startup time.
+
+That same deployment log showed `INDEXNOW_KEY` was empty. The build explicitly skipped generation of `/indexnow-key.txt` and reported that IndexNow URL notifications remain disabled. This is direct deployment-log evidence, not an assumption. To activate IndexNow, set the key both as a GitHub Actions repository secret for build-time verification-file generation and as a Cloudflare Worker runtime secret for server-side URL submission.
+
 ## Build-time configuration versus Worker runtime configuration
 
 These are separate environments. A GitHub Actions secret exposed to the deployment shell is not automatically a Cloudflare Worker runtime binding.
