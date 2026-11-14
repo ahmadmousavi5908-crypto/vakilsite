@@ -44,7 +44,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
         article.updated_at,
       ]),
     ];
-    const blob = new Blob(["\\uFEFF", createEditorialSpreadsheetTsv(exportRows)], {
+    const blob = new Blob(["\uFEFF", createEditorialSpreadsheetTsv(exportRows)], {
       type: "text/tab-separated-values;charset=utf-8",
     });
     const url = URL.createObjectURL(blob);
