@@ -49,7 +49,7 @@ export async function saveMavisArticleDraft(formData) {
 
 
 export async function searchMavisLocalArchive(rawQuery) {
-  const query = typeof rawQuery === "string" ? rawQuery.trim().replace(/\\s+/g, " ") : "";
+  const query = typeof rawQuery === "string" ? rawQuery.trim().replace(/\s+/g, " ") : "";
   if (query.length < 2 || query.length > 200) {
     return { ok: false, error: "عبارت جست‌وجو باید بین ۲ تا ۲۰۰ نویسه باشد." };
   }
