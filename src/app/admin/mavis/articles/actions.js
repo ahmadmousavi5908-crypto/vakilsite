@@ -83,7 +83,6 @@ export async function searchMavisEditorialSources(rawQuery) {
   const providers = [
     ["crossref", adapters.searchCrossref],
     ["semantic_scholar", adapters.searchSemanticScholar],
-    ["openalex", adapters.searchOpenAlex],
   ];
   const results = [];
   const providerErrors = [];
@@ -97,6 +96,23 @@ export async function searchMavisEditorialSources(rawQuery) {
     } catch {
       providerErrors.push({ provider, error: "UPSTREAM_UNAVAILABLE" });
     }
+  }
+
+  // Reserve a globally shared daily budget before any billable OpenAlex search.
+  try {
+    const { data, error } = await access.supabase.rpc("consume_mavis_openalex_daily_budget");
+    const budget = Array.isArray(data) ? data[0] : data;
+    if (error) {
+      providerErrors.push({ provider: "openalex", error: "BUDGET_CONTROL_UNAVAILABLE" });
+    } else if (!budget?.allowed) {
+      providerErrors.push({ provider: "openalex", error: "DAILY_BUDGET_EXHAUSTED" });
+    } else {
+      const result = await adapters.searchOpenAlex(query, 5);
+      if (result.ok) results.push(...result.candidates);
+      else providerErrors.push({ provider: "openalex", error: result.error });
+    }
+  } catch {
+    providerErrors.push({ provider: "openalex", error: "BUDGET_CONTROL_UNAVAILABLE" });
   }
 
   const normalizedCandidates = results.slice(0, 15);
