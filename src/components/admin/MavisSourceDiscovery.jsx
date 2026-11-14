@@ -29,7 +29,7 @@ function candidateKey(item) {
 
 export default function MavisSourceDiscovery() {
   const [query, setQuery] = useState("");
-  const [mode, setMode] = useState("online");
+  const [mode, setMode] = useState("all");
   const [localResponse, setLocalResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
@@ -62,6 +62,18 @@ export default function MavisSourceDiscovery() {
         const result = await searchMavisLocalArchive(query);
         if (!result?.ok) setError(result?.error || "جست‌وجو در آرشیو انجام نشد.");
         else setLocalResponse(result);
+      } else if (mode === "all") {
+        const [localResult, onlineResult] = await Promise.all([
+          searchMavisLocalArchive(query),
+          searchMavisEditorialSources(query),
+        ]);
+        if (localResult?.ok) setLocalResponse(localResult);
+        if (onlineResult?.ok) setResponse(onlineResult);
+        const failures = [
+          !localResult?.ok ? localResult?.error || "جست‌وجوی آرشیو انجام نشد." : "",
+          !onlineResult?.ok ? onlineResult?.error || "جست‌وجوی منابع آنلاین انجام نشد." : "",
+        ].filter(Boolean);
+        if (failures.length) setError(failures.join(" "));
       } else {
         const result = await searchMavisEditorialSources(query);
         if (!result?.ok) setError(result?.error || "جست‌وجو انجام نشد.");
@@ -125,22 +137,23 @@ export default function MavisSourceDiscovery() {
       </header>
 
       <div className={styles.modeTabs} role="group" aria-label="نوع جست‌وجو">
-        <button type="button" className={mode === "online" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("online")}>جست‌وجوی آنلاین منابع</button>
-        <button type="button" className={mode === "offline" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("offline")}>جست‌وجو در آرشیو داخلی</button>
+        <button type="button" className={mode === "all" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("all")}>جست‌وجوی یکپارچه</button>
+        <button type="button" className={mode === "online" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("online")}>فقط منابع آنلاین</button>
+        <button type="button" className={mode === "offline" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("offline")}>فقط آرشیو داخلی</button>
       </div>
 
       <form className={styles.searchForm} onSubmit={handleSearch}>
         <label htmlFor="mavis-source-query">موضوع، عنوان مقاله یا کلیدواژه</label>
         <div className={styles.searchRow}>
           <input id="mavis-source-query" value={query} onChange={(event) => setQuery(event.target.value)} minLength={2} maxLength={160} placeholder="مثلاً مسئولیت مدنی ناشی از تقصیر..." required />
-          <button type="submit" disabled={loading || query.trim().length < 2}>{loading ? "در حال جست‌وجو..." : mode === "offline" ? "جست‌وجو در آرشیو داخلی" : "جست‌وجوی منابع آنلاین"}</button>
+          <button type="submit" disabled={loading || query.trim().length < 2}>{loading ? "در حال جست‌وجو..." : mode === "offline" ? "جست‌وجو در آرشیو داخلی" : mode === "online" ? "جست‌وجوی منابع آنلاین" : "جست‌وجوی یکپارچه"}</button>
         </div>
-        <small>{mode === "offline" ? "بدون اتصال به سرویس خارجی؛ جست‌وجو در مقالات، منابع و نتایج ذخیره‌شده داخل MAVIS." : "جست‌وجو در منابع علمی آنلاین با درخواست‌های محدود و کنترل‌شده."}</small>
+        <small>{mode === "offline" ? "بدون فراخوانی سرویس خارجی؛ فقط داده‌های ذخیره‌شده داخل MAVIS." : mode === "online" ? "جست‌وجو در منابع علمی آنلاین با درخواست‌های محدود و کنترل‌شده." : "جست‌وجوی هم‌زمان آرشیو داخلی و منابع علمی آنلاین در یک مرحله."}</small>
       </form>
 
       {error ? <div className={styles.error} role="alert">{error}</div> : null}
 
-      {mode === "offline" && localResponse ? (
+      {mode !== "online" && localResponse ? (
         <div className={styles.resultsArea}>
           <div className={styles.resultsToolbar}>
             <div><strong>{localResponse.results.length.toLocaleString("fa-IR")} نتیجه در آرشیو داخلی</strong><small>جست‌وجوی آرشیو داخلی: «{localResponse.query}»</small></div>
@@ -171,7 +184,7 @@ export default function MavisSourceDiscovery() {
         </div>
       ) : null}
 
-      {mode === "online" && response ? (
+      {mode !== "offline" && response ? (
         <div className={styles.resultsArea}>
           <div className={styles.resultsToolbar}>
             <div><strong>{results.length.toLocaleString("fa-IR")} نتیجه یکتا</strong><small>عبارت: «{response.query}»</small></div>
