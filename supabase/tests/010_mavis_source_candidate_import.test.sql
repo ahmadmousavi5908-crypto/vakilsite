@@ -167,14 +167,14 @@ select is(
 );
 
 select throws_ok(
-  $select public.import_mavis_source_candidate('{"provider":"crossref","providerRecordId":"x","title":"Unsupported source category","sourceType":"news","sourceUrl":"https://example.org/source"}'::jsonb)$,
+  $$select public.import_mavis_source_candidate('{"provider":"crossref","providerRecordId":"x","title":"Unsupported source category","sourceType":"news","sourceUrl":"https://example.org/source"}'::jsonb)$$,
   '22023',
   'Unsupported source type',
   'only normalized academic candidates are accepted'
 );
 
 select throws_ok(
-  $select public.import_mavis_source_candidate('{"provider":"crossref","providerRecordId":"date-invalid","title":"Invalid publication date metadata","sourceType":"academic","publicationDate":"2024-99-99","sourceUrl":"https://example.org/source"}'::jsonb)$,
+  $$select public.import_mavis_source_candidate('{"provider":"crossref","providerRecordId":"date-invalid","title":"Invalid publication date metadata","sourceType":"academic","publicationDate":"2024-99-99","sourceUrl":"https://example.org/source"}'::jsonb)$$,
   '22023',
   'Invalid publication date',
   'invalid calendar dates are rejected instead of aborting migration execution'
