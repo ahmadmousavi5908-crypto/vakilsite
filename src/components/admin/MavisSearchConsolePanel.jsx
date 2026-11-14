@@ -6,6 +6,7 @@ import {
   rankContentOpportunities,
 } from "../../lib/mavis/growth-metrics.mjs";
 import styles from "./MavisSearchConsolePanel.module.css";
+import MavisSearchConsoleTools from "./MavisSearchConsoleTools";
 
 function localDate(date) {
   const year = date.getFullYear();
@@ -276,6 +277,7 @@ export default function MavisSearchConsolePanel() {
           <p className={styles.disclaimer}>{result.disclaimer} منطقه زمانی تاریخ‌ها در Search Console برابر America/Los_Angeles است.</p>
         </div>
       ) : null}
+      <MavisSearchConsoleTools />
     </section>
   );
 }
