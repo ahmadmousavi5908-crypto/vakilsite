@@ -1,4 +1,4 @@
-const LIMITS = { title: 300, slug: 180, excerpt: 1200, category: 100, author: 180, seoTitle: 300, seoDescription: 500, intro: 8000, heading: 240, body: 12000, tag: 60, tags: 40, sections: 80, warning: 2000, checklist: 60, checklistItem: 500 };
+const LIMITS = { title: 300, slug: 180, excerpt: 1200, category: 100, author: 180, seoTitle: 300, seoDescription: 500, intro: 8000, heading: 240, body: 12000, tag: 60, tags: 40, sections: 80, warning: 2000, checklist: 60, checklistItem: 500, totalContent: 200000 };
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function text(form, key) {
@@ -62,6 +62,14 @@ export function parseMavisArticleDraftInput(form) {
   }));
   if (sections.some((section) => !between(section.heading, 2, LIMITS.heading) || !between(section.body, 10, LIMITS.body))) {
     return { ok: false, error: "عنوان هر بخش باید ۲ تا ۲۴۰ و متن آن ۱۰ تا ۱۲۰۰۰ نویسه باشد." };
+  }
+
+  const totalContentLength = [
+    title, slug, excerpt, category, intro, author, seoTitle, seoDescription, warning,
+    ...tags, ...checklist, ...sections.flatMap((section) => [section.heading, section.body]),
+  ].reduce((total, value) => total + value.length, 0);
+  if (totalContentLength > LIMITS.totalContent) {
+    return { ok: false, error: "حجم کل متن مقاله بیش از حد مجاز است. مقاله را به چند بخش کوتاه‌تر تقسیم کنید." };
   }
 
   const content = { intro, sections };
