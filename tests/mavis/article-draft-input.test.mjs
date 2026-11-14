@@ -93,3 +93,15 @@ test("rejects oversized warning and checklist", () => {
   assert.equal(parseMavisArticleDraftInput(formWith({ warning: "x".repeat(2001) })).ok, false);
   assert.equal(parseMavisArticleDraftInput(formWith({ checklist: Array.from({ length: 61 }, () => "item").join("\n") })).ok, false);
 });
+
+
+test("rejects drafts that exceed the total content budget", () => {
+  const headings = Array.from({ length: 17 }, () => "بخش");
+  const bodies = Array.from({ length: 17 }, () => "x".repeat(12000));
+  const result = parseMavisArticleDraftInput(formWith({
+    section_heading: headings,
+    section_body: bodies,
+  }));
+  assert.equal(result.ok, false);
+  assert.match(result.error, /حجم کل متن/);
+});
