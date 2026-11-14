@@ -1,0 +1,66 @@
+name: Read-only Supabase production migration audit
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-production-migration-audit
+  cancel-in-progress: false
+
+jobs:
+  migration-history:
+    name: Compare repository migrations with production history
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the selected release branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Verify the audit target and credentials
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF" != "refs/heads/feature/mavis-indexnow-publication-notify-20261114" ]]; then
+            echo "::error::Run this audit only from feature/mavis-indexnow-publication-notify-20261114."
+            exit 1
+          fi
+          if [[ -z "${SUPABASE_ACCESS_TOKEN:-}" ]]; then
+            echo "::error::Missing repository secret: SUPABASE_ACCESS_TOKEN."
+            exit 1
+          fi
+          if [[ -z "${SUPABASE_DB_PASSWORD:-}" ]]; then
+            echo "::error::Missing repository secret: SUPABASE_DB_PASSWORD."
+            exit 1
+          fi
+          echo "Read-only audit credentials are present. Secret values are not displayed."
+
+      - name: Set up pinned Supabase CLI
+        uses: supabase/setup-cli@v3
+        with:
+          version: 2.84.2
+
+      - name: Link only the known production project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: supabase link --project-ref jroflcmiczfwtmiaxmpd
+
+      - name: Read production migration history
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          supabase migration list --remote 2>&1 | tee "$RUNNER_TEMP/production-migration-history.txt"
+          echo
+          echo "Audit complete. This workflow only links the checkout and reads migration history."
+          echo "No migration apply, repair, push, pull, or database write command is executed."
