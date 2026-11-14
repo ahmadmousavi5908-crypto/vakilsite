@@ -19,8 +19,8 @@ This integration connects the administrator's Google Search Console property to 
 
 ## Google Cloud setup
 
-1. In Google Cloud Console, create or select a project.
-2. Enable **Google Search Console API** for that project.
+1. In Google Cloud Console, create a **dedicated project for MAVIS Search Console**. Do not reuse a project that hosts other Google OAuth integrations or scopes; Google's token-revocation endpoint can revoke all scopes previously granted to that project for the user, not only this connection.
+2. Enable **Google Search Console API** for that dedicated project.
 3. Configure the OAuth consent screen and add the administrator account as a test user while the application is in testing.
 4. Create an OAuth client with application type **Web application**.
 5. Add this exact authorized redirect URI:
