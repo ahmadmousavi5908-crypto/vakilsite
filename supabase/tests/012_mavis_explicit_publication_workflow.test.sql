@@ -63,14 +63,13 @@ select set_config(
  (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
  true
 );
-reset role;
 select is(current_setting('test.anon_visibility'), '0', 'anonymous readers cannot access an approved but unpublished article');
 reset role;
 set local role authenticated;
 set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
 
 select throws_ok(
- $select public.publish_mavis_article((select article_id from publication_fixture),2)$,
+  $$select public.publish_mavis_article((select article_id from publication_fixture),2)$$,
  '40001','Article version changed; refresh before publication','stale version cannot be published'
 );
 select is(
@@ -96,14 +95,13 @@ select set_config(
  (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
  true
 );
-reset role;
 select is(current_setting('test.anon_visibility'), '1', 'anonymous readers can access an explicitly published article');
 reset role;
 set local role authenticated;
 set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
 
 select throws_ok(
- $select public.publish_mavis_article((select article_id from publication_fixture),1)$,
+  $$select public.publish_mavis_article((select article_id from publication_fixture),1)$$,
  '55000','Article is not approved for publication','already published article cannot be published twice'
 );
 
@@ -134,14 +132,13 @@ select set_config(
  (select count(*)::text from public.mavis_articles where id=current_setting('test.publication_article_id')::uuid),
  true
 );
-reset role;
 select is(current_setting('test.anon_visibility'), '0', 'anonymous readers lose access after unpublishing');
 reset role;
 set local role authenticated;
 set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000072';
 
 select throws_ok(
- $select public.unpublish_mavis_article((select article_id from publication_fixture),1)$,
+  $$select public.unpublish_mavis_article((select article_id from publication_fixture),1)$$,
  '55000','Article is not currently published','already unpublished article cannot be unpublished twice'
 );
 
