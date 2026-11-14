@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { articles as publicStaticArticles } from "../../../../data/articles";
 import { parseMavisArticleDraftInput } from "../../../../lib/mavis/article-draft-input.mjs";
@@ -228,6 +229,11 @@ export async function decideMavisArticleReview(articleId, articleVersion, decisi
 
 const ARTICLE_UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
+function revalidatePublicMavisArticlePaths() {
+  revalidatePath("/articles");
+  revalidatePath("/articles/[slug]", "page");
+}
+
 async function runMavisPublicationAction(action, articleId, expectedVersion) {
   if (typeof articleId !== "string" || !ARTICLE_UUID_PATTERN.test(articleId)
     || !Number.isInteger(expectedVersion) || expectedVersion < 1) {
@@ -262,6 +268,7 @@ async function runMavisPublicationAction(action, articleId, expectedVersion) {
       return { ok: false, error: "پاسخ پایگاه داده برای تغییر وضعیت معتبر نبود." };
     }
 
+    revalidatePublicMavisArticlePaths();
     return { ok: true, status: data.status };
   } catch {
     return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
@@ -300,6 +307,7 @@ async function runMavisArticleLifecycleAction(rpcName, args, expectedStatus) {
     if (!data || (expectedStatus && data.status !== expectedStatus)) {
       return { ok: false, error: "پاسخ پایگاه داده برای این عملیات معتبر نبود." };
     }
+    revalidatePublicMavisArticlePaths();
     return { ok: true, data };
   } catch {
     return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
