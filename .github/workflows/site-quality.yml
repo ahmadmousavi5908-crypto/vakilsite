@@ -59,6 +59,8 @@ jobs:
         run: node --test tests/mavis/article-draft-input.test.mjs
       - name: Run MAVIS editorial cursor tests
         run: node --test tests/mavis/editorial-cursor.test.mjs
+      - name: Run MAVIS spreadsheet export tests
+        run: npm run test:mavis-editorial-export
 
       - name: Run MAVIS orchestrator policy tests
         run: node --test tests/mavis/orchestrator-policy.test.mjs
