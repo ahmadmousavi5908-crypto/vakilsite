@@ -29,6 +29,9 @@ const isAllowedAdminSurface = (file) =>
 const isAllowedMetadataRoute = (file) =>
   file === "src/app/sitemap.js";
 
+const isAllowedAdminApiRoute = (file) =>
+  file.startsWith("src/app/api/admin/mavis/search-console/");
+
 function verifyPreservedArticleExtension(file) {
   const base = readAtRef(baseRef, file);
   const head = readAtRef(headRef, file);
@@ -84,6 +87,7 @@ const failedArticleChecks = changedFiles.filter(
 
 const protectedFiles = changedFiles.filter((file) => {
   if (isAllowedAdminSurface(file)) return false;
+  if (isAllowedAdminApiRoute(file)) return false;
   if (isAllowedMetadataRoute(file)) return false;
   if (articleExtensionFiles.has(file) && verifyPreservedArticleExtension(file)) return false;
 

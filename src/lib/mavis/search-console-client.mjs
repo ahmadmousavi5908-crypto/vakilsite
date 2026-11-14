@@ -6,7 +6,7 @@ const READ_ONLY_SCOPE = "https://www.googleapis.com/auth/webmasters.readonly";
 const DEFAULT_TIMEOUT_MS = 20000;
 const ALLOWED_AGGREGATIONS = new Set(["auto", "byPage", "byProperty", "byNewsShowcasePanel"]);
 
-function normalizeSiteUrl(value) {
+export function normalizeSearchConsoleSiteUrl(value) {
   if (typeof value !== "string" || !value.trim()) return null;
   const candidate = value.trim();
 
@@ -83,7 +83,7 @@ export function createSearchConsoleClient({
     clientId: typeof clientId === "string" ? clientId.trim() : "",
     clientSecret: typeof clientSecret === "string" ? clientSecret.trim() : "",
     refreshToken: typeof refreshToken === "string" ? refreshToken.trim() : "",
-    siteUrl: normalizeSiteUrl(siteUrl),
+    siteUrl: normalizeSearchConsoleSiteUrl(siteUrl),
   };
   const timeout = Number.isInteger(timeoutMs) && timeoutMs >= 1000 && timeoutMs <= 60000
     ? timeoutMs

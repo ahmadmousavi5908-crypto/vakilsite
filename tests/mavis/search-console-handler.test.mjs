@@ -116,3 +116,54 @@ test("maps invalid provider requests and upstream failures to safe responses", a
   assert.equal(failedResponse.status, 502);
   assert.doesNotMatch(JSON.stringify(await failedResponse.json()), /refresh token must not leak/);
 });
+
+
+test("resolves the encrypted credential client for each authorized request", async () => {
+  let resolved = false;
+  let receivedAccess;
+  const handler = createSearchConsoleHandler(dependencies({
+    client: null,
+    getClient: async (access) => {
+      resolved = true;
+      receivedAccess = access;
+      return { async querySearchAnalytics() { return successResult; } };
+    },
+  }));
+
+  const response = await handler(request(validPayload));
+  assert.equal(response.status, 200);
+  assert.equal(resolved, true);
+  assert.equal(receivedAccess.user.id, "admin-user");
+});
+
+test("does not resolve stored credentials for a non-admin request", async () => {
+  let resolved = false;
+  const handler = createSearchConsoleHandler(dependencies({
+    requireAdmin: async () => ({
+      configured: true,
+      authenticationAvailable: true,
+      adminCheckAvailable: true,
+      user: { id: "ordinary-user" },
+      isAdmin: false,
+    }),
+    client: null,
+    getClient: async () => {
+      resolved = true;
+      return { async querySearchAnalytics() { return successResult; } };
+    },
+  }));
+
+  const response = await handler(request(validPayload));
+  assert.equal(response.status, 403);
+  assert.equal(resolved, false);
+});
+
+test("returns a safe unavailable response when encrypted credentials cannot be loaded", async () => {
+  const handler = createSearchConsoleHandler(dependencies({
+    client: null,
+    getClient: async () => { throw new Error("private encrypted token details"); },
+  }));
+  const response = await handler(request(validPayload));
+  assert.equal(response.status, 503);
+  assert.doesNotMatch(JSON.stringify(await response.json()), /private encrypted token details/);
+});
