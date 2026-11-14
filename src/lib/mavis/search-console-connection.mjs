@@ -44,6 +44,8 @@ export async function createSearchConsoleClientFromStoredConnection({
     .update("\\0")
     .update(clientId)
     .update("\\0")
+    .update(clientSecret)
+    .update("\\0")
     .update(storedSiteUrl)
     .digest("hex");
   if (cachedClient && cachedClientFingerprint === fingerprint) return cachedClient;
