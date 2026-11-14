@@ -1,6 +1,6 @@
 begin;
 
-select plan(25);
+select plan(26);
 
 select has_function('public', 'import_mavis_source_candidate', array['jsonb'], 'source candidate import function exists');
 select ok(
@@ -192,6 +192,12 @@ select is(
   (select published_on from public.mavis_sources where canonical_url = 'https://example.org/paper?id=year'),
   '2020-01-01'::date,
   'year-only publication date is stored with explicit year precision fallback'
+);
+
+select is(
+  (select publication_date_precision from public.mavis_sources where canonical_url = 'https://example.org/paper?id=year'),
+  'year',
+  'year-only metadata retains its original date precision'
 );
 
 select * from finish();
