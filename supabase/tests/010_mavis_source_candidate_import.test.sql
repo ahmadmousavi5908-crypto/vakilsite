@@ -1,6 +1,6 @@
 begin;
 
-select plan(22);
+select plan(23);
 
 select has_function('public', 'import_mavis_source_candidate', array['jsonb'], 'source candidate import function exists');
 select ok(
@@ -171,6 +171,13 @@ select throws_ok(
   '22023',
   'Unsupported source type',
   'only normalized academic candidates are accepted'
+);
+
+select throws_ok(
+  $select public.import_mavis_source_candidate('{"provider":"crossref","providerRecordId":"date-invalid","title":"Invalid publication date metadata","sourceType":"academic","publicationDate":"2024-99-99","sourceUrl":"https://example.org/source"}'::jsonb)$,
+  '22023',
+  'Invalid publication date',
+  'invalid calendar dates are rejected instead of aborting migration execution'
 );
 
 select * from finish();
