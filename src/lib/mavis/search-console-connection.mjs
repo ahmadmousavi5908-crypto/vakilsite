@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { createSearchConsoleClient, normalizeSearchConsoleSiteUrl } from "./search-console-client.mjs";
-import { decryptSearchConsoleRefreshToken } from "./search-console-oauth.mjs";
+import { decryptSearchConsoleRefreshToken, revokeSearchConsoleRefreshToken } from "./search-console-oauth.mjs";
 
 let cachedClient = null;
 let cachedClientFingerprint = null;
@@ -59,4 +59,35 @@ export async function createSearchConsoleClientFromStoredConnection({
   });
   cachedClientFingerprint = fingerprint;
   return cachedClient;
+}
+
+
+export async function disconnectStoredSearchConsoleConnection({
+  supabase,
+  env = process.env,
+  revokeToken = revokeSearchConsoleRefreshToken,
+} = {}) {
+  const connection = await readStoredSearchConsoleConnection(supabase);
+  let revoked = false;
+
+  if (connection) {
+    try {
+      const refreshToken = decryptSearchConsoleRefreshToken(connection.encryptedRefreshToken, env);
+      await revokeToken({ refreshToken });
+      revoked = true;
+    } catch {
+      // Local credential removal must not depend on the provider being reachable.
+    }
+  }
+
+  const { error } = await supabase.rpc("disconnect_mavis_search_console");
+  if (error) throw new Error("Search Console connection could not be removed.");
+
+  cachedClient = null;
+  cachedClientFingerprint = null;
+  return {
+    connected: false,
+    revoked,
+    revocationPending: Boolean(connection) && !revoked,
+  };
 }
