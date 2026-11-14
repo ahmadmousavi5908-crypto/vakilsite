@@ -94,7 +94,7 @@ select is(
  'in_review','second draft can enter review'
 );
 select throws_ok(
- $select public.decide_mavis_article_review((select article_id from review_fixtures where kind='changes'),1,'changes_requested',null)$,
+  $$select public.decide_mavis_article_review((select article_id from review_fixtures where kind='changes'),1,'changes_requested',null)$$,
  '22023','A review note is required for this decision','requesting changes requires an explanatory note'
 );
 select is(
