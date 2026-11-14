@@ -44,11 +44,13 @@ async function readBoundedJson(request) {
 }
 
 function validateDependencies(dependencies) {
-  for (const key of ["requireAdmin", "client", "isJsonContentType", "matchesRequestOrigin", "parseKnowledgeSearchRateLimit"]) {
-    if (key === "client") continue;
+  for (const key of ["requireAdmin", "isJsonContentType", "matchesRequestOrigin", "parseKnowledgeSearchRateLimit"]) {
     if (typeof dependencies?.[key] !== "function") {
       throw new TypeError("Search Console handler requires " + key);
     }
+  }
+  if (dependencies.getClient !== undefined && typeof dependencies.getClient !== "function") {
+    throw new TypeError("Search Console getClient dependency must be a function");
   }
 }
 
@@ -92,10 +94,6 @@ export function createSearchConsoleHandler(dependencies) {
     if (!dependencies.isJsonContentType(request.headers.get("content-type"))) {
       return jsonResponse({ error: { code: "UNSUPPORTED_MEDIA_TYPE", message: "نوع محتوای درخواست باید JSON باشد." } }, 415);
     }
-    if (!client || typeof client.querySearchAnalytics !== "function") {
-      return jsonResponse({ error: { code: "NOT_CONFIGURED", message: "اتصال فقط‌خواندنی Search Console هنوز در تنظیمات امن سرور پیکربندی نشده است." } }, 503);
-    }
-
     let rateLimitResult;
     try {
       rateLimitResult = await access.supabase.rpc("consume_mavis_knowledge_search_limit");
@@ -139,8 +137,20 @@ export function createSearchConsoleHandler(dependencies) {
       return jsonResponse({ error: { code: "INVALID_REQUEST", message: "محدوده ابعاد یا صفحه‌بندی معتبر نیست." } }, 400);
     }
 
+    let activeClient = client;
     try {
-      const result = await client.querySearchAnalytics(payload);
+      if (typeof dependencies.getClient === "function") {
+        activeClient = await dependencies.getClient(access, request);
+      }
+    } catch {
+      return jsonResponse({ error: { code: "CONNECTION_UNAVAILABLE", message: "اتصال امن Search Console در دسترس نیست؛ وضعیت اتصال را بررسی کنید." } }, 503);
+    }
+    if (!activeClient || typeof activeClient.querySearchAnalytics !== "function") {
+      return jsonResponse({ error: { code: "NOT_CONFIGURED", message: "ابتدا اتصال امن Google Search Console را برقرار کنید." } }, 503);
+    }
+
+    try {
+      const result = await activeClient.querySearchAnalytics(payload);
       if (!result?.ok) {
         return jsonResponse({ error: { code: "INVALID_SEARCH_CONSOLE_REQUEST", reason: result?.reason || "invalid_request", message: "بازه یا ابعاد درخواست Search Console معتبر نیست." } }, 400);
       }
