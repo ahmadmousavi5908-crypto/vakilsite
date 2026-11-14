@@ -188,3 +188,41 @@ export async function exchangeSearchConsoleAuthorizationCode({
     clearTimeout(timer);
   }
 }
+
+
+export async function revokeSearchConsoleRefreshToken({
+  refreshToken,
+  fetchImpl = globalThis.fetch,
+  timeoutMs = 20000,
+} = {}) {
+  if (typeof refreshToken !== "string" || refreshToken.length < 10 || refreshToken.length > 4096 ||
+      typeof fetchImpl !== "function") {
+    throw new Error("Search Console revocation request is invalid.");
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetchImpl("https://oauth2.googleapis.com/revoke", {
+      method: "POST",
+      redirect: "error",
+      cache: "no-store",
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+      },
+      body: new URLSearchParams({ token: refreshToken }).toString(),
+    });
+    if (response?.ok) return { revoked: true, alreadyRevoked: false };
+
+    let payload = null;
+    try { payload = await response.json(); } catch { /* Ignore untrusted provider details. */ }
+    if (response?.status === 400 && payload?.error === "invalid_token") {
+      return { revoked: true, alreadyRevoked: true };
+    }
+    throw new Error("Google token revocation failed.");
+  } finally {
+    clearTimeout(timer);
+  }
+}
