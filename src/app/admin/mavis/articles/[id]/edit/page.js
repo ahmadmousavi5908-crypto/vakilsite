@@ -50,6 +50,24 @@ export default async function EditMavisArticlePage({ params }) {
 
   if (!article) notFound();
 
+  let initialSources = [];
+  let sourceLoadError = "";
+  try {
+    const { data, error } = await access.supabase
+      .from("mavis_article_sources")
+      .select("relation_type,citation_label,sort_order,source:mavis_sources!mavis_article_sources_source_id_fkey(id,title,canonical_url,source_type,external_id,author_name,publisher,published_on,publication_date_precision,rights_status,license_name,license_url,permission_evidence_ref,attribution_requirements,rights_reviewed_at,rights_review_note)")
+      .eq("article_id", id)
+      .order("sort_order", { ascending: true });
+    if (error) sourceLoadError = "فراداده منابع پیوست‌شده بارگذاری نشد؛ وضعیت حقوق استفاده را از روی این صفحه قطعی فرض نکنید.";
+    else initialSources = (Array.isArray(data) ? data : []).map((item) => ({
+      ...item.source,
+      relation_type: item.relation_type,
+      citation_label: item.citation_label,
+    })).filter((source) => source?.id);
+  } catch {
+    sourceLoadError = "ارتباط امن برای دریافت فراداده منابع برقرار نشد.";
+  }
+
   return (
     <div className="admin-shell" dir="rtl">
       <aside className="admin-sidebar">
@@ -66,7 +84,7 @@ export default async function EditMavisArticlePage({ params }) {
         <header className="admin-topbar"><div><span>فضای مدیریت / MAVIS</span><strong>ویرایش پیش‌نویس</strong></div><form action={signOut}><button type="submit">خروج امن</button></form></header>
         <main className="admin-content">
           <section className="admin-welcome"><div><span className="admin-eyebrow">MAVIS · VERSIONED DRAFT</span><h1>ویرایش مقاله</h1><p>نسخه فعلی: {article.current_version.toLocaleString("fa-IR")} · آخرین تغییر: {new Date(article.updated_at).toLocaleString("fa-IR")}</p></div><div className="admin-status"><i /> دسترسی مدیر تأیید شده</div></section>
-          <MavisArticleEditor initialArticle={article} />
+          <MavisArticleEditor initialArticle={article} initialSources={initialSources} sourceLoadError={sourceLoadError} />
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>
       </div>
