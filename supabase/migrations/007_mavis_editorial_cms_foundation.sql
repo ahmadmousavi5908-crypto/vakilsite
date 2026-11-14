@@ -57,6 +57,11 @@ create index if not exists mavis_articles_category_status_updated_idx
 create index if not exists mavis_articles_status_updated_idx
   on public.mavis_articles (status, updated_at desc, id desc);
 
+-- Supports the administrator's compound keyset cursor across editable states.
+create index if not exists mavis_articles_editable_updated_idx
+  on public.mavis_articles (updated_at desc, id desc)
+  where status in ('draft', 'changes_requested', 'needs_update');
+
 create table if not exists public.mavis_sources (
   id uuid primary key default gen_random_uuid(),
   canonical_url text not null unique,
