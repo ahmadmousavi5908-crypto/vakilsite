@@ -98,7 +98,7 @@ begin
     raise exception using errcode = '22023', message = 'Article and version are required';
   end if;
 
-  if p_decision not in ('approved', 'changes_requested', 'rejected') then
+  if p_decision is null or p_decision not in ('approved', 'changes_requested', 'rejected') then
     raise exception using errcode = '22023', message = 'Unsupported review decision';
   end if;
 
