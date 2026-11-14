@@ -15,6 +15,8 @@ declare
   v_actor uuid := auth.uid();
   v_status text;
   v_current_version integer;
+  v_origin_type text;
+  v_content jsonb;
 begin
   if v_actor is null or not public.is_site_admin() then
     raise exception using errcode = '42501', message = 'Administrator access required';
@@ -24,8 +26,8 @@ begin
     raise exception using errcode = '22023', message = 'Article and expected version are required';
   end if;
 
-  select status, current_version
-    into v_status, v_current_version
+  select status, current_version, origin_type, content
+    into v_status, v_current_version, v_origin_type, v_content
     from public.mavis_articles
     where id = p_article_id
     for update;
@@ -40,6 +42,17 @@ begin
 
   if v_status not in ('draft', 'changes_requested', 'needs_update') then
     raise exception using errcode = '55000', message = 'Article is not in a submittable state';
+  end if;
+
+  if v_origin_type = 'metadata_only' and (
+    v_content->>'intro' = 'این پیش‌نویس فقط از فراداده منبع ساخته شده و نیازمند بررسی و تکمیل مدیر است.'
+    or exists (
+      select 1
+      from jsonb_array_elements(coalesce(v_content->'sections', '[]'::jsonb)) as section(value)
+      where section.value->>'body' = 'متن علمی یا حقوقی این مقاله هنوز تهیه نشده است. مدیر باید محتوا، اعتبار منبع، ارتباط آن با حقوق ایران و وضعیت حقوق نشر را جداگانه بررسی کند.'
+    )
+  ) then
+    raise exception using errcode = '55000', message = 'Metadata-only draft requires editorial completion';
   end if;
 
   if not exists (
