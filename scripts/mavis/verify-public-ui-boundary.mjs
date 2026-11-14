@@ -26,6 +26,9 @@ const isAllowedAdminSurface = (file) =>
   file.startsWith("src/app/admin/") ||
   file.startsWith("src/components/admin/");
 
+const isAllowedMetadataRoute = (file) =>
+  file === "src/app/sitemap.js";
+
 function verifyPreservedArticleExtension(file) {
   const base = readAtRef(baseRef, file);
   const head = readAtRef(headRef, file);
@@ -81,6 +84,7 @@ const failedArticleChecks = changedFiles.filter(
 
 const protectedFiles = changedFiles.filter((file) => {
   if (isAllowedAdminSurface(file)) return false;
+  if (isAllowedMetadataRoute(file)) return false;
   if (articleExtensionFiles.has(file) && verifyPreservedArticleExtension(file)) return false;
 
   return (
