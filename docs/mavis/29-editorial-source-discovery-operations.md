@@ -14,6 +14,7 @@
 - Review decisions (`approved`, `changes_requested`, `rejected`) are append-only and bind to the exact current version. Change requests and rejections require an explanatory note.
 - Approval only changes the editorial status to `approved`; it does not publish the article.
 - A separate administrator action can publish only the exact current immutable version with an `approved` decision record.
+- After publish or unpublish, the server attempts a bounded IndexNow notification for the article URL. The action succeeds independently of notification delivery; the admin queue reports whether IndexNow accepted, skipped, or could not deliver the notification. This uses the existing `INDEXNOW_KEY` and `/indexnow-key.txt` verification file; no new credential or dependency is introduced.
 - Unpublishing returns the article to `approved`, clears `published_at`, and records an audit event; the public RLS policy then stops exposing it.
 - Archive, restore, and rollback operations are version-checked and audited. Restoring a previously published article returns it to `approved`, not `published`.
 - Rollback copies a selected historical snapshot into a new version, changes status to `draft`, clears `published_at`, and requires review and publication again.
