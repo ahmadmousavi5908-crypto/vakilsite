@@ -11,7 +11,9 @@ const PROVIDER_LABELS = {
 };
 
 const PROVIDER_ERRORS = {
-  PROVIDER_DISABLED: "این منبع تا زمان تنظیم کلید و بودجه مصرف غیرفعال است.",
+  PROVIDER_DISABLED: "این منبع غیرفعال است.",
+  DAILY_BUDGET_EXHAUSTED: "سقف روزانه ۰٫۰۵ دلار برای جست‌وجوی OpenAlex مصرف شده است.",
+  BUDGET_CONTROL_UNAVAILABLE: "کنترل سقف هزینه در دسترس نیست؛ جست‌وجوی OpenAlex برای ایمنی اجرا نشد.",
   RATE_LIMITED: "محدودیت درخواست منبع فعال شده است.",
   UPSTREAM_TIMEOUT: "پاسخ منبع بیش از زمان مجاز طول کشید.",
   UPSTREAM_UNAVAILABLE: "منبع موقتاً پاسخ‌گو نیست.",
@@ -108,7 +110,7 @@ export default function MavisSourceDiscovery() {
         <div>
           <span className={styles.eyebrow}>MAVIS · SOURCE INTELLIGENCE</span>
           <h2 id="mavis-source-title">موتور کشف و جست‌وجوی منابع</h2>
-          <p>جست‌وجوی فراداده علمی در Crossref و Semantic Scholar؛ OpenAlex تا زمان پیاده‌سازی کنترل واقعی هزینه غیرفعال است.</p>
+          <p>جست‌وجوی فراداده علمی در Crossref، Semantic Scholar و OpenAlex؛ برای OpenAlex سقف سراسری ۰٫۰۵ دلار در روز اعمال می‌شود.</p>
         </div>
         <span className={styles.readOnly}>جست‌وجوی امن · فقط فراداده</span>
       </header>
@@ -133,7 +135,7 @@ export default function MavisSourceDiscovery() {
                 <option value="all">همه منابع</option>
                 <option value="crossref">Crossref</option>
                 <option value="semantic_scholar">Semantic Scholar</option>
-                <option value="openalex" disabled>OpenAlex (فعلاً غیرفعال)</option>
+                <option value="openalex">OpenAlex</option>
               </select>
             </label>
           </div>
