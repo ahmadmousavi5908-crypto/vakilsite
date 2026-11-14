@@ -1,6 +1,6 @@
 begin;
 
-select plan(21);
+select plan(22);
 
 select has_function('public', 'import_mavis_source_candidate', array['jsonb'], 'source candidate import function exists');
 select ok(
@@ -164,6 +164,13 @@ select is(
   (select status from public.mavis_articles where title = 'A metadata-only legal research source'),
   'draft',
   'import workflow does not approve or publish the article'
+);
+
+select throws_ok(
+  $select public.import_mavis_source_candidate('{"provider":"crossref","providerRecordId":"x","title":"Unsupported source category","sourceType":"news","sourceUrl":"https://example.org/source"}'::jsonb)$,
+  '22023',
+  'Unsupported source type',
+  'only normalized academic candidates are accepted'
 );
 
 select * from finish();
