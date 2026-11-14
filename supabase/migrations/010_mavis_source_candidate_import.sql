@@ -114,7 +114,8 @@ begin
     end if;
     v_publication_date_text := p_candidate->>'publicationDate';
     if v_publication_date_text !~ '^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$'
-      or substring(v_publication_date_text, 1, 4)::integer not between 1000 and 9999 then
+      or substring(v_publication_date_text, 1, 4)::integer < 1000
+      or substring(v_publication_date_text, 1, 4)::integer > 9999 then
       raise exception using errcode = '22023', message = 'Invalid publication date';
     end if;
     begin
