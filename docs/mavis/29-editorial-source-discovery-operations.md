@@ -72,9 +72,6 @@ npm run build
 
 ## Not yet implemented
 
-- Candidate queue with durable discovery history and administrator triage states.
-- Cross-provider distributed leases and global provider concurrency coordination.
-- AI-assisted metadata/content completion.
 - Persistent discovery candidate triage queue.
 - Cross-provider distributed leases and global provider concurrency coordination.
 - AI-assisted metadata/content completion.
