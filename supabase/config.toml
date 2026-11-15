@@ -9,9 +9,6 @@ max_rows = 1000
 [db]
 port = 54322
 
-[db.migrations]
-enabled = true
-
 [db.seed]
 enabled = false
 
