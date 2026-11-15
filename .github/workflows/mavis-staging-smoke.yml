@@ -60,21 +60,13 @@ jobs:
               else
                 echo "HTTP 200 returned neither the admin shell nor the login form; inspecting the complete response."
                 cat /tmp/mavis-admin-headers
-                node --input-type=module <<'NODE'
-                import fs from "node:fs";
-                const html = fs.readFileSync("/tmp/mavis-admin-body", "utf8");
-                const bodyStart = html.indexOf("<body");
-                console.log(JSON.stringify({
-                  length: html.length,
-                  hasAdminShell: html.includes("admin-shell"),
-                  hasAdminLogin: html.includes("admin-login-form"),
-                  hasAdminWelcome: html.includes("دسترسی مدیر تأیید شده"),
-                  hasWorkspace: html.includes("MAVIS · CONTENT WORKSPACE"),
-                  hasRedirectMeta: /http-equiv=["']refresh["']/i.test(html),
-                  bodyStart: bodyStart >= 0 ? html.slice(bodyStart, bodyStart + 5000) : html.slice(-5000),
-                  responseTail: html.slice(-2500),
-                }, null, 2));
-                NODE
+                echo "Response bytes: $(wc -c < /tmp/mavis-admin-body)"
+                echo "Recognized markers:"
+                grep -Eo 'admin-shell|admin-login-form|دسترسی مدیر تأیید شده|MAVIS · CONTENT WORKSPACE|صف بازبینی|ورود به پنل مدیریت' /tmp/mavis-admin-body | sort | uniq -c || true
+                echo "Body classes:"
+                grep -Eo 'class="[^"]+"' /tmp/mavis-admin-body | sort -u | head -30 || true
+                echo "Response tail:"
+                tail -c 2500 /tmp/mavis-admin-body
               fi
               ;;
             *)
