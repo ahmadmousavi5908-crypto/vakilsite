@@ -1,12 +1,18 @@
 import { articles } from "../data/articles";
 import { practiceAreas } from "../data/practice-areas";
 import { getIndexableLegalRecords } from "../lib/legal-library";
+import { getPublishedEditorialArticles } from "../lib/mavis/editorial-content";
 
-export default function sitemap() {
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export default async function sitemap() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   if (!siteUrl) return [];
 
   const base = siteUrl.replace(/\/$/, "");
+  const editorialArticles = await getPublishedEditorialArticles();
+  const staticSlugs = new Set(articles.map((article) => article.slug));
   return [
     {
       url: base,
@@ -75,6 +81,12 @@ export default function sitemap() {
     })),
     ...articles.map((article) => ({
       url: base + "/articles/" + article.slug,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    })),
+    ...editorialArticles.filter((article) => article.isIndexable && !staticSlugs.has(article.slug)).map((article) => ({
+      url: base + "/articles/" + article.slug,
+      lastModified: article.updatedAt || article.publishedAt || undefined,
       changeFrequency: "monthly",
       priority: 0.7,
     })),
