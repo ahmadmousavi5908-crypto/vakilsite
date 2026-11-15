@@ -33,8 +33,11 @@ jobs:
               exit 1
             fi
           done
-          if ! grep -Fq "$BASE_URL" /tmp/mavis-staging-body; then
-            echo "Last route response did not contain the Staging origin; route responses are still verified by status."
+          curl --silent --show-error --fail --connect-timeout 5 --max-time 15 "$BASE_URL/sitemap.xml" -o /tmp/mavis-staging-sitemap.xml
+          grep -Fq "$BASE_URL" /tmp/mavis-staging-sitemap.xml
+          if grep -Fq "https://vakilahmadmousavi.ir" /tmp/mavis-staging-sitemap.xml; then
+            echo "::error::Staging sitemap contains the Production canonical origin."
+            exit 1
           fi
 
       - name: Verify admin route fails closed for anonymous visitors
