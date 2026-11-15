@@ -82,7 +82,7 @@ export function serializeEditorialCsv(rows) {
   if (!Array.isArray(rows)) return "";
   const serializedRows = rows.map((row) => (Array.isArray(row) ? row : []).map((cell) => {
     let value = String(cell ?? "");
-    if (/^[\\s]*[=+\\-@]/.test(value)) value = "'" + value;
+    if (["=", "+", "-", "@"].includes(value.trimStart()[0])) value = "'" + value;
     return '"' + value.replace(/"/g, '""') + '"';
   }).join(","));
   return String.fromCharCode(0xfeff) + serializedRows.join(String.fromCharCode(13, 10));
