@@ -8,7 +8,7 @@ export default async function sitemap() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   if (!siteUrl || isStagingSite()) return [];
 
-  const base = siteUrl.replace(/\\/$/, "");
+  const base = siteUrl.replace(/\/$/, "");
   const editorialArticles = await getPublishedEditorialArticles();
   const cmsBySlug = new Map(editorialArticles.map((article) => [article.slug, article]));
   return [
