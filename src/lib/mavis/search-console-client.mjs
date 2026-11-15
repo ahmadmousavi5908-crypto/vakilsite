@@ -52,7 +52,13 @@ function normalizePageFilter(value, siteUrl) {
       }
     } else {
       const propertyUrl = new URL(siteUrl);
-      if (url.origin !== propertyUrl.origin || !url.pathname.startsWith(propertyUrl.pathname)) {
+      const pathPrefix = propertyUrl.pathname.endsWith("/")
+        ? propertyUrl.pathname
+        : propertyUrl.pathname + "/";
+      const pathMatches = propertyUrl.pathname === "/" ||
+        url.pathname === propertyUrl.pathname ||
+        url.pathname.startsWith(pathPrefix);
+      if (url.origin !== propertyUrl.origin || !pathMatches) {
         return { ok: false, reason: "page_filter_outside_property" };
       }
     }
