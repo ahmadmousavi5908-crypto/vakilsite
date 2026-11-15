@@ -6,6 +6,7 @@ import {
   mapPublishedEditorialRecord,
   parseEditorialBody,
   parseEditorialSources,
+  serializeEditorialCsv,
   validateEditorialSlug,
 } from "../../src/lib/mavis/editorial-content-core.mjs";
 
@@ -47,4 +48,11 @@ test("public mapper never exposes a draft-only record", () => {
   });
   assert.equal(published.title, "مقاله");
   assert.equal(published.isIndexable, true);
+});
+
+test("CSV export escapes cells and neutralizes spreadsheet formulas", () => {
+  const csv = serializeEditorialCsv([["title", "note"], ["مقاله", '=HYPERLINK("https://example.com")']]);
+  assert.ok(csv.startsWith(String.fromCharCode(0xfeff)));
+  assert.ok(csv.includes("'=HYPERLINK(""https://example.com"")"));
+  assert.ok(csv.includes(String.fromCharCode(13, 10)));
 });
