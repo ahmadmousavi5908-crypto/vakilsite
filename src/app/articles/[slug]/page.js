@@ -69,21 +69,23 @@ export default async function ArticleDetailPage({ params }) {
         <article className="article-body">
           <p className="article-intro">{article.intro}</p>
           {(article.sections || []).map((section, index) => (
-            <section className="article-body-section" key={section.heading}>
+            <section className="article-body-section" key={section.heading + "-" + index}>
               <h2>{section.heading}</h2>
-              <p>{section.body}</p>
+              {String(section.body || "").split(/\\n{2,}/).filter(Boolean).map((paragraph, paragraphIndex) => (
+                <p key={paragraphIndex}>{paragraph}</p>
+              ))}
             </section>
           ))}
-          <div className="article-checklist">
+          {article.checklist?.length ? <div className="article-checklist">
             <h2>چک‌لیست پیش از مراجعه</h2>
-            <ul>{(article.checklist || []).map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
-          </div>
-          <div className="article-legal-note"><b>نکته مهم</b><p>{article.warning}</p></div>
-          <section className="article-sources">
+            <ul>{article.checklist.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
+          </div> : null}
+          {article.warning ? <div className="article-legal-note"><b>نکته مهم</b><p>{article.warning}</p></div> : null}
+          {article.sources?.length ? <section className="article-sources">
             <h2>مستندات و منابع قانونی</h2>
             <p>برای مطالعه متن قوانین و تطبیق آخرین اصلاحات، از منابع زیر استفاده کنید:</p>
-            <ul>{(article.sources || []).map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul>
-          </section>
+            <ul>{article.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul>
+          </section> : null}
           <div className="article-next-actions">
             <Link href="/articles">← بازگشت به همه مقالات</Link>
             <Link href="/#contact">درخواست بررسی موضوع من <span>←</span></Link>
