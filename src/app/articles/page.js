@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { articles } from "../../data/articles";
+import { articles as siteArticles } from "../../data/articles";
+import { getPublishedEditorialArticles } from "../../lib/mavis/editorial-content";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export const metadata = {
   title: "راهنماها و مقالات حقوقی | سید احمد موسوی",
@@ -7,9 +11,13 @@ export const metadata = {
   alternates: { canonical: "/articles" },
 };
 
-export default function ArticlesPage() {
-  const featured = articles[0];
-  const remaining = articles.slice(1);
+export default async function ArticlesPage() {
+  const cmsArticles = await getPublishedEditorialArticles();
+  const mergedArticles = new Map(siteArticles.map((article) => [article.slug, article]));
+  for (const article of cmsArticles) mergedArticles.set(article.slug, article);
+  const publishedArticles = [...mergedArticles.values()];
+  const featured = publishedArticles[0];
+  const remaining = publishedArticles.slice(1);
   return (
     <main className="article-page editorial-page" dir="rtl">
       <header className="article-header"><div className="container article-header-inner">
