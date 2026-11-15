@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { saveEditorialDraft, publishEditorialArticle } from "../../app/admin/mavis/editorial/actions";
-import { formatEditorialBody, formatEditorialSources } from "../../lib/mavis/editorial-content-core.mjs";
+import { formatEditorialBody, formatEditorialSources, serializeEditorialCsv } from "../../lib/mavis/editorial-content-core.mjs";
 import styles from "./MavisEditorialStudio.module.css";
 
 const statusLabels = {
@@ -82,9 +82,7 @@ export default function MavisEditorialStudio({ articles }) {
         article.updatedAt || "",
       ]),
     ];
-    const csv = String.fromCharCode(0xfeff) + rows.map((row) => row.map((cell) =>
-      '"' + String(cell).replace(/"/g, '""') + '"'
-    ).join(",")).join(String.fromCharCode(13, 10));
+    const csv = serializeEditorialCsv(rows);
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
     const anchor = document.createElement("a");
     anchor.href = url;
