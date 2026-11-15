@@ -1,6 +1,12 @@
 name: Read-only Supabase production migration audit
 
 on:
+  push:
+    branches:
+      - feature/mavis-indexnow-publication-notify-20261114
+    paths:
+      - ".github/workflows/supabase-production-migration-audit.yml"
+      - "ops/production-migration-audit-trigger.txt"
   workflow_dispatch:
 
 permissions:
