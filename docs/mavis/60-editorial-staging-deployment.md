@@ -22,16 +22,16 @@ Add these environment variables:
 | --- | --- |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID |
 | `NEXT_PUBLIC_SITE_URL` | Dedicated HTTPS staging origin, either `https://staging.<your-domain>` or `https://vakilahmadmousavi-ir-staging.<account-subdomain>.workers.dev` |
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://srbwniqhaxwaoepjfizf.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable key from `vakilsite-staging` |
+| `STAGING_SUPABASE_URL` | `https://srbwniqhaxwaoepjfizf.supabase.co` |
+| `STAGING_SUPABASE_PUBLISHABLE_KEY` | Publishable key from `vakilsite-staging` |
 
 Add these environment secrets:
 
 | Secret | Purpose |
 | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | Dedicated, scoped token permitted to deploy Workers |
-| `SUPABASE_ACCESS_TOKEN` | Supabase personal access token used by the CLI |
-| `SUPABASE_DB_PASSWORD` | Database password for the staging project only |
+| `CLOUDFLARE_STAGING_API_TOKEN` | Dedicated, scoped token permitted to deploy Workers |
+| `SUPABASE_STAGING_ACCESS_TOKEN` | Supabase personal access token used by the CLI |
+| `SUPABASE_STAGING_DB_PASSWORD` | Database password for the staging project only |
 
 Never place secrets in repository files, workflow variables, or chat messages. Do not reuse Production Supabase credentials or a Production Cloudflare token.
 
