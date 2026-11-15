@@ -189,5 +189,12 @@ jobs:
               EXISTS (SELECT 1 FROM public.site_settings WHERE setting_key = 'office_location')::text;
           "
 
+      - name: Reconcile verified existing migration history (metadata only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes supabase@3.0.0 migration repair 001 002 003 005 --status applied --yes --remote="$SUPABASE_DB_URL"
+          npx --yes supabase@3.0.0 migration list --remote="$SUPABASE_DB_URL"
+
       - name: Preview pending migrations (dry-run only)
         run: npx --yes supabase@3.0.0 db push --dry-run --remote="$SUPABASE_DB_URL"
