@@ -1,6 +1,9 @@
 name: Inspect MAVIS staging database
 
 on:
+  push:
+    branches:
+      - ops/run-mavis-staging-inspection-20261116
   workflow_dispatch:
     inputs:
       migration_ref:
@@ -30,7 +33,7 @@ jobs:
       - name: Validate selected migration source
         shell: bash
         env:
-          MIGRATION_REF: ${{ inputs.migration_ref }}
+          MIGRATION_REF: ${{ inputs.migration_ref || 'work/mother-two-updated-mavis-20261110' }}
         run: |
           set -euo pipefail
           if [ "$MIGRATION_REF" != "work/mother-two-updated-mavis-20261110" ]; then
@@ -59,7 +62,7 @@ jobs:
       - name: Check out the reviewed migration branch
         uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.migration_ref }}
+          ref: ${{ inputs.migration_ref || 'work/mother-two-updated-mavis-20261110' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
