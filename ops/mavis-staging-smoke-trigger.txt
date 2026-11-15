@@ -1,1 +1,1 @@
-Capture full anonymous admin route response metadata and body diagnostics.
+Inspect anonymous admin route response with shell-safe diagnostics.
