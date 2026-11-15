@@ -42,7 +42,8 @@ function normalizePageFilter(value, siteUrl) {
       ? new URL(value, baseUrl)
       : new URL(value);
 
-    if (url.protocol !== "https:" || !url.hostname || url.username || url.password || url.port || url.hash) {
+    if (url.protocol !== "https:" || !url.hostname || url.username || url.password ||
+        url.port || url.hash || url.search || /@|\d{8,}/.test(url.pathname)) {
       return { ok: false, reason: "invalid_page_filter" };
     }
 
