@@ -115,6 +115,17 @@ test("rejects invalid analytics requests before any external call", async () => 
   const result = await client.querySearchAnalytics({ ...request, rowLimit: 25001 });
   assert.deepEqual(result, { ok: false, reason: "invalid_pagination" });
   assert.equal(called, false);
+
+  const queryString = await client.querySearchAnalytics({
+    ...request,
+    pageFilter: "https://vakilahmadmousavi.ir/articles/guide?phone=09123456789",
+  });
+  assert.deepEqual(queryString, { ok: false, reason: "invalid_page_filter" });
+  const numericPath = await client.querySearchAnalytics({
+    ...request,
+    pageFilter: "/articles/09123456789",
+  });
+  assert.deepEqual(numericPath, { ok: false, reason: "invalid_page_filter" });
 });
 
 test("returns an empty result for a valid API response without rows", async () => {
