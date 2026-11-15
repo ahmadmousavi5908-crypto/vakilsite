@@ -16,7 +16,9 @@ on:
       - "package-lock.json"
       - "next.config.mjs"
       - "wrangler.jsonc"
+      - "wrangler.staging.jsonc"
       - ".github/workflows/cloudflare-compatibility.yml"
+      - ".github/workflows/deploy-mavis-editorial-staging.yml"
 
 permissions:
   contents: read
@@ -106,6 +108,12 @@ jobs:
           console.log(`Static assets: ${assetCount} / ${assetLimit}.`);
           if (bytes > workerLimit || assetCount > assetLimit) process.exit(1);
           NODE
+
+      - name: Validate the isolated staging Worker configuration without deploying
+        run: >-
+          npx wrangler deploy --dry-run
+          --config wrangler.staging.jsonc
+          --outdir .wrangler-staging-dry-run
 
       - name: Profile Worker startup locally
         run: npx wrangler check startup
