@@ -1,0 +1,1 @@
+Trigger marker for read-only Staging compatibility inspection of the reviewed PR #119 migration branch. No production or application files are changed.
