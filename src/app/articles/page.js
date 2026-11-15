@@ -2,9 +2,6 @@ import Link from "next/link";
 import { articles as siteArticles } from "../../data/articles";
 import { getPublishedEditorialArticles } from "../../lib/mavis/editorial-content";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export const metadata = {
   title: "راهنماها و مقالات حقوقی | سید احمد موسوی",
   description: "راهنماهای کاربردی و قابل فهم درباره حقوق ایران؛ از آماده‌سازی مدارک و شناخت مراحل دادرسی تا پرسش‌های مهم پیش از اقدام حقوقی.",
