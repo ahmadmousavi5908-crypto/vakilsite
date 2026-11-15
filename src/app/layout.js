@@ -2,8 +2,10 @@ import "./globals.css";
 import SocialContactDock from "../components/SocialContactDock";
 import AttorneyProfileDock from "../components/AttorneyProfileDock";
 import GlobalMobileMenu from "../components/GlobalMobileMenu";
+import { isStagingSite } from "../lib/site-environment";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const isStaging = isStagingSite();
 
 export const viewport = {
   width: "device-width",
@@ -47,17 +49,29 @@ export const metadata = {
     "وکیل دزفول",
     "خدمات حقوقی",
   ],
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
+  robots: isStaging
+    ? {
+        index: false,
+        follow: false,
+        googleBot: {
+          index: false,
+          follow: false,
+          "max-image-preview": "none",
+          "max-snippet": 0,
+          "max-video-preview": 0,
+        },
+      }
+    : {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+          "max-video-preview": -1,
+        },
+      },
   openGraph: {
     type: "website",
     locale: "fa_IR",

@@ -71,6 +71,8 @@ jobs:
           wrangler@4.161.0
 
       - name: Build Next.js for Cloudflare Workers
+        env:
+          NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi-ir-staging.ci-test.workers.dev
         shell: bash
         run: |
           set -o pipefail
@@ -142,6 +144,35 @@ jobs:
           if [ "$ready" != true ]; then
             cat /tmp/opennext-preview.log
             echo "Cloudflare Workers preview did not become ready within 60 seconds."
+            exit 1
+          fi
+
+          if ! grep -Eqi '<meta[^>]+name="robots"[^>]+content="noindex, nofollow"' /tmp/vakilsite-home.html; then
+            echo "Staging page is missing the noindex/nofollow robots metadata."
+            exit 1
+          fi
+          if ! grep -Fq 'https://vakilahmadmousavi-ir-staging.ci-test.workers.dev/' /tmp/vakilsite-home.html; then
+            echo "Staging canonical URL does not point to the isolated staging origin."
+            exit 1
+          fi
+          if grep -Fq 'https://vakilahmadmousavi.ir' /tmp/vakilsite-home.html; then
+            echo "Staging HTML unexpectedly references the production canonical host."
+            exit 1
+          fi
+
+          robots_status="$(curl --silent --show-error -o /tmp/vakilsite-robots.txt -w '%{http_code}' http://127.0.0.1:8787/robots.txt)"
+          echo "/robots.txt -> HTTP $robots_status"
+          if [ "$robots_status" != "200" ] || grep -qi '^Sitemap:' /tmp/vakilsite-robots.txt; then
+            echo "Staging robots.txt must be available and must not advertise a sitemap."
+            cat /tmp/vakilsite-robots.txt
+            exit 1
+          fi
+
+          sitemap_status="$(curl --silent --show-error -o /tmp/vakilsite-sitemap.xml -w '%{http_code}' http://127.0.0.1:8787/sitemap.xml)"
+          echo "/sitemap.xml -> HTTP $sitemap_status"
+          if [ "$sitemap_status" != "200" ] || grep -Eqi '<url[ >]' /tmp/vakilsite-sitemap.xml; then
+            echo "Staging sitemap must not expose indexable URLs."
+            cat /tmp/vakilsite-sitemap.xml
             exit 1
           fi
 
