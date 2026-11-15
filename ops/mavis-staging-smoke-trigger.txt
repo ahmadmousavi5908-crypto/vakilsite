@@ -1,1 +1,1 @@
-Run the expanded live Staging admin page/API authorization diagnostics.
+Capture full anonymous admin route response metadata and body diagnostics.
