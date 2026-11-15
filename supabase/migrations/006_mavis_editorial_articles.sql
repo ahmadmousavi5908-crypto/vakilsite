@@ -69,7 +69,7 @@ create policy "Admins can delete MAVIS articles"
   using (public.is_site_admin());
 
 comment on table public.mavis_editorial_articles is
-  'Versioned editorial CMS. draft_content is private; only published_content is exposed by the public RLS policy.';
+  'Versioned editorial CMS. Draft content is admin-only; public snapshots are exposed through a restricted RPC.';
 
 -- Public article delivery is exposed through a narrow SECURITY DEFINER function.
 -- Anonymous and ordinary authenticated users cannot query draft columns on the base table.
