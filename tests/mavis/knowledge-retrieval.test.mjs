@@ -11,7 +11,7 @@ function createRetriever(records = []) {
     },
     buildLegalEvidence: (record) => {
       calls.evidence.push(record.id);
-      return { recordId: record.id, state: "needs_official_check" };
+      return record.evidence || { recordId: record.id, state: "needs_official_check" };
     },
     buildLegalResearchDossier: (args) => {
       calls.dossier = args;
@@ -123,4 +123,35 @@ test("maps published articles and research notes to conservative source classes"
 
   assert.equal(calls.dossier.records[0].source_class, "educational_summary");
   assert.equal(calls.dossier.records[1].source_class, "research_note");
+});
+
+
+test("ranks verified primary evidence above close secondary matches", () => {
+  const { retrieve, calls } = createRetriever([
+    {
+      id: "secondary_match",
+      record_type: "article",
+      title: "شرح حقوقی",
+      search_score: 900,
+      evidence: { recordId: "secondary_match", state: "secondary_reference" },
+    },
+    {
+      id: "verified_law",
+      record_type: "law",
+      title: "قانون مرتبط",
+      search_score: 820,
+      evidence: {
+        recordId: "verified_law",
+        state: "verified_primary",
+        validity: { status: "in_force" },
+        citations: [{ sourceType: "primary", authorityVerified: true }],
+      },
+    },
+  ]);
+
+  const result = retrieve("موضوع حقوقی", 2);
+
+  assert.deepEqual(result.results.map((item) => item.id), ["verified_law", "secondary_match"]);
+  assert.equal(result.results[0].evidence_priority, "verified_primary");
+  assert.equal(calls.dossier.records[0].id, "verified_law");
 });
