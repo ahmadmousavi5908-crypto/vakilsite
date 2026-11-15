@@ -35,6 +35,12 @@ Add these environment secrets:
 
 Never place secrets in repository files, workflow variables, or chat messages. Do not reuse Production Supabase credentials or a Production Cloudflare token.
 
+### Cloudflare token with least privilege
+
+Before the first deployment, create an empty Worker named `vakilahmadmousavi-ir-staging` in the Cloudflare dashboard. Then create a separate account-owned API token with the Workers `Editor` role scoped only to that Worker, and store it as `CLOUDFLARE_STAGING_API_TOKEN`.
+
+Pre-creating the Worker avoids granting product-wide Workers `Admin` permission just to create it. Cloudflare requires `Editor` for deploying an existing Worker, while creating a new Worker requires product-level `Admin`. Use the generated `workers.dev` hostname for the first test so the token does not need zone-level Workers Routes permissions. See the official [Workers roles and permissions](https://developers.cloudflare.com/workers/authorization/workers/).
+
 ## Database migration workflow
 
 The workflow `Migrate MAVIS staging database` is manual-only and is hard-locked to project reference `srbwniqhaxwaoepjfizf`.
