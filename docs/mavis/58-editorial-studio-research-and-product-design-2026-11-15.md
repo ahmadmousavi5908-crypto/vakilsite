@@ -69,7 +69,7 @@ For Iranian legal material, the reviewer must verify the current primary source,
 
 ### D. Search intelligence
 
-Google Search Console should remain read-only and show clicks, impressions, CTR and average position; query/page/country/device and date dimensions; date range, source property, retrieval time and completeness; and URL inspection as a targeted, quota-controlled diagnostic.
+Google Search Console should remain read-only and show clicks, impressions, CTR and average position; query/page/country/device and date dimensions; date range, source property, retrieval time and completeness; exact article-URL filtering for per-article query reports; and URL inspection as a targeted, quota-controlled diagnostic. The page filter must be restricted to the configured property and use Google's page dimension filter with the equals operator.
 
 Search Console data is not a complete export of all queries. Missing rows are unknown, not zero. Internal opportunity scores must be labelled as heuristics and never as ranking forecasts.
 
@@ -121,5 +121,5 @@ The existing code has a server-side Search Console adapter and a webmasters.read
 - LexisNexis, 2025–26 Australian Legal AI Survey: https://www.lexisnexis.com/community/au-resources/b/whitepapers/posts/2025-26-australian-legal-ai-survey-report-adoption-confidence-and-what-s-next
 - LexisNexis, 2026 APAC AI Sentiment Survey: https://www.lexisnexis.com/community/amp-resources/195/2026-apac-ai-sentiment-survey-report-adoption-is-near-universal-governance-is-not
 - Google Search Console API authorization: https://developers.google.com/webmaster-tools/v1/how-tos/authorizing
-- Google Search Analytics API: https://developers.google.com/webmaster-tools/v1/searchanalytics/query
+- Google Search Analytics API and dimension filters: https://developers.google.com/webmaster-tools/v1/searchanalytics/query
 - Google URL Inspection API: https://developers.google.com/webmaster-tools/v1/urlInspection.index/inspect
