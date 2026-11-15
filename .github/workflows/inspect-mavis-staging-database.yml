@@ -95,5 +95,65 @@ jobs:
             ORDER BY n.nspname, c.relname;
           "
 
+      - name: Inspect migration objects, policies, and function definitions (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes supabase@3.0.0 db query --read-only --remote="$SUPABASE_DB_URL" "
+            SELECT
+              'columns' AS section,
+              table_schema || '.' || table_name AS object_name,
+              column_name || ' | ' || data_type || ' | nullable=' || is_nullable || ' | default=' || coalesce(column_default, '<none>') AS details
+            FROM information_schema.columns
+            WHERE (table_schema = 'public' AND table_name IN ('profiles', 'social_links', 'site_settings', 'mavis_editorial_articles'))
+               OR (table_schema = 'mavis_private' AND table_name = 'knowledge_search_rate_limits')
+            UNION ALL
+            SELECT
+              'constraints',
+              conrelid::regclass::text,
+              conname || ' | ' || pg_get_constraintdef(oid)
+            FROM pg_constraint
+            WHERE conrelid IN (
+              'public.profiles'::regclass,
+              'public.social_links'::regclass,
+              'public.site_settings'::regclass,
+              to_regclass('public.mavis_editorial_articles'),
+              to_regclass('mavis_private.knowledge_search_rate_limits')
+            )
+            UNION ALL
+            SELECT
+              'indexes',
+              schemaname || '.' || tablename,
+              indexname || ' | ' || indexdef
+            FROM pg_indexes
+            WHERE (schemaname = 'public' AND tablename IN ('profiles', 'social_links', 'site_settings', 'mavis_editorial_articles'))
+               OR (schemaname = 'mavis_private' AND tablename = 'knowledge_search_rate_limits')
+            UNION ALL
+            SELECT
+              'policies',
+              schemaname || '.' || tablename,
+              policyname || ' | roles=' || roles::text || ' | command=' || cmd || ' | using=' || coalesce(qual, '<none>') || ' | check=' || coalesce(with_check, '<none>')
+            FROM pg_policies
+            WHERE (schemaname = 'public' AND tablename IN ('profiles', 'social_links', 'site_settings', 'mavis_editorial_articles'))
+               OR (schemaname = 'mavis_private' AND tablename = 'knowledge_search_rate_limits')
+            UNION ALL
+            SELECT
+              'functions',
+              n.nspname || '.' || p.proname,
+              pg_get_function_identity_arguments(p.oid) || ' | ' || pg_get_functiondef(p.oid)
+            FROM pg_proc p
+            JOIN pg_namespace n ON n.oid = p.pronamespace
+            WHERE (n.nspname = 'public' AND p.proname IN ('is_site_admin', 'consume_mavis_knowledge_search_limit', 'get_mavis_published_articles'))
+               OR (n.nspname = 'mavis_private' AND p.proname = 'consume_knowledge_search_limit')
+            UNION ALL
+            SELECT
+              'migration_history',
+              'supabase_migrations.schema_migrations',
+              CASE WHEN to_regclass('supabase_migrations.schema_migrations') IS NULL
+                THEN 'table missing'
+                ELSE 'table exists; inspect with migration list output above'
+              END;
+          "
+
       - name: Preview pending migrations (dry-run only)
         run: npx --yes supabase@3.0.0 db push --dry-run --remote="$SUPABASE_DB_URL"
