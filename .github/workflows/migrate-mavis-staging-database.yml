@@ -24,7 +24,7 @@ jobs:
     environment: staging
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
-      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_STAGING_DB_URL }}
       SUPABASE_PROJECT_REF: srbwniqhaxwaoepjfizf
     steps:
       - name: Check out the selected migration revision
@@ -36,15 +36,29 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ] || [ -z "${SUPABASE_DB_PASSWORD:-}" ]; then
-            echo "::error::Configure SUPABASE_STAGING_ACCESS_TOKEN and SUPABASE_STAGING_DB_PASSWORD in the GitHub staging environment."
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ] || [ -z "${SUPABASE_DB_URL:-}" ]; then
+            echo "::error::Configure SUPABASE_STAGING_ACCESS_TOKEN and SUPABASE_STAGING_DB_URL in the GitHub staging environment."
             exit 1
           fi
           if [ "$SUPABASE_PROJECT_REF" != "srbwniqhaxwaoepjfizf" ] || [ "$SUPABASE_PROJECT_REF" = "jroflcmiczfwtmiaxmpd" ]; then
             echo "::error::Refusing to run migrations against any project except vakilsite-staging."
             exit 1
           fi
-          echo "Target locked to vakilsite-staging ($SUPABASE_PROJECT_REF)."
+          node <<'NODE'
+          const url = new URL(process.env.SUPABASE_DB_URL);
+          const expectedUser = `postgres.${process.env.SUPABASE_PROJECT_REF}`;
+          if (!['postgres:', 'postgresql:'].includes(url.protocol)
+            || url.username !== expectedUser
+            || !url.hostname.endsWith('.pooler.supabase.com')
+            || url.port !== '5432'
+            || url.pathname !== '/postgres'
+            || url.search
+            || url.hash) {
+            console.error('::error::The database URL must be the vakilsite-staging Session pooler URL (IPv4, port 5432).');
+            process.exit(1);
+          }
+          NODE
+          echo "Target locked to vakilsite-staging ($SUPABASE_PROJECT_REF) via the Supabase Session pooler."
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -58,17 +72,17 @@ jobs:
         run: >-
           npx --yes supabase@3.0.0 db push
           --dry-run
-          --remote="$SUPABASE_PROJECT_REF"
+          --remote="$SUPABASE_DB_URL"
 
       - name: Apply migrations to staging only
         if: ${{ inputs.apply_migrations }}
         run: >-
           npx --yes supabase@3.0.0 db push
           --yes
-          --remote="$SUPABASE_PROJECT_REF"
+          --remote="$SUPABASE_DB_URL"
 
       - name: Verify remote migration history
         if: ${{ inputs.apply_migrations }}
         run: >-
           npx --yes supabase@3.0.0 migration list
-          --remote="$SUPABASE_PROJECT_REF"
+          --remote="$SUPABASE_DB_URL"
