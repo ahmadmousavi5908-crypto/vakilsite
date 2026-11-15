@@ -9,7 +9,7 @@ on:
       migration_ref:
         description: "Migration source branch (leave the default unchanged)"
         required: true
-        default: "work/mother-two-updated-mavis-20261110"
+        default: "feature/mavis-indexnow-publication-notify-20261114"
         type: string
 
 permissions:
@@ -33,10 +33,10 @@ jobs:
       - name: Validate selected migration source
         shell: bash
         env:
-          MIGRATION_REF: ${{ inputs.migration_ref || 'work/mother-two-updated-mavis-20261110' }}
+          MIGRATION_REF: ${{ inputs.migration_ref || 'feature/mavis-indexnow-publication-notify-20261114' }}
         run: |
           set -euo pipefail
-          if [ "$MIGRATION_REF" != "work/mother-two-updated-mavis-20261110" ]; then
+          if [ "$MIGRATION_REF" != "feature/mavis-indexnow-publication-notify-20261114" ]; then
             echo "::error::Only the reviewed MAVIS migration branch is permitted."
             exit 1
           fi
@@ -62,7 +62,7 @@ jobs:
       - name: Check out the reviewed migration branch
         uses: actions/checkout@v7
         with:
-          ref: ${{ inputs.migration_ref || 'work/mother-two-updated-mavis-20261110' }}
+          ref: ${{ inputs.migration_ref || 'feature/mavis-indexnow-publication-notify-20261114' }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -188,13 +188,6 @@ jobs:
             SELECT 'office_location_seed_exists',
               EXISTS (SELECT 1 FROM public.site_settings WHERE setting_key = 'office_location')::text;
           "
-
-      - name: Reconcile verified existing migration history (metadata only)
-        shell: bash
-        run: |
-          set -euo pipefail
-          npx --yes supabase@3.0.0 migration repair 001 002 003 005 --status applied --yes --remote="$SUPABASE_DB_URL"
-          npx --yes supabase@3.0.0 migration list --remote="$SUPABASE_DB_URL"
 
       - name: Preview pending migrations (dry-run only)
         run: npx --yes supabase@3.0.0 db push --dry-run --remote="$SUPABASE_DB_URL"
