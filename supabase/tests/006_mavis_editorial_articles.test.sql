@@ -88,15 +88,15 @@ values
 set local role anon;
 
 select results_eq(
-  $select slug from public.get_mavis_published_articles()
-    where slug = 'mavis-rls-test-published'$,
+  $query$select slug from public.get_mavis_published_articles()
+    where slug = 'mavis-rls-test-published'$query$,
   array['mavis-rls-test-published'::text],
   'anonymous visitors can retrieve a published article snapshot'
 );
 
 select is_empty(
-  $select slug from public.get_mavis_published_articles()
-    where slug = 'mavis-rls-test-draft'$,
+  $query$select slug from public.get_mavis_published_articles()
+    where slug = 'mavis-rls-test-draft'$query$,
   'anonymous visitors cannot retrieve a draft through the public RPC'
 );
 
@@ -107,33 +107,33 @@ set local role authenticated;
 set local request.jwt.claim.sub = 'd0d00000-0000-4000-8000-000000000099';
 
 select results_eq(
-  $select count(*) from public.mavis_editorial_articles
+  $query$select count(*) from public.mavis_editorial_articles
     where id in (
       'd0d00000-0000-4000-8000-000000000006'::uuid,
       'd0d00000-0000-4000-8000-000000000007'::uuid
-    )$,
+    )$query$,
   array[0::bigint],
   'authenticated non-admin users cannot read published or draft base records'
 );
 
 select is_empty(
-  $update public.mavis_editorial_articles
+  $query$update public.mavis_editorial_articles
     set draft_content = '{"title":"Unauthorized edit"}'::jsonb
     where id = 'd0d00000-0000-4000-8000-000000000007'::uuid
-    returning id$,
+    returning id$query$,
   'authenticated non-admin users cannot update a draft'
 );
 
 select is_empty(
-  $delete from public.mavis_editorial_articles
+  $query$delete from public.mavis_editorial_articles
     where id = 'd0d00000-0000-4000-8000-000000000007'::uuid
-    returning id$,
+    returning id$query$,
   'authenticated non-admin users cannot delete a draft'
 );
 
 select throws_ok(
-  $insert into public.mavis_editorial_articles (slug, draft_content, status)
-    values ('mavis-rls-test-forbidden-insert', '{"title":"Unauthorized"}'::jsonb, 'draft')$,
+  $query$insert into public.mavis_editorial_articles (slug, draft_content, status)
+    values ('mavis-rls-test-forbidden-insert', '{"title":"Unauthorized"}'::jsonb, 'draft')$query$,
   '42501',
   null,
   'authenticated non-admin users cannot create editorial records'
