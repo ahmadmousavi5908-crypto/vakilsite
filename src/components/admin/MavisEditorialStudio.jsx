@@ -52,7 +52,17 @@ export default function MavisEditorialStudio({ articles }) {
 
   const filtered = useMemo(() => {
     const rows = articles.filter((article) => {
-      const haystack = [article.title, article.slug, article.category].join(" ").toLowerCase();
+      const sectionText = Array.isArray(article.sections)
+        ? article.sections.flatMap((section) => [section.heading, section.body]).join(" ")
+        : "";
+      const sourceText = Array.isArray(article.sources)
+        ? article.sources.map((source) => source.label || source.title || "").join(" ")
+        : "";
+      const keywordText = Array.isArray(article.keywords) ? article.keywords.join(" ") : "";
+      const haystack = [
+        article.title, article.slug, article.category, article.excerpt, article.intro,
+        sectionText, sourceText, keywordText,
+      ].join(" ").toLowerCase();
       return haystack.includes(search.trim().toLowerCase()) &&
         (statusFilter === "all" || article.status === statusFilter);
     });
@@ -109,7 +119,7 @@ export default function MavisEditorialStudio({ articles }) {
           <div className={styles.headingActions}><a href="/admin/mavis#growth-intelligence">هوشمندی رشد و Search Console</a><button type="button" onClick={createArticle}>＋ مقاله جدید</button></div>
         </div>
         <div className={styles.toolbar}>
-          <input aria-label="جست‌وجوی مقاله" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="جست‌وجو در عنوان، نشانی یا دسته‌بندی..." />
+          <input aria-label="جست‌وجوی مقاله" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="جست‌وجو در عنوان، متن، منابع، کلیدواژه و نشانی..." />
           <select aria-label="فیلتر وضعیت" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
             <option value="all">همه وضعیت‌ها</option><option value="site_published">محتوای فعلی سایت</option><option value="draft">پیش‌نویس</option><option value="published">منتشرشده در CMS</option><option value="archived">بایگانی</option>
           </select>
