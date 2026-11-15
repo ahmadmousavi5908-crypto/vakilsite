@@ -24,7 +24,7 @@ jobs:
     environment: staging
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
-      SUPABASE_DB_URL: ${{ secrets.SUPABASE_STAGING_DB_URL }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
       SUPABASE_PROJECT_REF: srbwniqhaxwaoepjfizf
     steps:
       - name: Check out the selected migration revision
@@ -32,12 +32,12 @@ jobs:
         with:
           ref: ${{ github.sha }}
 
-      - name: Validate staging-only target and credentials
+      - name: Build and validate staging-only database connection
         shell: bash
         run: |
           set -euo pipefail
-          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ] || [ -z "${SUPABASE_DB_URL:-}" ]; then
-            echo "::error::Configure SUPABASE_STAGING_ACCESS_TOKEN and SUPABASE_STAGING_DB_URL in the GitHub staging environment."
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ] || [ -z "${SUPABASE_DB_PASSWORD:-}" ]; then
+            echo "::error::Configure SUPABASE_STAGING_ACCESS_TOKEN and SUPABASE_STAGING_DB_PASSWORD in the GitHub staging environment."
             exit 1
           fi
           if [ "$SUPABASE_PROJECT_REF" != "srbwniqhaxwaoepjfizf" ] || [ "$SUPABASE_PROJECT_REF" = "jroflcmiczfwtmiaxmpd" ]; then
@@ -45,20 +45,22 @@ jobs:
             exit 1
           fi
           node <<'NODE'
-          const url = new URL(process.env.SUPABASE_DB_URL);
-          const expectedUser = `postgres.${process.env.SUPABASE_PROJECT_REF}`;
-          if (!['postgres:', 'postgresql:'].includes(url.protocol)
-            || url.username !== expectedUser
-            || !url.hostname.endsWith('.pooler.supabase.com')
+          const password = process.env.SUPABASE_DB_PASSWORD;
+          const projectRef = process.env.SUPABASE_PROJECT_REF;
+          const encodedPassword = encodeURIComponent(password);
+          const url = new URL(
+            `postgresql://postgres.${projectRef}:${encodedPassword}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres`
+          );
+          if (url.username !== `postgres.${projectRef}`
+            || url.hostname !== 'aws-1-eu-central-1.pooler.supabase.com'
             || url.port !== '5432'
-            || url.pathname !== '/postgres'
-            || url.search
-            || url.hash) {
-            console.error('::error::The database URL must be the vakilsite-staging Session pooler URL (IPv4, port 5432).');
+            || url.pathname !== '/postgres') {
+            console.error('::error::The generated staging database connection did not pass validation.');
             process.exit(1);
           }
+          require('node:fs').appendFileSync(process.env.GITHUB_ENV, `SUPABASE_DB_URL=${url.toString()}\\n`);
           NODE
-          echo "Target locked to vakilsite-staging ($SUPABASE_PROJECT_REF) via the Supabase Session pooler."
+          echo "Target locked to vakilsite-staging ($SUPABASE_PROJECT_REF) via the IPv4 Session pooler."
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
