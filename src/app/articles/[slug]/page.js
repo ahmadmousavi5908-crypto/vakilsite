@@ -71,7 +71,7 @@ export default async function ArticleDetailPage({ params }) {
           {(article.sections || []).map((section, index) => (
             <section className="article-body-section" key={section.heading + "-" + index}>
               <h2>{section.heading}</h2>
-              {String(section.body || "").split(/\\n{2,}/).filter(Boolean).map((paragraph, paragraphIndex) => (
+              {String(section.body || "").split(String.fromCharCode(10, 10)).filter(Boolean).map((paragraph, paragraphIndex) => (
                 <p key={paragraphIndex}>{paragraph}</p>
               ))}
             </section>
