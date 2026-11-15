@@ -5,7 +5,7 @@ on:
     branches:
       - feature/mavis-indexnow-publication-notify-20261114
     paths:
-      - ".github/workflows/mavis-staging-smoke.yml"
+      - "ops/mavis-staging-smoke-trigger.txt"
   workflow_dispatch:
 
 permissions:
@@ -17,26 +17,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Wait for Staging Worker and verify public routes
+      - name: Verify public Staging routes
         shell: bash
         run: |
           set -euo pipefail
           BASE_URL="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev"
           routes=(/ /robots.txt /sitemap.xml /articles /articles/library /admin/login)
           for route in "${routes[@]}"; do
-            status=""
-            for attempt in $(seq 1 12); do
-              status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-staging-body -w '%{http_code}' "$BASE_URL$route" || true)"
-              if [ "$status" = "200" ]; then break; fi
-              sleep 5
-            done
+            status="$(curl --silent --show-error --connect-timeout 5 --max-time 15 -D /tmp/mavis-staging-headers -o /tmp/mavis-staging-body -w '%{http_code}' "$BASE_URL$route" || true)"
             echo "$route => HTTP $status"
             if [ "$status" != "200" ]; then
               echo "::error::Staging route failed: $route"
+              cat /tmp/mavis-staging-headers 2>/dev/null || true
               cat /tmp/mavis-staging-body 2>/dev/null || true
               exit 1
             fi
           done
+          if ! grep -Fq "$BASE_URL" /tmp/mavis-staging-body; then
+            echo "Last route response did not contain the Staging origin; route responses are still verified by status."
+          fi
 
       - name: Verify admin route fails closed for anonymous visitors
         shell: bash
