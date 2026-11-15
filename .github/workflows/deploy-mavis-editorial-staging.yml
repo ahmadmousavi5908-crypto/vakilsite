@@ -106,9 +106,17 @@ jobs:
         run: npx opennextjs-cloudflare build
 
       - name: Validate Staging Worker bundle without deploying
-        run: npx wrangler deploy --dry-run --config wrangler.staging.jsonc
+        run: >-
+          npx wrangler deploy --dry-run --config wrangler.staging.jsonc
+          --var "NEXT_PUBLIC_SITE_URL:${NEXT_PUBLIC_SITE_URL}"
+          "NEXT_PUBLIC_SUPABASE_URL:${NEXT_PUBLIC_SUPABASE_URL}"
+          "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}"
 
       - name: Deploy only the isolated Staging Worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
-        run: npx wrangler deploy --config wrangler.staging.jsonc
+        run: >-
+          npx wrangler deploy --config wrangler.staging.jsonc
+          --var "NEXT_PUBLIC_SITE_URL:${NEXT_PUBLIC_SITE_URL}"
+          "NEXT_PUBLIC_SUPABASE_URL:${NEXT_PUBLIC_SUPABASE_URL}"
+          "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}"
