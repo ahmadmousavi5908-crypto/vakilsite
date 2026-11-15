@@ -189,5 +189,59 @@ jobs:
               EXISTS (SELECT 1 FROM public.site_settings WHERE setting_key = 'office_location')::text;
           "
 
-      - name: Preview pending migrations (dry-run only)
-        run: npx --yes supabase@3.0.0 db push --dry-run --remote="$SUPABASE_DB_URL"
+      - name: Apply reviewed MAVIS migrations to Staging only
+        shell: bash
+        run: |
+          set -euo pipefail
+          dry_run="$(npx --yes supabase@3.0.0 db push --dry-run --remote="$SUPABASE_DB_URL" 2>&1)"
+          printf '%s\\n' "$dry_run"
+          mapfile -t pending < <(printf '%s\\n' "$dry_run" | sed -n 's/^[[:space:]]*•[[:space:]]*//p')
+          expected=(
+            006_harden_is_site_admin_execute_acl.sql
+            007_mavis_editorial_cms_foundation.sql
+            008_mavis_editorial_draft_write_rpc.sql
+            009_mavis_source_discovery_rate_limit.sql
+            010_mavis_source_candidate_import.sql
+            011_mavis_exact_version_review_workflow.sql
+            012_mavis_explicit_publication_workflow.sql
+            013_mavis_archive_rollback_public_reads.sql
+            014_mavis_search_console_oauth_storage.sql
+            015_mavis_source_candidate_queue.sql
+            016_mavis_openalex_daily_budget.sql
+            017_mavis_local_full_text_search.sql
+          )
+          if [ "${#pending[@]}" -ne "${#expected[@]}" ]; then
+            echo "::error::Unexpected pending migration count; refusing Staging apply."
+            exit 1
+          fi
+          for i in "${!expected[@]}"; do
+            if [ "${pending[$i]}" != "${expected[$i]}" ]; then
+              echo "::error::Pending migration order/content differs from the reviewed allowlist."
+              exit 1
+            fi
+          done
+          npx --yes supabase@3.0.0 db push --yes --remote="$SUPABASE_DB_URL"
+          npx --yes supabase@3.0.0 migration list --remote="$SUPABASE_DB_URL"
+
+      - name: Verify Staging editorial schema (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes supabase@3.0.0 db query --read-only --remote="$SUPABASE_DB_URL" "
+            SELECT
+              n.nspname AS schema_name,
+              c.relname AS table_name,
+              c.relrowsecurity AS rls_enabled
+            FROM pg_class c
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            WHERE c.relkind IN ('r', 'p')
+              AND (
+                (n.nspname = 'public' AND c.relname IN (
+                  'mavis_articles', 'mavis_sources', 'mavis_article_versions',
+                  'mavis_article_approvals', 'mavis_source_candidates',
+                  'mavis_provider_usage_daily', 'mavis_search_console_connections'
+                ))
+                OR (n.nspname = 'mavis_private' AND c.relname = 'source_discovery_rate_limits')
+              )
+            ORDER BY n.nspname, c.relname;
+          "
