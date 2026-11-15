@@ -4,7 +4,7 @@
 .sectionHeading h2{font-size:20px;margin:5px 0 7px;color:#172c29}
 .sectionHeading p{font-size:13px;line-height:1.9;color:#68746f;margin:0}
 .eyebrow{font-size:10px;letter-spacing:.12em;color:#9a7b43;font-weight:800}
-.sectionHeading button,.actions button{border:0;border-radius:10px;background:#183b35;color:#fff;padding:11px 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.headingActions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.headingActions a{display:inline-flex;align-items:center;border:1px solid #dce3dc;border-radius:10px;padding:10px 12px;color:#24483d;text-decoration:none;font-size:12px;font-weight:700}.sectionHeading button,.actions button{border:0;border-radius:10px;background:#183b35;color:#fff;padding:11px 16px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
 .toolbar{display:flex;gap:10px;align-items:center;margin:16px 0;flex-wrap:wrap}
 .toolbar input,.toolbar select{min-height:42px;border:1px solid #dfe4df;border-radius:9px;padding:8px 12px;font:inherit;font-size:13px;background:#fff;min-width:170px}
 .toolbar input{flex:1;min-width:220px}
@@ -44,4 +44,4 @@
 .previewExcerpt{font-weight:700;color:#61716a}
 .preview aside{background:#f7f4ed;padding:14px;border-radius:10px}
 .preview li{margin:6px 0}
-@media(max-width:760px){.library,.editor{padding:15px;border-radius:14px}.sectionHeading{flex-direction:column}.fieldGrid{grid-template-columns:1fr}.fieldGrid .wide{grid-column:auto}.toolbar input{min-width:100%}.toolbar select{flex:1}.actions button{flex:1}.preview{padding:16px}.preview h1{font-size:21px}}
+@media(max-width:760px){.headingActions{width:100%}.headingActions a,.headingActions button{flex:1;text-align:center;justify-content:center}.library,.editor{padding:15px;border-radius:14px}.sectionHeading{flex-direction:column}.fieldGrid{grid-template-columns:1fr}.fieldGrid .wide{grid-column:auto}.toolbar input{min-width:100%}.toolbar select{flex:1}.actions button{flex:1}.preview{padding:16px}.preview h1{font-size:21px}}
