@@ -1,0 +1,66 @@
+name: MAVIS Staging smoke tests
+
+on:
+  push:
+    branches:
+      - feature/mavis-indexnow-publication-notify-20261114
+    paths:
+      - ".github/workflows/mavis-staging-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Verify live Staging Worker routes and access boundaries
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Wait for Staging Worker and verify public routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev"
+          routes=(/ /robots.txt /sitemap.xml /articles /articles/library /admin/login)
+          for route in "${routes[@]}"; do
+            status=""
+            for attempt in $(seq 1 12); do
+              status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-staging-body -w '%{http_code}' "$BASE_URL$route" || true)"
+              if [ "$status" = "200" ]; then break; fi
+              sleep 5
+            done
+            echo "$route => HTTP $status"
+            if [ "$status" != "200" ]; then
+              echo "::error::Staging route failed: $route"
+              cat /tmp/mavis-staging-body 2>/dev/null || true
+              exit 1
+            fi
+          done
+
+      - name: Verify admin route fails closed for anonymous visitors
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev"
+          status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-admin-body -D /tmp/mavis-admin-headers -w '%{http_code}' "$BASE_URL/admin/mavis/articles")"
+          echo "/admin/mavis/articles => HTTP $status"
+          case "$status" in
+            301|302|303|307|308|401|403) ;;
+            *)
+              echo "::error::Admin articles route did not fail closed for an anonymous visitor."
+              exit 1
+              ;;
+          esac
+
+      - name: Verify Staging is not indexable
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev"
+          curl --silent --show-error --fail --max-time 20 "$BASE_URL/" -D /tmp/mavis-staging-headers -o /tmp/mavis-staging-home
+          if ! grep -Eiq 'x-robots-tag:.*noindex|<meta[^>]+name=["\\x27]robots["\\x27][^>]+content=["\\x27][^"\\x27]*noindex' /tmp/mavis-staging-headers /tmp/mavis-staging-home; then
+            echo "::error::Staging homepage is missing an explicit noindex signal."
+            exit 1
+          fi
+          echo "Staging noindex signal verified."
