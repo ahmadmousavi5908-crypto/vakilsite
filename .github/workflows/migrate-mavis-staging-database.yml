@@ -58,7 +58,7 @@ jobs:
             console.error('::error::The generated staging database connection did not pass validation.');
             process.exit(1);
           }
-          require('node:fs').appendFileSync(process.env.GITHUB_ENV, `SUPABASE_DB_URL=${url.toString()}\\n`);
+          require('node:fs').appendFileSync(process.env.GITHUB_ENV, `SUPABASE_DB_URL=${url.toString()}\n`);
           NODE
           echo "Target locked to vakilsite-staging ($SUPABASE_PROJECT_REF) via the IPv4 Session pooler."
 
