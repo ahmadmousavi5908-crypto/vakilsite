@@ -158,5 +158,36 @@ jobs:
               END;
           "
 
+      - name: Verify existing migration grants and office seed (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes supabase@3.0.0 db query --read-only --remote="$SUPABASE_DB_URL" "
+            SELECT
+              'schema_usage_authenticated' AS check_name,
+              has_schema_privilege('authenticated', 'mavis_private', 'USAGE')::text AS result
+            UNION ALL
+            SELECT 'private_table_authenticated_select',
+              has_table_privilege('authenticated', 'mavis_private.knowledge_search_rate_limits', 'SELECT')::text
+            UNION ALL
+            SELECT 'private_table_authenticated_insert',
+              has_table_privilege('authenticated', 'mavis_private.knowledge_search_rate_limits', 'INSERT')::text
+            UNION ALL
+            SELECT 'private_counter_function_authenticated_execute',
+              has_function_privilege('authenticated', 'mavis_private.consume_knowledge_search_limit()', 'EXECUTE')::text
+            UNION ALL
+            SELECT 'private_counter_function_anon_execute',
+              has_function_privilege('anon', 'mavis_private.consume_knowledge_search_limit()', 'EXECUTE')::text
+            UNION ALL
+            SELECT 'admin_predicate_anon_execute',
+              has_function_privilege('anon', 'public.is_site_admin()', 'EXECUTE')::text
+            UNION ALL
+            SELECT 'admin_predicate_authenticated_execute',
+              has_function_privilege('authenticated', 'public.is_site_admin()', 'EXECUTE')::text
+            UNION ALL
+            SELECT 'office_location_seed_exists',
+              EXISTS (SELECT 1 FROM public.site_settings WHERE setting_key = 'office_location')::text;
+          "
+
       - name: Preview pending migrations (dry-run only)
         run: npx --yes supabase@3.0.0 db push --dry-run --remote="$SUPABASE_DB_URL"
