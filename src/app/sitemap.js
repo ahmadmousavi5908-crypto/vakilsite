@@ -12,7 +12,7 @@ export default async function sitemap() {
 
   const base = siteUrl.replace(/\/$/, "");
   const editorialArticles = await getPublishedEditorialArticles();
-  const staticSlugs = new Set(articles.map((article) => article.slug));
+  const cmsBySlug = new Map(editorialArticles.map((article) => [article.slug, article]));
   return [
     {
       url: base,
@@ -79,12 +79,15 @@ export default async function sitemap() {
       changeFrequency: "monthly",
       priority: 0.55,
     })),
-    ...articles.map((article) => ({
+    ...articles.filter((article) => {
+      const cmsArticle = cmsBySlug.get(article.slug);
+      return !cmsArticle || cmsArticle.isIndexable;
+    }).map((article) => ({
       url: base + "/articles/" + article.slug,
       changeFrequency: "monthly",
       priority: 0.7,
     })),
-    ...editorialArticles.filter((article) => article.isIndexable && !staticSlugs.has(article.slug)).map((article) => ({
+    ...editorialArticles.filter((article) => article.isIndexable && !articles.some((item) => item.slug === article.slug)).map((article) => ({
       url: base + "/articles/" + article.slug,
       lastModified: article.updatedAt || article.publishedAt || undefined,
       changeFrequency: "monthly",
