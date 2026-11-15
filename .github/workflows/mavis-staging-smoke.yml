@@ -48,9 +48,23 @@ jobs:
           status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-admin-body -D /tmp/mavis-admin-headers -w '%{http_code}' "$BASE_URL/admin/mavis/articles")"
           echo "/admin/mavis/articles => HTTP $status"
           case "$status" in
-            301|302|303|307|308|401|403) ;;
+            301|302|303|307|308|401|403)
+              echo "Anonymous request was rejected or redirected."
+              ;;
+            200)
+              if grep -Fq "admin-login-form" /tmp/mavis-admin-body && grep -Fq "ورود به پنل مدیریت" /tmp/mavis-admin-body; then
+                echo "Anonymous request received only the login form."
+              else
+                echo "::error::HTTP 200 did not contain the login form; refusing to treat the admin route as protected."
+                cat /tmp/mavis-admin-headers
+                head -c 2000 /tmp/mavis-admin-body
+                exit 1
+              fi
+              ;;
             *)
-              echo "::error::Admin articles route did not fail closed for an anonymous visitor."
+              echo "::error::Unexpected response from the admin route."
+              cat /tmp/mavis-admin-headers
+              head -c 2000 /tmp/mavis-admin-body
               exit 1
               ;;
           esac
