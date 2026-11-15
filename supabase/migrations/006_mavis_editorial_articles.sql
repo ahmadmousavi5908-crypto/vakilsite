@@ -37,7 +37,9 @@ create index if not exists mavis_editorial_published_idx
 alter table public.mavis_editorial_articles enable row level security;
 
 revoke all on table public.mavis_editorial_articles from public, anon, authenticated;
-grant select on table public.mavis_editorial_articles to anon, authenticated;
+grant select (slug, published_content, status, is_indexable, published_at, updated_at)
+  on table public.mavis_editorial_articles to anon;
+grant select on table public.mavis_editorial_articles to authenticated;
 grant insert, update, delete on table public.mavis_editorial_articles to authenticated;
 
 drop policy if exists "Public can read published MAVIS articles" on public.mavis_editorial_articles;
