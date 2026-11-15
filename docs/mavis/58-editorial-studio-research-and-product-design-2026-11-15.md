@@ -110,8 +110,8 @@ The existing code has a server-side Search Console adapter and a webmasters.read
 
 ## 6. Research sources
 
-- Thomson Reuters, 2026 State of the US Legal Market: https://www.thomsonreuters.com/en-us/posts/wp-content/uploads/sites/20/2026/01/2026-State-of-the-US-Legal-Market.pdf
-- American Bar Association, Creating an Effective Law Firm Knowledge System (Nov/Dec 2026): https://www.americanbar.org/groups/law_practice/resources/law-practice-magazine/2026/november-december-2026/creating-an-effective-law-firm-knowledge-system/
+- Thomson Reuters, 2026 State of the US Legal Market: https://www.thomsonreuters.com/en/institute/reports/state-of-the-us-legal-market-2026
+- American Bar Association, Creating an Effective Law Firm Knowledge System (Nov/Dec 2026): https://www.americanbar.org/groups/law_practice/resources/law-practice-magazine/2026/november-december-2026/
 - American Bar Association, The Legal Industry Report 2025: https://www.americanbar.org/groups/law_practice/resources/law-technology-today/2025/the-legal-industry-report-2025/
 - Wolters Kluwer, 2026 German law-firm benchmark: https://assets.contenthub.wolterskluwer.com/api/public/content/3083298-benchmark-report-for-law-firms-2026-565fca7048?v=9a7c6eb8
 - Legal Tech Monitor 2025, Germany: https://www.legaltechverband.de/wp-content/uploads/2025/03/Legal-Tech-Monitor-2025_EN.pdf
