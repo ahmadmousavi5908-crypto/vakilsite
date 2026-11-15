@@ -47,13 +47,20 @@ export default function MavisEditorialStudio({ articles }) {
   const [form, setForm] = useState(() => toForm(articles[0] || {}));
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState("updated");
   const [preview, setPreview] = useState(false);
 
-  const filtered = useMemo(() => articles.filter((article) => {
-    const haystack = [article.title, article.slug, article.category].join(" ").toLowerCase();
-    return haystack.includes(search.trim().toLowerCase()) &&
-      (statusFilter === "all" || article.status === statusFilter);
-  }), [articles, search, statusFilter]);
+  const filtered = useMemo(() => {
+    const rows = articles.filter((article) => {
+      const haystack = [article.title, article.slug, article.category].join(" ").toLowerCase();
+      return haystack.includes(search.trim().toLowerCase()) &&
+        (statusFilter === "all" || article.status === statusFilter);
+    });
+    rows.sort((a, b) => sortOrder === "title"
+      ? String(a.title || "").localeCompare(String(b.title || ""), "fa")
+      : new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime());
+    return rows;
+  }, [articles, search, statusFilter, sortOrder]);
 
   const selected = articles.find((article) => article.slug === selectedSlug) || null;
   const update = (key) => (event) => setForm((current) => ({ ...current, [key]: event.target.value }));
@@ -62,6 +69,28 @@ export default function MavisEditorialStudio({ articles }) {
     setSelectedSlug(article.slug);
     setForm(toForm(article));
     setPreview(false);
+  }
+
+  function exportCsv() {
+    const rows = [
+      ["title", "category", "slug", "status", "updated_at"],
+      ...filtered.map((article) => [
+        article.title || "",
+        article.category || "",
+        article.slug || "",
+        statusLabels[article.status] || article.status || "",
+        article.updatedAt || "",
+      ]),
+    ];
+    const csv = "\\uFEFF" + rows.map((row) => row.map((cell) =>
+      '"' + String(cell).replace(/"/g, '""') + '"'
+    ).join(",")).join("\\r\\n");
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "mavis-editorial-inventory.csv";
+    anchor.click();
+    URL.revokeObjectURL(url);
   }
 
   function createArticle() {
@@ -86,6 +115,10 @@ export default function MavisEditorialStudio({ articles }) {
           <select aria-label="فیلتر وضعیت" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
             <option value="all">همه وضعیت‌ها</option><option value="site_published">محتوای فعلی سایت</option><option value="draft">پیش‌نویس</option><option value="published">منتشرشده در CMS</option><option value="archived">بایگانی</option>
           </select>
+          <select aria-label="مرتب‌سازی مقالات" value={sortOrder} onChange={(event) => setSortOrder(event.target.value)}>
+            <option value="updated">آخرین ویرایش</option><option value="title">عنوان مقاله</option>
+          </select>
+          <button type="button" className={styles.exportButton} onClick={exportCsv}>خروجی CSV</button>
           <span>{filtered.length.toLocaleString("fa-IR")} مقاله</span>
         </div>
         <div className={styles.tableWrap}>
@@ -99,7 +132,8 @@ export default function MavisEditorialStudio({ articles }) {
                   <td><span className={styles.status} data-status={article.status}>{article.hasUnpublishedChanges ? "منتشرشده · نسخه جدید ذخیره نشده" : (statusLabels[article.status] || article.status)}</span></td>
                   <td dir="ltr">{article.slug}</td>
                   <td>{article.updatedAt ? new Date(article.updatedAt).toLocaleDateString("fa-IR") : "—"}</td>
-                  <td><button type="button" className={styles.openButton} onClick={() => selectArticle(article)}>بازکردن و ویرایش</button></td>
+                  <td className={styles.rowActions}><button type="button" className={styles.openButton} onClick={() => selectArticle(article)}>ویرایش</button>
+                    {article.status === "published" || article.status === "site_published" ? <a className={styles.readButton} href={"/articles/" + article.slug} target="_blank" rel="noreferrer">خواندن</a> : <span className={styles.draftRead}>هنوز منتشر نشده</span>}</td>
                 </tr>
               ))}
               {!filtered.length ? <tr><td colSpan="6" className={styles.empty}>مقاله‌ای با این مشخصات پیدا نشد.</td></tr> : null}
