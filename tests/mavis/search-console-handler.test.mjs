@@ -116,3 +116,18 @@ test("maps invalid provider requests and upstream failures to safe responses", a
   assert.equal(failedResponse.status, 502);
   assert.doesNotMatch(JSON.stringify(await failedResponse.json()), /refresh token must not leak/);
 });
+
+test("accepts a bounded article page filter and rejects malformed filter values", async () => {
+  let received;
+  const handler = createSearchConsoleHandler(dependencies({
+    client: { async querySearchAnalytics(payload) { received = payload; return successResult; } },
+  }));
+  const response = await handler(request({ ...validPayload, pageFilter: "/articles/contract-guide" }));
+  assert.equal(response.status, 200);
+  assert.equal(received.pageFilter, "/articles/contract-guide");
+
+  const invalid = await handler(request({ ...validPayload, pageFilter: { url: "https://example.com" } }));
+  assert.equal(invalid.status, 400);
+  const oversized = await handler(request({ ...validPayload, pageFilter: "x".repeat(2049) }));
+  assert.equal(oversized.status, 400);
+});
