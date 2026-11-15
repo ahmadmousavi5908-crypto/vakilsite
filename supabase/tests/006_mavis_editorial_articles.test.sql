@@ -1,6 +1,6 @@
 begin;
 
-select plan(19);
+select plan(20);
 
 select ok(
   (select relrowsecurity from pg_class where oid = 'public.mavis_editorial_articles'::regclass),
