@@ -79,7 +79,7 @@ export default function MavisEditorialStudio({ articles }) {
       <section className={styles.library} id="editorial-table">
         <div className={styles.sectionHeading}>
           <div><span className={styles.eyebrow}>CONTENT INVENTORY</span><h2>بانک مقالات و محتوا</h2><p>نمای جدولی، قابل جست‌وجو و مرتب‌سازی؛ هر ردیف یک مقاله مستقل است.</p></div>
-          <button type="button" onClick={createArticle}>＋ مقاله جدید</button>
+          <div className={styles.headingActions}><a href="/admin/mavis#growth-intelligence">هوشمندی رشد و Search Console</a><button type="button" onClick={createArticle}>＋ مقاله جدید</button></div>
         </div>
         <div className={styles.toolbar}>
           <input aria-label="جست‌وجوی مقاله" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="جست‌وجو در عنوان، نشانی یا دسته‌بندی..." />
@@ -96,7 +96,7 @@ export default function MavisEditorialStudio({ articles }) {
                 <tr key={article.slug} data-selected={article.slug === selectedSlug}>
                   <td><strong>{article.title || "مقاله بدون عنوان"}</strong><small>{article.source === "site" ? "نسخه فعلی سایت" : article.hasPublishedSnapshot ? "دارای نسخه منتشرشده" : "رکورد تحریریه"}</small></td>
                   <td>{article.category || "—"}</td>
-                  <td><span className={styles.status} data-status={article.status}>{statusLabels[article.status] || article.status}</span></td>
+                  <td><span className={styles.status} data-status={article.status}>{article.hasUnpublishedChanges ? "منتشرشده · نسخه جدید ذخیره نشده" : (statusLabels[article.status] || article.status)}</span></td>
                   <td dir="ltr">{article.slug}</td>
                   <td>{article.updatedAt ? new Date(article.updatedAt).toLocaleDateString("fa-IR") : "—"}</td>
                   <td><button type="button" className={styles.openButton} onClick={() => selectArticle(article)}>بازکردن و ویرایش</button></td>
