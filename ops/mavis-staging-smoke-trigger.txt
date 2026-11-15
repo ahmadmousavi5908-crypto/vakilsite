@@ -1,1 +1,1 @@
-Re-run Staging anonymous page and API authorization checks, including the Search Console status endpoint.
+Run the expanded live Staging admin page/API authorization diagnostics.
