@@ -1,0 +1,1 @@
+Trigger the guarded, allowlist-only Staging migration workflow for PR #119. Target is hard-locked to the Staging Supabase project; Production is not in scope.
