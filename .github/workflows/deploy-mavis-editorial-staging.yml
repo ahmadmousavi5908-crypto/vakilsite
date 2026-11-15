@@ -1,0 +1,106 @@
+name: Deploy MAVIS editorial staging
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-editorial-staging-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy-staging:
+    name: Build and deploy isolated staging Worker
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: staging
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.STAGING_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.STAGING_SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - name: Check out the selected deployment revision
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Validate isolated staging configuration
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN NEXT_PUBLIC_SITE_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Missing staging environment value: $name"
+              exit 1
+            fi
+          done
+          node --input-type=module <<'NODE'
+          const site = new URL(process.env.NEXT_PUBLIC_SITE_URL);
+          const supabase = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL);
+          const stagingSupabaseHost = "srbwniqhaxwaoepjfizf.supabase.co";
+          const productionSupabaseHost = "jroflcmiczfwtmiaxmpd";
+          const isWorkersDev =
+            site.hostname.startsWith("vakilahmadmousavi-ir-staging.") &&
+            site.hostname.endsWith(".workers.dev");
+          const isCustomStaging = site.hostname.startsWith("staging.");
+
+          if (
+            site.protocol !== "https:" ||
+            site.username ||
+            site.password ||
+            site.pathname !== "/" ||
+            site.search ||
+            site.hash ||
+            site.hostname === "vakilahmadmousavi.ir" ||
+            (!isWorkersDev && !isCustomStaging)
+          ) {
+            throw new Error("NEXT_PUBLIC_SITE_URL must be a dedicated HTTPS staging origin.");
+          }
+
+          if (
+            supabase.protocol !== "https:" ||
+            supabase.username ||
+            supabase.password ||
+            supabase.pathname !== "/" ||
+            supabase.search ||
+            supabase.hash ||
+            supabase.hostname !== stagingSupabaseHost ||
+            supabase.hostname === productionSupabaseHost
+          ) {
+            throw new Error("NEXT_PUBLIC_SUPABASE_URL must point only to the dedicated vakilsite-staging project.");
+          }
+
+          if (!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.trim()) {
+            throw new Error("The staging Supabase publishable key is missing.");
+          }
+
+          console.log("Dedicated Staging Worker and Supabase origins passed validation.");
+          NODE
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install project dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install pinned Cloudflare adapter tooling
+        run: >-
+          npm install --no-save --package-lock=false --no-audit --no-fund
+          @opennextjs/cloudflare@1.20.17
+          wrangler@4.161.0
+
+      - name: Build staging Worker
+        run: npx opennextjs-cloudflare build
+
+      - name: Deploy only the isolated staging Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
+        run: npx wrangler deploy --config wrangler.staging.jsonc
