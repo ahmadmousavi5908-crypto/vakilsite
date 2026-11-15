@@ -24,10 +24,11 @@ function initialRange() {
 const numberFormat = new Intl.NumberFormat("fa-IR", { maximumFractionDigits: 1 });
 const percentFormat = new Intl.NumberFormat("fa-IR", { style: "percent", maximumFractionDigits: 1 });
 
-export default function MavisSearchConsolePanel() {
+export default function MavisSearchConsolePanel({ initialPageFilter = "" }) {
   const [range] = useState(initialRange);
   const [startDate, setStartDate] = useState(range.startDate);
   const [endDate, setEndDate] = useState(range.endDate);
+  const [pageFilter, setPageFilter] = useState(initialPageFilter);
   const [dimensions, setDimensions] = useState(["query", "page"]);
   const [result, setResult] = useState(null);
   const [state, setState] = useState("idle");
@@ -53,6 +54,7 @@ export default function MavisSearchConsolePanel() {
         body: JSON.stringify({
           startDate,
           endDate,
+          pageFilter: pageFilter.trim() || undefined,
           dimensions,
           type: "web",
           dataState: "final",
@@ -130,6 +132,17 @@ export default function MavisSearchConsolePanel() {
           <span>تا تاریخ</span>
           <input type="date" value={endDate} onChange={(event) => setEndDate(event.target.value)} required />
         </label>
+        <label className={styles.pageFilter}>
+          <span>فیلتر صفحه مشخص (اختیاری)</span>
+          <input
+            type="text"
+            value={pageFilter}
+            onChange={(event) => setPageFilter(event.target.value)}
+            placeholder="/articles/contract-guide"
+            dir="ltr"
+            maxLength={2048}
+          />
+        </label>
         <fieldset className={styles.dimensions}>
           <legend>ابعاد گزارش</legend>
           <label>
@@ -161,6 +174,7 @@ export default function MavisSearchConsolePanel() {
             <span>کلیک: <strong>{numberFormat.format(result.rows.reduce((sum, row) => sum + row.metrics.clicks, 0))}</strong></span>
             <span>نمایش: <strong>{numberFormat.format(result.rows.reduce((sum, row) => sum + row.metrics.impressions, 0))}</strong></span>
             <span>ردیف‌های پالایش‌شده: <strong>{numberFormat.format(result.rows.filter((row) => row.privacyReviewRequired).length)}</strong></span>
+            {result.request?.pageFilter ? <span>فیلتر صفحه: <strong dir="ltr">{result.request.pageFilter}</strong></span> : null}
             {result.coverage.mayBeTruncated ? <strong className={styles.warning}>احتمال ناقص‌بودن نتایج</strong> : null}
           </div>
           <div className={styles.tableWrap}>

@@ -9,6 +9,7 @@ const ALLOWED_KEYS = new Set([
   "rowLimit",
   "startRow",
   "aggregationType",
+  "pageFilter",
 ]);
 
 function jsonResponse(body, status, headers = NO_STORE_HEADERS) {
@@ -135,7 +136,8 @@ export function createSearchConsoleHandler(dependencies) {
     }
     if (!Array.isArray(payload.dimensions) || payload.dimensions.length < 1 || payload.dimensions.length > 4 ||
         !Number.isInteger(payload.rowLimit ?? 1000) || (payload.rowLimit ?? 1000) < 1 || (payload.rowLimit ?? 1000) > 5000 ||
-        !Number.isInteger(payload.startRow ?? 0) || (payload.startRow ?? 0) < 0 || (payload.startRow ?? 0) > 50000) {
+        !Number.isInteger(payload.startRow ?? 0) || (payload.startRow ?? 0) < 0 || (payload.startRow ?? 0) > 50000 ||
+        (payload.pageFilter !== undefined && (typeof payload.pageFilter !== "string" || payload.pageFilter.length > 2048))) {
       return jsonResponse({ error: { code: "INVALID_REQUEST", message: "محدوده ابعاد یا صفحه‌بندی معتبر نیست." } }, 400);
     }
 

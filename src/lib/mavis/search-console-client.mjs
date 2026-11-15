@@ -28,7 +28,49 @@ function normalizeSiteUrl(value) {
   }
 }
 
-function readRequest(request) {
+function normalizePageFilter(value, siteUrl) {
+  if (value === undefined || value === null || value === "") return { ok: true, value: null };
+  if (typeof value !== "string" || value.length > 2048 || value.trim() !== value) {
+    return { ok: false, reason: "invalid_page_filter" };
+  }
+
+  try {
+    const isDomainProperty = siteUrl.startsWith("sc-domain:");
+    const domain = isDomainProperty ? siteUrl.slice("sc-domain:".length) : null;
+    const baseUrl = isDomainProperty ? "https://" + domain + "/" : siteUrl;
+    const url = value.startsWith("/") && !value.startsWith("//")
+      ? new URL(value, baseUrl)
+      : new URL(value);
+
+    if (url.protocol !== "https:" || !url.hostname || url.username || url.password ||
+        url.port || url.hash || url.search || /@|\d{8,}/.test(url.pathname)) {
+      return { ok: false, reason: "invalid_page_filter" };
+    }
+
+    if (isDomainProperty) {
+      if (url.hostname !== domain && !url.hostname.endsWith("." + domain)) {
+        return { ok: false, reason: "page_filter_outside_property" };
+      }
+    } else {
+      const propertyUrl = new URL(siteUrl);
+      const pathPrefix = propertyUrl.pathname.endsWith("/")
+        ? propertyUrl.pathname
+        : propertyUrl.pathname + "/";
+      const pathMatches = propertyUrl.pathname === "/" ||
+        url.pathname === propertyUrl.pathname ||
+        url.pathname.startsWith(pathPrefix);
+      if (url.origin !== propertyUrl.origin || !pathMatches) {
+        return { ok: false, reason: "page_filter_outside_property" };
+      }
+    }
+
+    return { ok: true, value: url.toString() };
+  } catch {
+    return { ok: false, reason: "invalid_page_filter" };
+  }
+}
+
+function readRequest(request, siteUrl) {
   const normalized = {
     startDate: request?.startDate,
     endDate: request?.endDate,
@@ -46,7 +88,13 @@ function readRequest(request) {
     return { ok: false, reason: "invalid_aggregation_type" };
   }
 
-  return { ok: true, value: { ...normalized, aggregationType } };
+  const pageFilter = normalizePageFilter(request?.pageFilter, siteUrl);
+  if (!pageFilter.ok) return pageFilter;
+  if (pageFilter.value && aggregationType === "byProperty") {
+    return { ok: false, reason: "page_filter_requires_page_or_auto_aggregation" };
+  }
+
+  return { ok: true, value: { ...normalized, aggregationType, pageFilter: pageFilter.value } };
 }
 
 async function requestJson(fetchImpl, url, options, timeoutMs, failureCode) {
@@ -134,7 +182,7 @@ export function createSearchConsoleClient({
     source: "google_search_console",
     scope: READ_ONLY_SCOPE,
     async querySearchAnalytics(request) {
-      const parsed = readRequest(request);
+      const parsed = readRequest(request, config.siteUrl);
       if (!parsed.ok) return parsed;
 
       const accessToken = await getAccessToken();
@@ -148,6 +196,16 @@ export function createSearchConsoleClient({
         rowLimit: parsed.value.rowLimit,
         startRow: parsed.value.startRow,
         aggregationType: parsed.value.aggregationType,
+        ...(parsed.value.pageFilter ? {
+          dimensionFilterGroups: [{
+            groupType: "and",
+            filters: [{
+              dimension: "page",
+              operator: "equals",
+              expression: parsed.value.pageFilter,
+            }],
+          }],
+        } : {}),
       };
 
       const apiResponse = await requestJson(
@@ -166,10 +224,14 @@ export function createSearchConsoleClient({
         "Search Console analytics request failed.",
       );
 
-      return normalizeSearchAnalyticsResponse(
+      const normalizedResponse = normalizeSearchAnalyticsResponse(
         { ...apiResponse, rows: Array.isArray(apiResponse?.rows) ? apiResponse.rows : [] },
         parsed.value,
       );
+      if (normalizedResponse.ok && parsed.value.pageFilter) {
+        normalizedResponse.request.pageFilter = parsed.value.pageFilter;
+      }
+      return normalizedResponse;
     },
   });
 }
