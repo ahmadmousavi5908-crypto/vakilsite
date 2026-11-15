@@ -70,6 +70,31 @@ jobs:
       - name: Verify Supabase CLI v3
         run: npx --yes supabase@3.0.0 --version
 
+      - name: Inspect staging migration history and existing schema (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== Remote migration history ==="
+          npx --yes supabase@3.0.0 migration list --remote="$SUPABASE_DB_URL"
+          echo "=== Existing MAVIS and site tables ==="
+          npx --yes supabase@3.0.0 db query --read-only --remote="$SUPABASE_DB_URL" "
+            SELECT
+              n.nspname AS schema_name,
+              c.relname AS table_name,
+              c.relrowsecurity AS rls_enabled,
+              array_agg(a.attname ORDER BY a.attnum) FILTER (WHERE a.attnum > 0 AND NOT a.attisdropped) AS columns
+            FROM pg_class c
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            JOIN pg_attribute a ON a.attrelid = c.oid
+            WHERE c.relkind IN ('r', 'p')
+              AND (
+                (n.nspname = 'public' AND c.relname IN ('profiles', 'social_links', 'site_settings', 'mavis_editorial_articles'))
+                OR (n.nspname = 'mavis_private' AND c.relname = 'knowledge_search_rate_limits')
+              )
+            GROUP BY n.nspname, c.relname, c.relrowsecurity
+            ORDER BY n.nspname, c.relname;
+          "
+
       - name: Preview pending migrations
         run: >-
           npx --yes supabase@3.0.0 db push
