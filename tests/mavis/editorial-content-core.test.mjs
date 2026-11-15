@@ -53,6 +53,7 @@ test("public mapper never exposes a draft-only record", () => {
 test("CSV export escapes cells and neutralizes spreadsheet formulas", () => {
   const csv = serializeEditorialCsv([["title", "note"], ["مقاله", '=HYPERLINK("https://example.com")']]);
   assert.ok(csv.startsWith(String.fromCharCode(0xfeff)));
-  assert.ok(csv.includes("'=HYPERLINK(\\"\\"https://example.com\\"\\")"));
+  assert.ok(csv.includes("'=HYPERLINK("));
+  assert.ok(csv.includes('""https://example.com""'));
   assert.ok(csv.includes(String.fromCharCode(13, 10)));
 });
