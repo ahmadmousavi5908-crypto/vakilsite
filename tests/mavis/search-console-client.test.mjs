@@ -146,3 +146,52 @@ test("does not expose OAuth or upstream response secrets in failures", async () 
       !error.message.includes("refresh-token-secret"),
   );
 });
+
+test("filters Search Console results to the selected article URL", async () => {
+  const calls = [];
+  const client = createSearchConsoleClient({
+    ...config,
+    fetchImpl: async (url, options) => {
+      calls.push({ url, options });
+      if (url === "https://oauth2.googleapis.com/token") {
+        return jsonResponse({ access_token: "article-filter-token", expires_in: 3600 });
+      }
+      return jsonResponse({
+        rows: [
+          { keys: ["راهنمای قرارداد"], clicks: 4, impressions: 80, ctr: 0.05, position: 6.1 },
+        ],
+      });
+    },
+  });
+
+  const result = await client.querySearchAnalytics({
+    ...request,
+    dimensions: ["query"],
+    pageFilter: "/articles/contract-guide",
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.request.pageFilter, "https://vakilahmadmousavi.ir/articles/contract-guide");
+  const body = JSON.parse(calls[1].options.body);
+  assert.deepEqual(body.dimensionFilterGroups, [{
+    groupType: "and",
+    filters: [{
+      dimension: "page",
+      operator: "equals",
+      expression: "https://vakilahmadmousavi.ir/articles/contract-guide",
+    }],
+  }]);
+});
+
+test("rejects article filters outside the configured Search Console property", async () => {
+  let called = false;
+  const client = createSearchConsoleClient({
+    ...config,
+    fetchImpl: async () => { called = true; return jsonResponse({ rows: [] }); },
+  });
+  const result = await client.querySearchAnalytics({
+    ...request,
+    pageFilter: "https://example.com/articles/contract-guide",
+  });
+  assert.deepEqual(result, { ok: false, reason: "page_filter_outside_property" });
+  assert.equal(called, false);
+});
