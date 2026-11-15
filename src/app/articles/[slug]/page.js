@@ -2,19 +2,20 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { articles } from "../../../data/articles";
 import JsonLd from "../../../components/JsonLd";
+import { getPublishedEditorialArticle } from "../../../lib/mavis/editorial-content";
 
-export function generateStaticParams() {
-  return articles.map((article) => ({ slug: article.slug }));
-}
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const article = await getPublishedEditorialArticle(slug) || articles.find((item) => item.slug === slug);
   if (!article) return { title: "مطلب پیدا نشد" };
   const canonicalPath = "/articles/" + article.slug;
   return {
-    title: article.title,
-    description: article.excerpt,
+    title: article.seoTitle || article.title,
+    description: article.seoDescription || article.excerpt,
+    robots: article.isIndexable === false ? { index: false, follow: false } : { index: true, follow: true },
     alternates: { canonical: canonicalPath },
     openGraph: {
       type: "article",
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ArticleDetailPage({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const article = await getPublishedEditorialArticle(slug) || articles.find((item) => item.slug === slug);
   if (!article) notFound();
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
@@ -70,7 +71,7 @@ export default async function ArticleDetailPage({ params }) {
       <div className="container article-detail-layout">
         <article className="article-body">
           <p className="article-intro">{article.intro}</p>
-          {article.sections.map((section, index) => (
+          {(article.sections || []).map((section, index) => (
             <section className="article-body-section" key={section.heading}>
               <h2>{section.heading}</h2>
               <p>{section.body}</p>
@@ -78,13 +79,13 @@ export default async function ArticleDetailPage({ params }) {
           ))}
           <div className="article-checklist">
             <h2>چک‌لیست پیش از مراجعه</h2>
-            <ul>{article.checklist.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
+            <ul>{(article.checklist || []).map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
           </div>
           <div className="article-legal-note"><b>نکته مهم</b><p>{article.warning}</p></div>
           <section className="article-sources">
             <h2>مستندات و منابع قانونی</h2>
             <p>برای مطالعه متن قوانین و تطبیق آخرین اصلاحات، از منابع زیر استفاده کنید:</p>
-            <ul>{article.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul>
+            <ul>{(article.sources || []).map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul>
           </section>
           <div className="article-next-actions">
             <Link href="/articles">← بازگشت به همه مقالات</Link>
