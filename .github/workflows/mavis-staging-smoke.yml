@@ -61,7 +61,7 @@ jobs:
           set -euo pipefail
           BASE_URL="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev"
           curl --silent --show-error --fail --max-time 20 "$BASE_URL/" -D /tmp/mavis-staging-headers -o /tmp/mavis-staging-home
-          if ! grep -Eiq 'x-robots-tag:.*noindex|<meta[^>]+name=["\\x27]robots["\\x27][^>]+content=["\\x27][^"\\x27]*noindex' /tmp/mavis-staging-headers /tmp/mavis-staging-home; then
+          if ! grep -Eiq '^x-robots-tag:.*noindex' /tmp/mavis-staging-headers; then
             echo "::error::Staging homepage is missing an explicit noindex signal."
             exit 1
           fi
