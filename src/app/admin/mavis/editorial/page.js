@@ -41,7 +41,7 @@ export default async function MavisEditorialPage({ searchParams }) {
       legalReviewStatus: record.legal_review_status,
       authorName: record.author_name,
       reviewerName: record.reviewer_name,
-      isIndexable: record.is_indexable,
+      isIndexable: record.published_content ? record.is_indexable : true,
       publishedAt: record.published_at,
       updatedAt: record.draft_updated_at || record.updated_at,
       hasPublishedSnapshot: true,
