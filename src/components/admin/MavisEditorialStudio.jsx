@@ -131,7 +131,10 @@ export default function MavisEditorialStudio({ articles }) {
                   <td dir="ltr">{article.slug}</td>
                   <td>{article.updatedAt ? new Date(article.updatedAt).toLocaleDateString("fa-IR") : "—"}</td>
                   <td className={styles.rowActions}><button type="button" className={styles.openButton} onClick={() => selectArticle(article)}>ویرایش</button>
-                    {article.status === "published" || article.status === "site_published" ? <a className={styles.readButton} href={"/articles/" + article.slug} target="_blank" rel="noreferrer">خواندن</a> : <span className={styles.draftRead}>هنوز منتشر نشده</span>}</td>
+                    {article.status === "published" || article.status === "site_published" ? <>
+                      <a className={styles.readButton} href={"/articles/" + article.slug} target="_blank" rel="noreferrer">خواندن</a>
+                      <a className={styles.readButton} href={"/admin/mavis?articlePage=" + encodeURIComponent("/articles/" + article.slug) + "#growth-intelligence"}>آمار جست‌وجو</a>
+                    </> : <span className={styles.draftRead}>هنوز منتشر نشده</span>}</td>
                 </tr>
               ))}
               {!filtered.length ? <tr><td colSpan="6" className={styles.empty}>مقاله‌ای با این مشخصات پیدا نشد.</td></tr> : null}
