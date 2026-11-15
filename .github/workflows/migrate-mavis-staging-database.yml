@@ -1,0 +1,74 @@
+name: Migrate MAVIS staging database
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply_migrations:
+        description: "Apply the reviewed migrations to vakilsite-staging (otherwise dry-run only)"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-staging-database-migrations
+  cancel-in-progress: false
+
+jobs:
+  migrate-staging:
+    name: Review or apply staging database migrations
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: srbwniqhaxwaoepjfizf
+    steps:
+      - name: Check out the selected migration revision
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Validate staging-only target and credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ] || [ -z "${SUPABASE_DB_PASSWORD:-}" ]; then
+            echo "::error::Configure SUPABASE_STAGING_ACCESS_TOKEN and SUPABASE_STAGING_DB_PASSWORD in the GitHub staging environment."
+            exit 1
+          fi
+          if [ "$SUPABASE_PROJECT_REF" != "srbwniqhaxwaoepjfizf" ] || [ "$SUPABASE_PROJECT_REF" = "jroflcmiczfwtmiaxmpd" ]; then
+            echo "::error::Refusing to run migrations against any project except vakilsite-staging."
+            exit 1
+          fi
+          echo "Target locked to vakilsite-staging ($SUPABASE_PROJECT_REF)."
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Verify Supabase CLI v3
+        run: npx --yes supabase@3.0.0 --version
+
+      - name: Preview pending migrations
+        run: >-
+          npx --yes supabase@3.0.0 db push
+          --dry-run
+          --remote="$SUPABASE_PROJECT_REF"
+
+      - name: Apply migrations to staging only
+        if: ${{ inputs.apply_migrations }}
+        run: >-
+          npx --yes supabase@3.0.0 db push
+          --yes
+          --remote="$SUPABASE_PROJECT_REF"
+
+      - name: Verify remote migration history
+        if: ${{ inputs.apply_migrations }}
+        run: >-
+          npx --yes supabase@3.0.0 migration list
+          --remote="$SUPABASE_PROJECT_REF"
