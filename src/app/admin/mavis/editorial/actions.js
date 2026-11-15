@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import {
@@ -132,6 +132,7 @@ export async function publishEditorialArticle(formData) {
     : await supabase.from("mavis_editorial_articles").insert({ ...payload, slug, created_by: user.sub });
 
   if (result.error) redirect("/admin/mavis/editorial?error=database");
+  updateTag("mavis-editorial");
   revalidatePath("/articles");
   revalidatePath("/articles/" + slug);
   revalidatePath("/sitemap.xml");
