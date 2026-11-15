@@ -11,7 +11,9 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function MavisAdminPage() {
+export default async function MavisAdminPage({ searchParams }) {
+  const params = await searchParams;
+  const initialPageFilter = typeof params?.articlePage === "string" ? params.articlePage : "";
   const { user, isAdmin, configured, authenticationAvailable, adminCheckAvailable } = await requireAdmin();
   if (!configured) redirect("/admin/login?error=config");
   if (authenticationAvailable === false) redirect("/admin/login?error=authorization");
@@ -61,7 +63,7 @@ export default async function MavisAdminPage() {
             <article><span>مقالات و خلاصه‌ها</span><strong>{(inventory.legalArticles + inventory.publishedArticles + inventory.researchNotes).toLocaleString("fa-IR")}</strong><small>{inventory.legalArticles.toLocaleString("fa-IR")} خلاصه ماده · {inventory.publishedArticles.toLocaleString("fa-IR")} مقاله سایت · {inventory.researchNotes.toLocaleString("fa-IR")} یادداشت پژوهشی</small></article>
           </section>
           <section id="knowledge-search"><MavisKnowledgeSearch /></section>
-          <section id="growth-intelligence"><MavisSearchConsolePanel /></section>
+          <section id="growth-intelligence"><MavisSearchConsolePanel key={initialPageFilter} initialPageFilter={initialPageFilter} /></section>
           <section className="admin-help">
             <strong>مرز استفاده از نتایج</strong>
             <p>این نسخه فقط مدخل‌های موجود را بازیابی و مرتب می‌کند. منبع ثانویه یا وضعیت «نیازمند بازبینی» به‌عنوان قانون معتبر معرفی نمی‌شود. خروجی، نظر حقوقی یا محاسبه مهلت نیست و هر نتیجه نیازمند بررسی وکیل است.</p>
