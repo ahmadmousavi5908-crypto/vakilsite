@@ -40,7 +40,7 @@ jobs:
             exit 1
           fi
 
-      - name: Inspect anonymous admin page response
+      - name: Verify anonymous admin page redirects to login
         shell: bash
         run: |
           set -euo pipefail
@@ -48,31 +48,19 @@ jobs:
           status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-admin-body -D /tmp/mavis-admin-headers -w '%{http_code}' "$BASE_URL/admin/mavis/articles")"
           echo "/admin/mavis/articles => HTTP $status"
           case "$status" in
-            301|302|303|307|308|401|403)
-              echo "Anonymous request was rejected or redirected."
-              ;;
-            200)
-              if grep -Fq "admin-shell" /tmp/mavis-admin-body; then
-                echo "::error::Anonymous request rendered the admin shell."
-                exit 1
-              elif grep -Fq "admin-login-form" /tmp/mavis-admin-body; then
-                echo "Anonymous request received the login form."
-              else
-                echo "HTTP 200 returned neither the admin shell nor the login form; inspecting the complete response."
+            301|302|303|307|308)
+              if ! grep -Eiq '^location:.*/admin/login' /tmp/mavis-admin-headers; then
+                echo "::error::Anonymous admin redirect does not point to the login page."
                 cat /tmp/mavis-admin-headers
-                echo "Response bytes: $(wc -c < /tmp/mavis-admin-body)"
-                echo "Recognized markers:"
-                grep -Eo 'admin-shell|admin-login-form|دسترسی مدیر تأیید شده|MAVIS · CONTENT WORKSPACE|صف بازبینی|ورود به پنل مدیریت' /tmp/mavis-admin-body | sort | uniq -c || true
-                echo "Body classes:"
-                grep -Eo 'class="[^"]+"' /tmp/mavis-admin-body | sort -u | head -30 || true
-                echo "Response tail:"
-                tail -c 2500 /tmp/mavis-admin-body
+                exit 1
               fi
+              echo "Anonymous admin page redirects to the login page."
+              ;;
+            401|403)
+              echo "Anonymous admin page access is denied."
               ;;
             *)
-              echo "::error::Unexpected response from the admin route."
-              cat /tmp/mavis-admin-headers
-              head -c 2500 /tmp/mavis-admin-body
+              echo "::error::Anonymous admin page must not render with HTTP $status."
               exit 1
               ;;
           esac
