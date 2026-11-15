@@ -29,13 +29,14 @@ export default async function MavisEditorialPage({ searchParams }) {
   const bySlug = new Map(records.map((record) => [record.slug, record]));
   const merged = siteArticles.map((article) => {
     const record = bySlug.get(article.slug);
-    if (!record) return { ...article, source: "site", status: "site_published", isIndexable: true };
+    if (!record) return { ...article, source: "site", isLegacySiteArticle: true, status: "site_published", isIndexable: true };
     return {
       ...article,
       ...(record.draft_content || {}),
       id: record.id,
       slug: record.slug,
       source: "cms",
+      isLegacySiteArticle: true,
       status: record.status,
       legalReviewStatus: record.legal_review_status,
       authorName: record.author_name,
@@ -43,8 +44,9 @@ export default async function MavisEditorialPage({ searchParams }) {
       isIndexable: record.is_indexable,
       publishedAt: record.published_at,
       updatedAt: record.draft_updated_at || record.updated_at,
-      hasPublishedSnapshot: Boolean(record.published_content),
-      hasUnpublishedChanges: Boolean(record.published_content && record.draft_updated_at && new Date(record.draft_updated_at) > new Date(record.published_at || 0)),
+      hasPublishedSnapshot: true,
+      hasUnpublishedChanges: record.status !== "published" ||
+        Boolean(record.published_content && record.draft_updated_at && new Date(record.draft_updated_at) > new Date(record.published_at || 0)),
     };
   });
   for (const record of records) {
