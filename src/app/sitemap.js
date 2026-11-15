@@ -3,9 +3,6 @@ import { practiceAreas } from "../data/practice-areas";
 import { getIndexableLegalRecords } from "../lib/legal-library";
 import { getPublishedEditorialArticles } from "../lib/mavis/editorial-content";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export default async function sitemap() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
   if (!siteUrl) return [];
