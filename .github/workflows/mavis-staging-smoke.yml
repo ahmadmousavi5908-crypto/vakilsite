@@ -54,10 +54,12 @@ jobs:
             200)
               if grep -Fq "admin-login-form" /tmp/mavis-admin-body && grep -Fq "ورود به پنل مدیریت" /tmp/mavis-admin-body; then
                 echo "Anonymous request received only the login form."
+              elif grep -Eiq 'دسترسی مدیر تأیید شده|MAVIS · CONTENT WORKSPACE|صف بازبینی' /tmp/mavis-admin-body; then
+                echo "::error::Anonymous response contains protected MAVIS workspace content."
+                exit 1
               else
-                echo "::error::HTTP 200 did not contain the login form; refusing to treat the admin route as protected."
-                cat /tmp/mavis-admin-headers
-                head -c 2000 /tmp/mavis-admin-body
+                echo "::error::Anonymous HTTP 200 response is not an identifiable login page."
+                head -c 3000 /tmp/mavis-admin-body
                 exit 1
               fi
               ;;
@@ -68,6 +70,20 @@ jobs:
               exit 1
               ;;
           esac
+
+      - name: Verify admin API rejects anonymous requests
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev"
+          status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-admin-api-body -D /tmp/mavis-admin-api-headers -w '%{http_code}' "$BASE_URL/api/admin/mavis/search-console/status")"
+          echo "/api/admin/mavis/search-console/status => HTTP $status"
+          if [ "$status" != "403" ]; then
+            echo "::error::Anonymous admin API request must return HTTP 403."
+            cat /tmp/mavis-admin-api-headers
+            cat /tmp/mavis-admin-api-body
+            exit 1
+          fi
 
       - name: Verify Staging is not indexable
         shell: bash
