@@ -37,17 +37,7 @@ create index if not exists mavis_editorial_published_idx
 alter table public.mavis_editorial_articles enable row level security;
 
 revoke all on table public.mavis_editorial_articles from public, anon, authenticated;
-grant select (slug, published_content, status, is_indexable, published_at, updated_at)
-  on table public.mavis_editorial_articles to anon;
-grant select on table public.mavis_editorial_articles to authenticated;
-grant insert, update, delete on table public.mavis_editorial_articles to authenticated;
-
-drop policy if exists "Public can read published MAVIS articles" on public.mavis_editorial_articles;
-create policy "Public can read published MAVIS articles"
-  on public.mavis_editorial_articles
-  for select
-  to anon, authenticated
-  using (status = 'published' and published_content is not null);
+grant select, insert, update, delete on table public.mavis_editorial_articles to authenticated;
 
 drop policy if exists "Admins can read all MAVIS articles" on public.mavis_editorial_articles;
 create policy "Admins can read all MAVIS articles"
@@ -80,3 +70,35 @@ create policy "Admins can delete MAVIS articles"
 
 comment on table public.mavis_editorial_articles is
   'Versioned editorial CMS. draft_content is private; only published_content is exposed by the public RLS policy.';
+
+-- Public article delivery is exposed through a narrow SECURITY DEFINER function.
+-- Anonymous and ordinary authenticated users cannot query draft columns on the base table.
+create or replace function public.get_mavis_published_articles()
+returns table (
+  slug text,
+  published_content jsonb,
+  is_indexable boolean,
+  published_at timestamptz,
+  updated_at timestamptz
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select
+    article.slug,
+    article.published_content,
+    article.is_indexable,
+    article.published_at,
+    article.updated_at
+  from public.mavis_editorial_articles as article
+  where article.status = 'published'
+    and article.published_content is not null
+  order by article.published_at desc nulls last;
+$function$;
+
+revoke all on function public.get_mavis_published_articles()
+  from public, anon, authenticated;
+grant execute on function public.get_mavis_published_articles()
+  to anon, authenticated;
