@@ -57,11 +57,10 @@ select ok(
   'published snapshot RPC excludes records without a public snapshot'
 );
 select ok(
-  position('public.is_site_admin()' in pg_get_expr(polqual, polrelid))
-    > 0
-  from pg_policy
-  where polrelid = 'public.mavis_editorial_articles'::regclass
-    and polname = 'Admins can read all MAVIS articles',
+  (select position('is_site_admin()' in pg_get_expr(polqual, polrelid)) > 0
+   from pg_policy
+   where polrelid = 'public.mavis_editorial_articles'::regclass
+     and polname = 'Admins can read all MAVIS articles'),
   'base-table read policy is restricted to site administrators'
 );
 
