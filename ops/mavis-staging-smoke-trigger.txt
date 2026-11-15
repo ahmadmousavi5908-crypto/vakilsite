@@ -1,1 +1,1 @@
-Run live Staging HTTP, sitemap-origin, anonymous-admin-access, and noindex verification against the latest deployed Worker version b2c5ab23-4bac-4d59-bdbb-899cc19d28ae.
+Re-run live Staging smoke checks after tightening anonymous admin verification. Latest Worker version: b2c5ab23-4bac-4d59-bdbb-899cc19d28ae.
