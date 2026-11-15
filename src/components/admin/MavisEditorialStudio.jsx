@@ -82,9 +82,9 @@ export default function MavisEditorialStudio({ articles }) {
         article.updatedAt || "",
       ]),
     ];
-    const csv = "\\uFEFF" + rows.map((row) => row.map((cell) =>
+    const csv = String.fromCharCode(0xfeff) + rows.map((row) => row.map((cell) =>
       '"' + String(cell).replace(/"/g, '""') + '"'
-    ).join(",")).join("\\r\\n");
+    ).join(",")).join(String.fromCharCode(13, 10));
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
     const anchor = document.createElement("a");
     anchor.href = url;
