@@ -127,7 +127,7 @@ export default function MavisEditorialStudio({ articles }) {
             <input type="hidden" name="selected_slug" value={selectedSlug} />
             <div className={styles.fieldGrid}>
               <label className={styles.wide}>عنوان مقاله<input name="title" value={form.title} onChange={update("title")} required maxLength={300} /></label>
-              <label>نشانی انگلیسی (slug)<input name="slug" value={form.slug} onChange={update("slug")} required maxLength={120} dir="ltr" pattern="[a-z0-9]+(-[a-z0-9]+)*" disabled={Boolean(selected?.hasPublishedSnapshot)} /></label>
+              <label>نشانی انگلیسی (slug)<input name="slug" value={form.slug} onChange={update("slug")} required maxLength={120} dir="ltr" pattern="[a-z0-9]+(-[a-z0-9]+)*" readOnly={Boolean(selected?.hasPublishedSnapshot)} /></label>
               <label>دسته‌بندی<input name="category" value={form.category} onChange={update("category")} maxLength={120} /></label>
               <label>زمان مطالعه<input name="read_time" value={form.readTime} onChange={update("readTime")} maxLength={40} /></label>
               <label className={styles.wide}>خلاصه مقاله<textarea name="excerpt" value={form.excerpt} onChange={update("excerpt")} required rows="2" maxLength={1200} /></label>
