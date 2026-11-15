@@ -1,0 +1,75 @@
+name: Deploy MAVIS editorial staging
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-editorial-staging-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy-staging:
+    name: Build and deploy isolated staging Worker
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: staging
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - name: Check out approved work branch
+        uses: actions/checkout@v4
+        with:
+          ref: work/mother-two-updated-mavis-20261110
+
+      - name: Validate isolated staging configuration
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN NEXT_PUBLIC_SITE_URL NEXT_PUBLIC_SUPABASE_URL NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Missing staging environment value: $name"
+              exit 1
+            fi
+          done
+          case "$NEXT_PUBLIC_SITE_URL" in
+            https://staging.*|https://*.workers.dev) ;;
+            *)
+              echo "::error::NEXT_PUBLIC_SITE_URL must be a dedicated staging hostname."
+              exit 1
+              ;;
+          esac
+          if [ "$NEXT_PUBLIC_SITE_URL" = "https://vakilahmadmousavi.ir" ]; then
+            echo "::error::Production canonical URL is forbidden in staging."
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install project dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install pinned Cloudflare adapter tooling
+        run: >-
+          npm install --no-save --package-lock=false --no-audit --no-fund
+          @opennextjs/cloudflare@1.20.17
+          wrangler@4.161.0
+
+      - name: Build staging Worker
+        run: npx opennextjs-cloudflare build
+
+      - name: Deploy only the isolated staging Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx wrangler deploy --config wrangler.staging.jsonc
