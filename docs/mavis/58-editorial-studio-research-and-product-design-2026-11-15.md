@@ -18,7 +18,7 @@ The key invariant is that saving a draft must never alter the live page. Only an
 
 Thomson Reuters' 2026 State of the US Legal Market reports that average law-firm technology spending rose 9.7% and knowledge-management spending 10.5% in 2025. The report argues that firms with an intentional AI strategy are more likely to report ROI than firms without a significant plan. This supports investing in an integrated workflow and knowledge base rather than a disconnected collection of AI buttons.
 
-The American Bar Association's November/December 2026 practice-management guidance emphasizes one trusted location for current procedures, templates and knowledge, with named content owners, controlled editing rights and scheduled review. The transferable lesson is governance: every content item needs an owner, a current version and a review path.
+The American Bar Association's November/December 2026 article explains how a centralized knowledge system reduces search time, outdated-form errors and loss of institutional knowledge. The product-design translation for MAVIS is to assign content owners, restrict editing rights and schedule reviews so that each item has a current version and a clear review path.
 
 The 2025 ABA Legal Industry Report also found that firms value AI that integrates with trusted software and fits their actual legal workflow. For MAVIS, this means connecting search data to the article being edited, not making the lawyer copy metrics between unrelated screens.
 
