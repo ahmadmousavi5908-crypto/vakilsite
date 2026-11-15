@@ -4,9 +4,6 @@ import { articles } from "../../../data/articles";
 import JsonLd from "../../../components/JsonLd";
 import { getPublishedEditorialArticle } from "../../../lib/mavis/editorial-content";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const article = await getPublishedEditorialArticle(slug) || articles.find((item) => item.slug === slug);
