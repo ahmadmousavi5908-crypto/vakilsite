@@ -1,1 +1,1 @@
-Inspect anonymous admin route response with shell-safe diagnostics.
+Verify the latest Staging Worker after the middleware authentication gate deployment.
