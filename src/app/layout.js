@@ -5,6 +5,9 @@ import GlobalMobileMenu from "../components/GlobalMobileMenu";
 import { getSiteUrl } from "../lib/site-url.mjs";
 
 const siteUrl = getSiteUrl();
+const isStagingSite = siteUrl
+  ? new URL(siteUrl).hostname.startsWith("vakilahmadmousavi-ir-staging.")
+  : false;
 
 export const viewport = {
   width: "device-width",
@@ -49,11 +52,11 @@ export const metadata = {
     "خدمات حقوقی",
   ],
   robots: {
-    index: true,
-    follow: true,
+    index: !isStagingSite,
+    follow: !isStagingSite,
     googleBot: {
-      index: true,
-      follow: true,
+      index: !isStagingSite,
+      follow: !isStagingSite,
       "max-image-preview": "large",
       "max-snippet": -1,
       "max-video-preview": -1,
