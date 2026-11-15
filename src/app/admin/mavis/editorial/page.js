@@ -44,6 +44,7 @@ export default async function MavisEditorialPage({ searchParams }) {
       publishedAt: record.published_at,
       updatedAt: record.draft_updated_at || record.updated_at,
       hasPublishedSnapshot: Boolean(record.published_content),
+      hasUnpublishedChanges: Boolean(record.published_content && record.draft_updated_at && new Date(record.draft_updated_at) > new Date(record.published_at || 0)),
     };
   });
   for (const record of records) {
@@ -61,6 +62,7 @@ export default async function MavisEditorialPage({ searchParams }) {
       publishedAt: record.published_at,
       updatedAt: record.draft_updated_at || record.updated_at,
       hasPublishedSnapshot: Boolean(record.published_content),
+      hasUnpublishedChanges: Boolean(record.published_content && record.draft_updated_at && new Date(record.draft_updated_at) > new Date(record.published_at || 0)),
     });
   }
 
