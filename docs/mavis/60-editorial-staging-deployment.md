@@ -46,6 +46,14 @@ The workflow `Migrate MAVIS staging database` is manual-only and is hard-locked 
 
 The current repository migration chain contains `001_social_links.sql`, `002_office_location.sql`, `003_social_link_types.sql`, `005_mavis_knowledge_search_rate_limit.sql`, and `006_mavis_editorial_articles.sql`. Migration 005 depends on `public.is_site_admin()` created in migration 001. The numbering gap at 004 is intentional in the current repository history; do not invent or add an empty migration to fill it.
 
+## Existing Staging baseline
+
+The Staging project already has the administrator Auth account and its `public.profiles.role = 'admin'` record. Do not create a duplicate administrator.
+
+Migration 001 was previously executed manually through the Supabase SQL Editor, so its tables, function, policies, and administrator profile already exist. That manual SQL execution was not recorded in Supabase migration history. A later attempt at migration 002 failed because the migration filename was pasted as SQL instead of executing the migration contents; no database change was reported from that failed attempt. The dashboard subsequently still showed no recorded migrations.
+
+Therefore the first CLI dry-run may list all five repository migrations as pending even though some objects from migration 001 already exist. Migration 001 uses idempotent table creation and function/policy replacement and should preserve the existing administrator profile. Review the dry-run output carefully. If it does not show the expected repository migrations, or reports a schema conflict, stop and investigate before applying anything.
+
 Use the default dry-run first. Review the exact migration list and only then run the workflow again with `apply_migrations=true`. Do not use the Production database or the Production migration workflow.
 
 The repository uses Supabase CLI v3 semantics: hosted database commands must specify `--remote=<project-ref>`; unattended hosted mutations require `--yes`. See the official [CLI v3 migration guide](https://supabase.com/docs/guides/local-development/cli/migrating-to-v3).
