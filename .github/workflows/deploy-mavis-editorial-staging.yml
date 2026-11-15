@@ -42,7 +42,8 @@ jobs:
           node --input-type=module <<'NODE'
           const site = new URL(process.env.NEXT_PUBLIC_SITE_URL);
           const supabase = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL);
-          const productionHost = "vakilahmadmousavi.ir";
+          const stagingSupabaseHost = "srbwniqhaxwaoepjfizf.supabase.co";
+          const productionSupabaseHost = "jroflcmiczfwtmiaxmpd.supabase.co";
           const isWorkersDev =
             site.hostname.startsWith("vakilahmadmousavi-ir-staging.") &&
             site.hostname.endsWith(".workers.dev");
@@ -55,7 +56,7 @@ jobs:
             site.pathname !== "/" ||
             site.search ||
             site.hash ||
-            site.hostname === productionHost ||
+            site.hostname === "vakilahmadmousavi.ir" ||
             (!isWorkersDev && !isCustomStaging)
           ) {
             throw new Error("NEXT_PUBLIC_SITE_URL must be a dedicated HTTPS staging origin.");
@@ -68,16 +69,17 @@ jobs:
             supabase.pathname !== "/" ||
             supabase.search ||
             supabase.hash ||
-            !supabase.hostname.endsWith(".supabase.co")
+            supabase.hostname !== stagingSupabaseHost ||
+            supabase.hostname === productionSupabaseHost
           ) {
-            throw new Error("NEXT_PUBLIC_SUPABASE_URL must be a standard HTTPS Supabase project origin.");
+            throw new Error("NEXT_PUBLIC_SUPABASE_URL must point only to the dedicated vakilsite-staging project.");
           }
 
           if (!process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.trim()) {
             throw new Error("The staging Supabase publishable key is missing.");
           }
 
-          console.log("Staging origins passed structural validation.");
+          console.log("Dedicated Staging Worker and Supabase origins passed validation.");
           NODE
 
       - name: Set up Node.js
