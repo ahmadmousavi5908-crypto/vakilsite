@@ -1,1 +1,1 @@
-Run read-only inventory of the Staging CMS schema, RLS, indexes, RPC definitions, migration history, and the full db push dry-run. Do not apply migrations or modify migration history.
+Run the read-only JSON audit query for Staging CMS columns, policies, indexes, functions, relations, migration history, and dry-run. No database mutation.
