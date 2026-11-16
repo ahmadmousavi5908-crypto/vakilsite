@@ -3,7 +3,7 @@
 Last verified: 2026-11-16
 Repository: `ahmadmousavi5908-crypto/vakilsite`
 Production site: `https://vakilahmadmousavi.ir`
-Current main after legacy deployment guard: `f36ccbd63034f30d8eef9239a0e5f8de224c6290`
+Current main after integration-contract reconciliation: `4433f48c589061f5eb507d78f728d4701bb4aba8`
 
 ## Delivered
 
@@ -50,6 +50,17 @@ Current main after legacy deployment guard: `f36ccbd63034f30d8eef9239a0e5f8de224
   - Anonymous readers saw only published rows and approved public columns; private draft fields remained denied.
   - All temporary E2E records and identity were removed.
 - The E2E runner's configured Staging database URI failed authentication once, then its password-based Staging fallback authenticated successfully. The test completed and cleaned up; keep this fallback detail visible for future credential hygiene.
+
+## Staging runtime integration audit
+
+Read-only inspection run: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43875193634
+
+- The Staging Worker secret-name inspection completed successfully without reading or printing secret values.
+- The Staging Worker reported no configured candidates for Google Search Console OAuth (0/4), Iranian legal source search (0/1), or Editorial AI (0/1). The local growth audit correctly reported `LOCAL_ONLY`; it requires no external provider key.
+- Staging database inspection confirmed the Search Console connection table and editorial AI rate-limit table exist, but no Search Console connection record is configured.
+- Aggregate CMS inventory was empty at inspection time (0 editorial articles, 0 legacy articles, 0 sources, 0 source candidates, 0 versions, 0 approvals); all temporary E2E article, source and identity counts were zero.
+- Live metadata-only discovery passed for Crossref (5 candidates) and OpenAlex (5 candidates). Semantic Scholar was rate-limited and reported a warning; it is optional in this smoke test.
+- These findings apply to the Staging Worker only. They do not establish whether the Production Worker has runtime secrets configured.
 
 ## Runtime secret propagation
 
