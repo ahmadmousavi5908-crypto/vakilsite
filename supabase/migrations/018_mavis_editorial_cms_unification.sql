@@ -274,7 +274,11 @@ AS
 SELECT *
 FROM public.mavis_editorial_articles;
 
+-- PostgreSQL requires the new owner to hold CREATE on the containing schema
+-- during ownership transfer. Grant and revoke it in the same migration transaction.
+GRANT CREATE ON SCHEMA public TO authenticated;
 ALTER VIEW public.mavis_articles OWNER TO authenticated;
+REVOKE CREATE ON SCHEMA public FROM authenticated;
 
 REVOKE ALL ON TABLE public.mavis_articles
   FROM public, anon, authenticated, service_role;
