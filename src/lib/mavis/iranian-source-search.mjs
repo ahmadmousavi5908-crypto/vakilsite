@@ -185,9 +185,16 @@ function buildOfficialSearchLinks(query, group) {
       url: "https://rrk.ir/ords/r/rrs/rrs-front/home"
     });
   }
-  const domains = getIranianSourceDomains(group);
-  for (const domain of domains.slice(0, 6)) {
-    if (["qavanin.ir", "www.qavanin.ir", "dotic.ir", "www.dotic.ir", "rrk.ir", "www.rrk.ir"].includes(domain)) continue;
+  const domains = group === "all"
+    ? [
+        ...getIranianSourceDomains("official").slice(3, 6),
+        ...getIranianSourceDomains("academic").slice(0, 3),
+        ...getIranianSourceDomains("secondary").slice(0, 1)
+      ]
+    : group === "official"
+      ? getIranianSourceDomains("official").slice(3)
+      : getIranianSourceDomains(group);
+  for (const domain of domains.slice(0, 7)) {
     links.push({
       id: "search-" + domain,
       title: "جست‌وجو در " + domain,
