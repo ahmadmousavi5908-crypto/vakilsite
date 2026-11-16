@@ -59,7 +59,7 @@ jobs:
             exit 1
           fi
           echo "::add-mask::$key"
-          printf 'SUPABASE_STAGING_SERVICE_ROLE_KEY=%s\\n' "$key" >> "$GITHUB_ENV"
+          printf 'SUPABASE_STAGING_SERVICE_ROLE_KEY=%s\n' "$key" >> "$GITHUB_ENV"
           unset response key
 
       - name: Run authenticated Staging editorial lifecycle
