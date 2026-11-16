@@ -70,6 +70,7 @@ export default function MavisWebArticleResearch({ onApply }) {
     setError("");
     setFeedback("");
     setResults([]);
+    setExtractReport(null);
     try {
       const response = await fetch("/api/admin/mavis/web-search", {
         method: "POST",
@@ -94,6 +95,7 @@ export default function MavisWebArticleResearch({ onApply }) {
   async function extract(result) {
     if (extractingUrl) return;
     setExtractingUrl(result.url);
+    setExtractReport(null);
     setError("");
     setFeedback("");
     try {
