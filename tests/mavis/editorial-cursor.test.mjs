@@ -12,6 +12,7 @@ test("encodes and decodes a stable keyset cursor", () => {
   assert.deepEqual(decodeMavisArticleCursor(cursor), {
     updatedAt: row.updated_at,
     id: row.id,
+    ordinal: 50,
   });
 });
 
@@ -36,6 +37,7 @@ test("preserves database timestamp precision for stable pagination", () => {
   assert.deepEqual(decodeMavisArticleCursor(cursor), {
     updatedAt: preciseRow.updated_at,
     id: row.id,
+    ordinal: 0,
   });
 });
 
