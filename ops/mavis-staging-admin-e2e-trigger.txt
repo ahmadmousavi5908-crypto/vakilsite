@@ -1,1 +1,1 @@
-Retry the authenticated Staging lifecycle with the generated confirmed_at field omitted from the temporary Auth user insert. Verify sign-in, editorial lifecycle, public visibility, and cleanup.
+Retry authenticated Staging lifecycle after omitting the generated auth.identities.email column. Prior temporary fixtures were confirmed cleaned up.
