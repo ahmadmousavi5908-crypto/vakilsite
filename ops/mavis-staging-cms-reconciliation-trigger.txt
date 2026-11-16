@@ -6,3 +6,4 @@ Repeat compact read-only CMS audit: verify canonical table/view parity, publicat
 2026-11-16: expanded read-only reconciliation includes mavis_private RLS, full MAVIS RPC inventory, and effective anon/authenticated/service_role function execution privileges.
 2026-11-16: include private rate-limit indexes in final read-only inventory.
 2026-11-16: include function schema names in complete MAVIS RPC ACL audit.
+2026-11-16: include all mavis_private helper functions in effective ACL inventory.
