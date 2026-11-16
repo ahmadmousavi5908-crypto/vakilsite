@@ -15,3 +15,5 @@ Log and inspect authenticated source-search response: 2026-11-17.
 Validate deployed Iranian source-search API route after Worker update: 2026-11-17.
 
 Final Staging validation after source authority classification update: 2026-11-17.
+
+Validate the collapsible editorial workspace and public expandable article library revision: 2026-11-17.
