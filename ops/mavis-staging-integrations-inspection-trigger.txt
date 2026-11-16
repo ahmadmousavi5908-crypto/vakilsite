@@ -6,3 +6,4 @@ Recheck the full Google Search Console configuration including the property URL 
 2026-11-16: repeat aggregate-only integration, CMS inventory and cleanup audit after latest deployment.
 
 Post-E2E cleanup verification: confirm the temporary administrator identity and all temporary article, approval, version, audit, source, and candidate records are absent.
+2026-11-16: post-static-import E2E audit; verify no temporary rows remain and report Staging provider secret names only.
