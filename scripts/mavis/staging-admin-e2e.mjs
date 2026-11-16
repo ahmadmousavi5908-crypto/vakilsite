@@ -7,7 +7,7 @@ const publishableKey = process.env.STAGING_SUPABASE_PUBLISHABLE_KEY;
 const dbPassword = process.env.SUPABASE_STAGING_DB_PASSWORD;
 const runId = process.env.GITHUB_RUN_ID || "local";
 const nonce = randomBytes(5).toString("hex");
-const userId = randomUUID();
+let userId = randomUUID();
 const email = `mavis-staging-e2e-${runId}-${nonce}@example.invalid`;
 const password = randomBytes(32).toString("base64url");
 const slug = `mavis-staging-e2e-${runId}-${nonce}`;
@@ -89,74 +89,6 @@ async function main() {
   try {
     console.log("Creating an isolated temporary Staging administrator identity.");
     userSeedAttempted = true;
-
-    // Remove leftovers from any interrupted earlier E2E run before creating a new identity.
-    const staleSlug = "mavis-staging-e2e-%";
-    const staleEmail = "mavis-staging-e2e-%@example.invalid";
-    for (const statement of [
-      `DELETE FROM public.mavis_article_sources WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug LIKE ${sqlString(staleSlug)});`,
-      `DELETE FROM public.mavis_article_approvals WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug LIKE ${sqlString(staleSlug)});`,
-      `DELETE FROM public.mavis_article_versions WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug LIKE ${sqlString(staleSlug)});`,
-      `DELETE FROM public.mavis_article_audit_events WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug LIKE ${sqlString(staleSlug)});`,
-      `DELETE FROM public.mavis_editorial_articles WHERE slug LIKE ${sqlString(staleSlug)};`,
-      `DELETE FROM auth.identities WHERE user_id IN (SELECT id FROM auth.users WHERE email LIKE ${sqlString(staleEmail)});`,
-      `DELETE FROM public.profiles WHERE id IN (SELECT id FROM auth.users WHERE email LIKE ${sqlString(staleEmail)});`,
-      `DELETE FROM auth.users WHERE email LIKE ${sqlString(staleEmail)};`,
-    ]) {
-      runDbQuery(statement);
-    }
-
-    userSeedAttempted = true;
-    runDbQuery(`
-      INSERT INTO auth.users (
-        instance_id, id, aud, role, email, encrypted_password,
-        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
-        is_sso_user, is_anonymous, created_at, updated_at
-      ) VALUES (
-        '00000000-0000-0000-0000-000000000000'::uuid,
-        ${sqlString(userId)}::uuid,
-        'authenticated',
-        'authenticated',
-        ${sqlString(email)},
-        extensions.crypt(${sqlString(password)}, extensions.gen_salt('bf')),
-        now(),
-        '{"provider":"email","providers":["email"]}'::jsonb,
-        '{"full_name":"MAVIS Staging E2E"}'::jsonb,
-        false,
-        false,
-        now(),
-        now()
-      );
-    `);
-
-    runDbQuery(`
-      INSERT INTO auth.identities (
-        id, provider_id, user_id, identity_data, provider, created_at, updated_at
-      ) VALUES (
-        gen_random_uuid(),
-        ${sqlString(userId)},
-        ${sqlString(userId)}::uuid,
-        jsonb_build_object(
-          'sub', ${sqlString(userId)},
-          'email', ${sqlString(email)},
-          'email_verified', true
-        ),
-        'email',
-        now(),
-        now()
-      )
-      ON CONFLICT (provider_id, provider) DO UPDATE SET
-        user_id = EXCLUDED.user_id,
-        identity_data = EXCLUDED.identity_data,
-        updated_at = now();
-    `);
-
-    runDbQuery(`
-      INSERT INTO public.profiles (id, role)
-      VALUES (${sqlString(userId)}::uuid, 'admin')
-      ON CONFLICT (id) DO UPDATE SET role = EXCLUDED.role;
-    `);
-
     client = createClient(projectUrl, publishableKey, {
       auth: {
         autoRefreshToken: false,
@@ -164,6 +96,28 @@ async function main() {
         detectSessionInUrl: false,
       },
     });
+
+    console.log("Creating the temporary Auth user through the official Supabase Auth signup endpoint.");
+    const { data: signupData, error: signupError } = await client.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: "MAVIS Staging E2E" } },
+    });
+    if (signupError) {
+      throw new Error(`Temporary Staging Auth signup failed: ${signupError.message}`);
+    }
+    assert(signupData.user?.id, "Supabase Auth signup returned no user.");
+    userId = signupData.user.id;
+
+    if (!signupData.session) {
+      runDbQuery(`UPDATE auth.users SET email_confirmed_at = now() WHERE id = ${sqlString(userId)}::uuid;`);
+    }
+
+    runDbQuery(`
+      INSERT INTO public.profiles (id, role)
+      VALUES (${sqlString(userId)}::uuid, 'admin')
+      ON CONFLICT (id) DO UPDATE SET role = EXCLUDED.role;
+    `);
 
     const { data: authData, error: authError } = await client.auth.signInWithPassword({
       email,
@@ -330,9 +284,9 @@ async function main() {
         `DELETE FROM public.mavis_article_versions WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)});`,
         `DELETE FROM public.mavis_article_audit_events WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)});`,
         `DELETE FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)};`,
-        `DELETE FROM auth.identities WHERE user_id = ${sqlString(userId)}::uuid;`,
-        `DELETE FROM public.profiles WHERE id = ${sqlString(userId)}::uuid;`,
-        `DELETE FROM auth.users WHERE id = ${sqlString(userId)}::uuid;`,
+        `DELETE FROM auth.identities WHERE user_id IN (SELECT id FROM auth.users WHERE email = ${sqlString(email)});`,
+        `DELETE FROM public.profiles WHERE id IN (SELECT id FROM auth.users WHERE email = ${sqlString(email)});`,
+        `DELETE FROM auth.users WHERE email = ${sqlString(email)};`,
       ];
 
       if (userSeedAttempted) {
@@ -342,7 +296,7 @@ async function main() {
       const cleanupCheck = runDbQuery(
         `SELECT CASE WHEN
           NOT EXISTS (SELECT 1 FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)})
-          AND NOT EXISTS (SELECT 1 FROM auth.users WHERE id = ${sqlString(userId)}::uuid)
+          AND NOT EXISTS (SELECT 1 FROM auth.users WHERE email = ${sqlString(email)})
           THEN 'MAVIS_STAGING_E2E_CLEANUP_OK'
           ELSE 'MAVIS_STAGING_E2E_CLEANUP_FAILED'
         END AS status;`,
