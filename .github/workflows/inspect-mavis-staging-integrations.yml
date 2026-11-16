@@ -88,7 +88,8 @@ jobs:
             'article_version_count', (SELECT count(*) FROM public.mavis_article_versions),
             'article_approval_count', (SELECT count(*) FROM public.mavis_article_approvals),
             'leftover_e2e_article_count', (SELECT count(*) FROM public.mavis_editorial_articles WHERE slug LIKE 'mavis-staging-e2e-%'),
-            'leftover_e2e_identity_count', (SELECT count(*) FROM auth.users WHERE email LIKE 'mavise2e%@example.invalid')
+            'leftover_e2e_identity_count', (SELECT count(*) FROM auth.users WHERE email LIKE 'mavise2e%@example.invalid'),
+            'leftover_e2e_source_count', (SELECT count(*) FROM public.mavis_sources WHERE canonical_url LIKE 'https://example.com/mavis-staging-e2e-%')
           ) AS integration_state;"
           npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL"
 
