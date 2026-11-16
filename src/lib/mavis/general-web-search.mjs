@@ -81,6 +81,60 @@ export function createGeneralWebSearch({ apiKey, fetchImpl = globalThis.fetch, t
         clearTimeout(timer);
       }
     },
+    async extract({ url: rawUrl, query = "" } = {}) {
+      let target;
+      try {
+        target = new URL(typeof rawUrl === "string" ? rawUrl : "");
+        if (target.protocol !== "https:" || target.username || target.password) {
+          return { ok: false, reason: "invalid_url" };
+        }
+      } catch {
+        return { ok: false, reason: "invalid_url" };
+      }
+
+      const cleanQuery = typeof query === "string" ? query.normalize("NFC").trim().slice(0, 180) : "";
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetchImpl("https://api.tavily.com/extract", {
+          method: "POST",
+          redirect: "error",
+          cache: "no-store",
+          signal: controller.signal,
+          headers: {
+            Authorization: "Bearer " + key,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            urls: [target.href],
+            ...(cleanQuery ? { query: cleanQuery } : {}),
+            extract_depth: "basic",
+            format: "markdown",
+            include_images: false,
+            include_usage: true,
+          }),
+        });
+        if (!response?.ok) throw new Error("Web extraction provider request failed.");
+        const payload = await response.json();
+        const extracted = Array.isArray(payload?.results)
+          ? payload.results.find((item) => {
+              try { return new URL(item?.url).href === target.href; } catch { return false; }
+            })
+          : null;
+        const content = typeof extracted?.raw_content === "string" ? extracted.raw_content.trim().slice(0, 12000) : "";
+        if (!content) return { ok: false, reason: "content_unavailable" };
+        return {
+          ok: true,
+          url: target.href,
+          content,
+          usageCredits: Number.isFinite(payload?.usage?.credits) ? payload.usage.credits : null,
+          scope: "public_web",
+        };
+      } finally {
+        clearTimeout(timer);
+      }
+    },
   });
 }
 
