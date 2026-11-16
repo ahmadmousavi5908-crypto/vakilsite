@@ -42,6 +42,7 @@ export default async function MavisArticlesPage({ searchParams }) {
   const articleStatus = allowedStatuses.includes(requestedStatus) ? requestedStatus : "all";
   const cursor = decodeMavisArticleCursor(cursorValue);
   let draftRows = [];
+  let articleTotal = 0;
   let nextCursor = null;
   let draftError = null;
 
@@ -49,9 +50,9 @@ export default async function MavisArticlesPage({ searchParams }) {
     draftError = "نشانی صفحه‌بندی معتبر نیست. از صفحه اول کتابخانه شروع کنید.";
   } else {
     try {
-      const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) => {
+      const { data, error, count } = await queryMavisEditorialArticles(access.supabase, (table) => {
         let query = table
-          .select("id, slug, title, author_name, category, status, current_version, updated_at")
+          .select("id, slug, title, author_name, category, status, current_version, updated_at", { count: "exact" })
           .order("updated_at", { ascending: false })
           .order("id", { ascending: false })
           .limit(26);
@@ -78,6 +79,7 @@ export default async function MavisArticlesPage({ searchParams }) {
           : "خواندن پیش‌نویس‌ها انجام نشد. دسترسی مدیر و اتصال پایگاه داده را بررسی کنید.";
       } else {
         const rows = Array.isArray(data) ? data : [];
+        articleTotal = Number.isInteger(count) ? count : rows.length;
         if (rows.length > 25) {
           const lastVisible = rows[24];
           nextCursor = encodeMavisArticleCursor(lastVisible, (cursor?.ordinal || 0) + 25);
@@ -246,7 +248,7 @@ export default async function MavisArticlesPage({ searchParams }) {
               if (searchQuery) next.set("q", searchQuery);
               if (articleStatus !== "all") next.set("status", articleStatus);
               return "/admin/mavis/articles?" + next.toString();
-            })() : null} rowStart={cursor?.ordinal || 0} initialQuery={searchQuery} initialStatus={articleStatus} error={draftError} />
+            })() : null} rowStart={cursor?.ordinal || 0} initialQuery={searchQuery} initialStatus={articleStatus} totalCount={articleTotal} error={draftError} />
             <MavisArticleCatalog articles={articles} />
           </MavisArticlesAccordion>
           <section className="admin-help">
