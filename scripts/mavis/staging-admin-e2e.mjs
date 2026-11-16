@@ -5,6 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 const projectUrl = process.env.STAGING_SUPABASE_URL;
 const publishableKey = process.env.STAGING_SUPABASE_PUBLISHABLE_KEY;
 const dbPassword = process.env.SUPABASE_STAGING_DB_PASSWORD;
+const serviceRoleKey = process.env.SUPABASE_STAGING_SERVICE_ROLE_KEY;
 const runId = process.env.GITHUB_RUN_ID || "local";
 const nonce = randomBytes(5).toString("hex");
 let userId = randomUUID();
@@ -97,20 +98,36 @@ async function main() {
       },
     });
 
-    console.log("Creating the temporary Auth user through the official Supabase Auth signup endpoint.");
-    const { data: signupData, error: signupError } = await client.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: "MAVIS Staging E2E" } },
-    });
-    if (signupError) {
-      throw new Error(`Temporary Staging Auth signup failed: ${signupError.message}`);
-    }
-    assert(signupData.user?.id, "Supabase Auth signup returned no user.");
-    userId = signupData.user.id;
+    if (serviceRoleKey) {
+      console.log("Creating the temporary Auth user with the protected Staging admin key.");
+      const authAdmin = createClient(projectUrl, serviceRoleKey, {
+        auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
+      });
+      const { data: adminData, error: adminError } = await authAdmin.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: { full_name: "MAVIS Staging E2E" },
+      });
+      if (adminError) throw new Error(`Temporary Staging admin-user creation failed: ${adminError.message}`);
+      assert(adminData.user?.id, "Supabase Auth admin API returned no user.");
+      userId = adminData.user.id;
+    } else {
+      console.log("Creating the temporary Auth user through the official Supabase Auth signup endpoint.");
+      const { data: signupData, error: signupError } = await client.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: "MAVIS Staging E2E" } },
+      });
+      if (signupError) {
+        throw new Error(`Temporary Staging Auth signup failed: ${signupError.message}`);
+      }
+      assert(signupData.user?.id, "Supabase Auth signup returned no user.");
+      userId = signupData.user.id;
 
-    if (!signupData.session) {
-      runDbQuery(`UPDATE auth.users SET email_confirmed_at = now() WHERE id = ${sqlString(userId)}::uuid;`);
+      if (!signupData.session) {
+        runDbQuery(`UPDATE auth.users SET email_confirmed_at = now() WHERE id = ${sqlString(userId)}::uuid;`);
+      }
     }
 
     runDbQuery(`
