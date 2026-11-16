@@ -187,7 +187,7 @@ function buildOfficialSearchLinks(query, group) {
   }
   const domains = getIranianSourceDomains(group);
   for (const domain of domains.slice(0, 6)) {
-    if (links.some((item) => item.id === domain)) continue;
+    if (["qavanin.ir", "www.qavanin.ir", "dotic.ir", "www.dotic.ir", "rrk.ir", "www.rrk.ir"].includes(domain)) continue;
     links.push({
       id: "search-" + domain,
       title: "جست‌وجو در " + domain,
