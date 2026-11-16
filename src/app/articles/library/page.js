@@ -47,7 +47,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
       if (!supabase) throw new Error("Public CMS is not configured");
       let query = supabase
         .from("mavis_articles")
-        .select("id, slug, title, excerpt, category, author_name, published_at")
+        .select("id, slug, title, excerpt, category, author_name, published_at, content")
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .order("id", { ascending: false })
@@ -132,11 +132,11 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
                   {rows.map((article, index) => (
                     <tr key={article.id}>
                       <td className={styles.rowNumber}>{(index + 1).toLocaleString("fa-IR")}</td>
-                      <td><strong>{article.title}</strong><small>{article.excerpt || "برای مشاهده متن کامل مقاله وارد صفحه مطالعه شوید."}</small></td>
+                      <td><strong>{article.title}</strong><small>{article.excerpt || "برای مشاهده متن کامل، ردیف را باز کنید."}</small><details className={styles.articleExpand}><summary><span aria-hidden="true">＋</span> مطالعه متن کامل</summary><div className={styles.expandedArticle}>{article.content?.intro ? <p>{article.content.intro}</p> : null}{Array.isArray(article.content?.sections) ? article.content.sections.map((section, sectionIndex) => <section key={section.heading || sectionIndex}><h3>{section.heading || "بخش مقاله"}</h3><p>{section.body}</p></section>) : null}{Array.isArray(article.content?.checklist) && article.content.checklist.length ? <section><h3>نکات کلیدی</h3><ul>{article.content.checklist.map((item, itemIndex) => <li key={itemIndex}>{item}</li>)}</ul></section> : null}{article.content?.warning ? <p className={styles.articleWarning}>{article.content.warning}</p> : null}<Link href={"/articles/" + article.slug}>صفحه اختصاصی و نسخه قابل اشتراک مقاله ←</Link></div></details></td>
                       <td><span className={styles.category}>{article.category || "عمومی"}</span></td>
                       <td>{article.author_name || "سید احمد موسوی"}</td>
                       <td><time dateTime={article.published_at}>{formatDate(article.published_at)}</time></td>
-                      <td><Link href={"/articles/" + article.slug}>مشاهده مقاله ←</Link></td>
+                      <td><Link href={"/articles/" + article.slug}>صفحه مقاله ←</Link></td>
                     </tr>
                   ))}
                 </tbody>
