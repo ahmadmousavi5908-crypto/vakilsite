@@ -78,6 +78,42 @@ jobs:
             exit 1
           fi
 
+      - name: Verify Iranian source search API rejects anonymous POST requests
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev"
+          status="$(curl --silent --show-error --max-time 20 -X POST -H 'content-type: application/json' -d '{"query":"قانون مدنی"}' -o /tmp/mavis-source-search-body -D /tmp/mavis-source-search-headers -w '%{http_code}' "$BASE_URL/api/admin/mavis/source-search")"
+          echo "/api/admin/mavis/source-search => HTTP $status"
+          if [ "$status" != "401" ]; then
+            echo "::error::Anonymous Iranian source search must return HTTP 401."
+            cat /tmp/mavis-source-search-headers
+            cat /tmp/mavis-source-search-body
+            exit 1
+          fi
+
+      - name: Verify retired editorial route redirects to the versioned CMS
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev"
+          status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-legacy-editorial-body -D /tmp/mavis-legacy-editorial-headers -w '%{http_code}' "$BASE_URL/admin/mavis/editorial")"
+          echo "/admin/mavis/editorial => HTTP $status"
+          case "$status" in
+            307|308)
+              if ! grep -Eiq '^location: */admin/mavis/articles' /tmp/mavis-legacy-editorial-headers; then
+                echo "::error::Legacy editorial route did not redirect to the versioned CMS."
+                cat /tmp/mavis-legacy-editorial-headers
+                exit 1
+              fi
+              ;;
+            *)
+              echo "::error::Legacy editorial route must redirect to the versioned CMS."
+              cat /tmp/mavis-legacy-editorial-headers
+              exit 1
+              ;;
+          esac
+
       - name: Verify competitor research API rejects anonymous POST requests
         shell: bash
         run: |
