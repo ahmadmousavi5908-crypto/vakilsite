@@ -8,7 +8,7 @@ export async function getMavisPublishedArticles() {
     const { data, error } = await supabase.rpc("get_mavis_published_articles");
     if (error || !Array.isArray(data)) return [];
     return data
-      .map((record) => mapPublishedEditorialRecord({ ...record, status: "published" }))
+      .map((record) => mapPublishedEditorialRecord({ ...record, updated_at: record.published_at, status: "published" }))
       .filter(Boolean);
   } catch {
     return [];
