@@ -130,7 +130,7 @@ test("uses Cloudflare Workers AI without requiring an OpenAI API key", async () 
           assert.equal(request.response_format.type, "json_schema");
           assert.equal(request.response_format.json_schema.type, "object");
           assert.equal(request.max_tokens, 2600);
-          return { response: JSON.stringify(output), usage: { prompt_tokens: 20 } };
+          return { response: output, usage: { prompt_tokens: 20 } };
         }
       },
       model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
@@ -164,4 +164,17 @@ test("maps Workers AI provider failures without leaking upstream details", async
   assert.equal(result.ok, false);
   assert.equal(result.code, "MAVIS_AI_PROVIDER_ERROR");
   assert.equal(JSON.stringify(result).includes("private upstream diagnostic"), false);
+});
+
+
+test("accepts string-encoded JSON from Workers AI compatibility responses", async () => {
+  const result = await generateMavisEditorialSuggestions(
+    { topic: "مسئولیت مدنی", sources: [source] },
+    {
+      ai: { run: async () => ({ response: JSON.stringify(output) }) },
+      model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    }
+  );
+  assert.equal(result.ok, true);
+  assert.equal(result.provider, "cloudflare_workers_ai");
 });
