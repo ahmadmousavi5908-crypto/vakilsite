@@ -73,3 +73,71 @@ test("invalid query and unsupported source group are rejected before network acc
   assert.deepEqual(await client.search({ query: "ماده ۱۰", group: "global" }), { ok: false, reason: "invalid_group" });
   assert.equal(called, false);
 });
+
+
+test("Qavanin Browser Run fallback parses official source metadata", async () => {
+  let capturedUrl = "";
+  const markup = `
+    <table>
+      <tr class="row">
+        <td><a href="/Law/TreeText/?IDS=12345678901234567890">open</a></td>
+        <td>قانون نمونه مسئولیت مدنی</td>
+        <td>1402/02/10</td>
+        <td>مجلس شورای اسلامی</td>
+      </tr>
+    </table>
+  `;
+  const client = createIranianSourceSearchFallback({
+    browser: {
+      quickAction: async (action, options) => {
+        assert.equal(action, "content");
+        capturedUrl = options.url;
+        return { ok: true, json: async () => ({ success: true, result: markup }) };
+      }
+    }
+  });
+  const result = await client.search({ query: "مسئولیت مدنی", group: "official", limit: 5 });
+  assert.equal(new URL(capturedUrl).hostname, "qavanin.ir");
+  assert.equal(result.ok, true);
+  assert.equal(result.provider, "cloudflare_browser_run_qavanin");
+  assert.equal(result.results.length, 1);
+  assert.equal(result.results[0].sourceAuthority, "official_primary");
+  assert.match(result.results[0].url, /IDS=12345678901234567890/);
+  assert.ok(result.searchLinks.some((item) => item.id === "rrk"));
+});
+
+test("no-key fallback returns official portal links when Browser Run is unavailable", async () => {
+  const result = await createIranianSourceSearchFallback().search({
+    query: "قانون مدنی",
+    group: "official",
+    limit: 5
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.provider, "official_portal_fallback");
+  assert.equal(result.results.length, 0);
+  assert.ok(result.searchLinks.some((item) => item.id === "qavanin"));
+  assert.ok(result.searchLinks.some((item) => item.id === "dotic"));
+});
+
+test("Browser Run failures degrade to verified portal links instead of a false search error", async () => {
+  const client = createIranianSourceSearchFallback({
+    browser: { quickAction: async () => { throw new Error("bot protection"); } }
+  });
+  const result = await client.search({ query: "قانون تجارت", group: "official", limit: 5 });
+  assert.equal(result.ok, true);
+  assert.equal(result.provider, "official_portal_fallback");
+  assert.equal(result.providerErrors[0].code, "UPSTREAM_UNAVAILABLE");
+  assert.ok(result.searchLinks.length >= 3);
+});
+
+test("all-source fallback includes the selected Iranian academic and legal-news domains", async () => {
+  const result = await createIranianSourceSearchFallback().search({
+    query: "مسئولیت مدنی",
+    group: "all",
+    limit: 10
+  });
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Asid.ir")));
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amizanonline.ir")));
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Aekhtebar.ir")));
+  assert.ok(result.searchLinks.some((item) => item.id === "qavanin"));
+});
