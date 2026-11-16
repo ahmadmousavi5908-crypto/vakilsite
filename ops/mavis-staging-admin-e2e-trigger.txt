@@ -1,0 +1,1 @@
+Run the authenticated Staging editorial E2E lifecycle. The workflow creates two temporary Staging-only administrator accounts and one temporary article, verifies draft edit, independent review, publish, public visibility, unpublish, then deletes all test records and accounts.
