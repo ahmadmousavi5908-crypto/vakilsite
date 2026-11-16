@@ -57,16 +57,18 @@ export default async function MavisArticlesPage({ searchParams }) {
           .limit(26);
 
         if (articleStatus !== "all") query = query.eq("status", articleStatus);
-        if (searchQuery) {
-          const term = searchQuery.replace(/[%,_()]/g, " ").replace(/\\s+/g, " ").trim();
-          if (term) {
-            const pattern = `%${term}%`;
-            query = query.or(`title.ilike.${pattern},slug.ilike.${pattern},category.ilike.${pattern},author_name.ilike.${pattern}`);
-          }
-        }
-        if (cursor) {
-          query = query.or(`updated_at.lt.${cursor.updatedAt},and(updated_at.eq.${cursor.updatedAt},id.lt.${cursor.id})`);
-        }
+        const term = searchQuery.replace(/[%,_()]/g, " ").replace(/\s+/g, " ").trim();
+        const pattern = term ? `%${term}%` : "";
+        const searchFilter = pattern
+          ? `or(title.ilike.${pattern},slug.ilike.${pattern},category.ilike.${pattern},author_name.ilike.${pattern})`
+          : "";
+        const cursorFilter = cursor
+          ? `or(updated_at.lt.${cursor.updatedAt},and(updated_at.eq.${cursor.updatedAt},id.lt.${cursor.id}))`
+          : "";
+
+        if (searchFilter && cursorFilter) query = query.or(`and(${searchFilter},${cursorFilter})`);
+        else if (searchFilter) query = query.or(searchFilter.slice(3, -1));
+        else if (cursorFilter) query = query.or(cursorFilter.slice(3, -1));
 
         return query;
       });
