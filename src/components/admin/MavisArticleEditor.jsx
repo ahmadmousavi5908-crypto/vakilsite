@@ -85,7 +85,8 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           } else {
             setSourceFeedback(sourceResult?.error || "پیش‌نویس ذخیره شد، اما اتصال منبع انجام نشد. اطلاعات منبع در فرم باقی مانده است.");
             setManualSource(pendingWebSource);
-            successMessage = "پیش‌نویس ذخیره شد؛ اتصال منبع نیازمند تلاش دوباره است.";
+            setPendingWebSource(null);
+            successMessage = "پیش‌نویس ذخیره شد؛ اطلاعات منبع در فرم ثبت دستی باقی مانده است.";
           }
         }
         setFeedback({ type: "success", message: successMessage, articleId: result.articleId });
