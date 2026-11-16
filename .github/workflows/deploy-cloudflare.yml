@@ -101,7 +101,7 @@ jobs:
           console.log(`Prepared ${Object.keys(secrets).length} optional MAVIS runtime secrets without exposing their values.`);
           NODE
 
-          npx wrangler deploy --secrets-file .wrangler-runtime-secrets.json --dry-run --outdir .wrangler-production-dry-run 2>&1 | tee /tmp/wrangler-production-dry-run.log
+          npx wrangler deploy --dry-run --outdir .wrangler-production-dry-run 2>&1 | tee /tmp/wrangler-production-dry-run.log
           node --input-type=module <<'NODE'
           import fs from "node:fs";
           const log = fs.readFileSync("/tmp/wrangler-production-dry-run.log", "utf8");
@@ -120,4 +120,4 @@ jobs:
           }
           NODE
 
-          npx wrangler deploy
+          npx wrangler deploy --secrets-file .wrangler-runtime-secrets.json
