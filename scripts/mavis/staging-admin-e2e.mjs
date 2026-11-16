@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import { createClient } from "@supabase/supabase-js";
 import { articles as staticArticles } from "../../src/data/articles.js";
 import { buildMavisStaticArticleImport } from "../../src/lib/mavis/static-article-import.mjs";
+import { normalizeMavisManualSourceInput } from "../../src/lib/mavis/manual-source-input.mjs";
 
 const projectUrl = process.env.STAGING_SUPABASE_URL;
 const publishableKey = process.env.STAGING_SUPABASE_PUBLISHABLE_KEY;
@@ -116,6 +117,7 @@ async function main() {
   let client;
   let executionError;
   let staticImportArticleId = null;
+  let staticImportSourceId = null;
 
   const payload = {
     slug,
@@ -273,6 +275,29 @@ async function main() {
         requireRpc(importedStaticId, staticImportError, "Import static article as draft");
         assert(typeof importedStaticId === "string", "Static article import did not return an article UUID.");
         staticImportArticleId = importedStaticId;
+        const normalizedStaticSource = normalizeMavisManualSourceInput({
+          title: "MAVIS Staging E2E source fixture",
+          sourceUrl: `https://example.com/mavis-staging-e2e-${runId}-${nonce}`,
+          sourceType: "manual",
+          relationType: "research_background",
+        });
+        const { data: staticSourceResult, error: staticSourceError } = await client.rpc(
+          "add_mavis_manual_article_source",
+          {
+            p_article_id: importedStaticId,
+            p_expected_version: 1,
+            p_source: normalizedStaticSource.source,
+            p_relation_type: normalizedStaticSource.relationType,
+          }
+        );
+        requireRpc(staticSourceResult, staticSourceError, "Attach a manual HTTPS research source to imported static draft");
+        assert(staticSourceResult.ok === true && staticSourceResult.source?.id,
+          "Static draft source attachment did not return a source record.");
+        staticImportSourceId = staticSourceResult.source.id;
+        assert(staticSourceResult.current_version === 2,
+          "Attaching a manual source did not advance the static draft version.");
+        console.log("PASS: static draft accepts an HTTPS manual research source with a version bump and no authority claim.");
+
         const { data: anonymousStaticDraft, error: anonymousStaticDraftError } = await anonymous
           .from("mavis_articles")
           .select("id")
@@ -444,6 +469,9 @@ async function main() {
       if (staticImportArticleId) {
         cleanupStatements.unshift(
           `DELETE FROM public.mavis_article_sources WHERE article_id = ${sqlString(staticImportArticleId)}::uuid;`,
+          ...(staticImportSourceId
+            ? [`DELETE FROM public.mavis_sources WHERE id = ${sqlString(staticImportSourceId)}::uuid;`]
+            : []),
           `DELETE FROM public.mavis_article_approvals WHERE article_id = ${sqlString(staticImportArticleId)}::uuid;`,
           `DELETE FROM public.mavis_article_versions WHERE article_id = ${sqlString(staticImportArticleId)}::uuid;`,
           `DELETE FROM public.mavis_article_audit_events WHERE article_id = ${sqlString(staticImportArticleId)}::uuid;`,
@@ -456,7 +484,8 @@ async function main() {
       }
 
       const staticImportCleanupCheck = staticImportArticleId
-        ? `AND NOT EXISTS (SELECT 1 FROM public.mavis_editorial_articles WHERE id = ${sqlString(staticImportArticleId)}::uuid)`
+        ? `AND NOT EXISTS (SELECT 1 FROM public.mavis_editorial_articles WHERE id = ${sqlString(staticImportArticleId)}::uuid)
+          ${staticImportSourceId ? `AND NOT EXISTS (SELECT 1 FROM public.mavis_sources WHERE id = ${sqlString(staticImportSourceId)}::uuid)` : ""}`
         : "";
       const cleanupCheck = runDbQuery(
         `SELECT CASE WHEN
