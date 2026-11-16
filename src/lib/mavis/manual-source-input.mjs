@@ -17,6 +17,7 @@ function inferSourceType(source) {
   if (authority === "official_primary") return "official_law";
   if (authority === "official_judicial" || authority === "official_portal") return "judiciary";
   if (authority === "official_research") return "government";
+  if (["official_news", "legal_news"].includes(authority) || group === "news") return "news";
   if (authority === "academic" || authority === "academic_index" || group === "academic") return "academic";
   if (authority === "secondary_reference" || group === "secondary") return "other";
   return "manual";
