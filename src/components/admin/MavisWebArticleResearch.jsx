@@ -30,8 +30,8 @@ function extractMetadata(content, result) {
   const date = firstMatch(content, [
     /(?:تاریخ انتشار|تاریخ چاپ|published(?: on)?|publication date)\s*[:：-]\s*([^\n]{4,80})/i,
   ], 40);
-  const headings = content.split("\n").map((line) => line.match(/^#{1,3}\\s+(.+)$/)?.[1]).filter(Boolean).map((heading) => normalizeText(heading).slice(0, 120)).slice(0, 8);
-  const wordCount = content.split(/\\s+/).filter(Boolean).length;
+  const headings = content.split("\n").map((line) => line.match(/^#{1,3}\s+(.+)$/)?.[1]).filter(Boolean).map((heading) => normalizeText(heading).slice(0, 120)).slice(0, 8);
+  const wordCount = content.split(/\s+/).filter(Boolean).length;
   const hasAbstract = /(?:چکیده|abstract)/i.test(content);
   return {
     title: normalizeText(result.title).slice(0, 300),
