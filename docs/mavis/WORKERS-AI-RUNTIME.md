@@ -43,3 +43,9 @@ When `MAVIS_IRAN_SOURCE_SEARCH_API_KEY` is absent, the admin source-search endpo
 Browser Run requests are identified as bots and are not a bot-protection bypass. If Qavanin blocks the request or returns markup that cannot be safely parsed, MAVIS does not fabricate results: it returns direct official-portal links for Qavanin, Dotic and the Official Gazette, plus domain-restricted search links for the selected source group. This fallback requires no API key and remains usable when the upstream portal is unavailable.
 
 Browser Run has plan-based usage limits. Keep this path administrator-only and monitor Cloudflare Browser Run usage before increasing request volume.
+
+## Live Staging verification
+
+The isolated Staging Worker exposes an admin-only `/api/admin/mavis/runtime-smoke` endpoint only when `MAVIS_STAGING_DIAGNOSTICS_ENABLED=true` is present in the Staging Worker variables. It performs one quota-controlled inference, validates the structured output through the production normalizer, and returns only provider/model metadata. The Production Worker does not enable this diagnostic endpoint.
+
+The authenticated Staging E2E workflow also calls the real source-search route with a temporary administrator session. It verifies the Browser Run binding is available and that the official Qavanin portal fallback is returned. Browser Run may still be blocked by the destination website; in that case the direct portal links remain the expected safe fallback.
