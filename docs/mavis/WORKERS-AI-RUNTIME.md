@@ -35,3 +35,11 @@ node --test tests/mavis/editorial-ai.test.mjs
 ```
 
 The test suite covers the Workers AI path without credentials, structured JSON schema request, source-citation filtering, malformed output, and provider failure handling. Live inference still requires a deployed Worker with the AI binding enabled.
+
+## Iranian legal source search without a paid search key
+
+When `MAVIS_IRAN_SOURCE_SEARCH_API_KEY` is absent, the admin source-search endpoint uses the Cloudflare Browser Run binding to try the official Qavanin search page. Parsed records are accepted only from the registered Qavanin domain and are labelled as primary-source candidates; repealed markers are preserved as hints and current legal status must still be checked on the source page.
+
+Browser Run requests are identified as bots and are not a bot-protection bypass. If Qavanin blocks the request or returns markup that cannot be safely parsed, MAVIS does not fabricate results: it returns direct official-portal links for Qavanin, Dotic and the Official Gazette, plus domain-restricted search links for the selected source group. This fallback requires no API key and remains usable when the upstream portal is unavailable.
+
+Browser Run has plan-based usage limits. Keep this path administrator-only and monitor Cloudflare Browser Run usage before increasing request volume.
