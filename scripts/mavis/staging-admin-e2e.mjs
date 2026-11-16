@@ -1,11 +1,13 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { createClient } from "@supabase/supabase-js";\nimport { createServerClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
 import { articles as staticArticles } from "../../src/data/articles.js";
 import { buildMavisStaticArticleImport } from "../../src/lib/mavis/static-article-import.mjs";
 import { normalizeMavisManualSourceInput } from "../../src/lib/mavis/manual-source-input.mjs";
 
-const siteUrl = process.env.STAGING_SITE_URL;\nconst projectUrl = process.env.STAGING_SUPABASE_URL;
+const siteUrl = process.env.STAGING_SITE_URL;
+const projectUrl = process.env.STAGING_SUPABASE_URL;
 const publishableKey = process.env.STAGING_SUPABASE_PUBLISHABLE_KEY;
 const configuredDbUrl = process.env.SUPABASE_STAGING_DB_URL;
 const dbPassword = process.env.SUPABASE_STAGING_DB_PASSWORD;
