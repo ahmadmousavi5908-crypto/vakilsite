@@ -24,7 +24,7 @@ values
 ('00000000-0000-4000-8000-000000000091','admin'),
 ('00000000-0000-4000-8000-000000000092','editor');
 
-insert into public.mavis_articles (
+insert into public.mavis_editorial_articles (
   id,slug,title,excerpt,category,content,status,origin_type,current_version
 ) values (
   '00000000-0000-4000-8000-000000000093',
@@ -62,7 +62,7 @@ select ok((select search_vector @@ plainto_tsquery('simple','specific performanc
 select ok((select search_vector @@ plainto_tsquery('simple','offline remedy') from public.mavis_sources where id='00000000-0000-4000-8000-000000000094'),'source insert trigger indexes source metadata');
 select ok((select search_vector @@ plainto_tsquery('simple','offline remedy') from public.mavis_source_candidates where id='00000000-0000-4000-8000-000000000095'),'candidate insert trigger indexes candidate metadata');
 
-update public.mavis_articles
+update public.mavis_editorial_articles
 set content='{"intro":"Specific performance; revised archive trigger verification; مسئولیت مدنی"}'::jsonb
 where id='00000000-0000-4000-8000-000000000093';
 select ok((select search_vector @@ plainto_tsquery('simple','revised archive') from public.mavis_articles where id='00000000-0000-4000-8000-000000000093'),'article update trigger refreshes the local search vector');
