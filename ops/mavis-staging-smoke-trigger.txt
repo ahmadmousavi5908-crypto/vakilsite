@@ -1,1 +1,1 @@
-Verify the newly deployed Staging Worker after canonical admin-table reads and the public-only RLS compatibility view changes.
+Verify live Staging after migration 018: public compatibility view, public routes, anonymous admin boundary, and noindex signals.
