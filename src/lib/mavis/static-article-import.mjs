@@ -6,7 +6,7 @@ function cleanText(value) {
 
 function normalizeSources(sources) {
   if (!Array.isArray(sources)) return [];
-  return sources.flatMap((source) => {
+  const normalized = sources.flatMap((source) => {
     const title = cleanText(source?.label);
     const rawUrl = cleanText(source?.url);
     if (title.length < 2 || !rawUrl) return [];
@@ -23,6 +23,7 @@ function normalizeSources(sources) {
       return [];
     }
   });
+  return [...new Map(normalized.map((source) => [source.sourceUrl, source])).values()];
 }
 
 export function buildMavisStaticArticleImport(article) {
@@ -65,6 +66,11 @@ export function buildMavisStaticArticleImport(article) {
   if (tags.length > 40 || tags.some((tag) => tag.length > 60)) throw new TypeError("Static article tags are outside the supported limits.");
   if (checklist.length > 60 || checklist.some((item) => item.length > 500)) throw new TypeError("Static article checklist is outside the supported limits.");
   if (warning.length > 2000 || seoTitle.length > 300) throw new TypeError("Static article metadata is outside the supported limits.");
+  const totalContentLength = [
+    title, slug, excerpt, category, intro, warning, seoTitle, seoDescription,
+    ...tags, ...checklist, ...sections.flatMap((section) => [section.heading, section.body]),
+  ].reduce((total, value) => total + value.length, 0);
+  if (totalContentLength > 200000) throw new TypeError("Static article exceeds the CMS content budget.");
 
   const content = { intro, sections };
   if (warning) content.warning = warning;
