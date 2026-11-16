@@ -91,7 +91,6 @@ export default function MavisEditorialStudio({ articles }) {
     setSelectedSlug(article.slug);
     setForm(toForm(article));
     setPreview(false);
-    setPage(1);
   }
 
   function applyWebResearch(metadata) {
