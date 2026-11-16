@@ -64,7 +64,7 @@ export default function MavisArticleCatalog({ articles }) {
         return;
       }
       const message = result.alreadyImported
-        ? "پیش‌نویس نسخه‌دار این مقاله از قبل وجود دارد."
+        ? `پیش‌نویس از قبل وجود داشت؛ ${result.importedSources.toLocaleString("fa-IR")} منبع پیوست یا تطبیق داده شد.${result.skippedSources ? ` ${result.skippedSources.toLocaleString("fa-IR")} منبع برای بررسی دستی کنار گذاشته شد.` : ""}`
         : `پیش‌نویس ساخته شد؛ ${result.importedSources.toLocaleString("fa-IR")} منبع پیوست شد.${result.skippedSources ? ` ${result.skippedSources.toLocaleString("fa-IR")} منبع برای بررسی دستی کنار گذاشته شد.` : ""}`;
       setImportFeedback((current) => ({
         ...current,
