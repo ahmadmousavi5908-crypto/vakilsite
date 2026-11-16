@@ -149,7 +149,6 @@ test("Iranian legal-news results normalize as secondary news sources for article
     title: "گزارش حقوقی اختبار",
     sourceUrl: "https://ekhtebar.ir/news/123",
     sourceType: "news",
-    relationType: "secondary_reference",
     sourceAuthority: "legal_news",
     sourceGroup: "news",
     provider: "tavily",
@@ -157,4 +156,16 @@ test("Iranian legal-news results normalize as secondary news sources for article
   assert.equal(normalized.source.sourceType, "news");
   assert.equal(normalized.relationType, "secondary_reference");
   assert.equal(normalized.source.sourceAuthority, "legal_news");
+});
+
+
+test("official research centers are treated as background, not binding primary authority", () => {
+  const normalized = normalizeMavisManualSourceInput({
+    title: "گزارش پژوهشی مرکز پژوهش‌های مجلس",
+    sourceUrl: "https://rc.majlis.ir/fa/report/123",
+    sourceAuthority: "official_research",
+    sourceGroup: "official",
+  });
+  assert.equal(normalized.source.sourceType, "government");
+  assert.equal(normalized.relationType, "research_background");
 });
