@@ -104,6 +104,34 @@ jobs:
           echo "::error::Neither configured credential completed the read-only migration-history query. Review the connection error above; no migration was applied."
           exit 1
 
+      - name: Verify local SQL files match the applied Staging migration history
+        shell: bash
+        run: |
+          set -euo pipefail
+          TEMP_WORKDIR="$(mktemp -d)"
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" init --force
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" migration fetch --remote="$STAGING_DATABASE_URL"
+          REMOTE_DIR="$TEMP_WORKDIR/supabase/migrations"
+          mapfile -t REMOTE_FILES < <(find "$REMOTE_DIR" -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sort)
+          mapfile -t LOCAL_FILES < <(find supabase/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sort)
+          if [ "${#REMOTE_FILES[@]}" -ne "${#LOCAL_FILES[@]}" ]; then
+            echo "::error::Local and remote migration file counts differ."
+            printf 'Remote files: %s\n' "${REMOTE_FILES[*]}"
+            printf 'Local files: %s\n' "${LOCAL_FILES[*]}"
+            exit 1
+          fi
+          for file in "${REMOTE_FILES[@]}"; do
+            if [ ! -f "supabase/migrations/$file" ]; then
+              echo "::error::Missing local migration file: $file"
+              exit 1
+            fi
+            if ! cmp -s "$REMOTE_DIR/$file" "supabase/migrations/$file"; then
+              echo "::error::Local migration content differs from the applied Staging history: $file"
+              exit 1
+            fi
+          done
+          echo "All ${#REMOTE_FILES[@]} local migration files exactly match the applied Staging history."
+
       - name: Preview pending migrations (dry-run only)
         shell: bash
         run: |
