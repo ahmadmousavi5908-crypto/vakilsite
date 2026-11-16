@@ -45,5 +45,22 @@ jobs:
       - name: Install pinned Supabase CLI
         run: npx --yes supabase@3.0.0 --version
 
+      - name: Resolve protected Staging Auth admin key
+        if: env.SUPABASE_STAGING_SERVICE_ROLE_KEY == ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          response="$(curl --silent --show-error --fail \
+            --header "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            "https://api.supabase.com/v1/projects/srbwniqhaxwaoepjfizf/api-keys?reveal=true")"
+          key="$(jq -r '([.[] | select(.type == "legacy" and .name == "service_role") | .api_key] + [.[] | select(.type == "secret") | .api_key] | map(select(type == "string" and length > 20)) | .[0]) // empty' <<< "$response")"
+          if [[ -z "$key" ]]; then
+            echo "::error::Could not resolve a Staging service-role/secret API key. The Staging Supabase access token needs API Keys read and API Key Secrets read permissions."
+            exit 1
+          fi
+          echo "::add-mask::$key"
+          printf 'SUPABASE_STAGING_SERVICE_ROLE_KEY=%s\\n' "$key" >> "$GITHUB_ENV"
+          unset response key
+
       - name: Run authenticated Staging editorial lifecycle
         run: node scripts/mavis/staging-admin-e2e.mjs
