@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { articles as publicStaticArticles } from "../../../../data/articles";
 import { parseMavisArticleDraftInput } from "../../../../lib/mavis/article-draft-input.mjs";
+import { queryMavisEditorialArticles } from "../../../../lib/mavis/editorial-table.mjs";
 
 export async function saveMavisArticleDraft(formData) {
   const parsed = parseMavisArticleDraftInput(formData);
@@ -312,11 +313,9 @@ function revalidatePublicMavisArticlePaths() {
 
 async function notifyMavisArticleIndexNow(access, articleId) {
   try {
-    const { data, error } = await access.supabase
-      .from("mavis_editorial_articles")
-      .select("slug")
-      .eq("id", articleId)
-      .maybeSingle();
+    const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) =>
+      table.select("slug").eq("id", articleId).maybeSingle()
+    );
     if (error || typeof data?.slug !== "string" || !data.slug) {
       return { state: "skipped", reason: "article_slug_unavailable" };
     }
