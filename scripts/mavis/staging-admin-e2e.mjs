@@ -1,6 +1,8 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { createClient } from "@supabase/supabase-js";
+import { articles as staticArticles } from "../../src/data/articles.js";
+import { buildMavisStaticArticleImport } from "../../src/lib/mavis/static-article-import.mjs";
 
 const projectUrl = process.env.STAGING_SUPABASE_URL;
 const publishableKey = process.env.STAGING_SUPABASE_PUBLISHABLE_KEY;
@@ -104,6 +106,7 @@ async function main() {
   let userSeedAttempted = false;
   let client;
   let executionError;
+  let staticImportArticleId = null;
 
   const payload = {
     slug,
@@ -232,6 +235,45 @@ async function main() {
         detectSessionInUrl: false,
       },
     });
+
+    const staticArticle = staticArticles.find((item) => item.slug === "civil-claim-checklist") || staticArticles[0];
+    const { data: existingStaticArticle, error: existingStaticArticleError } = await client
+      .from("mavis_editorial_articles")
+      .select("id, status")
+      .eq("slug", staticArticle.slug)
+      .maybeSingle();
+    if (existingStaticArticleError) {
+      throw new Error(`Static article import preflight failed: ${existingStaticArticleError.message}`);
+    }
+    if (existingStaticArticle) {
+      console.log("SKIP: a Staging CMS record already uses the selected static article slug; preserving administrator data.");
+    } else {
+      const staticImport = buildMavisStaticArticleImport(staticArticle);
+      const { data: importedStaticId, error: staticImportError } = await client.rpc(
+        "save_mavis_article_draft",
+        {
+          p_payload: staticImport.payload,
+          p_article_id: null,
+          p_expected_version: null,
+          p_change_note: "E2E: import an existing static article as an unpublished versioned draft.",
+        }
+      );
+      if (staticImportError?.code === "23505") {
+        console.log("SKIP: the static article was imported concurrently; no existing record was modified.");
+      } else {
+        requireRpc(importedStaticId, staticImportError, "Import static article as draft");
+        assert(typeof importedStaticId === "string", "Static article import did not return an article UUID.");
+        staticImportArticleId = importedStaticId;
+        const { data: anonymousStaticDraft, error: anonymousStaticDraftError } = await anonymous
+          .from("mavis_articles")
+          .select("id")
+          .eq("id", importedStaticId)
+          .maybeSingle();
+        if (anonymousStaticDraftError) throw new Error(`Static draft visibility check failed: ${anonymousStaticDraftError.message}`);
+        assert(!anonymousStaticDraft, "Imported static article draft became public before approval.");
+        console.log("PASS: a current static article imports as a versioned draft and remains hidden from anonymous database readers.");
+      }
+    }
 
     const { data: hiddenDraft, error: hiddenDraftError } = await anonymous
       .from("mavis_articles")
@@ -390,14 +432,28 @@ async function main() {
         `DELETE FROM auth.users WHERE email = ${sqlString(email)};`,
       ];
 
+      if (staticImportArticleId) {
+        cleanupStatements.unshift(
+          `DELETE FROM public.mavis_article_sources WHERE article_id = ${sqlString(staticImportArticleId)}::uuid;`,
+          `DELETE FROM public.mavis_article_approvals WHERE article_id = ${sqlString(staticImportArticleId)}::uuid;`,
+          `DELETE FROM public.mavis_article_versions WHERE article_id = ${sqlString(staticImportArticleId)}::uuid;`,
+          `DELETE FROM public.mavis_article_audit_events WHERE article_id = ${sqlString(staticImportArticleId)}::uuid;`,
+          `DELETE FROM public.mavis_editorial_articles WHERE id = ${sqlString(staticImportArticleId)}::uuid;`
+        );
+      }
+
       if (userSeedAttempted) {
         for (const statement of cleanupStatements) runDbQuery(statement);
       }
 
+      const staticImportCleanupCheck = staticImportArticleId
+        ? `AND NOT EXISTS (SELECT 1 FROM public.mavis_editorial_articles WHERE id = ${sqlString(staticImportArticleId)}::uuid)`
+        : "";
       const cleanupCheck = runDbQuery(
         `SELECT CASE WHEN
           NOT EXISTS (SELECT 1 FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)})
           AND NOT EXISTS (SELECT 1 FROM auth.users WHERE email = ${sqlString(email)})
+          ${staticImportCleanupCheck}
           THEN 'MAVIS_STAGING_E2E_CLEANUP_OK'
           ELSE 'MAVIS_STAGING_E2E_CLEANUP_FAILED'
         END AS status;`,
