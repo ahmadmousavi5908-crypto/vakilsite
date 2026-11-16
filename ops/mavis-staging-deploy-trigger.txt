@@ -1,3 +1,1 @@
-MAVIS staging-only deployment trigger.
-Deploys the reviewed branch to the isolated vakilsite-staging Supabase project and the dedicated staging Worker only.
-No Production routes or database are targeted.
+Deploy the isolated Staging Worker after adding Search Console OAuth connection routes, encrypted token storage, URL inspection and sitemap tools. Do not deploy Production.
