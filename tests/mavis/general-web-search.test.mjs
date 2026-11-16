@@ -68,3 +68,39 @@ test("general web search rejects invalid queries and limits", async () => {
 test("general web search requires a server-side API key", () => {
   assert.throws(() => createGeneralWebSearch({ apiKey: "" }), /not configured/i);
 });
+
+
+test("extracts a single validated HTTPS article URL with bounded clean content", async () => {
+  let request;
+  const client = createGeneralWebSearch({
+    apiKey: "test-key",
+    fetchImpl: async (url, options) => {
+      request = { url, options };
+      return {
+        ok: true,
+        json: async () => ({
+          usage: { credits: 1 },
+          results: [{ url: "https://example.org/paper", raw_content: "# Paper\\n\\nExtracted content" }],
+        }),
+      };
+    },
+  });
+
+  const result = await client.extract({ url: "https://example.org/paper", query: "حقوق قراردادها" });
+  const body = JSON.parse(request.options.body);
+  assert.equal(request.url, "https://api.tavily.com/extract");
+  assert.equal(body.urls[0], "https://example.org/paper");
+  assert.equal(body.query, "حقوق قراردادها");
+  assert.equal(body.format, "markdown");
+  assert.equal(result.ok, true);
+  assert.match(result.content, /Extracted content/);
+});
+
+test("extract rejects unsafe URLs before making a provider request", async () => {
+  const client = createGeneralWebSearch({
+    apiKey: "test-key",
+    fetchImpl: async () => { throw new Error("Fetch must not run for unsafe URLs."); },
+  });
+  assert.deepEqual(await client.extract({ url: "http://example.org/paper" }), { ok: false, reason: "invalid_url" });
+  assert.deepEqual(await client.extract({ url: "https://user:pass@example.org/paper" }), { ok: false, reason: "invalid_url" });
+});
