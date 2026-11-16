@@ -9,6 +9,22 @@ import styles from "./MavisArticleEditor.module.css";
 
 const emptySection = () => ({ heading: "", body: "" });
 
+function mapIranianSourceMetadata(metadata) {
+  const authority = metadata.sourceAuthority || "";
+  const isNews = ["official_news", "legal_news"].includes(authority) || metadata.sourceGroup === "news";
+  const sourceType = isNews ? "news"
+    : authority === "official_primary" ? "official_law"
+    : ["official_judicial", "official_portal"].includes(authority) ? "judiciary"
+    : authority === "official_research" ? "government"
+    : ["academic", "academic_index"].includes(authority) || metadata.sourceGroup === "academic" ? "academic"
+    : authority === "secondary_reference" ? "other"
+    : "manual";
+  const relationType = ["official_primary", "official_judicial", "official_portal", "official_research"].includes(authority)
+    ? "primary_authority"
+    : ["secondary_reference", "official_news", "legal_news"].includes(authority) ? "secondary_reference" : "research_background";
+  return { ...metadata, sourceType, relationType };
+}
+
 export default function MavisArticleEditor({ initialArticle = null, initialSources = [], sourceLoadError = "", aiEnabled = false, initialTopic = "" }) {
   const [sections, setSections] = useState(() =>
     Array.isArray(initialArticle?.content?.sections) && initialArticle.content.sections.length
@@ -23,6 +39,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
   const [expectedVersion, setExpectedVersion] = useState(initialArticle?.current_version || 0);
   const formRef = useRef(null);
   const [sources, setSources] = useState(initialSources);
+  const [pendingSource, setPendingSource] = useState(null);
   const [sourceFeedback, setSourceFeedback] = useState("");
   const [sourceBusy, setSourceBusy] = useState(false);
   const [manualSource, setManualSource] = useState({
@@ -64,9 +81,35 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
     try {
       const result = await saveMavisArticleDraft(new FormData(event.currentTarget));
       if (result?.ok) {
+        const savedVersion = expectedVersion + 1;
         setArticleId(result.articleId);
-        setExpectedVersion((current) => current + 1);
-        setFeedback({ type: "success", message: "پیش‌نویس با موفقیت ذخیره شد.", articleId: result.articleId });
+        setExpectedVersion(savedVersion);
+        let message = "پیش‌نویس با موفقیت ذخیره شد.";
+
+        if (pendingSource) {
+          try {
+            const attached = await addMavisManualArticleSource(
+              result.articleId,
+              savedVersion,
+              mapIranianSourceMetadata(pendingSource),
+            );
+            if (attached?.ok) {
+              setExpectedVersion(attached.currentVersion);
+              setSources((current) => [...current.filter((item) => item.id !== attached.source.id), attached.source]);
+              setPendingSource(null);
+              setSourceFeedback("منبع انتخاب‌شده به پیش‌نویس ذخیره‌شده متصل شد.");
+              message += " منبع انتخاب‌شده نیز متصل شد.";
+            } else {
+              setSourceFeedback(attached?.error || "پیش‌نویس ذخیره شد، اما اتصال منبع انجام نشد؛ منبع را دوباره از جست‌وجو انتخاب کنید.");
+              message += " اتصال منبع نیازمند تلاش دوباره است.";
+            }
+          } catch {
+            setSourceFeedback("پیش‌نویس ذخیره شد، اما اتصال منبع انجام نشد؛ منبع را دوباره از جست‌وجو انتخاب کنید.");
+            message += " اتصال منبع نیازمند تلاش دوباره است.";
+          }
+        }
+
+        setFeedback({ type: "success", message, articleId: result.articleId });
       } else {
         setFeedback({ type: "error", message: result?.error || "ذخیره پیش‌نویس انجام نشد." });
       }
@@ -101,25 +144,20 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
 
   async function handleImportIranianSource(metadata) {
     if (!articleId || expectedVersion < 1) {
-      return { ok: false, error: "ابتدا پیش‌نویس را ذخیره کنید." };
+      setPendingSource(metadata);
+      const titleField = formRef.current?.elements?.namedItem("title");
+      if (titleField && !titleField.value.trim() && metadata.title) {
+        titleField.value = metadata.title.slice(0, 300);
+      }
+      setSourceFeedback("منبع انتخاب شد؛ عنوان مقاله در صورت خالی‌بودن تکمیل شد. پس از تکمیل فرم و ذخیره، منبع به مقاله متصل می‌شود.");
+      return { ok: true, pending: true };
     }
 
-    const authority = metadata.sourceAuthority || "";
-    const sourceType = authority === "official_primary" ? "official_law"
-      : ["official_judicial", "official_portal"].includes(authority) ? "judiciary"
-      : authority === "official_research" ? "government"
-      : ["academic", "academic_index"].includes(authority) || metadata.sourceGroup === "academic" ? "academic"
-      : authority === "secondary_reference" ? "other"
-      : "manual";
-    const relationType = ["official_primary", "official_judicial", "official_portal", "official_research"].includes(authority)
-      ? "primary_authority"
-      : authority === "secondary_reference" ? "secondary_reference" : "research_background";
-
-    const result = await addMavisManualArticleSource(articleId, expectedVersion, {
-      ...metadata,
-      sourceType,
-      relationType
-    });
+    const result = await addMavisManualArticleSource(
+      articleId,
+      expectedVersion,
+      mapIranianSourceMetadata(metadata),
+    );
 
     if (!result?.ok) {
       setSourceFeedback(result?.error || "ثبت منبع انجام نشد.");
@@ -276,6 +314,13 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           </div>
         ) : <p className={styles.sourceEmpty}>هنوز منبعی به این پیش‌نویس متصل نشده است.</p>}
 
+        {!isEditing ? (
+          <details className={styles.sourceTools} open>
+            <summary>جست‌وجوی منابع حقوقی ایرانی</summary>
+            <MavisIranianSourceSearch onImport={handleImportIranianSource} />
+          </details>
+        ) : null}
+
         {isEditing ? (
           <>
             <details className={styles.sourceTools}>
@@ -305,6 +350,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
         ) : (
           <p className={styles.sourceEmpty}>برای افزودن منبع، ابتدا پیش‌نویس را ذخیره کنید تا شناسه و نسخه مشخص داشته باشد.</p>
         )}
+        {pendingSource ? <p className={styles.sourceFeedback} role="status">منبع در انتظار اتصال: {pendingSource.title}</p> : null}
         {sourceFeedback ? <p className={styles.sourceFeedback} role="status" aria-live="polite">{sourceFeedback}</p> : null}
       </section>
 
