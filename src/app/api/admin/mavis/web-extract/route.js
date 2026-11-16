@@ -13,6 +13,32 @@ function json(body, status) {
   return Response.json(body, { status, headers: NO_STORE });
 }
 
+async function readBoundedJson(request) {
+  const reader = request.body?.getReader();
+  if (!reader) throw new SyntaxError("Missing request body");
+  const chunks = [];
+  let size = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > 4096) {
+      try { await reader.cancel(); } catch { /* Best effort. */ }
+      const error = new Error("Payload too large");
+      error.code = "PAYLOAD_TOO_LARGE";
+      throw error;
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
 export async function POST(request) {
   let access;
   try {
@@ -39,9 +65,10 @@ export async function POST(request) {
 
   let payload;
   try {
-    payload = await request.json();
-  } catch {
-    return json({ error: { code: "INVALID_JSON", message: "ساختار درخواست معتبر نیست." } }, 400);
+    payload = await readBoundedJson(request);
+  } catch (error) {
+    const tooLarge = error?.code === "PAYLOAD_TOO_LARGE";
+    return json({ error: { code: tooLarge ? "PAYLOAD_TOO_LARGE" : "INVALID_JSON", message: tooLarge ? "حجم درخواست بیش از حد مجاز است." : "ساختار درخواست معتبر نیست." } }, tooLarge ? 413 : 400);
   }
 
   if (!payload || typeof payload !== "object" || Array.isArray(payload)
@@ -53,6 +80,12 @@ export async function POST(request) {
   const query = typeof payload.query === "string" ? payload.query.trim() : "";
   if (url.length > 2048 || query.length > 180) {
     return json({ error: { code: "INVALID_REQUEST", message: "نشانی یا عبارت جست‌وجو بیش از حد مجاز است." } }, 400);
+  }
+  try {
+    const target = new URL(url);
+    if (target.protocol !== "https:" || target.username || target.password) throw new Error("Unsafe URL");
+  } catch {
+    return json({ error: { code: "INVALID_URL", message: "فقط نشانی HTTPS معتبر و بدون اطلاعات ورود پذیرفته می‌شود." } }, 400);
   }
 
   let rateResult;
