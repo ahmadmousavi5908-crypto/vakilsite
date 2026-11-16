@@ -103,3 +103,45 @@ jobs:
             exit 1
           fi
           echo "Staging noindex signal verified."
+
+
+  scholarly-providers:
+    name: Verify live scholarly source discovery providers
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out reviewed source adapters
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Test live Crossref, Semantic Scholar and OpenAlex metadata search
+        run: |
+          node --input-type=module <<'NODE'
+          import { createMavisSourceDiscoveryAdapters } from "./src/lib/mavis/source-discovery-adapters.mjs";
+          const adapters = createMavisSourceDiscoveryAdapters({ timeoutMs: 7000 });
+          const providers = [
+            ["Crossref", adapters.searchCrossref],
+            ["Semantic Scholar", adapters.searchSemanticScholar],
+            ["OpenAlex", adapters.searchOpenAlex],
+          ];
+          const results = [];
+          for (const [name, search] of providers) {
+            const result = await search("Iranian contract law civil liability", 3);
+            const valid = result.ok === true && Array.isArray(result.candidates) &&
+              result.candidates.every((item) => typeof item.title === "string" &&
+                typeof item.sourceUrl === "string" && item.sourceUrl.startsWith("https://"));
+            console.log(`${valid ? "PASS" : "FAIL"}: ${name} live metadata request; candidates=${result.candidates?.length ?? 0}; error=${result.error || "none"}`);
+            results.push({ name, valid });
+          }
+          const successful = results.filter((item) => item.valid).length;
+          if (!results[0].valid || successful < 2) {
+            throw new Error(`Live scholarly source discovery verification failed: ${successful}/3 providers passed; Crossref must pass.`);
+          }
+          console.log(`PASS: ${successful}/3 live scholarly metadata providers returned normalized HTTPS records.`);
+          NODE
