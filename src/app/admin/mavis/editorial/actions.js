@@ -13,6 +13,17 @@ function field(formData, name, max = 12000) {
   return String(formData.get(name) || "").normalize("NFC").trim().slice(0, max);
 }
 
+function safeHttpsUrl(value) {
+  if (!value) return "";
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "https:" || url.username || url.password) return "";
+    return url.href;
+  } catch {
+    return "";
+  }
+}
+
 function readContent(formData) {
   const title = field(formData, "title", 300);
   const excerpt = field(formData, "excerpt", 1200);
@@ -36,6 +47,8 @@ function readContent(formData) {
     seoDescription: field(formData, "seo_description", 500),
     keywords: field(formData, "keywords", 1000).split(",").map((item) => item.trim()).filter(Boolean).slice(0, 20),
     authorName: field(formData, "author_name", 160),
+    coverImageUrl: safeHttpsUrl(field(formData, "cover_image_url", 2048)),
+    coverImageAlt: field(formData, "cover_image_alt", 300),
     sourceMetadata: {
       publication: field(formData, "publication", 240),
       publicationDate: field(formData, "publication_date", 40),
