@@ -1,0 +1,1 @@
+Inspect Auth user and identity schema plus password-hash functions without modifying Staging.
