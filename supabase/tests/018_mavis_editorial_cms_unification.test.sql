@@ -1,6 +1,6 @@
 begin;
 
-select plan(21);
+select plan(23);
 
 select has_column('public', 'mavis_editorial_articles', 'draft_content', 'Mother Two draft snapshot column is preserved');
 select has_column('public', 'mavis_editorial_articles', 'published_content', 'Mother Two published snapshot column is preserved');
@@ -20,7 +20,34 @@ select has_trigger(
 
 select ok(
   not has_schema_privilege('authenticated', 'public', 'CREATE'),
-  'authenticated role does not retain schema creation privileges after view ownership transfer'
+  'authenticated role does not retain schema creation privileges from the compatibility view setup'
+);
+
+select ok(
+  NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'mavis_articles'
+      AND column_name IN (
+        'created_by', 'updated_by', 'last_change_note',
+        'origin_type', 'archived_from_status', 'search_vector'
+      )
+  ),
+  'public compatibility view omits internal editorial metadata'
+);
+
+select is(
+  (
+    SELECT count(*)::integer
+    FROM pg_proc AS p
+    JOIN pg_namespace AS n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public'
+      AND p.prokind = 'f'
+      AND pg_get_functiondef(p.oid) LIKE '%public.mavis_articles%'
+  ),
+  0,
+  'privileged workflow functions address the canonical table directly'
 );
 
 insert into auth.users (
@@ -94,7 +121,7 @@ select lives_ok(
   $$select id from public.mavis_editorial_articles
     where id = '00000000-0000-4000-8000-000000000023'
     for update$$,
-  'compatibility view supports the row locking used by guarded workflow RPCs'
+  'canonical table supports the row locking used by guarded workflow RPCs'
 );
 
 update public.mavis_editorial_articles
