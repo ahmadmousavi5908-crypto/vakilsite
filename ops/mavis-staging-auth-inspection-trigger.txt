@@ -1,1 +1,2 @@
 Inspect Auth user and identity schema plus password-hash functions without modifying Staging.
+2026-11-16: repeat read-only auth schema and password-hash function inspection after E2E stabilization.
