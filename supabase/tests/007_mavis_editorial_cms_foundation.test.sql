@@ -9,10 +9,10 @@ select is(
   'YES',
   'compatibility view remains automatically updatable'
 );
-select ok(
-  (select coalesce(array_to_string(reloptions, ','), '') like '%security_invoker=true%'
-   from pg_class where oid = 'public.mavis_articles'::regclass),
-  'compatibility view enforces caller privileges and base-table RLS'
+select is(
+  (select pg_get_userbyid(relowner) from pg_class where oid = 'public.mavis_articles'::regclass),
+  'authenticated',
+  'compatibility view applies authenticated RLS policies without exposing internal columns to anon'
 );
 select ok(to_regclass('public.mavis_articles_editable_updated_idx') is not null, 'editable draft keyset pagination has a dedicated partial index');
 select has_table('public', 'mavis_sources', 'CMS source registry table exists');
