@@ -8,7 +8,7 @@ const row = {
 };
 
 test("encodes and decodes a stable keyset cursor", () => {
-  const cursor = encodeMavisArticleCursor(row);
+  const cursor = encodeMavisArticleCursor(row, 50);
   assert.deepEqual(decodeMavisArticleCursor(cursor), {
     updatedAt: row.updated_at,
     id: row.id,
@@ -37,4 +37,15 @@ test("preserves database timestamp precision for stable pagination", () => {
     updatedAt: preciseRow.updated_at,
     id: row.id,
   });
+});
+
+
+test("legacy cursors remain readable and new cursors preserve sequential row offsets", () => {
+  const legacy = Buffer.from(JSON.stringify({ updatedAt: row.updated_at, id: row.id })).toString("base64url");
+  assert.deepEqual(decodeMavisArticleCursor(legacy), {
+    updatedAt: row.updated_at,
+    id: row.id,
+    ordinal: 0,
+  });
+  assert.equal(decodeMavisArticleCursor(encodeMavisArticleCursor(row, 125)).ordinal, 125);
 });
