@@ -3,3 +3,4 @@ Run the read-only JSON audit query for Staging CMS columns, policies, indexes, f
 
 Repeat compact read-only CMS audit: verify canonical table/view parity, publication snapshots, unique slugs, source and version counts, and migration history.
 2026-11-16: Post-migration 019 final read-only CMS schema, RLS, function ACL, publication and migration-history reconciliation.
+2026-11-16: expanded read-only reconciliation includes mavis_private RLS, full MAVIS RPC inventory, and effective anon/authenticated/service_role function execution privileges.
