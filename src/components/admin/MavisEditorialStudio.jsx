@@ -210,6 +210,7 @@ export default function MavisEditorialStudio({ articles }) {
           <article className={styles.preview}>
             <span>{form.category || "راهنمای حقوقی"}</span><h1>{form.title || "عنوان مقاله"}</h1><p className={styles.previewExcerpt}>{form.excerpt}</p><p>{form.intro}</p>
             {previewBlocks(form.bodyMarkdown)}
+            {(form.publication || form.publicationDate || form.documentNumber || form.issuingAuthority || form.documentType) ? <section><h3>مشخصات منبع و انتشار</h3><p>{[form.publication, form.publicationDate, form.documentNumber, form.issuingAuthority, form.documentType].filter(Boolean).join(" · ")}</p></section> : null}
             {form.checklist ? <><h3>چک‌لیست</h3><ul>{form.checklist.split("\n").filter(Boolean).map((item, index) => <li key={index}>{item}</li>)}</ul></> : null}
             {form.warning ? <aside>{form.warning}</aside> : null}
             {form.sources ? <><h3>منابع</h3><ul>{form.sources.split("\n").filter(Boolean).map((item, index) => <li key={index}>{item}</li>)}</ul></> : null}
