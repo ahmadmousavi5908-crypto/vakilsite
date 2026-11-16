@@ -4,3 +4,5 @@ Read-only Staging integration audit: inspect secret names and connection metadat
 
 Recheck the full Google Search Console configuration including the property URL secret.
 2026-11-16: repeat aggregate-only integration, CMS inventory and cleanup audit after latest deployment.
+
+Post-E2E cleanup verification: confirm the temporary administrator identity and all temporary article, approval, version, audit, source, and candidate records are absent.
