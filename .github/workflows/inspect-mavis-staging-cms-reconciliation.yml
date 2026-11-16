@@ -76,7 +76,8 @@ jobs:
               SELECT jsonb_agg(jsonb_build_object(
                 'name', p.proname,
                 'arguments', pg_get_function_identity_arguments(p.oid),
-                'definition', pg_get_functiondef(p.oid)
+                'security_definer', p.prosecdef,
+                'configuration', p.proconfig
               ) ORDER BY p.proname)
               FROM pg_proc p
               JOIN pg_namespace n ON n.oid = p.pronamespace
@@ -88,7 +89,33 @@ jobs:
               'current_cms_relation', to_regclass('public.mavis_articles')::text,
               'versions_table', to_regclass('public.mavis_article_versions')::text,
               'approvals_table', to_regclass('public.mavis_article_approvals')::text,
-              'article_sources_table', to_regclass('public.mavis_article_sources')::text
+              'article_sources_table', to_regclass('public.mavis_article_sources')::text,
+              'compatibility_relation_kind', (
+                SELECT relkind FROM pg_class WHERE oid = to_regclass('public.mavis_articles')
+              ),
+              'canonical_relation_kind', (
+                SELECT relkind FROM pg_class WHERE oid = to_regclass('public.mavis_editorial_articles')
+              )
+            ),
+            'counts', jsonb_build_object(
+              'canonical_articles', (SELECT count(*) FROM public.mavis_editorial_articles),
+              'compatibility_view_rows', (SELECT count(*) FROM public.mavis_articles),
+              'canonical_published', (SELECT count(*) FROM public.mavis_editorial_articles WHERE status = 'published'),
+              'compatibility_published', (SELECT count(*) FROM public.mavis_articles WHERE status = 'published'),
+              'published_without_snapshot', (
+                SELECT count(*) FROM public.mavis_editorial_articles
+                WHERE status = 'published' AND (published_content IS NULL OR published_version IS NULL)
+              ),
+              'duplicate_slugs', (
+                SELECT count(*) FROM (
+                  SELECT slug FROM public.mavis_editorial_articles GROUP BY slug HAVING count(*) > 1
+                ) AS duplicates
+              ),
+              'sources', (SELECT count(*) FROM public.mavis_sources),
+              'source_candidates', (SELECT count(*) FROM public.mavis_source_candidates),
+              'article_versions', (SELECT count(*) FROM public.mavis_article_versions),
+              'article_approvals', (SELECT count(*) FROM public.mavis_article_approvals),
+              'article_source_links', (SELECT count(*) FROM public.mavis_article_sources)
             ),
             'migration_history', COALESCE((
               SELECT jsonb_agg(version ORDER BY version)
