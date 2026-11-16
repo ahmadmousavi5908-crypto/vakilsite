@@ -188,6 +188,22 @@ async function main() {
     if (adminReadError) throw new Error(`Canonical admin read failed: ${adminReadError.message}`);
     assert(adminRead.slug === slug && adminRead.status === "draft", "Admin read did not return the created draft.");
 
+    const anonymous = createClient(projectUrl, publishableKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
+      },
+    });
+
+    const { data: hiddenDraft, error: hiddenDraftError } = await anonymous
+      .from("mavis_articles")
+      .select("id")
+      .eq("id", articleId)
+      .maybeSingle();
+    if (hiddenDraftError) throw new Error(`Anonymous draft visibility check failed: ${hiddenDraftError.message}`);
+    assert(!hiddenDraft, "Unpublished draft was visible to anonymous readers.");
+
     const { data: submitResult, error: submitError } = await client.rpc(
       "submit_mavis_article_for_review",
       { p_article_id: articleId, p_expected_version: 1 }
@@ -214,14 +230,6 @@ async function main() {
     requireRpc(publishResult, publishError, "Publish exact version");
     assert(publishResult.status === "published", "Article was not published.");
 
-    const anonymous = createClient(projectUrl, publishableKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-        detectSessionInUrl: false,
-      },
-    });
-
     const { data: publicArticle, error: publicReadError } = await anonymous
       .from("mavis_articles")
       .select("id, slug, status, published_at")
@@ -239,14 +247,25 @@ async function main() {
       "Published article is missing from the public feed."
     );
 
-    const { data: privateRead, error: privateReadError } = await anonymous
+    const { data: publicCanonicalRead, error: publicCanonicalReadError } = await anonymous
       .from("mavis_editorial_articles")
-      .select("id")
+      .select("id, slug, status")
+      .eq("id", articleId)
+      .maybeSingle();
+    if (publicCanonicalReadError) throw new Error(`Anonymous public-column read failed: ${publicCanonicalReadError.message}`);
+    assert(
+      publicCanonicalRead?.slug === slug && publicCanonicalRead.status === "published",
+      "Anonymous access did not receive the published public-column projection."
+    );
+
+    const { error: privateColumnError } = await anonymous
+      .from("mavis_editorial_articles")
+      .select("draft_content")
       .eq("id", articleId)
       .maybeSingle();
     assert(
-      privateReadError || !privateRead,
-      "Anonymous access unexpectedly reached the canonical editorial table."
+      Boolean(privateColumnError),
+      "Anonymous access unexpectedly read the private draft_content column."
     );
 
     const { data: unpublishResult, error: unpublishError } = await client.rpc(
@@ -263,6 +282,14 @@ async function main() {
       .maybeSingle();
     if (hiddenAfterUnpublishError) throw new Error(hiddenAfterUnpublishError.message);
     assert(!hiddenAfterUnpublish, "Unpublished article remained publicly visible.");
+
+    const { data: hiddenCanonicalAfterUnpublish, error: hiddenCanonicalAfterUnpublishError } = await anonymous
+      .from("mavis_editorial_articles")
+      .select("id")
+      .eq("id", articleId)
+      .maybeSingle();
+    if (hiddenCanonicalAfterUnpublishError) throw new Error(hiddenCanonicalAfterUnpublishError.message);
+    assert(!hiddenCanonicalAfterUnpublish, "Unpublished canonical record remained visible to anonymous readers.");
 
     const { data: archiveResult, error: archiveError } = await client.rpc(
       "archive_mavis_article",
@@ -305,7 +332,7 @@ async function main() {
     assert(!finalPublicRead, "Article remained public after the final unpublish.");
 
     console.log("PASS: draft → review → approval → publish → public read → unpublish → archive → restore → republish → unpublish.");
-    console.log("PASS: admin reads the canonical table; anonymous users read only the public compatibility view.");
+    console.log("PASS: anonymous readers see only published rows and approved public columns; private draft fields remain denied.");
   } catch (error) {
     executionError = error;
   } finally {
