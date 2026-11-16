@@ -1,6 +1,6 @@
 begin;
 
-select plan(14);
+select plan(15);
 
 select has_column('public', 'mavis_sources', 'metadata', 'source metadata is stored in a structured private column');
 select has_table('mavis_private', 'editorial_ai_rate_limits', 'editorial AI usage has a dedicated private rate-limit table');
