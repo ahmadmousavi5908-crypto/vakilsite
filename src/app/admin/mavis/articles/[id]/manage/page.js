@@ -28,7 +28,7 @@ export default async function ManageMavisArticlePage({ params }) {
   if (!UUID_PATTERN.test(id || "")) notFound();
 
   const { data: article, error: articleError } = await access.supabase
-    .from("mavis_articles")
+    .from("mavis_editorial_articles")
     .select("id, slug, title, category, status, current_version, updated_at, published_at, archived_from_status")
     .eq("id", id)
     .maybeSingle();
