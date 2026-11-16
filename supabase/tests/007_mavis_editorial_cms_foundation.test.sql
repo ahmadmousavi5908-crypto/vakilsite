@@ -9,10 +9,10 @@ select is(
   'YES',
   'compatibility view remains automatically updatable'
 );
-select is(
-  (select pg_get_userbyid(relowner) from pg_class where oid = 'public.mavis_articles'::regclass),
-  'authenticated',
-  'compatibility view applies authenticated RLS policies without exposing internal columns to anon'
+select ok(
+  (select coalesce(array_to_string(reloptions, ','), '') like '%security_invoker=true%'
+   from pg_class where oid = 'public.mavis_articles'::regclass),
+  'public compatibility view enforces base-table RLS'
 );
 select ok(to_regclass('public.mavis_articles_editable_updated_idx') is not null, 'editable draft keyset pagination has a dedicated partial index');
 select has_table('public', 'mavis_sources', 'CMS source registry table exists');
@@ -31,9 +31,9 @@ select ok((select relrowsecurity from pg_class where oid = 'public.mavis_article
 select ok(
   has_column_privilege('anon', 'public.mavis_articles', 'slug', 'SELECT')
   and has_column_privilege('anon', 'public.mavis_articles', 'content', 'SELECT')
-  and not has_column_privilege('anon', 'public.mavis_articles', 'created_by', 'SELECT')
-  and not has_column_privilege('anon', 'public.mavis_articles', 'updated_by', 'SELECT')
-  and not has_column_privilege('anon', 'public.mavis_articles', 'last_change_note', 'SELECT'),
+  and not has_column_privilege('anon', 'public.mavis_editorial_articles', 'created_by', 'SELECT')
+  and not has_column_privilege('anon', 'public.mavis_editorial_articles', 'updated_by', 'SELECT')
+  and not has_column_privilege('anon', 'public.mavis_editorial_articles', 'last_change_note', 'SELECT'),
   'anonymous role can read public article fields but not internal editorial metadata'
 );
 select ok(not has_table_privilege('anon', 'public.mavis_sources', 'SELECT'), 'anonymous role cannot select source/rights records');
@@ -64,7 +64,7 @@ values
   ('00000000-0000-4000-8000-000000000011', 'editor'),
   ('00000000-0000-4000-8000-000000000012', 'admin');
 
-insert into public.mavis_articles (
+insert into public.mavis_editorial_articles (
   id, slug, title, excerpt, category, content, status, origin_type, current_version, published_at
 )
 values
