@@ -217,19 +217,20 @@ export function createIranianSourceSearchFallback({ browser, timeoutMs = 18000 }
         const url = searchLinks.find((item) => item.id === "qavanin")?.url;
         if (url) {
           try {
-            const response = await Promise.race([
-              browser.quickAction("content", {
-                url,
-                gotoOptions: { waitUntil: "networkidle2", timeout }
-              }),
-              new Promise((_, reject) => setTimeout(() => reject(new Error("BROWSER_RUN_TIMEOUT")), timeout))
-            ]);
+            const response = await browser.quickAction("content", {
+              url,
+              gotoOptions: { waitUntil: "networkidle2", timeout }
+            });
             if (!response?.ok) {
               providerErrors.push({ provider: "qavanin_browser_run", code: "UPSTREAM_UNAVAILABLE" });
             } else {
               const markup = await response.text();
-              results.push(...parseQavaninSearchResults(markup, limit));
-              if (!results.length) providerErrors.push({ provider: "qavanin_browser_run", code: "NO_PARSEABLE_RESULTS" });
+              if (markup.length > 2_000_000) {
+                providerErrors.push({ provider: "qavanin_browser_run", code: "RESPONSE_TOO_LARGE" });
+              } else {
+                results.push(...parseQavaninSearchResults(markup, limit));
+                if (!results.length) providerErrors.push({ provider: "qavanin_browser_run", code: "NO_PARSEABLE_RESULTS" });
+              }
             }
           } catch {
             providerErrors.push({ provider: "qavanin_browser_run", code: "UPSTREAM_UNAVAILABLE" });
