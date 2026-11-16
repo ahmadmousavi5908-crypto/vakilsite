@@ -179,8 +179,9 @@ jobs:
             const valid = result.ok === true && Array.isArray(result.candidates) &&
               result.candidates.every((item) => typeof item.title === "string" &&
                 typeof item.sourceUrl === "string" && item.sourceUrl.startsWith("https://"));
-            console.log(`${valid ? "PASS" : "FAIL"}: ${name} live metadata request; candidates=${result.candidates?.length ?? 0}; error=${result.error || "none"}`);
-            results.push({ name, valid });
+            const required = name === "Crossref";
+            console.log(`${valid ? "PASS" : required ? "FAIL" : "WARN"}: ${name} live metadata request; candidates=${result.candidates?.length ?? 0}; error=${result.error || "none"}`);
+            results.push({ name, valid, required });
           }
           const successful = results.filter((item) => item.valid).length;
           if (!results[0].valid || successful < 2) {
