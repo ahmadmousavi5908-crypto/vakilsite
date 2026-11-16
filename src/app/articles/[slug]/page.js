@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPublicArticleBySlug } from "../../../lib/mavis/published-editorial";
@@ -21,6 +22,7 @@ export async function generateMetadata({ params }) {
       type: "article",
       title: article.title,
       description: article.seoDescription || article.excerpt,
+      ...(article.coverImageUrl ? { images: [article.coverImageUrl] } : {}),
       locale: "fa_IR",
       url: canonicalPath,
     },
@@ -50,6 +52,7 @@ export default async function ArticleDetailPage({ params }) {
         ...(article.publishedAt ? { datePublished: article.publishedAt } : {}),
         ...(article.updatedAt ? { dateModified: article.updatedAt } : {}),
         ...(article.authorName ? { author: { "@type": "Person", name: article.authorName } } : {}),
+        ...(article.coverImageUrl ? { image: article.coverImageUrl } : {}),
       }
     : null;
 
@@ -73,6 +76,7 @@ export default async function ArticleDetailPage({ params }) {
       </section>
       <div className="container article-detail-layout">
         <article className="article-body">
+          {article.coverImageUrl ? <figure className="article-cover-image"><img src={article.coverImageUrl} alt={article.coverImageAlt || article.title} loading="lazy" decoding="async" /><figcaption>{article.coverImageAlt || article.title}</figcaption></figure> : null}
           <p className="article-intro">{article.intro}</p>
           {article.sections.map((section, index) => (
             <section className="article-body-section" key={section.heading}>
