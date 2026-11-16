@@ -166,9 +166,9 @@ export default function MavisSearchConsolePanel() {
         <div>
           <span className={styles.eyebrow}>اتصال داده بیرونی · فقط خواندنی</span>
           <h2 id="mavis-search-console-title">گزارش عملکرد Google Search Console</h2>
-          <p>داده‌ها فقط با درخواست مدیر دریافت می‌شوند؛ الگوهای شناخته‌شده مانند شماره تماس، ایمیل و شناسه‌های عددی پیش از نمایش پالایش می‌شوند.</p>
+          <p>داده‌ها از اتصال فقط‌خواندنی دریافت می‌شوند یا فایل CSV در مرورگر پردازش می‌شود؛ شماره تماس، ایمیل و شناسه‌های حساس پیش از نمایش پالایش می‌شوند.</p>
         </div>
-        <span className={styles.scope}>webmasters.readonly</span>
+        <span className={styles.scope}>{result?.importedFromCsv ? "CSV · local only" : "webmasters.readonly"}</span>
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit}>
