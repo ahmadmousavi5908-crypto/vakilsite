@@ -5,6 +5,7 @@ import { getMavisKnowledgeInventory } from "../../../lib/mavis/knowledge-registr
 import MavisKnowledgeSearch from "../../../components/admin/MavisKnowledgeSearch";
 import MavisIranianSourceSearch from "../../../components/admin/MavisIranianSourceSearch";
 import MavisSearchConsolePanel from "../../../components/admin/MavisSearchConsolePanel";
+import MavisPublicWebSearch from "../../../components/admin/MavisPublicWebSearch";
 import { signOut } from "../actions";
 
 export const metadata = {
@@ -34,6 +35,7 @@ export default async function MavisAdminPage() {
           <Link className="active" href="/admin/mavis">مرکز دانش MAVIS</Link>
           <Link href="/admin/mavis/growth">ممیزی محتوا و هوشمندی رشد</Link>
           <Link href="/admin/mavis/articles">کتابخانه مقالات</Link>
+          <a href="#public-web-search">آزمایش جست‌وجوی عمومی وب</a>
           <a href="#iran-source-search">جست‌وجوی منابع ایرانی</a>
           <a href="#knowledge-search">کتابخانه حقوقی داخلی</a>
           <a href="#growth-intelligence">هوشمندی رشد</a>
@@ -62,6 +64,7 @@ export default async function MavisAdminPage() {
             <article><span>قوانین ثبت‌شده</span><strong>{inventory.laws.toLocaleString("fa-IR")}</strong><small>همراه با وضعیت بررسی</small></article>
             <article><span>مقالات و خلاصه‌ها</span><strong>{(inventory.legalArticles + inventory.publishedArticles + inventory.researchNotes).toLocaleString("fa-IR")}</strong><small>{inventory.legalArticles.toLocaleString("fa-IR")} خلاصه ماده · {inventory.publishedArticles.toLocaleString("fa-IR")} مقاله سایت · {inventory.researchNotes.toLocaleString("fa-IR")} یادداشت پژوهشی</small></article>
           </section>
+          <section id="public-web-search"><MavisPublicWebSearch /></section>
           <section id="iran-source-search"><MavisIranianSourceSearch /></section>
           <section id="knowledge-search"><MavisKnowledgeSearch /></section>
           <section id="growth-intelligence"><MavisSearchConsolePanel /></section>
