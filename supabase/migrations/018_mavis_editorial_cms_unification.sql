@@ -270,13 +270,16 @@ CREATE TRIGGER mavis_editorial_legacy_fields_sync
   FOR EACH ROW
   EXECUTE FUNCTION public.sync_mavis_editorial_legacy_fields();
 
--- The original table name is retained as an automatically updatable compatibility view.
--- security_invoker ensures the canonical table's RLS policies and caller privileges apply.
+-- The compatibility view is owned by the authenticated role, not by the table owner.
+-- This preserves the authenticated RLS policy boundary while allowing the anonymous
+-- role to receive only the deliberately limited public columns from the view.
 CREATE VIEW public.mavis_articles
-WITH (security_invoker = true)
+WITH (security_invoker = false)
 AS
 SELECT *
 FROM public.mavis_editorial_articles;
+
+ALTER VIEW public.mavis_articles OWNER TO authenticated;
 
 REVOKE ALL ON TABLE public.mavis_articles
   FROM public, anon, authenticated, service_role;
@@ -286,12 +289,6 @@ REVOKE ALL ON TABLE public.mavis_articles
 GRANT SELECT ON TABLE public.mavis_editorial_articles TO authenticated;
 
 GRANT SELECT ON TABLE public.mavis_articles TO authenticated;
-
-GRANT SELECT (
-  id, slug, title, author_name, excerpt, category, tags, content,
-  content_schema_version, seo_title, seo_description, status,
-  current_version, created_at, updated_at, published_at
-) ON TABLE public.mavis_editorial_articles TO anon;
 
 GRANT SELECT (
   id, slug, title, author_name, excerpt, category, tags, content,
