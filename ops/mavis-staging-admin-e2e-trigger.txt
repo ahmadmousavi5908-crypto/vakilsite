@@ -7,3 +7,5 @@ Post-deploy verification after secure Search Console OAuth and read-only inspect
 MAVIS Iranian editorial search staging lifecycle validation: 2026-11-17.
 
 Authenticated Iranian source-search API route test: 2026-11-17.
+
+Bounded source-search API smoke test: 2026-11-17.
