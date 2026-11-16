@@ -2,3 +2,4 @@ Inspect Auth user and identity schema plus password-hash functions without modif
 2026-11-16: repeat read-only auth schema and password-hash function inspection after E2E stabilization.
 
 2026-11-16: read-only audit of Staging Worker secret names required for GSC, editorial AI, Iranian source search and competitor research. Never read or print secret values.
+2026-11-16: compare Cloudflare Staging and GitHub Staging integration secret availability by name only; do not read, print, or upload values.
