@@ -196,22 +196,34 @@ export async function generateMavisEditorialSuggestions(input, {
   let response;
   let payload;
   try {
-    response = await fetchImpl("https://api.openai.com/v1/responses", {
-      method: "POST",
-      redirect: "error",
-      cache: "no-store",
-      signal: controller.signal,
-      headers: { Authorization: "Bearer " + apiKey, "Content-Type": "application/json" },
-      body: JSON.stringify(request)
-    });
-    if (!response?.ok) return { ok: false, code: "MAVIS_AI_PROVIDER_ERROR", status: response?.status || 0 };
-    payload = await readBoundedResponseJson(response);
-  } catch (error) {
-    if (controller.signal.aborted) return { ok: false, code: "MAVIS_AI_TIMEOUT" };
-    if (error?.message === "MAVIS_AI_RESPONSE_TOO_LARGE") {
-      return { ok: false, code: "MAVIS_AI_RESPONSE_TOO_LARGE" };
+    try {
+      response = await fetchImpl("https://api.openai.com/v1/responses", {
+        method: "POST",
+        redirect: "error",
+        cache: "no-store",
+        signal: controller.signal,
+        headers: { Authorization: "Bearer " + apiKey, "Content-Type": "application/json" },
+        body: JSON.stringify(request)
+      });
+    } catch {
+      return {
+        ok: false,
+        code: controller.signal.aborted ? "MAVIS_AI_TIMEOUT" : "MAVIS_AI_NETWORK_ERROR"
+      };
     }
-    return { ok: false, code: "MAVIS_AI_INVALID_RESPONSE" };
+
+    if (!response?.ok) return { ok: false, code: "MAVIS_AI_PROVIDER_ERROR", status: response?.status || 0 };
+
+    try {
+      payload = await readBoundedResponseJson(response);
+    } catch (error) {
+      return {
+        ok: false,
+        code: error?.message === "MAVIS_AI_RESPONSE_TOO_LARGE"
+          ? "MAVIS_AI_RESPONSE_TOO_LARGE"
+          : "MAVIS_AI_INVALID_RESPONSE"
+      };
+    }
   } finally {
     clearTimeout(timer);
   }
