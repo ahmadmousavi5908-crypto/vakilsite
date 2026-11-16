@@ -713,11 +713,18 @@ export async function generateMavisEditorialDraft(formData) {
   }
 
   const apiKey = process.env.MAVIS_OPENAI_API_KEY || process.env.OPENAI_API_KEY || "";
-  if (!apiKey) {
+  let workersAi;
+  try {
+    const { getCloudflareContext } = await import("@opennextjs/cloudflare");
+    workersAi = getCloudflareContext().env?.AI;
+  } catch {
+    // Local Node.js development can continue through the optional OpenAI fallback.
+  }
+  if (typeof workersAi?.run !== "function" && !apiKey) {
     return {
       ok: false,
       code: "MAVIS_AI_NOT_CONFIGURED",
-      error: "اتصال مدل فعال نیست. کلید MAVIS_OPENAI_API_KEY باید در Worker آزمایشی تنظیم شود."
+      error: "سرویس هوش مصنوعی در این محیط فعال نیست. اتصال Workers AI یا کلید پشتیبان باید تنظیم شود."
     };
   }
 
@@ -800,9 +807,13 @@ export async function generateMavisEditorialDraft(formData) {
     sources
   };
 
+  const model = typeof workersAi?.run === "function"
+    ? process.env.MAVIS_WORKERS_AI_MODEL || "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    : process.env.MAVIS_EDITORIAL_MODEL || "gpt-6-astra";
   const result = await generateMavisEditorialSuggestions(input, {
     apiKey,
-    model: process.env.MAVIS_EDITORIAL_MODEL || "gpt-6-astra"
+    ai: workersAi,
+    model
   });
 
   if (!result.ok) {
