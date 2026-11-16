@@ -52,7 +52,7 @@ jobs:
             *) echo "::error::Refusing a non-Staging database host."; exit 1 ;;
           esac
           npx --yes supabase@3.0.0 migration list --remote="$DB_URL"
-          DRY_RUN="$(npx --yes supabase@3.0.0 db push --dry-run --remote="$DB_URL")"
+          DRY_RUN="$(npx --yes supabase@3.0.0 db push --dry-run --remote="$DB_URL" 2>&1)"
           printf '%s\n' "$DRY_RUN"
           PENDING_COUNT="$(printf '%s\n' "$DRY_RUN" | grep -Fc '018_mavis_editorial_cms_unification.sql' || true)"
           OTHER_PENDING="$(printf '%s\n' "$DRY_RUN" | grep -E '• [0-9]{3}_' | grep -v '018_mavis_editorial_cms_unification.sql' || true)"
