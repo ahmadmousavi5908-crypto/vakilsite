@@ -113,3 +113,16 @@ test("Browser Run failures degrade to verified portal links instead of a false s
   assert.equal(result.providerErrors[0].code, "UPSTREAM_UNAVAILABLE");
   assert.ok(result.searchLinks.length >= 3);
 });
+
+
+test("all-source fallback includes academic domains instead of only legal portals", async () => {
+  const { createIranianSourceSearchFallback } = await import("../../src/lib/mavis/iranian-source-search.mjs");
+  const result = await createIranianSourceSearchFallback().search({
+    query: "مسئولیت مدنی",
+    group: "all",
+    limit: 10
+  });
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Asid.ir")));
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amagiran.com")));
+  assert.ok(result.searchLinks.some((item) => item.id === "qavanin"));
+});
