@@ -131,7 +131,7 @@ async function main() {
 
     runDbQuery(`
       INSERT INTO auth.identities (
-        id, provider_id, user_id, identity_data, provider, email, created_at, updated_at
+        id, provider_id, user_id, identity_data, provider, created_at, updated_at
       ) VALUES (
         gen_random_uuid(),
         ${sqlString(email)},
@@ -142,14 +142,12 @@ async function main() {
           'email_verified', true
         ),
         'email',
-        ${sqlString(email)},
         now(),
         now()
       )
       ON CONFLICT (provider_id, provider) DO UPDATE SET
         user_id = EXCLUDED.user_id,
         identity_data = EXCLUDED.identity_data,
-        email = EXCLUDED.email,
         updated_at = now();
     `);
 
