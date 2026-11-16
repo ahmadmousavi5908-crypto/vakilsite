@@ -4,7 +4,7 @@ import { useState } from "react";
 import styles from "./MavisWebArticleResearch.module.css";
 
 function normalizeText(value) {
-  return String(value || "").replace(/\\s+/g, " ").trim();
+  return String(value || "").replace(/\s+/g, " ").trim();
 }
 
 function firstMatch(content, patterns, maxLength = 180) {
@@ -21,13 +21,13 @@ function limitWords(value, maxWords = 25) {
 
 function extractMetadata(content, result) {
   const author = firstMatch(content, [
-    /(?:نویسنده|مولف|مؤلف|پدیدآور|author)\\s*[:：-]\\s*([^\\n]{2,180})/i,
+    /(?:نویسنده|مولف|مؤلف|پدیدآور|author)\s*[:：-]\s*([^\n]{2,180})/i,
   ]);
   const publication = firstMatch(content, [
-    /(?:نام نشریه|نشریه|مجله|فصلنامه|ژورنال|publication|journal|publisher|ناشر)\\s*[:：-]\\s*([^\\n]{2,180})/i,
+    /(?:نام نشریه|نشریه|مجله|فصلنامه|ژورنال|publication|journal|publisher|ناشر)\s*[:：-]\s*([^\n]{2,180})/i,
   ]);
   const date = firstMatch(content, [
-    /(?:تاریخ انتشار|تاریخ چاپ|published(?: on)?|publication date)\\s*[:：-]\\s*([^\\n]{4,80})/i,
+    /(?:تاریخ انتشار|تاریخ چاپ|published(?: on)?|publication date)\s*[:：-]\s*([^\n]{4,80})/i,
   ], 40);
   return {
     title: normalizeText(result.title).slice(0, 300),
