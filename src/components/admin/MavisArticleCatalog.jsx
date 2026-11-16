@@ -155,7 +155,7 @@ export default function MavisArticleCatalog({ articles }) {
                     </tr>
                     {open && (
                       <tr>
-                        <td className={styles.detail} colSpan={6}>
+                        <td className={styles.detail} colSpan={7}>
                           <p>{article.excerpt}</p>
                           <strong>سرفصل‌ها</strong>
                           <ul>{(article.sections || []).map((section, index) => <li key={section.heading || index}>{section.heading}</li>)}</ul>
