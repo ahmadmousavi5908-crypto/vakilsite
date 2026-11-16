@@ -1,5 +1,5 @@
-MAVIS Staging migration preview trigger.
+MAVIS Staging migration execution authorization.
 
-Read-only only: inspect migration history and run db push --dry-run. No apply or repair operation is available in this workflow.
+The site administrator explicitly approved applying migration 019 to the isolated vakilsite-staging database only.
 
-Launch verification request: run the read-only Staging migration history comparison and dry-run before deployment.
+This one-time trigger is bound to the exact commit message: ops: apply approved MAVIS staging migration 019.
