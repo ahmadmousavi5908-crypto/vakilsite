@@ -1,1 +1,1 @@
-Run the authenticated Staging lifecycle test. It creates one temporary admin identity and article, tests draft, review, approval, publication, public visibility, unpublish, archive, restore, and removes every test record in a finally cleanup.
+Retry authenticated Staging editorial lifecycle after making all database seed and cleanup operations single-statement safe. Clean any prior interrupted E2E fixtures first, then verify the complete workflow and cleanup.
