@@ -3,7 +3,7 @@
 Last verified: 2026-11-16
 Repository: `ahmadmousavi5908-crypto/vakilsite`
 Production site: `https://vakilahmadmousavi.ir`
-Current main after integration-contract reconciliation: `4433f48c589061f5eb507d78f728d4701bb4aba8`
+Current main after production secret inventory and staging deploy hardening: `9b942504b9d9c9ec59debd9dc46287ba014bc3d6`
 
 ## Delivered
 
@@ -25,6 +25,7 @@ Current main after integration-contract reconciliation: `4433f48c589061f5eb507d7
 - Previously measured compressed Worker bundle: 1.51 MiB, below the 3 MiB Free limit.
 - The latest deployment workflow changes on current main have NOT yet been exercised by a deployment from current main. The successful run above predates the runtime-secret propagation commits.
 - The current workflow uses Wrangler's documented `wrangler deploy --secrets-file` option. Cloudflare documents JSON and dotenv input formats and confirms that secrets omitted from the file are preserved from the previous Worker version: https://developers.cloudflare.com/workers/wrangler/commands/workers/ and https://developers.cloudflare.com/workers/configuration/secrets/.
+- Read-only Production Worker secret inventory succeeded in run https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43875499167. The Worker currently has 0/4 Google Search Console secrets, 0/1 Iranian source-search key and 0/1 Editorial AI key. The local growth audit requires no external secret. This reports Worker state only; it does not reveal whether the corresponding GitHub repository secrets are already configured.
 - Live browser verification of `/`, `/articles/library`, `/admin/login` and authenticated `/admin/mavis/articles` is still outstanding.
 
 ## Database status: PRODUCTION NOT RELEASED
@@ -75,13 +76,26 @@ The manual Cloudflare deployment workflow on current main supports syncing optio
 
 The four Search Console credentials are validated as an all-or-none group. Missing optional secrets are omitted, not deleted from the existing Worker. Values are written to a temporary mode-0600 JSON file and are not printed to logs. This current-main workflow has not yet been exercised by a deployment. The duplicate legacy workflow is disabled to prevent accidental deployment of the obsolete branch.
 
+## Staging deployment secret synchronization
+
+- The isolated Staging deploy workflow now prepares the same optional MAVIS runtime secret set in a mode-0600 temporary JSON file and deploys it with Wrangler's documented `--secrets-file` option.
+- It validates the four Google Search Console values as an all-or-none group and never prints secret values.
+- Site quality checks passed on the preceding main revision after this workflow change: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43875405075.
+- The workflow is manual-only and has not yet been dispatched after this change. Before dispatch, configure the required Staging environment secrets if the corresponding integrations are to be enabled.
+
+## Production secret inventory
+
+- A new read-only workflow inventories the Production Worker's secret names without exposing values or changing Worker state.
+- Run https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43875499167 succeeded and confirmed all optional MAVIS runtime secret groups are currently absent from the Production Worker.
+- The active Production deployment workflow reads these optional values from GitHub repository Actions secrets. The next manual deployment from current main will synchronize any values that are configured there.
+
 ## Remaining release gates
 
-1. Confirm and, if needed, add `production / SUPABASE_PRODUCTION_DB_URL`; never paste its value into chat.
+1. Confirm and, if needed, add `production / SUPABASE_PRODUCTION_DB_URL`; the latest Production migration log showed it empty. Never paste its value into chat.
 2. Confirm a current recoverable Production backup.
 3. Dispatch the Production migration workflow from current main with both booleans false; inspect the full history, SQL parity and dry-run output.
 4. Apply Migration 019 only after the dry-run confirms it is the sole pending migration and the backup is independently confirmed; verify remote migration history afterward.
-5. Configure optional runtime secrets in GitHub repository Actions secrets, then dispatch the Cloudflare deployment workflow from current main to sync them.
+5. Configure the optional runtime secrets as GitHub repository Actions secrets, then dispatch the Cloudflare deployment workflow from current main to sync them. The Worker currently has none of these secrets.
 6. Verify live public routes, admin login, authenticated CMS access, source discovery, AI drafting, Search Console read-only analytics, and manual article lifecycle.
 7. Confirm there is no visual regression.
 
