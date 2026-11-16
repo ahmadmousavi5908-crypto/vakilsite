@@ -13,7 +13,7 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  "observability": {
+  "vars": {\n    "MAVIS_STAGING_DIAGNOSTICS_ENABLED": "true"\n  },\n  "observability": {
     "enabled": true
   }
 }
