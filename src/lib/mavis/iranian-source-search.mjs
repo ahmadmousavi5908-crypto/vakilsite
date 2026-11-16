@@ -59,7 +59,6 @@ export function createIranianSourceSearch({ apiKey, fetchImpl = globalThis.fetch
             include_raw_content: false,
             include_images: false,
             include_usage: true,
-            country: "iran",
           }),
         });
         if (!response?.ok) throw new Error("Iranian source provider request failed.");
