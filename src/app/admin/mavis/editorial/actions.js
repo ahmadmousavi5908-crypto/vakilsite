@@ -17,10 +17,10 @@ function safeHttpsUrl(value) {
   if (!value) return "";
   try {
     const url = new URL(value);
-    if (url.protocol !== "https:" || url.username || url.password) return "";
+    if (url.protocol !== "https:" || url.username || url.password) return null;
     return url.href;
   } catch {
-    return "";
+    return null;
   }
 }
 
@@ -66,6 +66,8 @@ function validateContent(slug, content) {
   if (content.excerpt.length < 30) return "خلاصه مقاله باید حداقل ۳۰ نویسه باشد.";
   if (content.intro.length < 30) return "مقدمه مقاله باید حداقل ۳۰ نویسه باشد.";
   if (!content.sections.length) return "متن مقاله را با حداقل یک تیتر ## و متن زیر آن وارد کنید.";
+  if (content.coverImageUrl === null) return "نشانی تصویر شاخص باید یک پیوند HTTPS معتبر باشد.";
+  if (content.coverImageUrl && content.coverImageAlt.length < 3) return "برای تصویر شاخص، متن جایگزین قابل فهم وارد کنید.";
   return "";
 }
 
