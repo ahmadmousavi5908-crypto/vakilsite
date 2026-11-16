@@ -56,6 +56,8 @@ jobs:
         run: npm run test:mavis-search-console
       - name: Run Iranian legal source search tests
         run: npm run test:mavis-iranian-source-search
+      - name: Run general public web search tests
+        run: node --test tests/mavis/general-web-search.test.mjs
       - name: Run MAVIS editorial core tests
         run: npm run test:mavis-editorial-core
       - name: Run MAVIS editorial AI provider tests
