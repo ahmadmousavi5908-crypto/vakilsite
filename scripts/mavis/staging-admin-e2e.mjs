@@ -1,11 +1,11 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";\nimport { createServerClient } from "@supabase/ssr";
 import { articles as staticArticles } from "../../src/data/articles.js";
 import { buildMavisStaticArticleImport } from "../../src/lib/mavis/static-article-import.mjs";
 import { normalizeMavisManualSourceInput } from "../../src/lib/mavis/manual-source-input.mjs";
 
-const projectUrl = process.env.STAGING_SUPABASE_URL;
+const siteUrl = process.env.STAGING_SITE_URL;\nconst projectUrl = process.env.STAGING_SUPABASE_URL;
 const publishableKey = process.env.STAGING_SUPABASE_PUBLISHABLE_KEY;
 const configuredDbUrl = process.env.SUPABASE_STAGING_DB_URL;
 const dbPassword = process.env.SUPABASE_STAGING_DB_PASSWORD;
@@ -218,6 +218,83 @@ async function main() {
     assert(authData.session?.access_token, "Supabase Auth did not issue an access token.");
 
     console.log("Authenticated Staging administrator successfully.");
+
+    assert(siteUrl, "Missing STAGING_SITE_URL.");
+    const stagingOrigin = new URL(siteUrl);
+    assert(
+      stagingOrigin.protocol === "https:" &&
+        (stagingOrigin.hostname.startsWith("vakilahmadmousavi-ir-staging.") && stagingOrigin.hostname.endsWith(".workers.dev")
+          || stagingOrigin.hostname.startsWith("staging.")),
+      "Refusing to run runtime checks against a non-Staging site origin."
+    );
+
+    const sessionCookies = new Map();
+    const ssrClient = createServerClient(projectUrl, publishableKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: true,
+        detectSessionInUrl: false,
+      },
+      cookies: {
+        getAll() {
+          return [...sessionCookies].map(([name, value]) => ({ name, value }));
+        },
+        setAll(cookiesToSet) {
+          for (const { name, value } of cookiesToSet) sessionCookies.set(name, value);
+        },
+      },
+    });
+    const { error: cookieSessionError } = await ssrClient.auth.setSession(authData.session);
+    if (cookieSessionError) throw new Error("Unable to prepare an isolated SSR session for Staging runtime checks.");
+    const cookieHeader = [...sessionCookies].map(([name, value]) => name + "=" + value).join("; ");
+    assert(cookieHeader.includes("sb-srbwniqhaxwaoepjfizf-auth-token="),
+      "Supabase SSR session cookie was not created.");
+
+    const runtimeHeaders = {
+      origin: stagingOrigin.origin,
+      cookie: cookieHeader,
+      "content-type": "application/json",
+    };
+    const sourceSearchResponse = await fetch(new URL("/api/admin/mavis/source-search", stagingOrigin), {
+      method: "POST",
+      headers: runtimeHeaders,
+      body: JSON.stringify({ query: "قانون مدنی", group: "official", limit: 3 }),
+      redirect: "error",
+    });
+    const sourceSearchPayload = await sourceSearchResponse.json();
+    assert(sourceSearchResponse.status === 200 && sourceSearchPayload.ok === true,
+      "Authenticated Staging official-source search did not return a valid response.");
+    assert(Array.isArray(sourceSearchPayload.searchLinks) &&
+      sourceSearchPayload.searchLinks.some((item) => item.id === "qavanin"),
+      "Official Qavanin fallback link was not returned.");
+    assert(!sourceSearchPayload.providerErrors?.some((item) => item.code === "BROWSER_BINDING_UNAVAILABLE"),
+      "Staging Worker does not expose the configured Browser Run binding.");
+    console.log(
+      "PASS: authenticated Staging legal-source search returned Qavanin portal access; provider=" +
+      String(sourceSearchPayload.provider || "unknown") +
+      "; parsedResults=" + String(sourceSearchPayload.results?.length || 0) +
+      "; providerWarnings=" + String(sourceSearchPayload.providerErrors?.length || 0) + "."
+    );
+
+    const aiSmokeResponse = await fetch(new URL("/api/admin/mavis/runtime-smoke", stagingOrigin), {
+      method: "POST",
+      headers: runtimeHeaders,
+      body: "{}",
+      redirect: "error",
+    });
+    const aiSmokePayload = await aiSmokeResponse.json();
+    assert(
+      aiSmokeResponse.status === 200 &&
+        aiSmokePayload.ok === true &&
+        aiSmokePayload.provider === "cloudflare_workers_ai" &&
+        aiSmokePayload.outputValidated === true,
+      "Live Staging Workers AI inference or structured-output validation failed: " +
+        String(aiSmokePayload.error?.code || aiSmokeResponse.status)
+    );
+    console.log(
+      "PASS: live Staging Workers AI inference and structured JSON validation succeeded (" +
+      aiSmokePayload.model + ")."
+    );
 
     const { data: articleId, error: draftError } = await client.rpc(
       "save_mavis_article_draft",
