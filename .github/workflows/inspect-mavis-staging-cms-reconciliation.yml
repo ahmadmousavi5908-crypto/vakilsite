@@ -1,0 +1,98 @@
+name: Inspect MAVIS Staging CMS reconciliation state
+
+on:
+  push:
+    branches:
+      - feature/mavis-indexnow-publication-notify-20261114
+    paths:
+      - "ops/mavis-staging-cms-reconciliation-trigger.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    name: Read-only CMS table and record inventory
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+      SUPABASE_STAGING_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install pinned Supabase CLI
+        run: npx --yes supabase@3.0.0 --version
+
+      - name: Report migration history and non-mutating dry run
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          npx --yes supabase@3.0.0 migration list --remote="$DB_URL"
+          npx --yes supabase@3.0.0 db push --dry-run --remote="$DB_URL"
+
+      - name: Inspect the Staging CMS schema and row counts
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          SQL="SELECT jsonb_build_object(
+            'postgres_version', current_setting('server_version'),
+            'columns', COALESCE((
+              SELECT jsonb_agg(jsonb_build_object(
+                'table', table_name, 'column', column_name, 'type', data_type,
+                'nullable', is_nullable, 'default', column_default
+              ) ORDER BY table_name, ordinal_position)
+              FROM information_schema.columns
+              WHERE table_schema = 'public' AND table_name LIKE 'mavis_%'
+            ), '[]'::jsonb),
+            'policies', COALESCE((
+              SELECT jsonb_agg(jsonb_build_object(
+                'table', tablename, 'name', policyname, 'roles', roles,
+                'command', cmd, 'using', qual, 'check', with_check
+              ) ORDER BY tablename, policyname)
+              FROM pg_policies
+              WHERE schemaname = 'public' AND tablename LIKE 'mavis_%'
+            ), '[]'::jsonb),
+            'indexes', COALESCE((
+              SELECT jsonb_agg(jsonb_build_object(
+                'table', tablename, 'name', indexname, 'definition', indexdef
+              ) ORDER BY tablename, indexname)
+              FROM pg_indexes
+              WHERE schemaname = 'public' AND tablename LIKE 'mavis_%'
+            ), '[]'::jsonb),
+            'functions', COALESCE((
+              SELECT jsonb_agg(jsonb_build_object(
+                'name', p.proname,
+                'arguments', pg_get_function_identity_arguments(p.oid),
+                'definition', pg_get_functiondef(p.oid)
+              ) ORDER BY p.proname)
+              FROM pg_proc p
+              JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public'
+                AND (p.proname LIKE 'mavis_%' OR p.proname IN ('is_site_admin', 'get_mavis_published_articles'))
+            ), '[]'::jsonb),
+            'relations', jsonb_build_object(
+              'mother_two_table', to_regclass('public.mavis_editorial_articles')::text,
+              'current_cms_relation', to_regclass('public.mavis_articles')::text,
+              'versions_table', to_regclass('public.mavis_article_versions')::text,
+              'approvals_table', to_regclass('public.mavis_article_approvals')::text,
+              'article_sources_table', to_regclass('public.mavis_article_sources')::text
+            ),
+            'migration_history', COALESCE((
+              SELECT jsonb_agg(version ORDER BY version)
+              FROM supabase_migrations.schema_migrations
+            ), '[]'::jsonb)
+          ) AS staging_audit;"
+          npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL"

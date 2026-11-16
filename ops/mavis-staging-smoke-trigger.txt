@@ -1,0 +1,1 @@
+Verify live Staging after migration 018: public compatibility view, public routes, anonymous admin boundary, and noindex signals.

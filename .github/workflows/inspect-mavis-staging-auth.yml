@@ -1,0 +1,45 @@
+name: Inspect Staging Auth test prerequisites
+
+on:
+  push:
+    branches:
+      - feature/mavis-indexnow-publication-notify-20261114
+    paths:
+      - "ops/mavis-staging-auth-inspection-trigger.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+      SUPABASE_STAGING_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Install pinned Supabase CLI
+        run: npx --yes supabase@3.0.0 --version
+      - name: Inspect Auth schema and password-hash functions read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          SQL="SELECT
+            (SELECT string_agg(column_name || ':' || is_nullable, ',' ORDER BY ordinal_position)
+             FROM information_schema.columns WHERE table_schema='auth' AND table_name='users') AS users_columns,
+            (SELECT string_agg(column_name || ':' || is_nullable, ',' ORDER BY ordinal_position)
+             FROM information_schema.columns WHERE table_schema='auth' AND table_name='identities') AS identities_columns,
+            to_regprocedure('extensions.crypt(text,text)') IS NOT NULL AS extensions_crypt_available,
+            to_regprocedure('extensions.gen_salt(text)') IS NOT NULL AS extensions_gen_salt_available,
+            to_regprocedure('crypt(text,text)') IS NOT NULL AS public_crypt_available,
+            to_regprocedure('gen_salt(text)') IS NOT NULL AS public_gen_salt_available;"
+          npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL"

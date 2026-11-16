@@ -1,0 +1,1 @@
+Run the read-only JSON audit query for Staging CMS columns, policies, indexes, functions, relations, migration history, and dry-run. No database mutation.

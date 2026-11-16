@@ -2,14 +2,14 @@ name: Site quality checks
 
 on:
   pull_request:
-    branches: [main, work/mother-two-updated-mavis-20261110]
+    branches: [main, work/mother-two-updated-mavis-20261110, "feature/**"]
   push:
     branches:
       - main
       - redesign/persian-ux-typography
       - feat/legal-library-discovery-20261102
       - integration/mavis-knowledge-retrieval-mother-two-20261110
-      - feat/mavis-editorial-cms-rebased-20261116
+      - "feature/**"
 
 permissions:
   contents: read
@@ -22,6 +22,14 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
+      - name: Protect approved public UI baseline
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git fetch --no-tags origin "$BASE_SHA" --depth=1
+          node scripts/mavis/verify-public-ui-boundary.mjs "$BASE_SHA" "$GITHUB_SHA"
+
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
@@ -33,6 +41,8 @@ jobs:
         run: npm run test:site-url
       - name: Test IndexNow key and URL validation
         run: npm run test:indexnow
+      - name: Test automatic IndexNow notifications
+        run: npm run test:indexnow-client
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
@@ -45,11 +55,27 @@ jobs:
         run: npm run test:mavis-offline
       - name: Run MAVIS offline intake tests
         run: node --test tests/mavis/offline-intake.test.mjs
+      - name: Run MAVIS admin authorization tests
+        run: node --test tests/mavis/admin-auth.test.mjs
+      - name: Run MAVIS article draft input tests
+        run: node --test tests/mavis/article-draft-input.test.mjs
+      - name: Run MAVIS editorial cursor tests
+        run: node --test tests/mavis/editorial-cursor.test.mjs
+      - name: Run MAVIS editorial table compatibility tests
+        run: node --test tests/mavis/editorial-table.test.mjs
+      - name: Run MAVIS spreadsheet export tests
+        run: npm run test:mavis-editorial-export
+
+      - name: Run MAVIS orchestrator policy tests
+        run: node --test tests/mavis/orchestrator-policy.test.mjs
+
+      - name: Run MAVIS evidence ranking tests
+        run: node --test tests/mavis/evidence-ranker.test.mjs
       - name: Run MAVIS Search Console tests
         run: npm run test:mavis-search-console
       - name: Run Iranian legal source search tests
         run: npm run test:mavis-iranian-source-search
-      - name: Run MAVIS editorial core tests
+      - name: Run MAVIS editorial content core tests
         run: npm run test:mavis-editorial-core
       - name: Run MAVIS knowledge retrieval tests
         run: >-
@@ -59,6 +85,11 @@ jobs:
           tests/mavis/knowledge-search-route.test.mjs
           tests/mavis/legal-evidence.test.mjs
           tests/mavis/legal-research-dossier.test.mjs
+      - name: Run MAVIS source discovery adapter tests
+        run: node --test tests/mavis/source-discovery-adapters.test.mjs
+
+      - name: Run MAVIS public article mapping, cursor, and sitemap tests
+        run: node --test tests/mavis/public-article-mapper.test.mjs tests/mavis/published-article-cursor.test.mjs tests/mavis/published-article-sitemap.test.mjs
       - name: Run ESLint
         run: npm run lint
       - name: Build production site
@@ -80,6 +111,12 @@ jobs:
 
           if [ "$READY" -ne 1 ]; then
             cat /tmp/vakilsite-next.log
+            exit 1
+          fi
+
+          curl --fail --silent http://127.0.0.1:3000/sitemap.xml > /tmp/vakilsite-sitemap.xml
+          if ! grep -Fq "https://vakilsite-ci.example/articles/civil-claim-checklist" /tmp/vakilsite-sitemap.xml; then
+            cat /tmp/vakilsite-sitemap.xml
             exit 1
           fi
 
