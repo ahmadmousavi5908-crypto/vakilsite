@@ -134,7 +134,7 @@ async function main() {
         id, provider_id, user_id, identity_data, provider, created_at, updated_at
       ) VALUES (
         gen_random_uuid(),
-        ${sqlString(email)},
+        ${sqlString(userId)},
         ${sqlString(userId)}::uuid,
         jsonb_build_object(
           'sub', ${sqlString(userId)},
