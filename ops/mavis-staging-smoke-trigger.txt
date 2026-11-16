@@ -1,1 +1,1 @@
-Verify the latest Staging Worker after the middleware authentication gate deployment.
+Verify the newly deployed Staging Worker after canonical admin-table reads and the public-only RLS compatibility view changes.
