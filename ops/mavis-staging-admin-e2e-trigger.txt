@@ -1,1 +1,1 @@
-Run the authenticated Staging editorial lifecycle using a protected key resolved from the Supabase Management API when no dedicated Staging admin key is configured. Verify the complete workflow and confirm temporary records are removed.
+Run authenticated Staging editorial lifecycle with a temporary database-seeded Auth identity. No email delivery or production credentials are used; verify complete lifecycle and cleanup.
