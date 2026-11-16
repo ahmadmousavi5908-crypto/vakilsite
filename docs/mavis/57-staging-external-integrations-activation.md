@@ -33,11 +33,11 @@ The model defaults to `gpt-6-astra`. An optional non-secret Worker variable `MAV
 
 ## Google Search Console OAuth setup
 
-1. Use a dedicated Google Cloud project for MAVIS Search Console and enable the Search Console API.
-2. Create a Web application OAuth client. Add both authorized redirect URIs:
-   - Production callback (for a separately approved future rollout): `https://vakilahmadmousavi.ir/api/admin/mavis/search-console/callback`
-   - Staging callback (for current verification): `https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev/api/admin/mavis/search-console/callback`
-3. Add the administrator Google account as a test user if the consent screen is in testing.
+1. Create a dedicated **Staging-only** Google Cloud project for MAVIS Search Console and enable the Search Console API. Do not reuse a project that hosts other OAuth integrations or scopes.
+2. Create a Web application OAuth client for Staging and register **only** this authorized redirect URI:
+   `https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev/api/admin/mavis/search-console/callback`
+   Do not add the Production callback or configure Production OAuth credentials in this Staging setup. A future Production rollout requires a separate Google Cloud project and OAuth client after explicit approval.
+3. Add the administrator Google account as a test user if the Staging consent screen is in testing.
 4. Grant only the read-only `webmasters.readonly` scope. The account must already have access to the selected Search Console property.
 5. Generate the encryption key locally with `openssl rand -hex 32`; paste it directly into the Cloudflare Secret field. Do not send it to anyone.
 6. Set the four `MAVIS_GSC_*` secrets on the Staging Worker only.
