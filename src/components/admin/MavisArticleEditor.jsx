@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { addMavisManualArticleSource, generateMavisEditorialDraft, saveMavisArticleDraft, submitMavisArticleForReview } from "../../app/admin/mavis/articles/actions";
 import MavisIranianSourceSearch from "./MavisIranianSourceSearch";
+import MavisWebArticleResearch from "./MavisWebArticleResearch";
 import styles from "./MavisArticleEditor.module.css";
 
 const emptySection = () => ({ heading: "", body: "" });
@@ -41,6 +42,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
   const [aiGenerating, setAiGenerating] = useState(false);
   const [aiFeedback, setAiFeedback] = useState("");
   const [aiReport, setAiReport] = useState(null);
+  const [pendingWebSource, setPendingWebSource] = useState(null);
 
   function updateSection(index, key, value) {
     setSections((current) => current.map((section, itemIndex) =>
@@ -64,9 +66,29 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
     try {
       const result = await saveMavisArticleDraft(new FormData(event.currentTarget));
       if (result?.ok) {
+        const savedVersion = articleId ? expectedVersion + 1 : 1;
         setArticleId(result.articleId);
-        setExpectedVersion((current) => current + 1);
-        setFeedback({ type: "success", message: "پیش‌نویس با موفقیت ذخیره شد.", articleId: result.articleId });
+        setExpectedVersion(savedVersion);
+
+        let successMessage = "پیش‌نویس با موفقیت ذخیره شد.";
+        if (pendingWebSource) {
+          const sourceResult = await addMavisManualArticleSource(result.articleId, savedVersion, pendingWebSource);
+          if (sourceResult?.ok) {
+            setExpectedVersion(sourceResult.currentVersion);
+            setSources((current) => [...current.filter((item) => item.id !== sourceResult.source.id), {
+              ...sourceResult.source,
+              relation_type: pendingWebSource.relationType,
+            }]);
+            setPendingWebSource(null);
+            setSourceFeedback("منبع استخراج‌شده به نسخه پیش‌نویس متصل شد؛ اعتبار و حقوق استفاده همچنان نیازمند بررسی مدیر است.");
+            successMessage = "پیش‌نویس و اطلاعات منبع با موفقیت ذخیره شدند.";
+          } else {
+            setSourceFeedback(sourceResult?.error || "پیش‌نویس ذخیره شد، اما اتصال منبع انجام نشد. اطلاعات منبع در فرم باقی مانده است.");
+            setManualSource(pendingWebSource);
+            successMessage = "پیش‌نویس ذخیره شد؛ اتصال منبع نیازمند تلاش دوباره است.";
+          }
+        }
+        setFeedback({ type: "success", message: successMessage, articleId: result.articleId });
       } else {
         setFeedback({ type: "error", message: result?.error || "ذخیره پیش‌نویس انجام نشد." });
       }
@@ -176,6 +198,44 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
     }
   }
 
+  function applyWebResearch(metadata) {
+    const fields = formRef.current?.elements;
+    if (!fields) return;
+    const setField = (name, value) => {
+      const field = fields.namedItem(name);
+      if (field && typeof value === "string") field.value = value;
+    };
+    const summary = metadata.abstract || "چکیده منبع در نتیجه جست‌وجو موجود نبود؛ پس از مطالعه منبع تکمیل شود.";
+    setField("title", metadata.title || "");
+    setField("author_name", metadata.author || "");
+    setField("excerpt", summary);
+    setField("intro", "این پیش‌نویس با استفاده از فراداده منبع وب تهیه شده است. متن تحلیلی باید پس از مطالعه منبع و با نگارش مستقل تکمیل و مستند شود.");
+    setField("seo_title", metadata.title || "");
+    setField("seo_description", summary);
+    if (!String(fields.namedItem("category")?.value || "").trim()) {
+      setField("category", "پژوهش حقوقی");
+    }
+    setSections([{
+      heading: "معرفی و محورهای پژوهش",
+      body: "این بخش پس از مطالعه متن کامل منبع و با نگارش مستقل تکمیل می‌شود. اطلاعات کتاب‌شناختی و پیوند منبع در بخش منابع ثبت خواهد شد.",
+    }]);
+
+    const source = {
+      title: metadata.title || "منبع پژوهشی استخراج‌شده از وب",
+      sourceUrl: metadata.sourceUrl,
+      sourceType: "academic",
+      relationType: "research_background",
+      author: metadata.author || "",
+      publication: metadata.publication || "",
+      publicationDate: metadata.publicationDate || "",
+      abstract: summary,
+    };
+    setManualSource(source);
+    setPendingWebSource(source);
+    setSourceFeedback("اطلاعات مقاله به فرم منتقل شد. برای ثبت پیش‌نویس و اتصال منبع، دکمه ذخیره را بزنید.");
+    setFeedback({ type: "success", message: "فراداده منبع در فیلدهای مقاله قرار گرفت؛ پیش از ذخیره، همه موارد را بازبینی کنید." });
+  }
+
   function updateManualSource(key, value) {
     setManualSource((current) => ({ ...current, [key]: value }));
   }
@@ -240,6 +300,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
         <Link href="/admin/mavis/articles" className={styles.backLink}>بازگشت به کتابخانه</Link>
       </header>
 
+      <MavisWebArticleResearch onApply={applyWebResearch} />
       {sourceLoadError ? <p className={styles.sourceError} role="status">{sourceLoadError}</p> : null}
       <section className={styles.sourcePanel} aria-labelledby="mavis-source-metadata-title">
         <header>
