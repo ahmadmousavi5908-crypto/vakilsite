@@ -3,6 +3,7 @@ name: Inspect MAVIS Staging integrations
 on:
   push:
     branches:
+      - main
       - feature/mavis-third-arm-delivery-20261116
     paths:
       - "ops/mavis-staging-integrations-inspection-trigger.txt"
@@ -59,7 +60,7 @@ jobs:
           }
           const wrangler = JSON.parse(fs.readFileSync("wrangler.staging.jsonc", "utf8"));
           const workersAiReady = wrangler.ai?.binding === "AI";
-          console.log(`${workersAiReady ? "CONFIGURED" : "MISSING"}: Editorial AI Workers AI binding (${workersAiReady ? "AI" : "not configured"})`);
+          console.log(`${workersAiReady ? "DECLARED_IN_CONFIG" : "MISSING"}: Editorial AI Workers AI binding (${workersAiReady ? "AI" : "not configured"})`);
           console.log(`${names.has("MAVIS_OPENAI_API_KEY") ? "CONFIGURED" : "OPTIONAL_MISSING"}: OpenAI fallback key`);
           console.log("Growth audit currently uses deterministic local content analysis; no external competitor-search secret is required.");
           console.log("Secret values were not requested, read, or printed.");
