@@ -19,7 +19,7 @@ function mapIranianSourceMetadata(metadata) {
     : ["academic", "academic_index"].includes(authority) || metadata.sourceGroup === "academic" ? "academic"
     : authority === "secondary_reference" ? "other"
     : "manual";
-  const relationType = ["official_primary", "official_judicial", "official_portal", "official_research"].includes(authority)
+  const relationType = ["official_primary", "official_judicial", "official_portal"].includes(authority)
     ? "primary_authority"
     : ["secondary_reference", "official_news", "legal_news"].includes(authority) ? "secondary_reference" : "research_background";
   return { ...metadata, sourceType, relationType };
