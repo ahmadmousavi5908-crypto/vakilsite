@@ -3,53 +3,72 @@
 Last verified: 2026-11-16
 Repository: `ahmadmousavi5908-crypto/vakilsite`
 Production site: `https://vakilahmadmousavi.ir`
-Main commit: `7a74ca4ca6a3cb571dd050d178ed9142f8463d7c`
+Current main after release-workflow hardening: `0c2d59dfab5350e1f07b4243c8fb95a00d1cab6e`
 
-## Delivered to main
+## Delivered
 
-- PR #137 was squash-merged into `main`.
-- The MAVIS editorial CMS is available in the application source at `/admin/mavis/articles`.
-- The public article library route is `/articles/library`.
-- The editorial workflow includes multi-provider metadata discovery (Crossref, Semantic Scholar, OpenAlex), source candidate management, draft/version/review/approval, manual publication, archive and restore.
-- Existing public articles were not overwritten by the CMS import workflow.
-- Existing approved site appearance was not intentionally redesigned.
-- Production Cloudflare deployment is now manual-only. A push to `main` does not automatically deploy the Worker.
+- PR #137 is merged into `main`.
+- Editorial CMS: `/admin/mavis/articles`.
+- Public article library: `/articles/library`.
+- Editorial workflow includes Crossref, Semantic Scholar and OpenAlex discovery; source candidate queues; versioned drafts; review and approval; manual publication; archive and restore.
+- The approved public-site appearance was not redesigned.
+- Production deployment remains manual-only.
 
-## Verified evidence
+## Production Worker deployment evidence
 
-- Site quality and production build passed on main: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43866674077
-- Staging migration history parity and dry-run passed: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43866673822
-- PR database tests passed: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43866380484
-- PR Cloudflare compatibility audit passed: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43866380189
-- Earlier authenticated Staging editorial E2E completed the draft/review/approve/publish/public-read/unpublish/archive/restore/republish lifecycle: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43864813095
-- Earlier Staging integration inspection returned metadata from Crossref, Semantic Scholar and OpenAlex: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43864813193
+- Cloudflare deployment succeeded in run https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43775079360.
+- Deployed source commit: `3da6654661787722074f91eea7bc6d42870964b0`.
+- Worker: `vakilahmadmousavi-ir`.
+- Cloudflare version: `b70c6256-b33c-40ee-8396-89b026694441`.
+- Compressed Worker bundle: 1.51 MiB, below the 3 MiB Free limit.
+- The subsequent main commits only hardened deployment secret propagation and this handoff record; they did not change the approved site presentation.
+- Live browser verification of `/`, `/articles/library`, `/admin/login` and authenticated `/admin/mavis/articles` is still outstanding.
 
-## Not yet deployed to production
+## Database status: NOT RELEASED
 
-No Production database migration or Cloudflare Worker deployment has been run. Do not describe the live site as updated until the manual deployment and live route checks pass.
+- Production migration run https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43869600250 failed at credential validation.
+- Its log shows `SUPABASE_PRODUCTION_DB_URL` was empty in the `production` GitHub Environment. The CLI, remote history check, dry-run and apply steps were all skipped. No migration was applied by that run.
+- Required secret scope: GitHub Actions Environment `production`, secret `SUPABASE_PRODUCTION_DB_URL`.
+- The workflow is intentionally restricted to the expected production Supabase project and permits only Migration 019 after history and SQL parity checks.
+- Do not enable `apply_migrations` until the dry-run confirms exactly Migration 019 and a current recoverable backup has been independently confirmed.
 
-### Required credentials
+## Staging database findings
 
-1. GitHub Actions repository secret `CLOUDFLARE_API_TOKEN` for the Cloudflare production deploy workflow.
-2. GitHub Actions environment secret `production / SUPABASE_PRODUCTION_DB_URL` for the guarded Production migration workflow.
-3. Optional deploy-time verification secrets: `INDEXNOW_KEY`, `GOOGLE_SITE_VERIFICATION`, `BING_SITE_VERIFICATION`.
-4. Runtime integration credentials are separate from deployment credentials. Configure only the provider credentials actually used by the runtime: OpenAI, Iranian source search, growth search and Google Search Console. Never commit values to this repository or paste secrets into chat.
+Read-only inspection run: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43774988242
 
-## Safe release order
+- The Staging database responded successfully.
+- Its migration history was empty.
+- Existing objects included `profiles`, `social_links`, `site_settings`, and `mavis_private.knowledge_search_rate_limits`, all with RLS enabled.
+- `mavis_editorial_articles` was absent.
+- The branch inspected by that workflow previewed migrations 001, 002, 003, 005 and 006. This is a baseline/history mismatch, not permission to apply those migrations blindly.
+- The inspected branch predates Migration 019 and must not be treated as the production release source.
 
-1. Confirm a current, recoverable Supabase Production backup exists.
-2. Add the two required GitHub secrets in their specified scopes. Never disclose secret values in logs or chat.
-3. Run GitHub Actions workflow **Migrate MAVIS production database** from `main` with `apply_migrations=false` first. Review the production migration history, SQL parity and dry-run output.
-4. Only after confirming the dry-run contains exactly the intended Migration 019 and the backup is recoverable, run the same workflow with `apply_migrations=true` and `backup_confirmed=true`.
-5. Confirm the post-migration history includes Migration 019.
-6. Run GitHub Actions workflow **Deploy Vakilsite to Cloudflare Workers** manually from `main`.
-7. Verify the production home page, `/articles`, `/articles/library`, `/admin/login`, and authenticated `/admin/mavis/articles`. Confirm no visual regression and no runtime errors.
-8. Configure and independently test provider integrations. A successful site deployment does not imply OpenAI, Iranian search, growth search or Search Console credentials are configured.
+## Runtime secret propagation
 
-## Operational guardrails
+The manual Cloudflare deployment workflow now supports syncing optional runtime secrets from GitHub Actions repository secrets to the Worker during the same deployment:
 
-- Do not merge the historical oversized PR #119.
+- `MAVIS_OPENAI_API_KEY`
+- `MAVIS_IRAN_SOURCE_SEARCH_API_KEY`
+- `MAVIS_GSC_CLIENT_ID`
+- `MAVIS_GSC_CLIENT_SECRET`
+- `MAVIS_GSC_REFRESH_TOKEN`
+- `MAVIS_GSC_SITE_URL`
+
+The four Search Console credentials are validated as an all-or-none group. Missing optional secrets are omitted, not deleted from the existing Worker. Values are written to a temporary mode-0600 JSON file and are not printed to logs. This change has been committed but has not yet been exercised by a new deployment.
+
+## Remaining release gates
+
+1. Confirm and, if needed, add `production / SUPABASE_PRODUCTION_DB_URL`; never paste its value into chat.
+2. Confirm a current recoverable Production backup.
+3. Run the Production migration workflow with both booleans false and review its complete dry-run.
+4. Apply Migration 019 only after the dry-run and backup checks pass; verify remote migration history afterward.
+5. Configure optional runtime secrets in GitHub repository Actions secrets, then run the manual Cloudflare deployment to sync them.
+6. Verify live public routes, admin login, authenticated CMS access, source discovery, AI drafting, Search Console read-only analytics, and manual article lifecycle.
+7. Confirm there is no visual regression.
+
+## Guardrails
+
+- Do not merge historical PR #119.
 - Do not enable automatic Production deployment on push.
-- Do not run Production migrations without the backup confirmation and a reviewed dry-run.
-- Do not claim the public site displays the new routes until the Worker deployment and live HTTP/browser checks are observed.
-- Continue from the current `main` commit above; do not recreate PR #137 or repeat its completed implementation.
+- Do not apply migrations based on the Staging baseline report without a reviewed reconciliation.
+- Do not claim end-to-end Production completion until the database migration, runtime integration tests, and live route/admin checks are all evidenced.
