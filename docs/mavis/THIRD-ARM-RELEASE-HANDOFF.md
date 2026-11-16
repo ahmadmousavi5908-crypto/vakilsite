@@ -3,7 +3,7 @@
 Last verified: 2026-11-16
 Repository: `ahmadmousavi5908-crypto/vakilsite`
 Production site: `https://vakilahmadmousavi.ir`
-Current main: `89bf5a8c5aca6586cf879a23dd71403087c418f7`
+Current main after handoff reconciliation: `8616f1e6e88b74a6d71299b927580bada2baa985`
 
 ## Delivered
 
@@ -13,7 +13,7 @@ Current main: `89bf5a8c5aca6586cf879a23dd71403087c418f7`
 - Editorial workflow includes Crossref, Semantic Scholar and OpenAlex discovery; source candidate queues; versioned drafts; review and approval; manual publication; archive and restore.
 - The approved public-site appearance was not redesigned.
 - Production deployment remains manual-only.
-- Site quality checks passed on current main in run https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43873103967.
+- Full current-main site quality checks passed on handoff commit `8616f1e`: lint, production build, legal-library HTTP routes, and the MAVIS offline, intake, Search Console, Iranian legal-source search, editorial-core and knowledge-retrieval test suites. Run: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43874513389.
 
 ## Production Worker deployment evidence
 
@@ -23,6 +23,7 @@ Current main: `89bf5a8c5aca6586cf879a23dd71403087c418f7`
 - Previously verified Cloudflare version: `b70c6256-b33c-40ee-8396-89b026694441`.
 - Previously measured compressed Worker bundle: 1.51 MiB, below the 3 MiB Free limit.
 - The latest deployment workflow changes on current main have NOT yet been exercised by a deployment from current main. The successful run above predates the runtime-secret propagation commits.
+- The current workflow uses Wrangler's documented `wrangler deploy --secrets-file` option. Cloudflare documents JSON and dotenv input formats and confirms that secrets omitted from the file are preserved from the previous Worker version: https://developers.cloudflare.com/workers/wrangler/commands/workers/ and https://developers.cloudflare.com/workers/configuration/secrets/.
 - Live browser verification of `/`, `/articles/library`, `/admin/login` and authenticated `/admin/mavis/articles` is still outstanding.
 
 ## Database status: PRODUCTION NOT RELEASED
