@@ -75,7 +75,7 @@ export async function POST(request) {
 
   const url = typeof payload.url === "string" ? payload.url.trim() : "";
   if (url.length > 2048) {
-    return json({ error: { code: "INVALID_REQUEST", message: "نشانی یا عبارت جست‌وجو بیش از حد مجاز است." } }, 400);
+    return json({ error: { code: "INVALID_REQUEST", message: "نشانی منبع بیش از حد مجاز است." } }, 400);
   }
   try {
     const target = new URL(url);
