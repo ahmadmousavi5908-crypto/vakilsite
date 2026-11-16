@@ -58,6 +58,12 @@ jobs:
         run: npm run test:mavis-editorial-core
       - name: Run MAVIS editorial AI provider tests
         run: node --test tests/mavis/editorial-ai.test.mjs
+      - name: Validate Cloudflare Wrangler configuration files
+        run: >-
+          node --input-type=module -e
+          "import fs from 'node:fs'; for (const file of ['wrangler.jsonc','wrangler.staging.jsonc','wrangler.preview.jsonc']) { JSON.parse(fs.readFileSync(file, 'utf8')); console.log(file + ': valid JSONC'); }"
+      - name: Syntax-check isolated Staging E2E script
+        run: node --check scripts/mavis/staging-admin-e2e.mjs
       - name: Run MAVIS knowledge retrieval tests
         run: >-
           node --test
