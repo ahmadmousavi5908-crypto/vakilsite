@@ -3,7 +3,7 @@
 Last verified: 2026-11-16
 Repository: `ahmadmousavi5908-crypto/vakilsite`
 Production site: `https://vakilahmadmousavi.ir`
-Current main after production secret inventory and staging deploy hardening: `9b942504b9d9c9ec59debd9dc46287ba014bc3d6`
+Current main after release evidence reconciliation: `79b1f19cbb679906cd555dc91e2564f34ce242ba`
 
 ## Delivered
 
@@ -80,7 +80,7 @@ The four Search Console credentials are validated as an all-or-none group. Missi
 
 - The isolated Staging deploy workflow now prepares the same optional MAVIS runtime secret set in a mode-0600 temporary JSON file and deploys it with Wrangler's documented `--secrets-file` option.
 - It validates the four Google Search Console values as an all-or-none group and never prints secret values.
-- Site quality checks passed on the preceding main revision after this workflow change: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43875405075.
+- Site quality checks passed after the Staging deploy workflow, Production read-only inventory workflow, and their trigger were committed: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43875499254.
 - The workflow is manual-only and has not yet been dispatched after this change. Before dispatch, configure the required Staging environment secrets if the corresponding integrations are to be enabled.
 
 ## Production secret inventory
