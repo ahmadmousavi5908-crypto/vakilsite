@@ -71,7 +71,7 @@ select is(
 );
 
 select is(
-  (select status from public.mavis_articles where origin_type = 'metadata_only' and title = 'A metadata-only legal research source'),
+  (select status from public.mavis_editorial_articles where origin_type = 'metadata_only' and title = 'A metadata-only legal research source'),
   'draft',
   'imported article is always a draft'
 );
