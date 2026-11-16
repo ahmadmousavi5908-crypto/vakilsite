@@ -270,7 +270,7 @@ async function main() {
         aiSmokePayload.provider === "cloudflare_workers_ai" &&
         aiSmokePayload.outputValidated === true,
       "Live Staging Workers AI inference or structured-output validation failed: " +
-        String(aiSmokePayload.error?.code || aiSmokeResponse.status)
+        String(aiSmokePayload.error?.validationReason || aiSmokePayload.error?.code || aiSmokeResponse.status)
     );
     assert(
       aiSmokePayload.sourceSearch?.browserBindingAvailable === true &&
