@@ -50,14 +50,15 @@ jobs:
           const entries = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/mavis-worker-secrets.json", "utf8"));
           const names = new Set(entries.map((entry) => entry.name));
           const groups = {
-            "Google Search Console OAuth": ["MAVIS_GSC_CLIENT_ID", "MAVIS_GSC_CLIENT_SECRET", "MAVIS_GSC_REFRESH_TOKEN", "MAVIS_GSC_SITE_URL"],
-            "Iranian legal source search": ["MAVIS_IRAN_SOURCE_SEARCH_API_KEY"]
+            "Google Search Console OAuth (live)": ["MAVIS_GSC_CLIENT_ID", "MAVIS_GSC_CLIENT_SECRET", "MAVIS_GSC_REFRESH_TOKEN", "MAVIS_GSC_SITE_URL"]
           };
           for (const [label, required] of Object.entries(groups)) {
             const present = required.filter((name) => names.has(name));
             const status = present.length === required.length ? "CONFIGURED" : "MISSING";
             console.log(`${status}: ${label} (${present.length}/${required.length} candidate secrets present)`);
           }
+          console.log(`${names.has("MAVIS_IRAN_SOURCE_SEARCH_API_KEY") ? "CONFIGURED" : "OPTIONAL_MISSING"}: Optional external Iranian search API key (Browser Run fallback available)`);
+          console.log("Search Console CSV fallback: LOCAL_ONLY (browser-side import available; OAuth is required only for live API access).");
           const wrangler = JSON.parse(fs.readFileSync("wrangler.staging.jsonc", "utf8"));
           const workersAiReady = wrangler.ai?.binding === "AI";
           console.log(`${workersAiReady ? "DECLARED_IN_CONFIG" : "MISSING"}: Editorial AI Workers AI binding (${workersAiReady ? "AI" : "not configured"})`);
