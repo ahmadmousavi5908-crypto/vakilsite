@@ -3,3 +3,5 @@ Run the authenticated Staging end-to-end suite after the isolated Worker deploym
 Post-merge verification after Workers AI output validation and IndexNow client fixes. Run on current main. No Production actions.
 
 Post-deploy verification after secure Search Console OAuth and read-only inspection integration. No Production actions.
+
+MAVIS Iranian editorial search staging lifecycle validation: 2026-11-17.
