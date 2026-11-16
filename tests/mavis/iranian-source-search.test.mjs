@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { getIranianSourceDomains, normalizeIranianSourceUrl } from "../../src/lib/mavis/iranian-source-registry.mjs";
 import { createIranianSourceSearch, createIranianSourceSearchFallback } from "../../src/lib/mavis/iranian-source-search.mjs";
+import { normalizeMavisManualSourceInput } from "../../src/lib/mavis/manual-source-input.mjs";
 
 test("the allowlist contains exactly ten selected Iranian legal and research sources", () => {
   const domains = getIranianSourceDomains("all");
@@ -140,4 +141,20 @@ test("all-source fallback includes the selected Iranian academic and legal-news 
   assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amizanonline.ir")));
   assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Aekhtebar.ir")));
   assert.ok(result.searchLinks.some((item) => item.id === "qavanin"));
+});
+
+
+test("Iranian legal-news results normalize as secondary news sources for article drafts", () => {
+  const normalized = normalizeMavisManualSourceInput({
+    title: "گزارش حقوقی اختبار",
+    sourceUrl: "https://ekhtebar.ir/news/123",
+    sourceType: "news",
+    relationType: "secondary_reference",
+    sourceAuthority: "legal_news",
+    sourceGroup: "news",
+    provider: "tavily",
+  });
+  assert.equal(normalized.source.sourceType, "news");
+  assert.equal(normalized.relationType, "secondary_reference");
+  assert.equal(normalized.source.sourceAuthority, "legal_news");
 });
