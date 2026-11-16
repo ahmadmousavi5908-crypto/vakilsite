@@ -265,35 +265,52 @@ CREATE TRIGGER mavis_editorial_legacy_fields_sync
   FOR EACH ROW
   EXECUTE FUNCTION public.sync_mavis_editorial_legacy_fields();
 
--- The compatibility view is owned by the authenticated role, not by the table owner.
--- This preserves the authenticated RLS policy boundary while allowing the anonymous
--- role to receive only the deliberately limited public columns from the view.
-CREATE VIEW public.mavis_articles
-WITH (security_invoker = false)
-AS
-SELECT *
-FROM public.mavis_editorial_articles;
+-- Rewrite existing SECURITY DEFINER RPCs to address the canonical table directly.
+-- The legacy relation name below is reserved for a read-only public compatibility view.
+DO $rewrite_legacy_cms_function_references$
+DECLARE
+  function_row record;
+BEGIN
+  FOR function_row IN
+    SELECT p.oid
+    FROM pg_proc AS p
+    JOIN pg_namespace AS n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public'
+      AND p.prokind = 'f'
+      AND pg_get_functiondef(p.oid) LIKE '%public.mavis_articles%'
+  LOOP
+    EXECUTE replace(
+      pg_get_functiondef(function_row.oid),
+      'public.mavis_articles',
+      'public.mavis_editorial_articles'
+    );
+  END LOOP;
+END;
+$rewrite_legacy_cms_function_references$;
 
--- PostgreSQL requires the new owner to hold CREATE on the containing schema
--- during ownership transfer. Grant and revoke it in the same migration transaction.
-GRANT CREATE ON SCHEMA public TO authenticated;
-ALTER VIEW public.mavis_articles OWNER TO authenticated;
-REVOKE CREATE ON SCHEMA public FROM authenticated;
+-- The compatibility view exposes only fields approved for public article reads.
+-- security_invoker preserves base-table RLS and column-level privacy.
+CREATE VIEW public.mavis_articles
+WITH (security_invoker = true)
+AS
+SELECT
+  id, slug, title, author_name, excerpt, category, tags, content,
+  content_schema_version, seo_title, seo_description, status,
+  current_version, created_at, updated_at, published_at
+FROM public.mavis_editorial_articles;
 
 REVOKE ALL ON TABLE public.mavis_articles
   FROM public, anon, authenticated, service_role;
 
--- A security-invoker view requires the caller to hold matching privileges
--- on its base table; RLS remains the row-level access boundary.
 GRANT SELECT ON TABLE public.mavis_editorial_articles TO authenticated;
-
-GRANT SELECT ON TABLE public.mavis_articles TO authenticated;
 
 GRANT SELECT (
   id, slug, title, author_name, excerpt, category, tags, content,
   content_schema_version, seo_title, seo_description, status,
   current_version, created_at, updated_at, published_at
-) ON TABLE public.mavis_articles TO anon;
+) ON TABLE public.mavis_editorial_articles TO anon;
+
+GRANT SELECT ON TABLE public.mavis_articles TO anon, authenticated;
 
 CREATE OR REPLACE FUNCTION public.get_mavis_published_articles()
 RETURNS TABLE (
