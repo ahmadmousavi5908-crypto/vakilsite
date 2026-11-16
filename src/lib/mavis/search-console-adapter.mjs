@@ -208,14 +208,13 @@ function csvNumber(value, { percent = false } = {}) {
     .replace(/[٬،,]/g, "")
     .replace(/٫/g, ".")
     .replace(/\s/g, "");
-    .replace(/[٬،,]/g, "")
-    .replace(/\s/g, "");
   if (!raw) return null;
   const hasPercent = /[%٪]$/.test(raw);
   const numeric = Number(hasPercent ? raw.slice(0, -1) : raw);
   if (!Number.isFinite(numeric) || numeric < 0) return null;
   const normalized = percent && (hasPercent || numeric > 1) ? numeric / 100 : numeric;
   return Number.isFinite(normalized) ? normalized : null;
+}
 }
 
 function csvDate(value) {
