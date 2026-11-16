@@ -1,5 +1,6 @@
 import { requireAdmin } from "../../../../../lib/supabase/admin";
 import { generateMavisEditorialSuggestions } from "../../../../../lib/mavis/editorial-ai.mjs";
+import { createIranianSourceSearchFallback } from "../../../../../lib/mavis/iranian-source-search.mjs";
 import { isJsonContentType, matchesRequestOrigin } from "../../../../../lib/mavis/request-guards.mjs";
 
 export const dynamic = "force-dynamic";
@@ -71,6 +72,32 @@ export async function POST(request) {
     return Response.json({ error: { code: "RATE_LIMIT_UNAVAILABLE" } }, { status: 503 });
   }
 
+  let sourceLimit;
+  try {
+    const sourceLimitResult = await access.supabase.rpc("consume_mavis_source_discovery_limit");
+    sourceLimit = Array.isArray(sourceLimitResult.data) ? sourceLimitResult.data[0] : sourceLimitResult.data;
+    if (sourceLimitResult.error || typeof sourceLimit?.allowed !== "boolean") {
+      return Response.json({ error: { code: "SOURCE_RATE_LIMIT_UNAVAILABLE" } }, { status: 503 });
+    }
+    if (!sourceLimit.allowed) {
+      return Response.json({ error: { code: "SOURCE_RATE_LIMITED" } }, {
+        status: 429,
+        headers: { "Cache-Control": "no-store", "Retry-After": String(sourceLimit.retry_after_seconds || 60) }
+      });
+    }
+  } catch {
+    return Response.json({ error: { code: "SOURCE_RATE_LIMIT_UNAVAILABLE" } }, { status: 503 });
+  }
+
+  const sourceSearch = await createIranianSourceSearchFallback({ browser: env.BROWSER }).search({
+    query: "قانون مدنی",
+    group: "official",
+    limit: 3
+  });
+  if (!sourceSearch.ok || !Array.isArray(sourceSearch.searchLinks)) {
+    return Response.json({ error: { code: "OFFICIAL_SOURCE_FALLBACK_FAILED" } }, { status: 502 });
+  }
+
   const model = env.MAVIS_WORKERS_AI_MODEL || "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
   const result = await generateMavisEditorialSuggestions({
     topic: "MAVIS Staging runtime integration smoke test",
@@ -95,6 +122,13 @@ export async function POST(request) {
     model: result.model,
     outputValidated: true,
     evidenceGapsCount: result.suggestions.evidenceGaps.length,
-    remainingRequests: Number.isInteger(limit.remaining) ? limit.remaining : null
+    remainingRequests: Number.isInteger(limit.remaining) ? limit.remaining : null,
+    sourceSearch: {
+      browserBindingAvailable: typeof env.BROWSER?.quickAction === "function",
+      provider: sourceSearch.provider,
+      parsedResults: sourceSearch.results.length,
+      officialPortalFallbackAvailable: sourceSearch.searchLinks.some((item) => item.id === "qavanin"),
+      providerWarnings: sourceSearch.providerErrors.map((item) => item.code)
+    }
   }, { headers: { "Cache-Control": "no-store" } });
 }
