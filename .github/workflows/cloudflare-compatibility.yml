@@ -113,6 +113,8 @@ jobs:
 
       - name: Smoke-test the Cloudflare Workers runtime locally
         shell: bash
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           set -euo pipefail
           npx opennextjs-cloudflare preview --config wrangler.preview.jsonc --ip 127.0.0.1 --port 8787 > /tmp/opennext-preview.log 2>&1 &
