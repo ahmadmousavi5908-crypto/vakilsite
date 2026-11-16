@@ -5,11 +5,10 @@ import { createClient } from "@supabase/supabase-js";
 const projectUrl = process.env.STAGING_SUPABASE_URL;
 const publishableKey = process.env.STAGING_SUPABASE_PUBLISHABLE_KEY;
 const dbPassword = process.env.SUPABASE_STAGING_DB_PASSWORD;
-const serviceRoleKey = process.env.SUPABASE_STAGING_SERVICE_ROLE_KEY;
 const runId = process.env.GITHUB_RUN_ID || "local";
 const nonce = randomBytes(5).toString("hex");
 let userId = randomUUID();
-const email = `mavise2e${runId}${nonce}@gmail.com`;
+const email = `mavise2e${runId}${nonce}@example.invalid`;
 const password = randomBytes(32).toString("base64url");
 const slug = `mavis-staging-e2e-${runId}-${nonce}`;
 const articleTitle = `MAVIS Staging E2E ${runId}`;
@@ -98,37 +97,47 @@ async function main() {
       },
     });
 
-    if (serviceRoleKey) {
-      console.log("Creating the temporary Auth user with the protected Staging admin key.");
-      const authAdmin = createClient(projectUrl, serviceRoleKey, {
-        auth: { autoRefreshToken: false, persistSession: false, detectSessionInUrl: false },
-      });
-      const { data: adminData, error: adminError } = await authAdmin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: { full_name: "MAVIS Staging E2E" },
-      });
-      if (adminError) throw new Error(`Temporary Staging admin-user creation failed: ${adminError.message}`);
-      assert(adminData.user?.id, "Supabase Auth admin API returned no user.");
-      userId = adminData.user.id;
-    } else {
-      console.log("Creating the temporary Auth user through the official Supabase Auth signup endpoint.");
-      const { data: signupData, error: signupError } = await client.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name: "MAVIS Staging E2E" } },
-      });
-      if (signupError) {
-        throw new Error(`Temporary Staging Auth signup failed: ${signupError.message}`);
-      }
-      assert(signupData.user?.id, "Supabase Auth signup returned no user.");
-      userId = signupData.user.id;
+    console.log("Creating the isolated Staging Auth identity directly in the protected database.");
+    runDbQuery(`
+      INSERT INTO auth.users (
+        instance_id, id, aud, role, email, encrypted_password,
+        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+        is_sso_user, is_anonymous, created_at, updated_at
+      ) VALUES (
+        '00000000-0000-0000-0000-000000000000'::uuid,
+        ${sqlString(userId)}::uuid,
+        'authenticated',
+        'authenticated',
+        ${sqlString(email)},
+        extensions.crypt(${sqlString(password)}, extensions.gen_salt('bf')),
+        now(),
+        '{"provider":"email","providers":["email"]}'::jsonb,
+        '{"full_name":"MAVIS Staging E2E"}'::jsonb,
+        false,
+        false,
+        now(),
+        now()
+      );
+    `);
 
-      if (!signupData.session) {
-        runDbQuery(`UPDATE auth.users SET email_confirmed_at = now() WHERE id = ${sqlString(userId)}::uuid;`);
-      }
-    }
+    runDbQuery(`
+      INSERT INTO auth.identities (
+        id, provider_id, user_id, identity_data, provider, created_at, updated_at
+      ) VALUES (
+        gen_random_uuid(),
+        ${sqlString(userId)},
+        ${sqlString(userId)}::uuid,
+        jsonb_build_object(
+          'sub', ${sqlString(userId)},
+          'email', ${sqlString(email)},
+          'email_verified', true
+        ),
+        'email',
+        now(),
+        now()
+      );
+    `);
+
 
     runDbQuery(`
       INSERT INTO public.profiles (id, role)
