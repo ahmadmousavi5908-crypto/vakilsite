@@ -120,17 +120,154 @@ jobs:
             printf 'Local files: %s\n' "${LOCAL_FILES[*]}"
             exit 1
           fi
-          for file in "${REMOTE_FILES[@]}"; do
-            if [ ! -f "supabase/migrations/$file" ]; then
-              echo "::error::Missing local migration file: $file"
-              exit 1
-            fi
-            if ! cmp -s "$REMOTE_DIR/$file" "supabase/migrations/$file"; then
-              echo "::error::Local migration content differs from the applied Staging history: $file"
-              exit 1
-            fi
-          done
-          echo "All ${#REMOTE_FILES[@]} local migration files exactly match the applied Staging history."
+          node - "$REMOTE_DIR" "supabase/migrations" <<'NODE'
+          const fs = require("node:fs");
+          const path = require("node:path");
+
+          function normalizeSql(source) {
+            let output = "";
+            let index = 0;
+            let state = "normal";
+            let blockDepth = 0;
+            let dollarTag = "";
+
+            const addSpace = () => {
+              if (output && !output.endsWith(" ")) output += " ";
+            };
+
+            while (index < source.length) {
+              const current = source[index];
+              const next = source[index + 1];
+
+              if (state === "normal") {
+                if (current === "-" && next === "-") {
+                  index += 2;
+                  while (index < source.length && source[index] !== "\n" && source[index] !== "\r") index++;
+                  addSpace();
+                  continue;
+                }
+                if (current === "/" && next === "*") {
+                  state = "block";
+                  blockDepth = 1;
+                  index += 2;
+                  addSpace();
+                  continue;
+                }
+                if (current === "'") {
+                  output += current;
+                  state = "single";
+                  index++;
+                  continue;
+                }
+                if (current === '"') {
+                  output += current;
+                  state = "double";
+                  index++;
+                  continue;
+                }
+                if (current === "$") {
+                  const match = source.slice(index).match(/^\$[A-Za-z_][A-Za-z0-9_]*\$|^\$\$/);
+                  if (match) {
+                    dollarTag = match[0];
+                    output += dollarTag;
+                    state = "dollar";
+                    index += dollarTag.length;
+                    continue;
+                  }
+                }
+                if (/\s/.test(current)) {
+                  addSpace();
+                  index++;
+                  continue;
+                }
+                if (current === ";") {
+                  output = output.trimEnd() + ";";
+                  index++;
+                  while (index < source.length && /\s/.test(source[index])) index++;
+                  continue;
+                }
+                output += current;
+                index++;
+                continue;
+              }
+
+              if (state === "single") {
+                output += current;
+                index++;
+                if (current === "'" && next === "'") {
+                  output += next;
+                  index++;
+                } else if (current === "'" ) {
+                  state = "normal";
+                } else if (current === "\\" && index < source.length) {
+                  output += source[index++];
+                }
+                continue;
+              }
+
+              if (state === "double") {
+                output += current;
+                index++;
+                if (current === '"' && next === '"') {
+                  output += next;
+                  index++;
+                } else if (current === '"') {
+                  state = "normal";
+                }
+                continue;
+              }
+
+              if (state === "dollar") {
+                if (source.startsWith(dollarTag, index)) {
+                  output += dollarTag;
+                  index += dollarTag.length;
+                  state = "normal";
+                } else {
+                  output += current;
+                  index++;
+                }
+                continue;
+              }
+
+              if (state === "block") {
+                if (current === "/" && next === "*") {
+                  blockDepth++;
+                  index += 2;
+                } else if (current === "*" && next === "/") {
+                  blockDepth--;
+                  index += 2;
+                  if (blockDepth === 0) state = "normal";
+                } else {
+                  index++;
+                }
+              }
+            }
+
+            return output.trim();
+          }
+
+          const remoteDirectory = process.argv[2];
+          const localDirectory = process.argv[3];
+          const remoteFiles = fs.readdirSync(remoteDirectory).filter((name) => name.endsWith(".sql")).sort();
+          const localFiles = fs.readdirSync(localDirectory).filter((name) => name.endsWith(".sql")).sort();
+
+          if (JSON.stringify(remoteFiles) !== JSON.stringify(localFiles)) {
+            console.error("Local and remote migration filenames differ.");
+            console.error(JSON.stringify({ remoteFiles, localFiles }, null, 2));
+            process.exit(1);
+          }
+
+          for (const name of remoteFiles) {
+            const remoteSql = normalizeSql(fs.readFileSync(path.join(remoteDirectory, name), "utf8"));
+            const localSql = normalizeSql(fs.readFileSync(path.join(localDirectory, name), "utf8"));
+            if (remoteSql !== localSql) {
+              console.error(`SQL statements differ from the applied Staging history: ${name}`);
+              process.exit(1);
+            }
+          }
+
+          console.log(`All ${remoteFiles.length} migration files match the applied Staging SQL after comment and whitespace normalization.`);
+          NODE
 
       - name: Preview pending migrations (dry-run only)
         shell: bash
