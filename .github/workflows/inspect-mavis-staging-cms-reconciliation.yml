@@ -72,7 +72,8 @@ jobs:
                 'table', tablename, 'name', indexname, 'definition', indexdef
               ) ORDER BY tablename, indexname)
               FROM pg_indexes
-              WHERE schemaname = 'public' AND tablename LIKE 'mavis_%'
+              WHERE (schemaname = 'public' AND tablename LIKE 'mavis_%')
+                OR (schemaname = 'mavis_private' AND tablename = 'editorial_ai_rate_limits')
             ), '[]'::jsonb),
             'functions', COALESCE((
               SELECT jsonb_agg(jsonb_build_object(
