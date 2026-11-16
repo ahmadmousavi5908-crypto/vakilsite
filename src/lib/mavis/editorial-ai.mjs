@@ -224,10 +224,14 @@ export async function generateMavisEditorialSuggestions(input, {
     if (new TextEncoder().encode(JSON.stringify(payload)).byteLength > MAX_RESPONSE_BYTES) {
       return { ok: false, code: "MAVIS_AI_RESPONSE_TOO_LARGE" };
     }
-    if (typeof payload?.response !== "string" || !payload.response.trim()) {
+    if (typeof payload?.response === "string") {
+      raw = payload.response.trim();
+    } else if (payload?.response && typeof payload.response === "object" && !Array.isArray(payload.response)) {
+      raw = JSON.stringify(payload.response);
+    } else {
       return { ok: false, code: "MAVIS_AI_INVALID_RESPONSE" };
     }
-    raw = payload.response.trim();
+    if (!raw) return { ok: false, code: "MAVIS_AI_EMPTY_RESPONSE" };
   } else {
     const timeout = Number.isInteger(timeoutMs) && timeoutMs >= 1 && timeoutMs <= 60000
       ? timeoutMs
