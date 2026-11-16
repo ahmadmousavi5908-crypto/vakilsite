@@ -3,7 +3,6 @@
 Last verified: 2026-11-16
 Repository: `ahmadmousavi5908-crypto/vakilsite`
 Production site: `https://vakilahmadmousavi.ir`
-Current main after release evidence reconciliation: `79b1f19cbb679906cd555dc91e2564f34ce242ba`
 
 ## Delivered
 
