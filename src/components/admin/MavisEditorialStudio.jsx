@@ -123,7 +123,6 @@ export default function MavisEditorialStudio({ articles }) {
         sources: nextSources,
         seoTitle: metadata.title || current.seoTitle,
         seoDescription: summary,
-        authorName: metadata.author || current.authorName,
         sourceTitle: metadata.title || "",
         sourceAuthor: metadata.author || "",
         sourcePublication: metadata.publication || "",
