@@ -9,11 +9,15 @@ const STATUS_LABELS = {
   draft: "پیش‌نویس",
   changes_requested: "نیازمند اصلاح",
   needs_update: "نیازمند به‌روزرسانی",
+  in_review: "در انتظار بازبینی",
+  approved: "تأییدشده",
+  published: "منتشرشده",
+  archived: "آرشیوشده",
 };
 
-export default function MavisDraftList({ rows = [], nextCursor = null, error = null }) {
-  const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+export default function MavisDraftList({ rows = [], nextCursor = null, nextHref = null, rowStart = 0, initialQuery = "", initialStatus = "all", error = null }) {
+  const [query, setQuery] = useState(initialQuery);
+  const [statusFilter, setStatusFilter] = useState(initialStatus);
   const [sortBy, setSortBy] = useState("updated_at");
   const [sortDirection, setSortDirection] = useState("desc");
 
@@ -79,7 +83,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
           <h2 id="mavis-draft-list-title">کاربرگ مقالات و پیش‌نویس‌ها</h2>
           <p>جدول قابل جست‌وجو و مرتب‌سازی؛ داده‌ها از دیتابیس و با صفحه‌بندی امن دریافت می‌شوند.</p>
         </div>
-        <strong className={styles.count}>{rows.length.toLocaleString("fa-IR")} مورد در این صفحه</strong>
+        <strong className={styles.count}>{rows.length.toLocaleString("fa-IR")} ردیف · شماره‌گذاری پیوسته</strong>
       </header>
 
       {error ? (
@@ -90,31 +94,37 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
         </div>
       ) : (
         <>
-          <div className={styles.toolbar}>
+          <form className={styles.toolbar} method="get" action="/admin/mavis/articles">
             <label className={styles.searchField}>
-              <span>جست‌وجوی سریع</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="عنوان، نامک یا دسته‌بندی..." />
+              <span>جست‌وجو در عنوان، نامک، نویسنده و دسته‌بندی</span>
+              <input name="q" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="عنوان، نامک، نویسنده یا دسته‌بندی..." />
             </label>
             <label className={styles.filterField}>
               <span>وضعیت</span>
-              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+              <select name="status" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
                 <option value="all">همه وضعیت‌ها</option>
                 <option value="draft">پیش‌نویس</option>
                 <option value="changes_requested">نیازمند اصلاح</option>
                 <option value="needs_update">نیازمند به‌روزرسانی</option>
+                <option value="in_review">در انتظار بازبینی</option>
+                <option value="approved">تأییدشده</option>
+                <option value="published">منتشرشده</option>
+                <option value="archived">آرشیوشده</option>
               </select>
             </label>
-            <span className={styles.filteredCount}>{visibleRows.length.toLocaleString("fa-IR")} ردیف نمایش داده می‌شود</span>
+            <span className={styles.filteredCount}>{visibleRows.length.toLocaleString("fa-IR")} ردیف در این صفحه</span>
+            <button type="submit" className={styles.filterButton}>اعمال فیلتر</button>
             <button type="button" className={styles.exportButton} onClick={downloadSpreadsheet} disabled={!visibleRows.length}>خروجی Excel · همین نتایج</button>
-          </div>
+          </form>
           {visibleRows.length ? (
             <>
               <div className={styles.tableWrap}>
                 <table className={styles.table}>
-                  <thead><tr><th>{sortLabel("title", "عنوان مقاله")}</th><th>{sortLabel("category", "دسته‌بندی")}</th><th>وضعیت</th><th>{sortLabel("current_version", "نسخه")}</th><th>{sortLabel("updated_at", "آخرین تغییر")}</th><th>عملیات</th></tr></thead>
+                  <thead><tr><th>ردیف</th><th>{sortLabel("title", "عنوان مقاله")}</th><th>{sortLabel("category", "دسته‌بندی")}</th><th>وضعیت</th><th>{sortLabel("current_version", "نسخه")}</th><th>{sortLabel("updated_at", "آخرین تغییر")}</th><th>عملیات</th></tr></thead>
                   <tbody>
-                    {visibleRows.map((article) => (
+                    {visibleRows.map((article, index) => (
                       <tr key={article.id}>
+                        <td className={styles.rowNumber}>{(rowStart + index + 1).toLocaleString("fa-IR")}</td>
                         <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
                         <td>{article.category}</td>
                         <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
@@ -126,7 +136,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
                   </tbody>
                 </table>
               </div>
-              {nextCursor && !query && statusFilter === "all" ? <nav className={styles.pagination} aria-label="صفحه‌بندی پیش‌نویس‌ها"><Link href={`/admin/mavis/articles?cursor=${encodeURIComponent(nextCursor)}`}>ردیف‌های قدیمی‌تر ←</Link></nav> : null}
+              {nextCursor && nextHref ? <nav className={styles.pagination} aria-label="صفحه‌بندی کتابخانه مقالات"><Link href={nextHref}>ردیف‌های بعدی ←</Link></nav> : null}
             </>
           ) : <div className={styles.empty}>با این عبارت یا فیلتر، ردیفی در صفحه فعلی پیدا نشد.</div>}
         </>
