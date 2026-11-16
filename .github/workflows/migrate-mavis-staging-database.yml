@@ -78,31 +78,40 @@ jobs:
       - name: Verify Supabase CLI v3
         run: npx --yes supabase@3.0.0 --version
 
-      - name: Preview pending migrations
+      - name: Authenticate and inspect migration history (read-only)
         shell: bash
         run: |
           set -euo pipefail
           if [ -n "${SUPABASE_STAGING_DB_URL:-}" ]; then
-            echo "Trying the configured staging connection URI."
-            if npx --yes supabase@3.0.0 db push --dry-run --remote="$SUPABASE_STAGING_DB_URL"; then
+            echo "Checking the configured staging URI with a read-only migration-history query."
+            if npx --yes supabase@3.0.0 migration list --remote="$SUPABASE_STAGING_DB_URL"; then
               echo "::add-mask::$SUPABASE_STAGING_DB_URL"
               echo "STAGING_DATABASE_URL=$SUPABASE_STAGING_DB_URL" >> "$GITHUB_ENV"
-              echo "Authenticated with SUPABASE_STAGING_DB_URL."
+              echo "Read-only migration-history query succeeded with SUPABASE_STAGING_DB_URL."
               exit 0
             fi
-            echo "The configured URI did not authenticate; checking the dedicated password secret."
+            echo "The URI query failed; trying the dedicated password secret."
           fi
           if [ -n "${SUPABASE_STAGING_DB_PASSWORD:-}" ]; then
             STAGING_PASSWORD_URL="$(node -e 'const u = new URL("postgresql://postgres.srbwniqhaxwaoepjfizf@aws-1-eu-central-1.pooler.supabase.com:5432/postgres"); u.password = process.env.SUPABASE_STAGING_DB_PASSWORD; process.stdout.write(u.toString())')"
             echo "::add-mask::$STAGING_PASSWORD_URL"
-            if npx --yes supabase@3.0.0 db push --dry-run --remote="$STAGING_PASSWORD_URL"; then
+            if npx --yes supabase@3.0.0 migration list --remote="$STAGING_PASSWORD_URL"; then
               echo "STAGING_DATABASE_URL=$STAGING_PASSWORD_URL" >> "$GITHUB_ENV"
-              echo "Authenticated with SUPABASE_STAGING_DB_PASSWORD."
+              echo "Read-only migration-history query succeeded with SUPABASE_STAGING_DB_PASSWORD."
               exit 0
             fi
           fi
-          echo "::error::Neither configured staging database credential could authenticate."
+          echo "::error::Neither configured credential completed the read-only migration-history query. Review the connection error above; no migration was applied."
           exit 1
+
+      - name: Preview pending migrations (dry-run only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! npx --yes supabase@3.0.0 db push --dry-run --remote="$STAGING_DATABASE_URL"; then
+            echo "::error::Database access succeeded, but the migration preview failed. Compare the Local and Remote migration versions above; no migration was applied."
+            exit 1
+          fi
 
       - name: Apply migrations to staging only
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true }}
