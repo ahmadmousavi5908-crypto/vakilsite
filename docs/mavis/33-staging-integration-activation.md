@@ -21,6 +21,17 @@ The read-only Staging integration audit currently reports:
 
 The audit lists secret names only. It never requests or prints secret values.
 
+## Existing static article import
+
+The administrator's current-site article catalog remains read-only until an individual article is imported.
+
+- **ورود به پیش‌نویس** creates a separate versioned CMS draft with the same slug.
+- The public static article remains unchanged. Import never publishes, approves, or changes indexability.
+- Only HTTPS source links are attached as manual research-background metadata. Their legal authority and reuse rights remain unverified until a human reviews them.
+- Invalid, non-HTTPS, or duplicate source links are reported as skipped for manual review.
+- Repeating the import opens the existing editable draft and reconciles its source links instead of creating a duplicate.
+- Publication remains a separate version-specific administrator approval and publish action.
+
 ## Staging Worker secrets
 
 Add these under Cloudflare Dashboard → Workers & Pages → `vakilahmadmousavi-ir-staging` → Settings → Variables and Secrets. Use **Secret** for every credential and encryption key.
