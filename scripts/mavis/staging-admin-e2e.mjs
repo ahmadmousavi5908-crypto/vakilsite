@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const projectUrl = process.env.STAGING_SUPABASE_URL;
 const publishableKey = process.env.STAGING_SUPABASE_PUBLISHABLE_KEY;
+const configuredDbUrl = process.env.SUPABASE_STAGING_DB_URL;
 const dbPassword = process.env.SUPABASE_STAGING_DB_PASSWORD;
 const runId = process.env.GITHUB_RUN_ID || "local";
 const nonce = randomBytes(5).toString("hex");
@@ -12,7 +13,10 @@ const email = `mavise2e${runId}${nonce}@example.invalid`;
 const password = randomBytes(32).toString("base64url");
 const slug = `mavis-staging-e2e-${runId}-${nonce}`;
 const articleTitle = `MAVIS Staging E2E ${runId}`;
-const dbUrl = `postgresql://postgres.srbwniqhaxwaoepjfizf:${encodeURIComponent(dbPassword || "")}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`;
+const fallbackDbUrl = dbPassword
+  ? `postgresql://postgres.srbwniqhaxwaoepjfizf:${encodeURIComponent(dbPassword)}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`
+  : "";
+const dbUrl = configuredDbUrl || fallbackDbUrl;
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -54,13 +58,25 @@ function requireRpc(data, error, operation) {
 async function main() {
   assert(projectUrl, "Missing STAGING_SUPABASE_URL.");
   assert(publishableKey, "Missing STAGING_SUPABASE_PUBLISHABLE_KEY.");
-  assert(dbPassword, "Missing SUPABASE_STAGING_DB_PASSWORD.");
+  assert(dbUrl, "Missing SUPABASE_STAGING_DB_URL and SUPABASE_STAGING_DB_PASSWORD.");
 
   const parsedUrl = new URL(projectUrl);
   assert(
     parsedUrl.hostname === "srbwniqhaxwaoepjfizf.supabase.co" &&
       parsedUrl.protocol === "https:",
     "Refusing to run against a non-Staging Supabase project."
+  );
+
+  const parsedDbUrl = new URL(dbUrl);
+  const dbUsername = decodeURIComponent(parsedDbUrl.username);
+  assert(
+    ["postgres:", "postgresql:"].includes(parsedDbUrl.protocol) &&
+      parsedDbUrl.hostname.endsWith(".pooler.supabase.com") &&
+      parsedDbUrl.port === "5432" &&
+      dbUsername.endsWith(".srbwniqhaxwaoepjfizf") &&
+      !dbUsername.includes("jroflcmiczfwtmiaxmpd") &&
+      parsedDbUrl.pathname === "/postgres",
+    "Refusing to run against a non-Staging database connection."
   );
 
   let userSeedAttempted = false;
@@ -148,7 +164,6 @@ async function main() {
         now()
       );
     `);
-
 
     runDbQuery(`
       INSERT INTO public.profiles (id, role)
