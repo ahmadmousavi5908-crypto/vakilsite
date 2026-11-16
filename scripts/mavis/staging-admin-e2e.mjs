@@ -303,16 +303,12 @@ async function main() {
         signal: AbortSignal.timeout(20000),
       });
     } catch (error) {
-      console.error("DEBUG: source-search fetch failed", error?.message, error?.cause?.code || error?.cause?.message || "");
       throw error;
     }
     const iranianSearchText = await iranianSearchResponse.text();
     let iranianSearchPayload;
     try { iranianSearchPayload = JSON.parse(iranianSearchText); }
     catch { iranianSearchPayload = { raw: iranianSearchText.slice(0, 500) }; }
-    console.log("DEBUG: source-search status=" + iranianSearchResponse.status +
-      "; location=" + String(iranianSearchResponse.headers.get("location") || "") +
-      "; payload=" + JSON.stringify(iranianSearchPayload));
     assert(
       iranianSearchResponse.status === 200 &&
         iranianSearchPayload.ok === true &&
