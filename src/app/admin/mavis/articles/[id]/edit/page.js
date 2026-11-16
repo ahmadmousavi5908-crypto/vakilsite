@@ -30,7 +30,7 @@ export default async function EditMavisArticlePage({ params }) {
   let article;
   try {
     const { data, error } = await access.supabase
-      .from("mavis_articles")
+      .from("mavis_editorial_articles")
       .select("id, slug, title, author_name, excerpt, category, tags, content, content_schema_version, seo_title, seo_description, status, current_version, updated_at")
       .eq("id", id)
       .in("status", ["draft", "changes_requested", "needs_update"])
