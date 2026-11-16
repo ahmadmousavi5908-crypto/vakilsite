@@ -27,6 +27,7 @@ jobs:
       SUPABASE_STAGING_DB_URL: ${{ secrets.SUPABASE_STAGING_DB_URL }}
       SUPABASE_STAGING_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
       SUPABASE_PROJECT_REF: srbwniqhaxwaoepjfizf
+      STAGING_BASE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
     steps:
       - name: Check out the selected migration revision
         uses: actions/checkout@v7
@@ -61,7 +62,12 @@ jobs:
           }
           NODE
           fi
+          case "${STAGING_BASE_URL:-}" in
+            https://vakilahmadmousavi-ir-staging.*.workers.dev) ;;
+            *) echo "::error::Staging base URL is missing or not the isolated workers.dev host."; exit 1 ;;
+          esac
           echo "Database target is locked to vakilsite-staging."
+          echo "Web smoke target is locked to the isolated Staging Worker."
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -105,3 +111,66 @@ jobs:
           set -euo pipefail
           npx --yes supabase@3.0.0 db push --dry-run --remote="$STAGING_DATABASE_URL"
           echo "Read-only preview completed. This workflow contains no migration apply command."
+
+      - name: Smoke-test public Staging routes and sitemap isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="${STAGING_BASE_URL%/}"
+          routes=(/ /robots.txt /sitemap.xml /articles /articles/library /admin/login)
+          for route in "${routes[@]}"; do
+            status="$(curl --silent --show-error --connect-timeout 5 --max-time 15 -o /tmp/mavis-staging-body -w '%{http_code}' "$BASE_URL$route")"
+            echo "$route => HTTP $status"
+            if [ "$status" != "200" ]; then
+              echo "::error::Staging route failed: $route"
+              cat /tmp/mavis-staging-body 2>/dev/null || true
+              exit 1
+            fi
+          done
+          curl --silent --show-error --fail --connect-timeout 5 --max-time 15 "$BASE_URL/sitemap.xml" -o /tmp/mavis-staging-sitemap.xml
+          grep -Fq "$BASE_URL" /tmp/mavis-staging-sitemap.xml
+          if grep -Fq "https://vakilahmadmousavi.ir" /tmp/mavis-staging-sitemap.xml; then
+            echo "::error::Staging sitemap contains the Production canonical origin."
+            exit 1
+          fi
+
+      - name: Verify anonymous Growth Intelligence access boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="${STAGING_BASE_URL%/}"
+          status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-growth-body -D /tmp/mavis-growth-headers -w '%{http_code}' "$BASE_URL/admin/mavis/growth")"
+          echo "/admin/mavis/growth => HTTP $status"
+          case "$status" in
+            301|302|303|307|308)
+              if ! grep -Eiq '^location:.*/admin/login' /tmp/mavis-growth-headers; then
+                echo "::error::Anonymous Growth Intelligence request did not redirect to login."
+                cat /tmp/mavis-growth-headers
+                exit 1
+              fi
+              ;;
+            401|403) ;;
+            *)
+              echo "::error::Anonymous Growth Intelligence page must not render with HTTP $status."
+              exit 1
+              ;;
+          esac
+          api_status="$(curl --silent --show-error --max-time 20 -X POST -H 'content-type: application/json' -d '{"query":"وکیل اهواز"}' -o /tmp/mavis-growth-api-body -w '%{http_code}' "$BASE_URL/api/admin/mavis/growth/competitors")"
+          echo "Competitor research API anonymous POST => HTTP $api_status"
+          if [ "$api_status" != "401" ]; then
+            echo "::error::Competitor research API must reject anonymous POST requests."
+            cat /tmp/mavis-growth-api-body
+            exit 1
+          fi
+
+      - name: Verify Staging is explicitly noindex
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="${STAGING_BASE_URL%/}"
+          curl --silent --show-error --fail --max-time 20 "$BASE_URL/" -D /tmp/mavis-staging-headers -o /tmp/mavis-staging-home
+          if ! grep -Eiq '^x-robots-tag:.*noindex' /tmp/mavis-staging-headers; then
+            echo "::error::Staging homepage is missing an explicit noindex signal."
+            exit 1
+          fi
+          echo "Staging noindex signal verified."
