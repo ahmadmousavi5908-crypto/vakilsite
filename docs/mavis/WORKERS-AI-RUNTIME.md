@@ -48,7 +48,7 @@ Browser Run has plan-based usage limits. Keep this path administrator-only and m
 
 The isolated Staging Worker exposes an admin-only `/api/admin/mavis/runtime-smoke` endpoint only when `MAVIS_STAGING_DIAGNOSTICS_ENABLED=true` is present in the Staging Worker variables. It performs one quota-controlled inference, validates the structured output through the production normalizer, and returns only provider/model metadata. The Production Worker does not enable this diagnostic endpoint.
 
-The authenticated Staging E2E workflow also calls the real source-search route with a temporary administrator session. It verifies the Browser Run binding is available and that the official Qavanin portal fallback is returned. Browser Run may still be blocked by the destination website; in that case the direct portal links remain the expected safe fallback.
+The authenticated Staging E2E workflow calls the protected runtime-smoke route with a temporary administrator session. It invokes the Browser Run fallback directly without persisting source candidates, verifies that the binding is available, and confirms that the official Qavanin portal link is returned. Browser Run may still be blocked by the destination website; in that case the direct portal links remain the expected safe fallback.
 
 ## Search Console data without OAuth
 
