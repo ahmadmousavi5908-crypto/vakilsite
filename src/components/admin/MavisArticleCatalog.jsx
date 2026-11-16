@@ -118,13 +118,14 @@ export default function MavisArticleCatalog({ articles }) {
 
         <div className={styles.tableWrap}>
           <table className={styles.table}>
-            <thead><tr><th>عنوان مقاله</th><th>دسته‌بندی</th><th>ساختار</th><th>منابع</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+            <thead><tr><th>ردیف</th><th>عنوان مقاله</th><th>دسته‌بندی</th><th>ساختار</th><th>منابع</th><th>وضعیت</th><th>عملیات</th></tr></thead>
             <tbody>
-              {visible.map((article) => {
+              {visible.map((article, index) => {
                 const open = Boolean(expanded[article.slug]);
                 return (
                   <Fragment key={article.slug}>
                     <tr>
+                      <td>{(index + 1).toLocaleString("fa-IR")}</td>
                       <td>
                         <strong>{article.title}</strong>
                         <small dir="ltr">/{article.slug}</small>
