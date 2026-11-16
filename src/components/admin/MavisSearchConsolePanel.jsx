@@ -5,6 +5,7 @@ import {
   aggregateSearchPerformanceRows,
   rankContentOpportunities,
 } from "../../lib/mavis/growth-metrics.mjs";
+import { normalizeSearchConsoleCsv } from "../../lib/mavis/search-console-adapter.mjs";
 import styles from "./MavisSearchConsolePanel.module.css";
 
 function localDate(date) {
@@ -97,6 +98,55 @@ export default function MavisSearchConsolePanel() {
     }
   }
 
+  async function handleCsvImport(event) {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    input.value = "";
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setState("error");
+      setMessage("حجم فایل CSV نباید بیشتر از ۵ مگابایت باشد.");
+      return;
+    }
+
+    setState("loading");
+    setMessage("");
+    setResult(null);
+    try {
+      const csv = await file.text();
+      const imported = normalizeSearchConsoleCsv(csv, {
+        startDate,
+        endDate,
+        rowLimit: 5000,
+      });
+      if (!imported.ok) {
+        const errors = {
+          csv_empty: "فایل CSV خالی است.",
+          csv_too_large: "حجم فایل از حد مجاز بیشتر است.",
+          csv_unclosed_quote: "ساختار نقل‌قول‌ها در فایل CSV معتبر نیست.",
+          csv_missing_rows: "فایل CSV ردیف داده ندارد.",
+          csv_required_columns_missing: "ستون‌های لازم باید شامل Query یا Page، Clicks، Impressions و Position باشند.",
+          csv_invalid_metric_row: "مقادیر آماری در ردیف " + numberFormat.format(imported.row || 0) + " معتبر نیستند.",
+          csv_invalid_date_row: "تاریخ ردیف " + numberFormat.format(imported.row || 0) + " معتبر نیست.",
+          csv_no_rows_in_selected_range: "در بازه انتخاب‌شده ردیفی برای نمایش وجود ندارد.",
+        };
+        setState("error");
+        setMessage(errors[imported.reason] || "ساختار فایل CSV قابل پردازش نیست.");
+        return;
+      }
+
+      setResult(imported);
+      setState("success");
+      setMessage(imported.coverage.dateRangeVerified
+        ? "فایل CSV در همین مرورگر پردازش شد؛ ردیف‌های خارج از بازه انتخابی حذف شدند و داده‌های حساس پالایش شدند."
+        : "فایل CSV در همین مرورگر پردازش شد؛ فایل ستون تاریخ ندارد، بنابراین بازه انتخابی از داخل فایل قابل تأیید نیست.");
+    } catch {
+      setState("error");
+      setMessage("خواندن فایل CSV انجام نشد. فایل UTF-8 معتبر را انتخاب کنید.");
+    }
+  }
+
   const displayedDimensions = result?.request?.dimensions || dimensions;
   const opportunities = useMemo(() => {
     if (!result) return [];
@@ -150,6 +200,18 @@ export default function MavisSearchConsolePanel() {
         </button>
       </form>
 
+      <div className={styles.csvImport}>
+        <label htmlFor="mavis-search-console-csv">یا ورود فایل CSV خروجی Google Search Console</label>
+        <input
+          id="mavis-search-console-csv"
+          type="file"
+          accept=".csv,text/csv"
+          onChange={handleCsvImport}
+          disabled={state === "loading"}
+        />
+        <p>فایل حداکثر ۵ مگابایت است و فقط در مرورگر پردازش می‌شود؛ به سرور ارسال یا ذخیره نمی‌شود.</p>
+      </div>
+
       {message ? (
         <p className={styles.message} data-state={state} role="status" aria-live="polite">{message}</p>
       ) : null}
@@ -157,6 +219,7 @@ export default function MavisSearchConsolePanel() {
       {result ? (
         <div className={styles.results}>
           <div className={styles.summary}>
+            <span>منبع: <strong>{result.importedFromCsv ? "فایل CSV محلی" : "اتصال زنده"}</strong></span>
             <span>تعداد ردیف: <strong>{numberFormat.format(result.coverage.rowCount)}</strong></span>
             <span>کلیک: <strong>{numberFormat.format(result.rows.reduce((sum, row) => sum + row.metrics.clicks, 0))}</strong></span>
             <span>نمایش: <strong>{numberFormat.format(result.rows.reduce((sum, row) => sum + row.metrics.impressions, 0))}</strong></span>
