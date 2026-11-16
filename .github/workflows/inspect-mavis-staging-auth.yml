@@ -53,6 +53,13 @@ jobs:
     env:
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
+      CHECK_MAVIS_GSC_CLIENT_ID: ${{ secrets.MAVIS_GSC_CLIENT_ID }}
+      CHECK_MAVIS_GSC_CLIENT_SECRET: ${{ secrets.MAVIS_GSC_CLIENT_SECRET }}
+      CHECK_MAVIS_GSC_TOKEN_ENCRYPTION_KEY: ${{ secrets.MAVIS_GSC_TOKEN_ENCRYPTION_KEY }}
+      CHECK_MAVIS_OPENAI_API_KEY: ${{ secrets.MAVIS_OPENAI_API_KEY }}
+      CHECK_OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      CHECK_MAVIS_IRAN_SOURCE_SEARCH_API_KEY: ${{ secrets.MAVIS_IRAN_SOURCE_SEARCH_API_KEY }}
+      CHECK_MAVIS_GROWTH_SEARCH_API_KEY: ${{ secrets.MAVIS_GROWTH_SEARCH_API_KEY }}
     steps:
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -93,12 +100,22 @@ jobs:
             "Iranian legal-source search API key",
             "Competitor research API key",
           ];
+          const githubGroups = [
+            ["CHECK_MAVIS_GSC_CLIENT_ID"],
+            ["CHECK_MAVIS_GSC_CLIENT_SECRET"],
+            ["CHECK_MAVIS_GSC_TOKEN_ENCRYPTION_KEY"],
+            ["CHECK_MAVIS_OPENAI_API_KEY", "CHECK_OPENAI_API_KEY"],
+            ["CHECK_MAVIS_IRAN_SOURCE_SEARCH_API_KEY"],
+            ["CHECK_MAVIS_GROWTH_SEARCH_API_KEY"],
+          ];
           let missing = 0;
           console.log("Configured Staging Worker secret names (values are never requested):");
           for (const name of [...names].sort()) console.log(" - " + name);
           for (let i = 0; i < requiredGroups.length; i += 1) {
             const present = requiredGroups[i].some((name) => names.has(name));
-            console.log((present ? "PASS: " : "MISSING: ") + labels[i]);
+            const githubAvailable = githubGroups[i].some((name) => Boolean(process.env[name]?.trim()));
+            console.log((present ? "PASS: " : "MISSING: ") + labels[i] + " on Cloudflare Staging");
+            console.log((githubAvailable ? "AVAILABLE: " : "NOT AVAILABLE: ") + labels[i] + " in GitHub Staging secrets");
             if (!present) missing += 1;
           }
           if (missing) {
