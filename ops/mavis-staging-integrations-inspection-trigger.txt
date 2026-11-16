@@ -1,0 +1,1 @@
+Read-only Staging integration audit: inspect secret names and connection metadata; run bounded Crossref and Semantic Scholar metadata-only smoke tests. No secrets or credentials are read or printed.
