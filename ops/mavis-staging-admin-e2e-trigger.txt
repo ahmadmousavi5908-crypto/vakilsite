@@ -1,0 +1,1 @@
+Run the authenticated Staging lifecycle test. It creates one temporary admin identity and article, tests draft, review, approval, publication, public visibility, unpublish, archive, restore, and removes every test record in a finally cleanup.
