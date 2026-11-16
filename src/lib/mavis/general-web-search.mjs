@@ -81,7 +81,7 @@ export function createGeneralWebSearch({ apiKey, fetchImpl = globalThis.fetch, t
         clearTimeout(timer);
       }
     },
-    async extract({ url: rawUrl, query = "" } = {}) {
+    async extract({ url: rawUrl } = {}) {
       let target;
       try {
         target = new URL(typeof rawUrl === "string" ? rawUrl : "");
@@ -92,7 +92,6 @@ export function createGeneralWebSearch({ apiKey, fetchImpl = globalThis.fetch, t
         return { ok: false, reason: "invalid_url" };
       }
 
-      const cleanQuery = typeof query === "string" ? query.normalize("NFC").trim().slice(0, 180) : "";
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), timeout);
       try {
@@ -108,7 +107,6 @@ export function createGeneralWebSearch({ apiKey, fetchImpl = globalThis.fetch, t
           },
           body: JSON.stringify({
             urls: [target.href],
-            ...(cleanQuery ? { query: cleanQuery } : {}),
             extract_depth: "basic",
             format: "markdown",
             include_images: false,
