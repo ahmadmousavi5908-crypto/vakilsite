@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { buildMavisStaticArticleImport } from "../../src/lib/mavis/static-article-import.mjs";
+import { articles as currentSiteArticles } from "../../src/data/articles.js";
 
 const article = {
   slug: "civil-claim-checklist",
@@ -51,4 +52,11 @@ test("rejects malformed static article structures instead of truncating content"
     ...article,
     sections: [{ heading: "بخش", body: "کوتاه" }],
   }), /sections/i);
+});
+
+test("every current site article fits the versioned draft schema without publishing", () => {
+  assert.ok(currentSiteArticles.length > 0);
+  const imported = currentSiteArticles.map((item) => buildMavisStaticArticleImport(item));
+  assert.equal(imported.length, currentSiteArticles.length);
+  assert.ok(imported.every((item) => item.payload.content.sections.length > 0));
 });
