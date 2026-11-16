@@ -1,1 +1,1 @@
-Retry Staging Auth E2E using a valid reserved example.com email address accepted by Supabase Auth. Any created account remains temporary and is deleted by the workflow cleanup.
+Retry authenticated Staging E2E with a random syntactically valid Gmail test address after Supabase Auth rejected reserved example domains. The address is generated per run and deleted during cleanup.
