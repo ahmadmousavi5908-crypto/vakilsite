@@ -12,6 +12,9 @@ const GROUPS = [
 
 const AUTHORITY_LABELS = {
   official_primary: "منبع رسمی اولیه",
+  official_portal: "درگاه رسمی قضایی",
+  official_research: "مرکز پژوهشی رسمی",
+  official_judicial: "مرجع قضایی رسمی",
   academic: "پایگاه علمی / پژوهشی",
   academic_index: "نمایه یا پایگاه ثانویه علمی",
   secondary_reference: "مرجع ثانویه، نه مستند نهایی",
