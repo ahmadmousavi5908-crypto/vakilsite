@@ -26,6 +26,7 @@ function extractMetadata(content, result) {
   const publication = firstMatch(content, [
     /(?:نام نشریه|نشریه|مجله|فصلنامه|ژورنال|publication|journal|publisher|ناشر)\s*[:：-]\s*([^\n]{2,180})/i,
   ]);
+  const doi = content.match(/\\b10\\.\\d{4,9}\\/[a-z0-9._;()/:+-]+\\b/i)?.[0] || "";
   const date = firstMatch(content, [
     /(?:تاریخ انتشار|تاریخ چاپ|published(?: on)?|publication date)\s*[:：-]\s*([^\n]{4,80})/i,
   ], 40);
@@ -34,6 +35,7 @@ function extractMetadata(content, result) {
     author,
     publication,
     publicationDate: result.publishedDate || date,
+    documentNumber: doi,
     sourceUrl: result.url,
     abstract: limitWords(result.snippet, 25),
     sourceType: "academic",
