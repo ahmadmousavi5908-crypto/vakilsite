@@ -69,6 +69,7 @@ export function createIranianSourceSearch({ apiKey, fetchImpl = globalThis.fetch
         return {
           ok: true,
           query: cleanQuery,
+          group,
           results,
           usageCredits: Number.isFinite(payload?.usage?.credits) ? payload.usage.credits : null,
           provider: "tavily",
@@ -245,6 +246,7 @@ export function createIranianSourceSearchFallback({ browser, timeoutMs = 18000 }
       return {
         ok: true,
         query: cleanQuery,
+        group,
         results: results.slice(0, limit),
         searchLinks,
         provider: results.length ? "cloudflare_browser_run_qavanin" : "official_portal_fallback",
