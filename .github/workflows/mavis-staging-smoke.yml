@@ -40,30 +40,29 @@ jobs:
             exit 1
           fi
 
-      - name: Verify anonymous admin page redirects to login
+      - name: Verify anonymous admin pages redirect to login
         shell: bash
         run: |
           set -euo pipefail
           BASE_URL="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev"
-          status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-admin-body -D /tmp/mavis-admin-headers -w '%{http_code}' "$BASE_URL/admin/mavis/articles")"
-          echo "/admin/mavis/articles => HTTP $status"
-          case "$status" in
-            301|302|303|307|308)
-              if ! grep -Eiq '^location:.*/admin/login' /tmp/mavis-admin-headers; then
-                echo "::error::Anonymous admin redirect does not point to the login page."
-                cat /tmp/mavis-admin-headers
+          for route in /admin/mavis/articles /admin/mavis/growth; do
+            status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-admin-body -D /tmp/mavis-admin-headers -w '%{http_code}' "$BASE_URL$route")"
+            echo "$route => HTTP $status"
+            case "$status" in
+              301|302|303|307|308)
+                if ! grep -Eiq '^location:.*/admin/login' /tmp/mavis-admin-headers; then
+                  echo "::error::Anonymous admin redirect does not point to the login page: $route"
+                  cat /tmp/mavis-admin-headers
+                  exit 1
+                fi
+                ;;
+              401|403) ;;
+              *)
+                echo "::error::Anonymous admin page must not render with HTTP $status: $route"
                 exit 1
-              fi
-              echo "Anonymous admin page redirects to the login page."
-              ;;
-            401|403)
-              echo "Anonymous admin page access is denied."
-              ;;
-            *)
-              echo "::error::Anonymous admin page must not render with HTTP $status."
-              exit 1
-              ;;
-          esac
+                ;;
+            esac
+          done
 
       - name: Verify admin API rejects anonymous requests
         shell: bash
@@ -76,6 +75,20 @@ jobs:
             echo "::error::Anonymous admin API request must return HTTP 403."
             cat /tmp/mavis-admin-api-headers
             cat /tmp/mavis-admin-api-body
+            exit 1
+          fi
+
+      - name: Verify competitor research API rejects anonymous POST requests
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev"
+          status="$(curl --silent --show-error --max-time 20 -X POST -H 'content-type: application/json' -d '{"query":"وکیل اهواز"}' -o /tmp/mavis-competitor-api-body -D /tmp/mavis-competitor-api-headers -w '%{http_code}' "$BASE_URL/api/admin/mavis/growth/competitors")"
+          echo "/api/admin/mavis/growth/competitors => HTTP $status"
+          if [ "$status" != "401" ]; then
+            echo "::error::Anonymous competitor research API must return HTTP 401."
+            cat /tmp/mavis-competitor-api-headers
+            cat /tmp/mavis-competitor-api-body
             exit 1
           fi
 
