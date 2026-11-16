@@ -34,7 +34,7 @@ export default function MavisSearchConsolePanel() {
   const [result, setResult] = useState(null);
   const [state, setState] = useState("idle");
   const [message, setMessage] = useState("");
-  const [connection, setConnection] = useState({ loading: true, connected: false, siteUrl: null, error: "" });
+  const [connection, setConnection] = useState({ loading: true, configured: null, connected: false, siteUrl: null, error: "" });
 
   useEffect(() => {
     let active = true;
@@ -42,10 +42,10 @@ export default function MavisSearchConsolePanel() {
       .then(async (response) => {
         const payload = await response.json().catch(() => null);
         if (!response.ok) throw new Error(payload?.error || "وضعیت اتصال قابل دریافت نیست.");
-        if (active) setConnection({ loading: false, connected: payload.connected === true, siteUrl: payload.siteUrl || null, error: "" });
+        if (active) setConnection({ loading: false, configured: payload.configured === true, connected: payload.connected === true, siteUrl: payload.siteUrl || null, error: "" });
       })
       .catch(() => {
-        if (active) setConnection({ loading: false, connected: false, siteUrl: null, error: "وضعیت اتصال سرویس قابل دریافت نیست." });
+        if (active) setConnection({ loading: false, configured: null, connected: false, siteUrl: null, error: "وضعیت اتصال سرویس قابل دریافت نیست." });
       });
     return () => { active = false; };
   }, []);
@@ -60,7 +60,7 @@ export default function MavisSearchConsolePanel() {
       });
       const payload = await response.json().catch(() => null);
       if (!response.ok || payload?.connected !== false) throw new Error("disconnect_failed");
-      setConnection({ loading: false, connected: false, siteUrl: null, error: "" });
+      setConnection({ loading: false, configured: true, connected: false, siteUrl: null, error: "" });
       setResult(null);
       setState("idle");
       setMessage(payload.revocationFailed
@@ -211,13 +211,17 @@ export default function MavisSearchConsolePanel() {
       <div className={styles.connection}>
         <div>
           <strong>{connection.loading ? "در حال بررسی اتصال..." : connection.connected ? "اتصال برقرار است" : "Search Console متصل نیست"}</strong>
-          <span>{connection.connected ? connection.siteUrl : connection.error || "برای دریافت داده واقعی، ابتدا حساب مالک سایت را متصل کنید."}</span>
+          <span>{connection.connected
+            ? connection.siteUrl
+            : connection.error || (connection.configured === false
+              ? "اتصال زنده هنوز پیکربندی نشده است؛ ورود CSV در همین صفحه فعال است."
+              : "برای دریافت داده واقعی، ابتدا حساب مالک سایت را متصل کنید.")}</span>
         </div>
         {connection.connected ? (
           <button type="button" className={styles.disconnectButton} onClick={handleDisconnect} disabled={connection.loading}>قطع اتصال</button>
-        ) : (
+        ) : connection.configured === true ? (
           <a className={styles.connectButton} href="/api/admin/mavis/search-console/connect">اتصال امن حساب گوگل</a>
-        )}
+        ) : null}
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit}>
