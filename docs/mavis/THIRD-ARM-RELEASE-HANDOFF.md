@@ -3,7 +3,7 @@
 Last verified: 2026-11-16
 Repository: `ahmadmousavi5908-crypto/vakilsite`
 Production site: `https://vakilahmadmousavi.ir`
-Current main after handoff reconciliation: `8616f1e6e88b74a6d71299b927580bada2baa985`
+Current main after legacy deployment guard: `f36ccbd63034f30d8eef9239a0e5f8de224c6290`
 
 ## Delivered
 
@@ -13,6 +13,7 @@ Current main after handoff reconciliation: `8616f1e6e88b74a6d71299b927580bada2ba
 - Editorial workflow includes Crossref, Semantic Scholar and OpenAlex discovery; source candidate queues; versioned drafts; review and approval; manual publication; archive and restore.
 - The approved public-site appearance was not redesigned.
 - Production deployment remains manual-only.
+- Duplicate legacy workflow `.github/workflows/deploy-cloudflare-production.yml` was identified as pinning an obsolete branch and was disabled on current main. Only `.github/workflows/deploy-cloudflare.yml` is the active production deployment workflow.
 - Full current-main site quality checks passed on handoff commit `8616f1e`: lint, production build, legal-library HTTP routes, and the MAVIS offline, intake, Search Console, Iranian legal-source search, editorial-core and knowledge-retrieval test suites. Run: https://github.com/ahmadmousavi5908-crypto/vakilsite/actions/runs/43874513389.
 
 ## Production Worker deployment evidence
@@ -61,7 +62,7 @@ The manual Cloudflare deployment workflow on current main supports syncing optio
 - `MAVIS_GSC_REFRESH_TOKEN`
 - `MAVIS_GSC_SITE_URL`
 
-The four Search Console credentials are validated as an all-or-none group. Missing optional secrets are omitted, not deleted from the existing Worker. Values are written to a temporary mode-0600 JSON file and are not printed to logs. This current-main workflow has not yet been exercised by a deployment.
+The four Search Console credentials are validated as an all-or-none group. Missing optional secrets are omitted, not deleted from the existing Worker. Values are written to a temporary mode-0600 JSON file and are not printed to logs. This current-main workflow has not yet been exercised by a deployment. The duplicate legacy workflow is disabled to prevent accidental deployment of the obsolete branch.
 
 ## Remaining release gates
 
