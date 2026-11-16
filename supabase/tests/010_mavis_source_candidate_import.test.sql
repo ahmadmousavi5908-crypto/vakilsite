@@ -77,7 +77,7 @@ select is(
 );
 
 select is(
-  (select origin_type from public.mavis_articles where title = 'A metadata-only legal research source'),
+  (select origin_type from public.mavis_editorial_articles where title = 'A metadata-only legal research source'),
   'metadata_only',
   'imported article is explicitly marked metadata-only'
 );
