@@ -7,9 +7,10 @@ function isValidTimestamp(value) {
     && !Number.isNaN(new Date(value).getTime());
 }
 
-export function encodeMavisArticleCursor(row) {
+export function encodeMavisArticleCursor(row, ordinal = 0) {
   if (!row || !isValidTimestamp(row.updated_at) || !UUID_PATTERN.test(row.id || "")) return null;
-  const payload = JSON.stringify({ updatedAt: row.updated_at, id: row.id.toLowerCase() });
+  const safeOrdinal = Number.isSafeInteger(ordinal) && ordinal >= 0 ? ordinal : 0;
+  const payload = JSON.stringify({ updatedAt: row.updated_at, id: row.id.toLowerCase(), ordinal: safeOrdinal });
   return Buffer.from(payload, "utf8").toString("base64url");
 }
 
@@ -19,7 +20,8 @@ export function decodeMavisArticleCursor(value) {
     const parsed = JSON.parse(Buffer.from(value, "base64url").toString("utf8"));
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
     if (!isValidTimestamp(parsed.updatedAt) || typeof parsed.id !== "string" || !UUID_PATTERN.test(parsed.id)) return null;
-    return { updatedAt: parsed.updatedAt, id: parsed.id.toLowerCase() };
+    const ordinal = Number.isSafeInteger(parsed.ordinal) && parsed.ordinal >= 0 ? parsed.ordinal : 0;
+    return { updatedAt: parsed.updatedAt, id: parsed.id.toLowerCase(), ordinal };
   } catch {
     return null;
   }
