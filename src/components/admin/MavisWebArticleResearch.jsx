@@ -30,6 +30,9 @@ function extractMetadata(content, result) {
   const date = firstMatch(content, [
     /(?:تاریخ انتشار|تاریخ چاپ|published(?: on)?|publication date)\s*[:：-]\s*([^\n]{4,80})/i,
   ], 40);
+  const headings = content.split("\n").map((line) => line.match(/^#{1,3}\\s+(.+)$/)?.[1]).filter(Boolean).map((heading) => normalizeText(heading).slice(0, 120)).slice(0, 8);
+  const wordCount = content.split(/\\s+/).filter(Boolean).length;
+  const hasAbstract = /(?:چکیده|abstract)/i.test(content);
   return {
     title: normalizeText(result.title).slice(0, 300),
     author,
@@ -38,6 +41,9 @@ function extractMetadata(content, result) {
     documentNumber: doi,
     sourceUrl: result.url,
     abstract: limitWords(result.snippet, 25),
+    headings,
+    wordCount,
+    hasAbstract,
     sourceType: "academic",
     relationType: "research_background",
   };
@@ -54,6 +60,7 @@ export default function MavisWebArticleResearch({ onApply }) {
   const [extractingUrl, setExtractingUrl] = useState("");
   const [error, setError] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [extractReport, setExtractReport] = useState(null);
 
   async function search(event) {
     event.preventDefault();
@@ -102,6 +109,7 @@ export default function MavisWebArticleResearch({ onApply }) {
         throw new Error(payload?.error?.message || "استخراج محتوای صفحه انجام نشد.");
       }
       const metadata = extractMetadata(payload.content, result);
+      setExtractReport(metadata);
       onApply(metadata);
       setFeedback("اطلاعات کتاب‌شناختی به فرم مقاله منتقل شد. فیلدهای استخراج‌شده را بازبینی کنید؛ متن کامل منبع به مقاله کپی نشده است.");
     } catch (requestError) {
@@ -129,6 +137,13 @@ export default function MavisWebArticleResearch({ onApply }) {
       </form>
       {error ? <p className={styles.error} role="alert">{error}</p> : null}
       {feedback ? <p className={styles.feedback} role="status">{feedback}</p> : null}
+      {extractReport ? (
+        <div className={styles.extractReport} role="status">
+          <strong>گزارش استخراج صفحه</strong>
+          <span>حدود {extractReport.wordCount.toLocaleString("fa-IR")} واژه از متن قابل‌استخراج · {extractReport.hasAbstract ? "نشانه چکیده پیدا شد" : "چکیده مشخصی شناسایی نشد"}</span>
+          {extractReport.headings.length ? <ul>{extractReport.headings.map((heading, index) => <li key={index}>{heading}</li>)}</ul> : <small>عنوان‌بندی مشخصی از صفحه استخراج نشد.</small>}
+        </div>
+      ) : null}
       {results.length ? (
         <div className={styles.results}>
           <strong>{results.length.toLocaleString("fa-IR")} نتیجه وب</strong>
