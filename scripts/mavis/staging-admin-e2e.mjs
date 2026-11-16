@@ -249,7 +249,7 @@ async function main() {
     const { error: cookieSessionError } = await ssrClient.auth.setSession(authData.session);
     if (cookieSessionError) throw new Error("Unable to prepare an isolated SSR session for Staging runtime checks.");
     const cookieHeader = [...sessionCookies].map(([name, value]) => name + "=" + value).join("; ");
-    assert(cookieHeader.includes("sb-srbwniqhaxwaoepjfizf-auth-token="),
+    assert([...sessionCookies.keys()].some((name) => name.startsWith("sb-srbwniqhaxwaoepjfizf-auth-token")),
       "Supabase SSR session cookie was not created.");
 
     const runtimeHeaders = {
