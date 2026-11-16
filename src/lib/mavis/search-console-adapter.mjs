@@ -312,7 +312,8 @@ export function normalizeSearchConsoleCsv(input, { startDate, endDate, rowLimit 
       ...normalized.coverage,
       mayBeTruncated: rows.length > rowLimit || rows.length >= rowLimit,
       apiCompletenessGuaranteed: false,
+      dateRangeVerified: dimensions.includes("date"),
     },
-    disclaimer: "این گزارش از فایل CSV وارد شده و اتصال زنده به Google Search Console نیست. داده فقط در مرورگر پردازش شده است؛ پوشش و بازه آن به فایل خروجی بستگی دارد.",
+    disclaimer: dimensions.includes("date")\n      ? "این گزارش از فایل CSV وارد شده و اتصال زنده به Google Search Console نیست. داده فقط در مرورگر پردازش شده و ردیف‌های خارج از بازه انتخابی حذف شده‌اند."\n      : "این گزارش از فایل CSV وارد شده و اتصال زنده به Google Search Console نیست. فایل ستون تاریخ ندارد؛ بازه انتخابی از داخل فایل قابل راستی‌آزمایی نیست.",
   };
 }
