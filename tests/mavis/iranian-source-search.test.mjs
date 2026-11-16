@@ -82,7 +82,7 @@ test("no-key fallback searches Qavanin through Browser Run and normalizes offici
     }
   });
   const result = await client.search({ query: "مسئولیت مدنی", group: "official", limit: 5 });
-  assert.match(capturedUrl, /^https:\\/\\/qavanin\\.ir\\//);
+  assert.equal(new URL(capturedUrl).hostname, "qavanin.ir");
   assert.equal(result.ok, true);
   assert.equal(result.provider, "cloudflare_browser_run_qavanin");
   assert.equal(result.results.length, 1);
