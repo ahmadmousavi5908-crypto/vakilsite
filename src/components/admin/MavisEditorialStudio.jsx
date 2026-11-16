@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import MavisWebArticleResearch from "./MavisWebArticleResearch";
 import { saveEditorialDraft, publishEditorialArticle } from "../../app/admin/mavis/editorial/actions";
 import { formatEditorialBody, formatEditorialSources, serializeEditorialCsv } from "../../lib/mavis/editorial-content-core.mjs";
 import styles from "./MavisEditorialStudio.module.css";
@@ -24,6 +25,11 @@ function toForm(article) {
     checklist: Array.isArray(article.checklist) ? article.checklist.join("\n") : "",
     warning: article.warning || "",
     sources: formatEditorialSources(article.sources),
+    sourceTitle: article.sourceMetadata?.title || "",
+    sourceAuthor: article.sourceMetadata?.author || "",
+    sourcePublication: article.sourceMetadata?.publication || "",
+    sourcePublicationDate: article.sourceMetadata?.publicationDate || "",
+    sourceDoi: article.sourceMetadata?.doi || "",
     seoTitle: article.seoTitle || "",
     seoDescription: article.seoDescription || article.excerpt || "",
     keywords: Array.isArray(article.keywords) ? article.keywords.join(", ") : "",
@@ -49,6 +55,8 @@ export default function MavisEditorialStudio({ articles }) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("updated");
   const [preview, setPreview] = useState(false);
+  const [page, setPage] = useState(1);
+  const pageSize = 25;
 
   const filtered = useMemo(() => {
     const rows = articles.filter((article) => {
@@ -61,7 +69,8 @@ export default function MavisEditorialStudio({ articles }) {
       const keywordText = Array.isArray(article.keywords) ? article.keywords.join(" ") : "";
       const haystack = [
         article.title, article.slug, article.category, article.excerpt, article.intro,
-        sectionText, sourceText, keywordText,
+        sectionText, sourceText, keywordText, article.authorName, article.reviewerName,
+        article.sourceMetadata?.title, article.sourceMetadata?.author, article.sourceMetadata?.publication, article.sourceMetadata?.doi,
       ].join(" ").toLowerCase();
       return haystack.includes(search.trim().toLowerCase()) &&
         (statusFilter === "all" || article.status === statusFilter);
@@ -72,12 +81,57 @@ export default function MavisEditorialStudio({ articles }) {
     return rows;
   }, [articles, search, statusFilter, sortOrder]);
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const pageRows = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const selected = articles.find((article) => article.slug === selectedSlug) || null;
   const update = (key) => (event) => setForm((current) => ({ ...current, [key]: event.target.value }));
 
   function selectArticle(article) {
     setSelectedSlug(article.slug);
     setForm(toForm(article));
+    setPreview(false);
+    setPage(1);
+  }
+
+  function applyWebResearch(metadata) {
+    const summary = metadata.abstract && metadata.abstract.length >= 30
+      ? metadata.abstract
+      : "خلاصه کوتاه منبع در نتیجه جست‌وجو موجود نبود؛ پس از مطالعه منبع اصلی تکمیل شود.";
+    const sourceLabel = [
+      metadata.title,
+      metadata.author ? "نویسنده: " + metadata.author : "",
+      metadata.publication ? "نشریه: " + metadata.publication : "",
+      metadata.publicationDate ? "تاریخ: " + metadata.publicationDate : "",
+      metadata.documentNumber ? "DOI: " + metadata.documentNumber : "",
+    ].filter(Boolean).join("؛ ");
+
+    setForm((current) => {
+      const sourceLine = (sourceLabel || metadata.title || "منبع پژوهشی") + " | " + metadata.sourceUrl;
+      const sourceLines = String(current.sources || "").split("\n").map((line) => line.trim()).filter(Boolean);
+      const nextSources = sourceLines.some((line) => line.includes(metadata.sourceUrl))
+        ? current.sources
+        : [...sourceLines, sourceLine].join("\n");
+      return {
+        ...current,
+        title: metadata.title || current.title,
+        category: current.category || "پژوهش حقوقی",
+        readTime: current.readTime || "۶ دقیقه",
+        excerpt: summary,
+        intro: "این پیش‌نویس بر پایه اطلاعات کتاب‌شناختی منبع وب ایجاد شده است. متن تحلیلی باید پس از مطالعه منبع و با نگارش مستقل تکمیل و مستند شود.",
+        bodyMarkdown: current.bodyMarkdown || "## معرفی و محورهای پژوهش\nاین بخش پس از مطالعه منبع اصلی و بررسی مستندات حقوقی، با نگارش مستقل تکمیل شود.",
+        sources: nextSources,
+        seoTitle: metadata.title || current.seoTitle,
+        seoDescription: summary,
+        authorName: metadata.author || current.authorName,
+        sourceTitle: metadata.title || "",
+        sourceAuthor: metadata.author || "",
+        sourcePublication: metadata.publication || "",
+        sourcePublicationDate: metadata.publicationDate || "",
+        sourceDoi: metadata.documentNumber || "",
+        legalApproved: false,
+      };
+    });
     setPreview(false);
   }
 
@@ -109,21 +163,24 @@ export default function MavisEditorialStudio({ articles }) {
     setSelectedSlug("");
     setForm(toForm(fresh));
     setPreview(false);
+    setPage(1);
   }
 
   return (
     <div className={styles.workspace} dir="rtl">
+      <details className={styles.libraryAccordion} open>
+      <summary><span>بانک مقالات و محتوا</span><small>{filtered.length.toLocaleString("fa-IR")} مقاله · نمایش ۲۵ ردیف در هر صفحه</small></summary>
       <section className={styles.library} id="editorial-table">
         <div className={styles.sectionHeading}>
           <div><span className={styles.eyebrow}>CONTENT INVENTORY</span><h2>بانک مقالات و محتوا</h2><p>نمای جدولی، قابل جست‌وجو و مرتب‌سازی؛ هر ردیف یک مقاله مستقل است.</p></div>
           <div className={styles.headingActions}><a href="/admin/mavis#growth-intelligence">هوشمندی رشد و Search Console</a><button type="button" onClick={createArticle}>＋ مقاله جدید</button></div>
         </div>
         <div className={styles.toolbar}>
-          <input aria-label="جست‌وجوی مقاله" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="جست‌وجو در عنوان، متن، منابع، کلیدواژه و نشانی..." />
-          <select aria-label="فیلتر وضعیت" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
+          <input aria-label="جست‌وجوی مقاله" value={search} onChange={(event) => { setSearch(event.target.value); setPage(1); }} placeholder="جست‌وجو در عنوان، متن، منابع، کلیدواژه و نشانی..." />
+          <select aria-label="فیلتر وضعیت" value={statusFilter} onChange={(event) => { setStatusFilter(event.target.value); setPage(1); }}>
             <option value="all">همه وضعیت‌ها</option><option value="site_published">محتوای فعلی سایت</option><option value="draft">پیش‌نویس</option><option value="published">منتشرشده در CMS</option><option value="archived">بایگانی</option>
           </select>
-          <select aria-label="مرتب‌سازی مقالات" value={sortOrder} onChange={(event) => setSortOrder(event.target.value)}>
+          <select aria-label="مرتب‌سازی مقالات" value={sortOrder} onChange={(event) => { setSortOrder(event.target.value); setPage(1); }}>
             <option value="updated">آخرین ویرایش</option><option value="title">عنوان مقاله</option>
           </select>
           <button type="button" className={styles.exportButton} onClick={exportCsv}>خروجی CSV</button>
@@ -131,10 +188,11 @@ export default function MavisEditorialStudio({ articles }) {
         </div>
         <div className={styles.tableWrap}>
           <table>
-            <thead><tr><th>عنوان مقاله</th><th>دسته‌بندی</th><th>وضعیت</th><th>نشانی</th><th>آخرین ویرایش</th><th>عملیات</th></tr></thead>
+            <thead><tr><th>ردیف</th><th>عنوان مقاله</th><th>دسته‌بندی</th><th>وضعیت</th><th>نشانی</th><th>آخرین ویرایش</th><th>عملیات</th></tr></thead>
             <tbody>
-              {filtered.map((article) => (
+              {pageRows.map((article, index) => (
                 <tr key={article.slug} data-selected={article.slug === selectedSlug}>
+                  <td className={styles.rowNumber}>{((currentPage - 1) * pageSize + index + 1).toLocaleString("fa-IR")}</td>
                   <td><strong>{article.title || "مقاله بدون عنوان"}</strong><small>{article.source === "site" ? "نسخه فعلی سایت" : article.hasPublishedSnapshot ? "دارای نسخه منتشرشده" : "رکورد تحریریه"}</small></td>
                   <td>{article.category || "—"}</td>
                   <td><span className={styles.status} data-status={article.status}>{article.hasUnpublishedChanges ? "منتشرشده · پیش‌نویس جدید" : (statusLabels[article.status] || article.status)}</span></td>
@@ -147,17 +205,27 @@ export default function MavisEditorialStudio({ articles }) {
                     </> : <span className={styles.draftRead}>هنوز منتشر نشده</span>}</td>
                 </tr>
               ))}
-              {!filtered.length ? <tr><td colSpan="6" className={styles.empty}>مقاله‌ای با این مشخصات پیدا نشد.</td></tr> : null}
+              {!filtered.length ? <tr><td colSpan="7" className={styles.empty}>مقاله‌ای با این مشخصات پیدا نشد.</td></tr> : null}
             </tbody>
           </table>
         </div>
+              {filtered.length > pageSize ? (
+          <nav className={styles.pagination} aria-label="صفحه‌بندی بانک مقالات">
+            <button type="button" disabled={currentPage <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>قبلی</button>
+            <span>ردیف {(filtered.length ? (currentPage - 1) * pageSize + 1 : 0).toLocaleString("fa-IR")} تا {Math.min(currentPage * pageSize, filtered.length).toLocaleString("fa-IR")} از {filtered.length.toLocaleString("fa-IR")} · صفحه {currentPage.toLocaleString("fa-IR")} از {totalPages.toLocaleString("fa-IR")}</span>
+            <button type="button" disabled={currentPage >= totalPages} onClick={() => setPage((value) => Math.min(totalPages, value + 1))}>بعدی</button>
+          </nav>
+        ) : null}
       </section>
+      </details>
 
       <section className={styles.editor} id="article-editor">
         <div className={styles.sectionHeading}>
           <div><span className={styles.eyebrow}>EDITOR & REVIEW</span><h2>{selected ? "ویرایش مقاله" : "ساخت مقاله جدید"}</h2><p>متن را تغییر بده، پیش‌نمایش را بخوان و پیش از انتشار، بازبینی را ثبت کن.</p></div>
           <button type="button" className={styles.previewToggle} onClick={() => setPreview((value) => !value)}>{preview ? "بازگشت به ویرایش" : "پیش‌نمایش خوانا"}</button>
         </div>
+
+        {!preview ? <MavisWebArticleResearch onApply={applyWebResearch} /> : null}
 
         {preview ? (
           <article className={styles.preview}>
@@ -181,6 +249,16 @@ export default function MavisEditorialStudio({ articles }) {
               <label className={styles.wide}>چک‌لیست (هر مورد در یک خط)<textarea name="checklist" value={form.checklist} onChange={update("checklist")} rows="4" maxLength={5000} /></label>
               <label className={styles.wide}>هشدار و توضیح حقوقی<textarea name="warning" value={form.warning} onChange={update("warning")} rows="3" maxLength={3000} /></label>
               <label className={styles.wide}>منابع (هر خط: عنوان | نشانی HTTPS)<textarea name="sources" value={form.sources} onChange={update("sources")} rows="4" maxLength={12000} placeholder={"روزنامه رسمی | https://...\nپایگاه قوانین | https://..."} /></label>
+              <details className={`${styles.sourceMetadata} ${styles.wide}`} open={Boolean(form.sourceTitle || form.sourceAuthor || form.sourcePublication || form.sourceDoi)}>
+                <summary>فراداده کتاب‌شناختی منبع اصلی (قابل ویرایش)</summary>
+                <div className={styles.sourceMetadataGrid}>
+                  <label>عنوان منبع<input name="source_title" value={form.sourceTitle} onChange={update("sourceTitle")} maxLength={300} /></label>
+                  <label>نویسنده منبع<input name="source_author" value={form.sourceAuthor} onChange={update("sourceAuthor")} maxLength={180} /></label>
+                  <label>نشریه یا پایگاه انتشار<input name="source_publication" value={form.sourcePublication} onChange={update("sourcePublication")} maxLength={240} /></label>
+                  <label>تاریخ انتشار<input name="source_publication_date" value={form.sourcePublicationDate} onChange={update("sourcePublicationDate")} maxLength={60} /></label>
+                  <label className={styles.wide}>شناسه DOI یا شماره سند<input name="source_doi" value={form.sourceDoi} onChange={update("sourceDoi")} maxLength={200} dir="ltr" /></label>
+                </div>
+              </details>
               <label className={styles.wide}>عنوان سئو<input name="seo_title" value={form.seoTitle} onChange={update("seoTitle")} maxLength={300} /></label>
               <label className={styles.wide}>توضیحات متا<textarea name="seo_description" value={form.seoDescription} onChange={update("seoDescription")} rows="2" maxLength={500} /></label>
               <label className={styles.wide}>کلیدواژه‌ها (با ویرگول جدا کن)<input name="keywords" value={form.keywords} onChange={update("keywords")} maxLength={1000} /></label>
