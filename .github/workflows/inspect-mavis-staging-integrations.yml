@@ -49,20 +49,21 @@ jobs:
           const entries = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/mavis-worker-secrets.json", "utf8"));
           const names = new Set(entries.map((entry) => entry.name));
           const groups = {
-            "Google Search Console OAuth": ["MAVIS_GSC_CLIENT_ID", "MAVIS_GSC_CLIENT_SECRET", "MAVIS_GSC_TOKEN_ENCRYPTION_KEY", "MAVIS_GSC_SITE_URL"],
+            "Google Search Console OAuth": ["MAVIS_GSC_CLIENT_ID", "MAVIS_GSC_CLIENT_SECRET", "MAVIS_GSC_REFRESH_TOKEN", "MAVIS_GSC_SITE_URL"],
             "Iranian legal source search": ["MAVIS_IRAN_SOURCE_SEARCH_API_KEY"],
-            "Competitor growth research": ["MAVIS_GROWTH_SEARCH_API_KEY", "MAVIS_IRAN_SOURCE_SEARCH_API_KEY"],
-            "Editorial AI": ["MAVIS_OPENAI_API_KEY", "OPENAI_API_KEY"]
+            "Editorial AI": ["MAVIS_OPENAI_API_KEY"],
+            "Local growth audit": []
           };
           for (const [label, required] of Object.entries(groups)) {
             const present = required.filter((name) => names.has(name));
-            const complete = label === "Competitor growth research"
-              ? present.length > 0
-              : label === "Editorial AI"
-                ? present.length > 0
-                : present.length === required.length;
-            console.log(`${complete ? "CONFIGURED" : "MISSING"}: ${label} (${present.length}/${required.length} candidate secrets present)`);
+            const status = required.length === 0
+              ? "LOCAL_ONLY"
+              : present.length === required.length
+                ? "CONFIGURED"
+                : "MISSING";
+            console.log(`${status}: ${label} (${present.length}/${required.length} candidate secrets present)`);
           }
+          console.log("Growth audit currently uses deterministic local content analysis; no external competitor-search secret is required.");
           console.log("Secret values were not requested, read, or printed.");
           NODE
 
