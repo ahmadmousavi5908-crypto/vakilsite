@@ -692,6 +692,8 @@ export async function generateMavisEditorialDraft(formData) {
     const messages = {
       MAVIS_AI_INVALID_INPUT: result.message || "برای تولید پیش‌نویس، موضوع یا عنوان مقاله را وارد کنید.",
       MAVIS_AI_NETWORK_ERROR: "ارتباط با سرویس مدل برقرار نشد.",
+      MAVIS_AI_TIMEOUT: "پاسخ سرویس مدل بیش از زمان مجاز طول کشید؛ دوباره تلاش کنید.",
+      MAVIS_AI_RESPONSE_TOO_LARGE: "پاسخ سرویس مدل از محدوده امن بزرگ‌تر بود و پذیرفته نشد.",
       MAVIS_AI_PROVIDER_ERROR: "سرویس مدل درخواست را نپذیرفت. کلید و دسترسی API را بررسی کنید.",
       MAVIS_AI_INCOMPLETE_RESPONSE: "پاسخ مدل کامل نشد؛ دوباره تلاش کنید.",
       MAVIS_AI_REFUSED: "مدل به این درخواست پاسخ نداد.",
