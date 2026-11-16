@@ -51,7 +51,7 @@ export default function MavisIranianSourceSearch() {
       const payload = await response.json().catch(() => null);
       if (!response.ok) throw new Error(payload?.error?.message || "جست‌وجو انجام نشد.");
       setResults(Array.isArray(payload?.results) ? payload.results : []);
-      setNotice(payload?.results?.length ? "نتایج فقط از دامنه‌های تأییدشده ایرانی دریافت شده‌اند." : "در منابع انتخاب‌شده نتیجه‌ای پیدا نشد.");
+      setNotice(payload?.results?.length ? "نتایج فقط از دامنه‌های منتخب ایرانی دریافت شده‌اند." : "در منابع انتخاب‌شده نتیجه‌ای پیدا نشد.");
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "خطای ناشناخته در جست‌وجو.");
     } finally {
@@ -131,7 +131,7 @@ export default function MavisIranianSourceSearch() {
           <select id="mavis-iran-source-group" value={group} onChange={(event) => setGroup(event.target.value)}>
             {GROUPS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
           </select>
-          <span>جست‌وجو فقط در فهرست دامنه‌های مجاز انجام می‌شود.</span>
+          <span>جست‌وجو فقط در دامنه‌های منتخب انجام می‌شود؛ اطلاعات محرمانه پرونده یا موکل را وارد نکنید.</span>
         </div>
       </form>
 
