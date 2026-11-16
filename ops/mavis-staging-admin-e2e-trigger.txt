@@ -1,1 +1,1 @@
-Retry authenticated Staging E2E with the email identity provider_id set to the Supabase Auth user UUID as required by the Auth schema.
+Retry the authenticated Staging lifecycle using Supabase Auth's supported signup flow, then promote the isolated temporary profile to admin and clean it up afterward.
