@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { articles } from "../../../../data/articles";
 import MavisArticleCatalog from "../../../../components/admin/MavisArticleCatalog";
+import MavisArticleEditor from "../../../../components/admin/MavisArticleEditor";
 import MavisDraftList from "../../../../components/admin/MavisDraftList";
 import MavisReviewQueue from "../../../../components/admin/MavisReviewQueue";
 import MavisPublicationQueue from "../../../../components/admin/MavisPublicationQueue";
@@ -44,7 +45,7 @@ export default async function MavisArticlesPage({ searchParams }) {
     try {
       const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) => {
         let query = table
-          .select("id, slug, title, category, status, current_version, updated_at")
+          .select("id, slug, title, category, content, status, current_version, updated_at")
           .in("status", ["draft", "changes_requested", "needs_update"])
           .order("updated_at", { ascending: false })
           .order("id", { ascending: false })
@@ -170,16 +171,17 @@ export default async function MavisArticlesPage({ searchParams }) {
             </div>
             <div className="admin-status"><i /> دسترسی مدیر تأیید شده</div>
           </section>
-          <section className="admin-help">
-            <strong>موتور جست‌وجوی منابع حقوقی ایرانی</strong>
-            <p>جست‌وجو فقط در ده منبع منتخب ایرانی انجام می‌شود. نتیجه انتخاب‌شده به‌عنوان منبع به پیش‌نویس نسخه‌دار متصل می‌شود؛ انتشار همچنان فقط پس از بازبینی و تأیید مدیر انجام خواهد شد.</p>
-            <Link href="/admin/mavis/articles/new">جست‌وجوی منابع و ساخت پیش‌نویس ←</Link>
-          </section>
-          <MavisReviewQueue rows={reviewRows} error={reviewError} />
-          <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
-          <MavisArchiveQueue rows={archivedRows} error={archiveError} />
-          <MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} />
-          <MavisArticleCatalog articles={articles} />
+          <details className="admin-help mavis-collapsible">
+            <summary><strong>＋ ایجاد مقاله و جست‌وجوی منابع حقوقی</strong><span>برای خلوت‌ماندن پنل، فرم فقط هنگام نیاز باز می‌شود.</span></summary>
+            <MavisArticleEditor aiEnabled={Boolean(process.env.MAVIS_OPENAI_API_KEY || process.env.OPENAI_API_KEY)} />
+            <p>نتیجه جست‌وجو پس از انتخاب به پیش‌نویس متصل می‌شود؛ انتشار فقط پس از بازبینی و تأیید مدیر انجام خواهد شد.</p>
+            <Link href="/admin/mavis/articles/new">بازکردن تحریریه در صفحه مستقل ←</Link>
+          </details>
+          <details className="admin-help mavis-collapsible"><summary><strong>صف بازبینی مدیر</strong><span>نسخه‌هایی که برای بررسی ارسال شده‌اند</span></summary><MavisReviewQueue rows={reviewRows} error={reviewError} /></details>
+          <details className="admin-help mavis-collapsible"><summary><strong>انتشار و مدیریت وضعیت عمومی</strong><span>تأیید، انتشار و لغو انتشار</span></summary><MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} /></details>
+          <details className="admin-help mavis-collapsible"><summary><strong>آرشیو و بازیابی مقالات</strong><span>مقالات حذف‌شده به‌صورت امن</span></summary><MavisArchiveQueue rows={archivedRows} error={archiveError} /></details>
+          <details className="admin-help mavis-collapsible"><summary><strong>پیش‌نویس‌ها و کاربرگ مقالات</strong><span>جست‌وجو، ویرایش و انتقال به آرشیو</span></summary><MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} /></details>
+          <details className="admin-help mavis-collapsible"><summary><strong>مقالات فعلی سایت</strong><span>فهرست محتوای ثابت موجود</span></summary><MavisArticleCatalog articles={articles} /></details>
           <section className="admin-help">
             <strong>وضعیت این مرحله</strong>
             <p>جست‌وجوی منابع ایرانی، اتصال منبع به پیش‌نویس نسخه‌دار و گردش‌کار تأیید مدیر فعال است. پیش‌نویس پس از ذخیره نسخه مشخص می‌تواند وارد صف بازبینی شود. تصمیم بازبین به همان نسخه متصل است؛ انتشار و لغو انتشار نیز عملیات جداگانه مدیر و نسخه‌محور هستند. صفحه عمومی فعلی تا تکمیل مسیر دیتابیسی بدون تغییر باقی می‌ماند. آرشیو و بازگردانی نسخه‌ها از فهرست آرشیو مدیریت می‌شود.</p>
@@ -190,3 +192,4 @@ export default async function MavisArticlesPage({ searchParams }) {
     </div>
   );
 }
+
