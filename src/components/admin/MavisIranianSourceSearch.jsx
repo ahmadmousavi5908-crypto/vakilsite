@@ -20,7 +20,7 @@ const AUTHORITY_LABELS = {
   secondary_reference: "مرجع ثانویه، نه مستند نهایی",
 };
 
-export default function MavisIranianSourceSearch() {
+export default function MavisIranianSourceSearch({ onImport }) {
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState("all");
   const [results, setResults] = useState([]);
@@ -172,6 +172,7 @@ export default function MavisIranianSourceSearch() {
                 <label className={styles.full}>چکیده / توضیح<textarea rows="4" value={metadata.abstract} onChange={(event) => updateField("abstract", event.target.value)} /></label>
                 <label className={styles.full}>پیوند منبع<input value={metadata.sourceUrl} onChange={(event) => updateField("sourceUrl", event.target.value)} dir="ltr" /></label>
               </div>
+              {typeof onImport === "function" ? <button className={styles.importButton} type="button" onClick={() => onImport(metadata)}>ساخت پیش‌نویس جدید از این منبع</button> : null}
               <button className={styles.copyButton} type="button" onClick={copyMetadata}>کپی مشخصات برای تحریریه</button>
               <p className={styles.disclaimer}>نوع سند، تاریخ و اعتبار حقوقی صرفاً با انتخاب یا تأیید مدیر ثبت می‌شود. نتیجه جست‌وجو به‌تنهایی اثبات‌کننده اعتبار قانون یا رأی نیست.</p>
             </aside>
