@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { requireAdmin } from "../../../../../../lib/supabase/admin";
 import MavisArticleEditor from "../../../../../../components/admin/MavisArticleEditor";
+import { queryMavisEditorialArticles } from "../../../../../../lib/mavis/editorial-table.mjs";
 import { signOut } from "../../../../../admin/actions";
 
 export const metadata = {
@@ -29,12 +30,13 @@ export default async function EditMavisArticlePage({ params }) {
 
   let article;
   try {
-    const { data, error } = await access.supabase
-      .from("mavis_editorial_articles")
-      .select("id, slug, title, author_name, excerpt, category, tags, content, content_schema_version, seo_title, seo_description, status, current_version, updated_at")
-      .eq("id", id)
-      .in("status", ["draft", "changes_requested", "needs_update"])
-      .maybeSingle();
+    const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) =>
+      table
+        .select("id, slug, title, author_name, excerpt, category, tags, content, content_schema_version, seo_title, seo_description, status, current_version, updated_at")
+        .eq("id", id)
+        .in("status", ["draft", "changes_requested", "needs_update"])
+        .maybeSingle()
+    );
 
     if (error) {
       if (error.code === "42P01" || error.code === "PGRST205") {
