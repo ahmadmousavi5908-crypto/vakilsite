@@ -69,13 +69,12 @@ export async function POST(request) {
     return json({ error: { code: tooLarge ? "PAYLOAD_TOO_LARGE" : "INVALID_JSON", message: tooLarge ? "حجم درخواست بیش از حد مجاز است." : "ساختار درخواست معتبر نیست." } }, tooLarge ? 413 : 400);
   }
   if (!payload || typeof payload !== "object" || Array.isArray(payload)
-    || Object.keys(payload).some((key) => !["url", "query"].includes(key))) {
+    || Object.keys(payload).some((key) => key !== "url")) {
     return json({ error: { code: "INVALID_REQUEST", message: "ساختار درخواست معتبر نیست." } }, 400);
   }
 
   const url = typeof payload.url === "string" ? payload.url.trim() : "";
-  const query = typeof payload.query === "string" ? payload.query.trim() : "";
-  if (url.length > 2048 || query.length > 180) {
+  if (url.length > 2048) {
     return json({ error: { code: "INVALID_REQUEST", message: "نشانی یا عبارت جست‌وجو بیش از حد مجاز است." } }, 400);
   }
   try {
@@ -101,7 +100,7 @@ export async function POST(request) {
   }
 
   try {
-    const result = await extractClient.extract({ url, query });
+    const result = await extractClient.extract({ url });
     if (!result?.ok) return json({ error: { code: "EXTRACTION_UNAVAILABLE", message: "متن قابل‌استخراجی از این صفحه دریافت نشد." } }, 422);
     return json(result, 200);
   } catch {
