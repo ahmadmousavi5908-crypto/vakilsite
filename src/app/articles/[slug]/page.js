@@ -1,26 +1,28 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { articles } from "../../../data/articles";
+import { getPublicArticleBySlug } from "../../../lib/mavis/published-editorial";
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
 
-export function generateStaticParams() {
-  return articles.map((article) => ({ slug: article.slug }));
-}
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const article = await getPublicArticleBySlug(slug);
   if (!article) return { title: "مطلب پیدا نشد" };
   const canonicalPath = "/articles/" + article.slug;
   return {
-    title: article.metaTitle || article.title,
-    description: article.excerpt,
+    title: article.seoTitle || article.metaTitle || article.title,
+    description: article.seoDescription || article.excerpt,
+    ...(article.isIndexable === false ? { robots: { index: false, follow: false } } : {}),
     alternates: { canonical: canonicalPath },
     openGraph: {
       type: "article",
       title: article.title,
-      description: article.excerpt,
+      description: article.seoDescription || article.excerpt,
+      ...(article.coverImageUrl ? { images: [article.coverImageUrl] } : {}),
       locale: "fa_IR",
       url: canonicalPath,
     },
@@ -29,7 +31,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ArticleDetailPage({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const article = await getPublicArticleBySlug(slug);
   if (!article) notFound();
 
   const siteUrl = getSiteUrl();
@@ -47,6 +49,10 @@ export default async function ArticleDetailPage({ params }) {
           "@id": articleUrl,
         },
         url: articleUrl,
+        ...(article.publishedAt ? { datePublished: article.publishedAt } : {}),
+        ...(article.updatedAt ? { dateModified: article.updatedAt } : {}),
+        ...(article.authorName ? { author: { "@type": "Person", name: article.authorName } } : {}),
+        ...(article.coverImageUrl ? { image: article.coverImageUrl } : {}),
       }
     : null;
 
@@ -65,11 +71,12 @@ export default async function ArticleDetailPage({ params }) {
           <span className="section-kicker">راهنمای حقوقی · قوانین ایران</span>
           <h1>{article.title}</h1>
           <p>{article.excerpt}</p>
-          <div className="article-meta article-detail-meta"><span>{article.readTime} مطالعه</span><span>ویژه قوانین ایران</span></div>
+          <div className="article-meta article-detail-meta"><span>{article.readTime} مطالعه</span>{article.authorName ? <span>نویسنده: {article.authorName}</span> : null}<span>ویژه قوانین ایران</span></div>
         </div>
       </section>
       <div className="container article-detail-layout">
         <article className="article-body">
+          {article.coverImageUrl ? <figure className="article-cover-image"><img src={article.coverImageUrl} alt={article.coverImageAlt || article.title} loading="lazy" decoding="async" /><figcaption>{article.coverImageAlt || article.title}</figcaption></figure> : null}
           <p className="article-intro">{article.intro}</p>
           {article.sections.map((section, index) => (
             <section className="article-body-section" key={section.heading}>
@@ -82,6 +89,18 @@ export default async function ArticleDetailPage({ params }) {
             <ul>{article.checklist.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
           </div>
           <div className="article-legal-note"><b>نکته مهم</b><p>{article.warning}</p></div>
+          {article.sourceMetadata && Object.values(article.sourceMetadata).some(Boolean) ? (
+            <section className="article-sources">
+              <h2>مشخصات انتشار و سند</h2>
+              <ul>
+                {article.sourceMetadata.publication ? <li>نشریه / پایگاه: {article.sourceMetadata.publication}</li> : null}
+                {article.sourceMetadata.publicationDate ? <li>تاریخ انتشار: {article.sourceMetadata.publicationDate}</li> : null}
+                {article.sourceMetadata.documentNumber ? <li>شماره سند / رأی: {article.sourceMetadata.documentNumber}</li> : null}
+                {article.sourceMetadata.issuingAuthority ? <li>مرجع صادرکننده: {article.sourceMetadata.issuingAuthority}</li> : null}
+                {article.sourceMetadata.documentType ? <li>نوع سند: {article.sourceMetadata.documentType}</li> : null}
+              </ul>
+            </section>
+          ) : null}
           <section className="article-sources">
             <h2>مستندات و منابع قانونی</h2>
             <p>برای مطالعه متن قوانین و تطبیق آخرین اصلاحات، از منابع زیر استفاده کنید:</p>
