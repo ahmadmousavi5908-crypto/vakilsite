@@ -1,7 +1,5 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
-
 import { useMemo, useState } from "react";
 import MavisIranianSourceSearch from "./MavisIranianSourceSearch";
 import { saveEditorialDraft, publishEditorialArticle } from "../../app/admin/mavis/editorial/actions";
