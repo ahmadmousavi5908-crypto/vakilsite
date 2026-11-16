@@ -1,3 +1,0 @@
-APPROVED: Apply Supabase migration 019 to the isolated vakilsite-staging project only.
-Production project and public publication are explicitly excluded.
-Approval scope: staging database schema migration only.
