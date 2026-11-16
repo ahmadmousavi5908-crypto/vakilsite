@@ -148,7 +148,6 @@ test("Iranian legal-news results normalize as secondary news sources for article
   const normalized = normalizeMavisManualSourceInput({
     title: "گزارش حقوقی اختبار",
     sourceUrl: "https://ekhtebar.ir/news/123",
-    sourceType: "news",
     sourceAuthority: "legal_news",
     sourceGroup: "news",
     provider: "tavily",
