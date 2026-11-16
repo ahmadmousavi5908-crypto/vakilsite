@@ -114,20 +114,36 @@ export default function MavisEditorialStudio({ articles }) {
 
   function importSource(source) {
     const sourceLine = (source.title || source.publication || "منبع انتخاب‌شده") + " | " + source.sourceUrl;
-    setForm((current) => ({
-      ...current,
-      title: current.title || source.title || "",
-      excerpt: current.excerpt || String(source.abstract || "").slice(0, 1200),
-      intro: current.intro || String(source.abstract || "").slice(0, 4000),
-      sources: [current.sources, sourceLine].filter(Boolean).join("\n"),
-      publication: source.publication || current.publication,
-      publicationDate: source.publicationDate || current.publicationDate,
-      documentNumber: source.documentNumber || current.documentNumber,
-      issuingAuthority: source.issuingAuthority || current.issuingAuthority,
-      documentType: source.documentType || current.documentType,
-    }));
+    const fresh = toForm({
+      title: "",
+      slug: "",
+      category: "",
+      readTime: "۶ دقیقه",
+      excerpt: "",
+      intro: "",
+      sections: [],
+      checklist: [],
+      warning: "",
+      sources: [],
+      keywords: [],
+      authorName: "سید احمد موسوی",
+      sourceMetadata: {},
+    });
+    setSelectedSlug("");
+    setForm({
+      ...fresh,
+      title: source.title || "",
+      excerpt: String(source.abstract || "").slice(0, 1200),
+      intro: String(source.abstract || "").slice(0, 4000),
+      sources: sourceLine,
+      publication: source.publication || "",
+      publicationDate: source.publicationDate || "",
+      documentNumber: source.documentNumber || "",
+      issuingAuthority: source.issuingAuthority || "",
+      documentType: source.documentType || "",
+    });
     setPreview(false);
-    setNotice("مشخصات منبع به فیلدهای تحریریه منتقل شد.");
+    setNotice("پیش‌نویس جدید از منبع انتخاب‌شده ساخته شد؛ نشانی مقاله را تکمیل و ذخیره کنید.");
   }
 
   function createArticle() {
