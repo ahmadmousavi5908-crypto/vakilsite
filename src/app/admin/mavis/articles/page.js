@@ -8,6 +8,7 @@ import MavisSourceCandidateQueue from "../../../../components/admin/MavisSourceC
 import MavisReviewQueue from "../../../../components/admin/MavisReviewQueue";
 import MavisPublicationQueue from "../../../../components/admin/MavisPublicationQueue";
 import MavisArchiveQueue from "../../../../components/admin/MavisArchiveQueue";
+import MavisArticlesAccordion from "../../../../components/admin/MavisArticlesAccordion";
 import { decodeMavisArticleCursor, encodeMavisArticleCursor } from "../../../../lib/mavis/editorial-cursor.mjs";
 import { queryMavisEditorialArticles } from "../../../../lib/mavis/editorial-table.mjs";
 import { requireAdmin } from "../../../../lib/supabase/admin";
@@ -35,6 +36,10 @@ export default async function MavisArticlesPage({ searchParams }) {
 
   const params = await searchParams;
   const cursorValue = typeof params?.cursor === "string" ? params.cursor : "";
+  const searchQuery = typeof params?.q === "string" ? params.q.trim().slice(0, 100) : "";
+  const allowedStatuses = ["all", "draft", "changes_requested", "needs_update", "in_review", "approved", "published", "archived"];
+  const requestedStatus = typeof params?.status === "string" ? params.status : "all";
+  const articleStatus = allowedStatuses.includes(requestedStatus) ? requestedStatus : "all";
   const cursor = decodeMavisArticleCursor(cursorValue);
   let draftRows = [];
   let nextCursor = null;
@@ -46,12 +51,19 @@ export default async function MavisArticlesPage({ searchParams }) {
     try {
       const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) => {
         let query = table
-          .select("id, slug, title, category, status, current_version, updated_at")
-          .in("status", ["draft", "changes_requested", "needs_update"])
+          .select("id, slug, title, author_name, category, status, current_version, updated_at")
           .order("updated_at", { ascending: false })
           .order("id", { ascending: false })
           .limit(26);
 
+        if (articleStatus !== "all") query = query.eq("status", articleStatus);
+        if (searchQuery) {
+          const term = searchQuery.replace(/[%,_()]/g, " ").replace(/\\s+/g, " ").trim();
+          if (term) {
+            const pattern = `%${term}%`;
+            query = query.or(`title.ilike.${pattern},slug.ilike.${pattern},category.ilike.${pattern},author_name.ilike.${pattern}`);
+          }
+        }
         if (cursor) {
           query = query.or(`updated_at.lt.${cursor.updatedAt},and(updated_at.eq.${cursor.updatedAt},id.lt.${cursor.id})`);
         }
@@ -66,7 +78,7 @@ export default async function MavisArticlesPage({ searchParams }) {
         const rows = Array.isArray(data) ? data : [];
         if (rows.length > 25) {
           const lastVisible = rows[24];
-          nextCursor = encodeMavisArticleCursor(lastVisible);
+          nextCursor = encodeMavisArticleCursor(lastVisible, (cursor?.ordinal || 0) + 25);
           draftRows = rows.slice(0, 25);
         } else {
           draftRows = rows;
@@ -215,13 +227,21 @@ export default async function MavisArticlesPage({ searchParams }) {
             </div>
             <div className="admin-status"><i /> دسترسی مدیر تأیید شده</div>
           </section>
-          <MavisSourceDiscovery />
-          <MavisSourceCandidateQueue rows={candidateRows} nextCursor={nextCandidateCursor} stateFilter={candidateState} error={candidateError} />
-          <MavisReviewQueue rows={reviewRows} error={reviewError} />
-          <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
-          <MavisArchiveQueue rows={archivedRows} error={archiveError} />
-          <MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} />
-          <MavisArticleCatalog articles={articles} />
+          <MavisArticlesAccordion>
+            <MavisSourceDiscovery />
+            <MavisSourceCandidateQueue rows={candidateRows} nextCursor={nextCandidateCursor} stateFilter={candidateState} error={candidateError} />
+            <MavisReviewQueue rows={reviewRows} error={reviewError} />
+            <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
+            <MavisArchiveQueue rows={archivedRows} error={archiveError} />
+            <MavisDraftList rows={draftRows} nextCursor={nextCursor} nextHref={nextCursor ? (() => {
+              const next = new URLSearchParams();
+              next.set("cursor", nextCursor);
+              if (searchQuery) next.set("q", searchQuery);
+              if (articleStatus !== "all") next.set("status", articleStatus);
+              return "/admin/mavis/articles?" + next.toString();
+            })() : null} rowStart={cursor?.ordinal || 0} initialQuery={searchQuery} initialStatus={articleStatus} error={draftError} />
+            <MavisArticleCatalog articles={articles} />
+          </MavisArticlesAccordion>
           <section className="admin-help">
             <strong>وضعیت این مرحله</strong>
             <p>جست‌وجوی منابع و ساخت پیش‌نویس فراداده‌ای فعال است. پیش‌نویس پس از ذخیره نسخه مشخص می‌تواند وارد صف بازبینی شود. تصمیم بازبین به همان نسخه متصل است؛ انتشار و لغو انتشار نیز عملیات جداگانه مدیر و نسخه‌محور هستند. صفحه عمومی فعلی تا تکمیل مسیر دیتابیسی بدون تغییر باقی می‌ماند. آرشیو و بازگردانی نسخه‌ها از فهرست آرشیو مدیریت می‌شود.</p>
