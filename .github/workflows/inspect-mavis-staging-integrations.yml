@@ -49,7 +49,7 @@ jobs:
           const entries = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/mavis-worker-secrets.json", "utf8"));
           const names = new Set(entries.map((entry) => entry.name));
           const groups = {
-            "Google Search Console OAuth": ["MAVIS_GSC_CLIENT_ID", "MAVIS_GSC_CLIENT_SECRET", "MAVIS_GSC_TOKEN_ENCRYPTION_KEY"],
+            "Google Search Console OAuth": ["MAVIS_GSC_CLIENT_ID", "MAVIS_GSC_CLIENT_SECRET", "MAVIS_GSC_TOKEN_ENCRYPTION_KEY", "MAVIS_GSC_SITE_URL"],
             "Iranian legal source search": ["MAVIS_IRAN_SOURCE_SEARCH_API_KEY"],
             "Competitor growth research": ["MAVIS_GROWTH_SEARCH_API_KEY", "MAVIS_IRAN_SOURCE_SEARCH_API_KEY"],
             "Editorial AI": ["MAVIS_OPENAI_API_KEY", "OPENAI_API_KEY"]
