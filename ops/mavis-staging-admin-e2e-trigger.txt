@@ -9,3 +9,4 @@ Retry after database connection preflight and password fallback fix; confirm lif
 2026-11-16: rerun authenticated editorial lifecycle after latest staging Worker deployment.
 2026-11-16: verify one current static article can be copied into an unpublished versioned Staging draft, remains hidden from anonymous readers, and is fully cleaned up.
 2026-11-16: Post-security-hardening verification: re-run full authenticated Staging editorial lifecycle after validating database targets before any connection.
+2026-11-16: verify static draft manual HTTPS source attachment, version increment and cleanup.
