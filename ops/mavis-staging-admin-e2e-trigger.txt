@@ -5,3 +5,5 @@ Post-merge verification after Workers AI output validation and IndexNow client f
 Post-deploy verification after secure Search Console OAuth and read-only inspection integration. No Production actions.
 
 MAVIS Iranian editorial search staging lifecycle validation: 2026-11-17.
+
+Authenticated Iranian source-search API route test: 2026-11-17.
