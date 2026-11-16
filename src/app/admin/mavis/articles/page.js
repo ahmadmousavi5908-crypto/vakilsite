@@ -44,7 +44,7 @@ export default async function MavisArticlesPage({ searchParams }) {
   } else {
     try {
       let query = access.supabase
-        .from("mavis_articles")
+        .from("mavis_editorial_articles")
         .select("id, slug, title, category, status, current_version, updated_at")
         .in("status", ["draft", "changes_requested", "needs_update"])
         .order("updated_at", { ascending: false })
@@ -79,7 +79,7 @@ export default async function MavisArticlesPage({ searchParams }) {
   let reviewError = null;
   try {
     const { data, error } = await access.supabase
-      .from("mavis_articles")
+      .from("mavis_editorial_articles")
       .select("id, slug, title, category, current_version, updated_at")
       .eq("status", "in_review")
       .order("updated_at", { ascending: false })
@@ -96,13 +96,13 @@ export default async function MavisArticlesPage({ searchParams }) {
   try {
     const [approvedResult, publishedResult] = await Promise.all([
       access.supabase
-        .from("mavis_articles")
+        .from("mavis_editorial_articles")
         .select("id, slug, title, category, current_version, updated_at")
         .eq("status", "approved")
         .order("updated_at", { ascending: false })
         .limit(50),
       access.supabase
-        .from("mavis_articles")
+        .from("mavis_editorial_articles")
         .select("id, slug, title, category, current_version, updated_at, published_at")
         .eq("status", "published")
         .order("published_at", { ascending: false })
@@ -122,7 +122,7 @@ export default async function MavisArticlesPage({ searchParams }) {
   let archiveError = null;
   try {
     const { data, error } = await access.supabase
-      .from("mavis_articles")
+      .from("mavis_editorial_articles")
       .select("id, slug, title, current_version, updated_at")
       .eq("status", "archived")
       .order("updated_at", { ascending: false })
