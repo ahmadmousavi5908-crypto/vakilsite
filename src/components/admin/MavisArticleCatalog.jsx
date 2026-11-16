@@ -142,10 +142,10 @@ export default function MavisArticleCatalog({ articles }) {
                           <button
                             type="button"
                             className={styles.importButton}
-                            disabled={Boolean(importingSlug) || Boolean(importFeedback[article.slug]?.error)}
+                            disabled={Boolean(importingSlug)}
                             onClick={() => handleImportToDraft(article.slug)}
                           >
-                            {importingSlug === article.slug ? "در حال ورود..." : "ورود به پیش‌نویس"}
+                            {importingSlug === article.slug ? "در حال ورود..." : importFeedback[article.slug]?.error ? "تلاش دوباره" : "ورود به پیش‌نویس"}
                           </button>
                         )}
                         {importFeedback[article.slug]?.message ? <small className={styles.importFeedback} role="status">{importFeedback[article.slug].message}</small> : null}
