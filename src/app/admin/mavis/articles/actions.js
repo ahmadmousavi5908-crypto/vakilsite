@@ -9,6 +9,24 @@ import { generateMavisEditorialSuggestions } from "../../../../lib/mavis/editori
 import { queryMavisEditorialArticles } from "../../../../lib/mavis/editorial-table.mjs";
 import { buildMavisStaticArticleImport } from "../../../../lib/mavis/static-article-import.mjs";
 
+async function attachStaticArticleSources(articleId, initialVersion, sources, skippedSources = 0) {
+  let currentVersion = initialVersion;
+  let importedSources = 0;
+  let skipped = skippedSources;
+
+  for (const source of sources) {
+    const result = await addMavisManualArticleSource(articleId, currentVersion, source);
+    if (result?.ok) {
+      currentVersion = result.currentVersion;
+      importedSources += 1;
+    } else {
+      skipped += 1;
+    }
+  }
+
+  return { currentVersion, importedSources, skippedSources: skipped };
+}
+
 export async function saveMavisArticleDraft(formData) {
   const parsed = parseMavisArticleDraftInput(formData);
   if (!parsed.ok) return { ok: false, error: parsed.error };
@@ -78,18 +96,32 @@ export async function importMavisStaticArticleToDraft(rawSlug) {
   }
 
   try {
+    const imported = buildMavisStaticArticleImport(article);
     const { data: existing, error: lookupError } = await queryMavisEditorialArticles(access.supabase, (table) =>
       table.select("id, slug, status, current_version").eq("slug", slug).maybeSingle()
     );
     if (lookupError) return { ok: false, error: "وضعیت مقاله در CMS بررسی نشد." };
     if (existing) {
-      if (["draft", "changes_requested", "needs_update"].includes(existing.status)) {
-        return { ok: true, articleId: existing.id, alreadyImported: true, importedSources: 0, skippedSources: 0 };
+      if (!["draft", "changes_requested", "needs_update"].includes(existing.status)) {
+        return { ok: false, error: "این مقاله از قبل در CMS ثبت شده و در وضعیت قابل ورود مجدد نیست." };
       }
-      return { ok: false, error: "این مقاله از قبل در CMS ثبت شده و در وضعیت قابل ورود مجدد نیست." };
+      const sourceResult = await attachStaticArticleSources(
+        existing.id,
+        existing.current_version,
+        imported.sources,
+        imported.skippedSources
+      );
+      revalidatePath("/admin/mavis/articles");
+      revalidatePath("/admin/mavis/articles/" + existing.id + "/edit");
+      return {
+        ok: true,
+        articleId: existing.id,
+        alreadyImported: true,
+        importedSources: sourceResult.importedSources,
+        skippedSources: sourceResult.skippedSources,
+      };
     }
 
-    const imported = buildMavisStaticArticleImport(article);
     const { data: articleId, error } = await access.supabase.rpc("save_mavis_article_draft", {
       p_payload: imported.payload,
       p_article_id: null,
@@ -105,18 +137,12 @@ export async function importMavisStaticArticleToDraft(rawSlug) {
       return { ok: false, error: "ساخت پیش‌نویس نسخه‌دار انجام نشد." };
     }
 
-    let currentVersion = 1;
-    let importedSources = 0;
-    let skippedSources = imported.skippedSources;
-    for (const source of imported.sources) {
-      const result = await addMavisManualArticleSource(articleId, currentVersion, source);
-      if (result?.ok) {
-        currentVersion = result.currentVersion;
-        importedSources += 1;
-      } else {
-        skippedSources += 1;
-      }
-    }
+    const sourceResult = await attachStaticArticleSources(
+      articleId,
+      1,
+      imported.sources,
+      imported.skippedSources
+    );
 
     revalidatePath("/admin/mavis/articles");
     revalidatePath("/admin/mavis/articles/" + articleId + "/edit");
@@ -127,8 +153,8 @@ export async function importMavisStaticArticleToDraft(rawSlug) {
       ok: true,
       articleId,
       alreadyImported: false,
-      importedSources,
-      skippedSources,
+      importedSources: sourceResult.importedSources,
+      skippedSources: sourceResult.skippedSources,
     };
   } catch (error) {
     return {
