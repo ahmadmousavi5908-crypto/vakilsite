@@ -14,6 +14,7 @@ const STATUS_LABELS = {
   published: "منتشرشده",
   archived: "آرشیوشده",
   rejected: "ردشده",
+  rejected: "ردشده",
 };
 
 export default function MavisDraftList({ rows = [], nextCursor = null, nextHref = null, rowStart = 0, initialQuery = "", initialStatus = "all", error = null }) {
@@ -81,8 +82,8 @@ export default function MavisDraftList({ rows = [], nextCursor = null, nextHref 
       <header className={styles.header}>
         <div>
           <span className={styles.eyebrow}>DATABASE EDITORIAL RECORDS</span>
-          <h2 id="mavis-draft-list-title">کاربرگ مقالات و پیش‌نویس‌ها</h2>
-          <p>جدول قابل جست‌وجو و مرتب‌سازی؛ داده‌ها از دیتابیس و با صفحه‌بندی امن دریافت می‌شوند.</p>
+          <h2 id="mavis-draft-list-title">فهرست همه مقالات</h2>
+          <p>مقالات با شماره ردیف پیوسته، جست‌وجوی سراسری، فیلتر وضعیت و صفحه‌بندی امن نمایش داده می‌شوند.</p>
         </div>
         <strong className={styles.count}>{rows.length.toLocaleString("fa-IR")} ردیف · شماره‌گذاری پیوسته</strong>
       </header>
@@ -111,6 +112,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, nextHref 
                 <option value="approved">تأییدشده</option>
                 <option value="published">منتشرشده</option>
                 <option value="archived">آرشیوشده</option>
+                <option value="rejected">ردشده</option>
               </select>
             </label>
             <span className={styles.filteredCount}>{visibleRows.length.toLocaleString("fa-IR")} ردیف در این صفحه</span>
