@@ -3,3 +3,5 @@ Verify secret names only; never read or print secret values.
 Report Workers AI and Browser Run as repository configuration declarations, not as proof of deployment.
 Triggered after the MAVIS Workers AI and no-key source-search integration changes are merged.
 No deployment, secret mutation, or database operation is permitted.
+
+Read-only Production Worker integration inventory after Workers AI runtime changes. Never read secret values. No Production deployment or database changes.
