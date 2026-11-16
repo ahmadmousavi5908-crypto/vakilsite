@@ -8,3 +8,5 @@ Deploy the merged secure Search Console OAuth and read-only inspection tools to 
 Iranian-only editorial search workflow staging validation: 2026-11-17.
 
 Redeploy Staging with consistent Iranian source-search response metadata: 2026-11-17.
+
+Deploy final Iranian source authority classification and intake wiring to Staging: 2026-11-17.
