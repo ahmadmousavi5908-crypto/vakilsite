@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { articles as publicStaticArticles } from "../../../../data/articles";
 import { parseMavisArticleDraftInput } from "../../../../lib/mavis/article-draft-input.mjs";
+import { normalizeMavisManualSourceInput } from "../../../../lib/mavis/manual-source-input.mjs";
+import { generateMavisEditorialSuggestions } from "../../../../lib/mavis/editorial-ai.mjs";
 import { queryMavisEditorialArticles } from "../../../../lib/mavis/editorial-table.mjs";
 
 export async function saveMavisArticleDraft(formData) {
@@ -511,4 +513,197 @@ export async function ignoreMavisSourceCandidate(candidateId, note = "") {
   } catch {
     return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
   }
+}
+
+
+export async function addMavisManualArticleSource(articleId, expectedVersion, sourceInput) {
+  if (typeof articleId !== "string" || !/^[0-9a-f-]{36}$/i.test(articleId)
+    || !Number.isInteger(expectedVersion) || expectedVersion < 1) {
+    return { ok: false, code: "INVALID_ARTICLE_VERSION", error: "شناسه یا نسخه پیش‌نویس معتبر نیست." };
+  }
+
+  let normalized;
+  try {
+    normalized = normalizeMavisManualSourceInput(sourceInput);
+  } catch (error) {
+    return { ok: false, code: "INVALID_SOURCE", error: error.message || "اطلاعات منبع معتبر نیست." };
+  }
+
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, code: "ADMIN_AUTH_REQUIRED", error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, code: "ADMIN_AUTH_REQUIRED", error: "برای ثبت منبع، ورود با حساب مدیر الزامی است." };
+  }
+
+  try {
+    const { data, error } = await access.supabase.rpc("add_mavis_manual_article_source", {
+      p_article_id: articleId,
+      p_expected_version: expectedVersion,
+      p_source: normalized.source,
+      p_relation_type: normalized.relationType,
+    });
+
+    if (error?.code === "42883" || error?.code === "PGRST202") {
+      return {
+        ok: false,
+        code: "MAVIS_SOURCE_MIGRATION_PENDING",
+        error: "ثبت و اتصال منبع پس از فعال‌سازی Migration 019 روی Staging در دسترس قرار می‌گیرد."
+      };
+    }
+    if (error?.code === "42501") return { ok: false, code: "FORBIDDEN", error: "دسترسی مدیر برای ثبت منبع تأیید نشد." };
+    if (error?.code === "40001") return { ok: false, code: "VERSION_CONFLICT", error: "نسخه پیش‌نویس تغییر کرده است. صفحه را تازه‌سازی کنید." };
+    if (error?.code === "55000") return { ok: false, code: "ARTICLE_NOT_EDITABLE", error: "منبع فقط به پیش‌نویس قابل ویرایش متصل می‌شود." };
+    if (error?.code === "22023") return { ok: false, code: "INVALID_SOURCE", error: "عنوان، نشانی یا نوع منبع معتبر نیست." };
+    if (error || !data?.ok || !data?.source?.id) {
+      return { ok: false, code: "SOURCE_ATTACH_FAILED", error: "ثبت و اتصال منبع انجام نشد." };
+    }
+
+    revalidatePath("/admin/mavis/articles");
+    revalidatePath("/admin/mavis/articles/" + articleId + "/edit");
+    revalidatePath("/articles");
+    revalidatePath("/articles/library");
+
+    return {
+      ok: true,
+      alreadyAttached: data.already_attached === true,
+      currentVersion: data.current_version,
+      source: data.source
+    };
+  } catch {
+    return { ok: false, code: "SOURCE_ATTACH_FAILED", error: "ارتباط امن با پایگاه داده برقرار نشد." };
+  }
+}
+
+export async function generateMavisEditorialDraft(formData) {
+  if (!formData || typeof formData.get !== "function") {
+    return { ok: false, code: "INVALID_FORM", error: "اطلاعات فرم معتبر نیست." };
+  }
+
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, code: "ADMIN_AUTH_REQUIRED", error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, code: "ADMIN_AUTH_REQUIRED", error: "برای استفاده از دستیار تحریریه، ورود مدیر الزامی است." };
+  }
+
+  const apiKey = process.env.MAVIS_OPENAI_API_KEY || process.env.OPENAI_API_KEY || "";
+  if (!apiKey) {
+    return {
+      ok: false,
+      code: "MAVIS_AI_NOT_CONFIGURED",
+      error: "اتصال مدل فعال نیست. کلید MAVIS_OPENAI_API_KEY باید در Worker آزمایشی تنظیم شود."
+    };
+  }
+
+  const articleId = String(formData.get("article_id") || "");
+  let sources = [];
+
+  if (/^[0-9a-f-]{36}$/i.test(articleId)) {
+    const relation = "source:mavis_sources!mavis_article_sources_source_id_fkey(id,title,canonical_url,source_type,external_id,author_name,publisher,published_on,rights_status,metadata)";
+    let sourceResult = await access.supabase
+      .from("mavis_article_sources")
+      .select("relation_type,citation_label," + relation)
+      .eq("article_id", articleId)
+      .order("sort_order", { ascending: true });
+
+    if (sourceResult.error && /metadata|PGRST204|42703/i.test(sourceResult.error.message || "")) {
+      sourceResult = await access.supabase
+        .from("mavis_article_sources")
+        .select("relation_type,citation_label,source:mavis_sources!mavis_article_sources_source_id_fkey(id,title,canonical_url,source_type,external_id,author_name,publisher,published_on,rights_status)")
+        .eq("article_id", articleId)
+        .order("sort_order", { ascending: true });
+    }
+
+    if (sourceResult.error) {
+      return { ok: false, code: "SOURCE_CONTEXT_UNAVAILABLE", error: "فهرست منابع متصل به مقاله خوانده نشد." };
+    }
+
+    sources = (sourceResult.data || []).map((row) => {
+      const source = Array.isArray(row.source) ? row.source[0] : row.source;
+      return source ? {
+        ...source,
+        relation_type: row.relation_type,
+        citation_label: row.citation_label,
+        metadata: source.metadata || {}
+      } : null;
+    }).filter(Boolean);
+  }
+
+  const { data: limit, error: limitError } = await access.supabase.rpc("consume_mavis_editorial_ai_limit");
+  if (limitError?.code === "42883" || limitError?.code === "PGRST202") {
+    return {
+      ok: false,
+      code: "MAVIS_AI_RATE_LIMIT_NOT_READY",
+      error: "محدودکننده مصرف هوش مصنوعی هنوز فعال نشده است؛ Migration 019 باید روی Staging اجرا شود."
+    };
+  }
+  if (limitError || !limit || typeof limit.allowed !== "boolean") {
+    return { ok: false, code: "MAVIS_AI_RATE_LIMIT_UNAVAILABLE", error: "کنترل سهمیه دستیار هوشمند در دسترس نیست." };
+  }
+  if (!limit.allowed) {
+    return {
+      ok: false,
+      code: "MAVIS_AI_RATE_LIMITED",
+      retryAfterSeconds: limit.retry_after_seconds,
+      error: "سهمیه تولید پیش‌نویس موقتاً تکمیل شده است. کمی بعد دوباره تلاش کنید."
+    };
+  }
+
+  const sectionHeadings = formData.getAll("section_heading");
+  const sectionBodies = formData.getAll("section_body");
+  const sections = sectionHeadings.map((heading, index) => ({
+    heading: String(heading || ""),
+    body: String(sectionBodies[index] || "")
+  }));
+  const tags = String(formData.get("tags") || "")
+    .split(/[,\u060C]/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const input = {
+    topic: String(formData.get("title") || formData.get("excerpt") || formData.get("category") || ""),
+    title: String(formData.get("title") || ""),
+    slug: String(formData.get("slug") || ""),
+    category: String(formData.get("category") || ""),
+    excerpt: String(formData.get("excerpt") || ""),
+    intro: String(formData.get("intro") || ""),
+    warning: String(formData.get("warning") || ""),
+    checklist: String(formData.get("checklist") || "").split(/\r?\n/).map((item) => item.trim()).filter(Boolean),
+    sections,
+    tags,
+    sources
+  };
+
+  const result = await generateMavisEditorialSuggestions(input, {
+    apiKey,
+    model: process.env.MAVIS_EDITORIAL_MODEL || "gpt-6-astra"
+  });
+
+  if (!result.ok) {
+    const messages = {
+      MAVIS_AI_INVALID_INPUT: result.message || "برای تولید پیش‌نویس، موضوع یا عنوان مقاله را وارد کنید.",
+      MAVIS_AI_NETWORK_ERROR: "ارتباط با سرویس مدل برقرار نشد.",
+      MAVIS_AI_PROVIDER_ERROR: "سرویس مدل درخواست را نپذیرفت. کلید و دسترسی API را بررسی کنید.",
+      MAVIS_AI_INCOMPLETE_RESPONSE: "پاسخ مدل کامل نشد؛ دوباره تلاش کنید.",
+      MAVIS_AI_REFUSED: "مدل به این درخواست پاسخ نداد.",
+      MAVIS_AI_INVALID_OUTPUT: "ساختار پاسخ مدل معتبر نبود؛ دوباره تلاش کنید."
+    };
+    return { ok: false, code: result.code, error: messages[result.code] || "تولید پیش‌نویس انجام نشد." };
+  }
+
+  return {
+    ok: true,
+    model: result.model,
+    remainingRequests: limit.remaining,
+    suggestions: result.suggestions
+  };
 }

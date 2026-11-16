@@ -38,7 +38,7 @@ export default async function NewMavisArticlePage() {
         <header className="admin-topbar"><div><span>فضای مدیریت / MAVIS</span><strong>ساخت پیش‌نویس مقاله</strong></div><form action={signOut}><button type="submit">خروج امن</button></form></header>
         <main className="admin-content">
           <section className="admin-welcome"><div><span className="admin-eyebrow">MAVIS · EDITORIAL CMS</span><h1>ایجاد محتوای جدید</h1><p>فرم ساخت پیش‌نویس ساختاریافته با ذخیره امن و نسخه‌بندی‌شده.</p></div><div className="admin-status"><i /> دسترسی مدیر تأیید شده</div></section>
-          <MavisArticleEditor />
+          <MavisArticleEditor aiEnabled={Boolean(process.env.MAVIS_OPENAI_API_KEY || process.env.OPENAI_API_KEY)} />
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>
       </div>

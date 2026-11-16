@@ -29,6 +29,8 @@ export default function MavisIranianSourceSearch({ onImport }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [metadata, setMetadata] = useState(null);
+  const [importing, setImporting] = useState(false);
+  const [importFeedback, setImportFeedback] = useState("");
 
   async function search(event) {
     event.preventDefault();
@@ -39,6 +41,7 @@ export default function MavisIranianSourceSearch({ onImport }) {
     setNotice("");
     setSelected(null);
     setMetadata(null);
+    setImportFeedback("");
     setResults([]);
     try {
       const response = await fetch("/api/admin/mavis/source-search", {
@@ -71,6 +74,9 @@ export default function MavisIranianSourceSearch({ onImport }) {
       documentType: "",
       abstract: item.snippet || "",
       sourceUrl: item.url || "",
+      sourceAuthority: item.sourceAuthority || "",
+      sourceGroup: item.sourceGroup || group,
+      provider: "tavily",
     });
   }
 
@@ -96,6 +102,23 @@ export default function MavisIranianSourceSearch({ onImport }) {
       setNotice("مشخصات منبع کپی شد و آماده انتقال به تحریریه است.");
     } catch {
       setError("دسترسی مرورگر به کلیپ‌بورد ممکن نیست؛ متن را دستی انتخاب و کپی کنید.");
+    }
+  }
+
+  async function importSelectedSource() {
+    if (!metadata || typeof onImport !== "function" || importing) return;
+    setImporting(true);
+    setImportFeedback("");
+    try {
+      const result = await onImport(metadata);
+      if (!result?.ok) throw new Error(result?.error || "اتصال منبع به پیش‌نویس انجام نشد.");
+      setImportFeedback(result.alreadyAttached
+        ? "این منبع قبلاً به مقاله متصل شده است."
+        : "منبع با موفقیت به نسخه جاری پیش‌نویس متصل شد.");
+    } catch (importError) {
+      setImportFeedback(importError instanceof Error ? importError.message : "اتصال منبع انجام نشد.");
+    } finally {
+      setImporting(false);
     }
   }
 
@@ -172,7 +195,8 @@ export default function MavisIranianSourceSearch({ onImport }) {
                 <label className={styles.full}>چکیده / توضیح<textarea rows="4" value={metadata.abstract} onChange={(event) => updateField("abstract", event.target.value)} /></label>
                 <label className={styles.full}>پیوند منبع<input value={metadata.sourceUrl} onChange={(event) => updateField("sourceUrl", event.target.value)} dir="ltr" /></label>
               </div>
-              {typeof onImport === "function" ? <button className={styles.importButton} type="button" onClick={() => onImport(metadata)}>ساخت پیش‌نویس جدید از این منبع</button> : null}
+              {typeof onImport === "function" ? <button className={styles.importButton} type="button" onClick={importSelectedSource} disabled={importing}>{importing ? "در حال ثبت منبع..." : "ثبت و اتصال منبع به پیش‌نویس"}</button> : null}
+              {importFeedback ? <p className={styles.notice} role="status">{importFeedback}</p> : null}
               <button className={styles.copyButton} type="button" onClick={copyMetadata}>کپی مشخصات برای تحریریه</button>
               <p className={styles.disclaimer}>نوع سند، تاریخ و اعتبار حقوقی صرفاً با انتخاب یا تأیید مدیر ثبت می‌شود. نتیجه جست‌وجو به‌تنهایی اثبات‌کننده اعتبار قانون یا رأی نیست.</p>
             </aside>

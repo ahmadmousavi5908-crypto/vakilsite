@@ -76,6 +76,10 @@ jobs:
         run: npm run test:mavis-iranian-source-search
       - name: Run MAVIS editorial content core tests
         run: npm run test:mavis-editorial-core
+      - name: Run MAVIS editorial AI tests
+        run: npm run test:mavis-editorial-ai
+      - name: Run MAVIS manual source input tests
+        run: npm run test:mavis-manual-source-input
       - name: Run MAVIS knowledge retrieval tests
         run: >-
           node --test
