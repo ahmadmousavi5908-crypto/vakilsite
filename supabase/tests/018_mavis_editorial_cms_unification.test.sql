@@ -39,7 +39,7 @@ values (
   now()
 );
 
-insert into public.mavis_articles (
+insert into public.mavis_editorial_articles (
   id, slug, title, author_name, excerpt, category, tags, content,
   content_schema_version, status, origin_type, current_version
 )
@@ -91,13 +91,13 @@ values (
 );
 
 select lives_ok(
-  $$select id from public.mavis_articles
+  $$select id from public.mavis_editorial_articles
     where id = '00000000-0000-4000-8000-000000000023'
     for update$$,
   'compatibility view supports the row locking used by guarded workflow RPCs'
 );
 
-update public.mavis_articles
+update public.mavis_editorial_articles
 set status = 'published', published_at = now()
 where id = '00000000-0000-4000-8000-000000000023';
 
