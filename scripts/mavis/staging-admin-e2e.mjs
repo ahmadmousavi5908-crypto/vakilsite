@@ -301,6 +301,7 @@ async function main() {
       signal: AbortSignal.timeout(20000),
     });
     const iranianSearchPayload = await iranianSearchResponse.json();
+    console.log("DEBUG: source-search HTTP " + iranianSearchResponse.status + "; payload=" + JSON.stringify(iranianSearchPayload));
     assert(
       iranianSearchResponse.status === 200 &&
         iranianSearchPayload.ok === true &&
