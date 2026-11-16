@@ -5,7 +5,7 @@ import styles from "./MavisSearchConsoleTools.module.css";
 
 const numberFormat = new Intl.NumberFormat("fa-IR");
 
-export default function MavisSearchConsoleTools() {
+export default function MavisSearchConsoleTools({ connected = false }) {
   const [url, setUrl] = useState("https://vakilahmadmousavi.ir/");
   const [inspection, setInspection] = useState(null);
   const [sitemaps, setSitemaps] = useState(null);
@@ -50,6 +50,10 @@ export default function MavisSearchConsoleTools() {
         </div>
       </div>
 
+      {!connected ? (
+        <p className={styles.message} role="status">پس از پیکربندی OAuth و اتصال حساب مدیر، ابزارهای ایندکس و نقشه سایت فعال می‌شوند.</p>
+      ) : null}
+
       <div className={styles.inspectionForm}>
         <label htmlFor="mavis-gsc-inspection-url">نشانی کامل صفحه</label>
         <input
@@ -62,14 +66,14 @@ export default function MavisSearchConsoleTools() {
           maxLength={2048}
           placeholder="https://vakilahmadmousavi.ir/articles/example"
         />
-        <button type="button" onClick={() => request("inspect")} disabled={Boolean(loading) || !url.trim()}>
+        <button type="button" onClick={() => request("inspect")} disabled={!connected || Boolean(loading) || !url.trim()}>
           {loading === "inspect" ? "در حال بررسی..." : "بررسی وضعیت ایندکس"}
         </button>
       </div>
 
       <div className={styles.sitemapAction}>
         <span>نقشه‌های ثبت‌شده در Google Search Console</span>
-        <button type="button" onClick={() => request("sitemaps")} disabled={Boolean(loading)}>
+        <button type="button" onClick={() => request("sitemaps")} disabled={!connected || Boolean(loading)}>
           {loading === "sitemaps" ? "در حال دریافت..." : "دریافت فهرست نقشه‌ها"}
         </button>
       </div>
