@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - feature/mavis-indexnow-publication-notify-20261114
     paths:
       - ".github/workflows/migrate-mavis-staging-database.yml"
       - "supabase/migrations/**"
+      - "ops/mavis-staging-migration-019-apply.txt"
   workflow_dispatch:
     inputs:
       apply_migrations:
@@ -286,7 +288,7 @@ jobs:
           fi
 
       - name: Apply migrations to staging only
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true) || (github.event_name == 'push' && github.ref == 'refs/heads/feature/mavis-indexnow-publication-notify-20261114' && github.event.head_commit.message == 'ops: apply approved MAVIS staging migration 019') }}
         run: >-
           npx --yes supabase@3.0.0 db push
           --yes
