@@ -79,7 +79,7 @@ export default async function MavisArticlesPage({ searchParams }) {
           : "خواندن پیش‌نویس‌ها انجام نشد. دسترسی مدیر و اتصال پایگاه داده را بررسی کنید.";
       } else {
         const rows = Array.isArray(data) ? data : [];
-        articleTotal = Number.isInteger(count) ? count : rows.length;
+        articleTotal = Number.isInteger(count) ? count + (cursor?.ordinal || 0) : rows.length + (cursor?.ordinal || 0);
         if (rows.length > 25) {
           const lastVisible = rows[24];
           nextCursor = encodeMavisArticleCursor(lastVisible, (cursor?.ordinal || 0) + 25);
