@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { archiveMavisArticle } from "../../app/admin/mavis/articles/actions";
 import styles from "./MavisDraftList.module.css";
 import { createEditorialSpreadsheetTsv } from "../../lib/mavis/editorial-spreadsheet-export.mjs";
 
@@ -16,6 +18,10 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("updated_at");
   const [sortDirection, setSortDirection] = useState("desc");
+  const [confirmingArchiveId, setConfirmingArchiveId] = useState("");
+  const [archivingId, setArchivingId] = useState("");
+  const [actionFeedback, setActionFeedback] = useState(null);
+  const router = useRouter();
 
   const visibleRows = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
@@ -31,6 +37,31 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
         return sortDirection === "asc" ? comparison : -comparison;
       });
   }, [rows, query, statusFilter, sortBy, sortDirection]);
+
+  async function archiveArticle(article) {
+    if (archivingId) return;
+    if (confirmingArchiveId !== article.id) {
+      setConfirmingArchiveId(article.id);
+      setActionFeedback(null);
+      return;
+    }
+    setArchivingId(article.id);
+    setActionFeedback(null);
+    try {
+      const result = await archiveMavisArticle(article.id, Number(article.current_version), "انتقال به آرشیو به درخواست مدیر");
+      if (!result?.ok) {
+        setActionFeedback({ type: "error", message: result?.error || "انتقال مقاله به آرشیو انجام نشد." });
+        return;
+      }
+      setActionFeedback({ type: "success", message: "مقاله به آرشیو منتقل شد و از فهرست فعال کنار رفت؛ امکان بازیابی آن وجود دارد." });
+      setConfirmingArchiveId("");
+      router.refresh();
+    } catch {
+      setActionFeedback({ type: "error", message: "ارتباط با سرور برقرار نشد؛ وضعیت مقاله را دوباره بررسی کنید." });
+    } finally {
+      setArchivingId("");
+    }
+  }
 
   function downloadSpreadsheet() {
     const exportRows = [
@@ -107,6 +138,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
             <span className={styles.filteredCount}>{visibleRows.length.toLocaleString("fa-IR")} ردیف نمایش داده می‌شود</span>
             <button type="button" className={styles.exportButton} onClick={downloadSpreadsheet} disabled={!visibleRows.length}>خروجی Excel · همین نتایج</button>
           </div>
+          {actionFeedback ? <p className={styles[actionFeedback.type]} role="status" aria-live="polite">{actionFeedback.message}</p> : null}
           {visibleRows.length ? (
             <>
               <div className={styles.tableWrap}>
@@ -115,12 +147,12 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
                   <tbody>
                     {visibleRows.map((article) => (
                       <tr key={article.id}>
-                        <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
+                        <td><details className={styles.articleDetails}><summary><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small><span>＋ جزئیات</span></summary><div className={styles.articlePreview}><p>{article.content?.intro || article.content?.excerpt || "برای مشاهده و تکمیل متن، مقاله را ویرایش کنید."}</p>{Array.isArray(article.content?.sections) ? <small>{article.content.sections.length.toLocaleString("fa-IR")} بخش محتوایی ثبت شده است.</small> : null}</div></details></td>
                         <td>{article.category}</td>
                         <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
                         <td>{Number(article.current_version).toLocaleString("fa-IR")}</td>
                         <td><time dateTime={article.updated_at}>{new Date(article.updated_at).toLocaleString("fa-IR")}</time></td>
-                        <td><Link href={`/admin/mavis/articles/${article.id}/edit`}>ویرایش</Link></td>
+                        <td className={styles.rowActions}><Link href={`/admin/mavis/articles/${article.id}/edit`}>ویرایش</Link><button type="button" className={styles.archiveButton} onClick={() => archiveArticle(article)} disabled={Boolean(archivingId)}>{archivingId === article.id ? "در حال انتقال..." : confirmingArchiveId === article.id ? "تأیید حذف امن" : "حذف / آرشیو"}</button>{confirmingArchiveId === article.id ? <small className={styles.confirmHint}>با تأیید، مقاله به آرشیو قابل‌بازیابی منتقل می‌شود.</small> : null}</td>
                       </tr>
                     ))}
                   </tbody>
