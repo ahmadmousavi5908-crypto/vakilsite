@@ -2,3 +2,5 @@ Retry authenticated Staging E2E with the provider_id set to the Supabase Auth us
 Auth seed now initializes all GoTrue string token fields to empty strings.
 Verify public-column projection and private-field denial.
 Run full editorial lifecycle against the merged current-main branch.
+
+Post-Migration verification: run the authenticated Staging editorial lifecycle against the current branch head after migration 019.
