@@ -13,6 +13,7 @@ concurrency:
 jobs:
   deploy:
     name: Build and deploy production Worker
+    environment: production
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
