@@ -1,7 +1,7 @@
 begin;
 select plan(22);
 
-select has_column('public','mavis_articles','search_vector','article content has a local full-text search vector');
+select has_column('public','mavis_editorial_articles','search_vector','article content has a local full-text search vector');
 select has_column('public','mavis_sources','search_vector','source registry has a local search vector');
 select has_column('public','mavis_source_candidates','search_vector','candidate queue has a local search vector');
 select ok(to_regclass('public.mavis_articles_search_vector_gin_idx') is not null,'article full-text search has a GIN index');
