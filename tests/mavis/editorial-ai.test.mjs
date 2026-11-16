@@ -50,6 +50,10 @@ test("validates structured output and filters unknown source IDs", async () => {
     apiKey: "test-key",
     fetchImpl: async (url, options) => {
       assert.equal(url, "https://api.openai.com/v1/responses");
+      assert.equal(options.method, "POST");
+      assert.equal(options.redirect, "error");
+      assert.equal(options.cache, "no-store");
+      assert.ok(options.signal instanceof AbortSignal);
       assert.equal(JSON.parse(options.body).store, false);
       return { ok: true, status: 200, json: async () => ({
         status: "completed",
@@ -70,4 +74,41 @@ test("handles provider refusal safely", async () => {
     }) })
   });
   assert.equal(result.code, "MAVIS_AI_REFUSED");
+});
+
+
+test("bounds AI requests with a timeout and maps it safely", async () => {
+  const result = await generateMavisEditorialSuggestions({ topic: "مسئولیت مدنی" }, {
+    apiKey: "test-key",
+    timeoutMs: 5,
+    fetchImpl: async (_url, options) => new Promise((_resolve, reject) => {
+      options.signal.addEventListener("abort", () => reject(new Error("aborted")), { once: true });
+    })
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.code, "MAVIS_AI_TIMEOUT");
+});
+
+test("rejects oversized provider responses before parsing", async () => {
+  const body = new ReadableStream({
+    start(controller) {
+      controller.enqueue(new Uint8Array(512 * 1024 + 1));
+      controller.close();
+    }
+  });
+  const result = await generateMavisEditorialSuggestions({ topic: "مسئولیت مدنی" }, {
+    apiKey: "test-key",
+    fetchImpl: async () => ({ ok: true, status: 200, body })
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.code, "MAVIS_AI_RESPONSE_TOO_LARGE");
+});
+
+test("maps transport failures separately from invalid JSON", async () => {
+  const result = await generateMavisEditorialSuggestions({ topic: "مسئولیت مدنی" }, {
+    apiKey: "test-key",
+    fetchImpl: async () => { throw new Error("network unavailable"); }
+  });
+  assert.equal(result.ok, false);
+  assert.equal(result.code, "MAVIS_AI_NETWORK_ERROR");
 });
