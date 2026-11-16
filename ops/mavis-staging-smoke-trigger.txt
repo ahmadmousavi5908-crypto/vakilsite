@@ -9,3 +9,4 @@ Verify deployed article library, robots, sitemap, admin redirects, and API bound
 2026-11-16: re-run Staging route and provider checks with optional-provider rate limits reported as warnings.
 2026-11-16: post-deploy smoke against Worker version 475e50cc-a4e0-4d90-ba7f-d5da35222c9b and current static-draft import release at 8a2fcac4f21aaa4ede22da3be30874fea008e26e.
 2026-11-16: post-deployment live route, admin boundary and source-provider smoke for Worker version 475e50cc-a4e0-4d90-ba7f-d5da35222c9b.
+2026-11-16: Final post-deploy Staging smoke: public routes, sitemap and robots isolation, admin authorization, growth API boundary, and scholarly source provider checks.
