@@ -16,7 +16,7 @@ const articleTitle = `MAVIS Staging E2E ${runId}`;
 const fallbackDbUrl = dbPassword
   ? `postgresql://postgres.srbwniqhaxwaoepjfizf:${encodeURIComponent(dbPassword)}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`
   : "";
-const dbUrl = configuredDbUrl || fallbackDbUrl;
+let dbUrl = configuredDbUrl || fallbackDbUrl;
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -59,6 +59,28 @@ async function main() {
   assert(projectUrl, "Missing STAGING_SUPABASE_URL.");
   assert(publishableKey, "Missing STAGING_SUPABASE_PUBLISHABLE_KEY.");
   assert(dbUrl, "Missing SUPABASE_STAGING_DB_URL and SUPABASE_STAGING_DB_PASSWORD.");
+
+  const dbCandidates = [...new Set([configuredDbUrl, fallbackDbUrl].filter(Boolean))];
+  let databaseConnectionVerified = false;
+  let lastDatabaseConnectionError;
+  for (const candidate of dbCandidates) {
+    dbUrl = candidate;
+    try {
+      runDbQuery("SELECT 1;", { readOnly: true });
+      databaseConnectionVerified = true;
+      console.log("Staging database connection verified.");
+      break;
+    } catch (error) {
+      lastDatabaseConnectionError = error;
+      if (candidate !== dbCandidates.at(-1)) {
+        console.warn("Configured Staging database URI failed authentication; trying the password-based Staging fallback.");
+      }
+    }
+  }
+  assert(
+    databaseConnectionVerified,
+    `Unable to authenticate to the isolated Staging database: ${lastDatabaseConnectionError?.message || "unknown connection error"}`
+  );
 
   const parsedUrl = new URL(projectUrl);
   assert(
