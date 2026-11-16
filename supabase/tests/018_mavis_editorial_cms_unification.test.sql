@@ -1,6 +1,6 @@
 begin;
 
-select plan(20);
+select plan(21);
 
 select has_column('public', 'mavis_editorial_articles', 'draft_content', 'Mother Two draft snapshot column is preserved');
 select has_column('public', 'mavis_editorial_articles', 'published_content', 'Mother Two published snapshot column is preserved');
@@ -16,6 +16,11 @@ select has_trigger(
   'mavis_editorial_articles',
   'mavis_editorial_legacy_fields_sync',
   'legacy snapshot fields are synchronized by a base-table trigger'
+);
+
+select ok(
+  not has_schema_privilege('authenticated', 'public', 'CREATE'),
+  'authenticated role does not retain schema creation privileges after view ownership transfer'
 );
 
 insert into auth.users (
