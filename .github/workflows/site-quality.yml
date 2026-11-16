@@ -29,6 +29,11 @@ jobs:
           cache: npm
       - name: Install dependencies and synchronize lockfile
         run: npm ci --no-audit --no-fund
+      - name: Install pinned Cloudflare runtime adapter for binding-aware build
+        run: >-
+          npm install --no-save --package-lock=false --no-audit --no-fund
+          @opennextjs/cloudflare@1.20.17
+          wrangler@4.161.0
       - name: Test canonical site URL and sitemap invariants
         run: npm run test:site-url
       - name: Test IndexNow key and URL validation
@@ -51,6 +56,8 @@ jobs:
         run: npm run test:mavis-iranian-source-search
       - name: Run MAVIS editorial core tests
         run: npm run test:mavis-editorial-core
+      - name: Run MAVIS editorial AI provider tests
+        run: node --test tests/mavis/editorial-ai.test.mjs
       - name: Run MAVIS knowledge retrieval tests
         run: >-
           node --test
