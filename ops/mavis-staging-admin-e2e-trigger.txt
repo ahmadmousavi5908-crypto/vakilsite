@@ -1,3 +1,5 @@
 Run the authenticated Staging end-to-end suite after the isolated Worker deployment. Verify live Workers AI structured output, Browser Run binding availability, official-source fallback links, article lifecycle, and cleanup. No Production actions.
 
 Post-merge verification after Workers AI output validation and IndexNow client fixes. Run on current main. No Production actions.
+
+Post-deploy verification after secure Search Console OAuth and read-only inspection integration. No Production actions.
