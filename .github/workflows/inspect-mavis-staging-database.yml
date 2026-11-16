@@ -77,6 +77,37 @@ jobs:
       - name: Read remote migration history
         run: npx --yes supabase@3.0.0 migration list --remote="$SUPABASE_DB_URL"
 
+      - name: Fetch remote migration files into an isolated temporary workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          TEMP_WORKDIR="$(mktemp -d)"
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" init --force
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" migration fetch --remote="$SUPABASE_DB_URL"
+          node - "$TEMP_WORKDIR/supabase/migrations" <<'NODE'
+          const fs = require("node:fs");
+          const path = require("node:path");
+          const crypto = require("node:crypto");
+          const directory = process.argv[2];
+          const files = fs.readdirSync(directory).filter((name) => name.endsWith(".sql")).sort();
+          console.log(`Fetched migration files: ${files.length}`);
+          for (const name of files) {
+            const sql = fs.readFileSync(path.join(directory, name), "utf8");
+            const sha256 = crypto.createHash("sha256").update(sql).digest("hex");
+            const summary = {
+              file: name,
+              sha256,
+              hardensAdminAcl: /revoke\\s+all\\s+on\\s+function\\s+public\\.is_site_admin/i.test(sql),
+              createsEditorialArticles: /create\\s+table(?:\\s+if\\s+not\\s+exists)?\\s+public\\.mavis_editorial_articles/i.test(sql),
+              createsMavisArticles: /create\\s+table(?:\\s+if\\s+not\\s+exists)?\\s+public\\.mavis_articles/i.test(sql),
+              renamesMavisArticles: /rename\\s+to\\s+mavis_editorial_articles/i.test(sql),
+              mentionsSearchConsole: /mavis_search_console_connections/i.test(sql),
+              mentionsSourceCandidates: /mavis_source_candidates/i.test(sql),
+            };
+            console.log(JSON.stringify(summary));
+          }
+          NODE
+
       - name: Inspect existing site and MAVIS tables (read-only)
         shell: bash
         run: |
@@ -91,10 +122,13 @@ jobs:
             FROM pg_class c
             JOIN pg_namespace n ON n.oid = c.relnamespace
             JOIN pg_attribute a ON a.attrelid = c.oid
-            WHERE c.relkind IN ('r', 'p')
+            WHERE c.relkind IN ('r', 'p', 'v', 'm')
               AND (
-                (n.nspname = 'public' AND c.relname IN ('profiles', 'social_links', 'site_settings', 'mavis_editorial_articles'))
-                OR (n.nspname = 'mavis_private' AND c.relname = 'knowledge_search_rate_limits')
+                (n.nspname = 'public' AND (
+                  c.relname IN ('profiles', 'social_links', 'site_settings')
+                  OR c.relname LIKE 'mavis_%'
+                ))
+                OR (n.nspname = 'mavis_private' AND c.relkind IN ('r', 'p'))
               )
             GROUP BY n.nspname, c.relname, c.relrowsecurity
             ORDER BY n.nspname, c.relname;
