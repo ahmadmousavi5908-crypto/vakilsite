@@ -1,13 +1,1 @@
-Read-only Staging integration audit: inspect secret names and connection metadata; run bounded Crossref and Semantic Scholar metadata-only smoke tests. No secrets or credentials are read or printed.
-2026-11-16: rerun integration secret-name audit with the actual MAVIS_OPENAI_API_KEY variable.
-2026-11-16: include aggregate-only CMS inventory and verify no temporary E2E articles or identities remain.
-
-Recheck the full Google Search Console configuration including the property URL secret.
-2026-11-16: repeat aggregate-only integration, CMS inventory and cleanup audit after latest deployment.
-
-Post-E2E cleanup verification: confirm the temporary administrator identity and all temporary article, approval, version, audit, source, and candidate records are absent.
-2026-11-16: post-static-import E2E audit; verify no temporary rows remain and report Staging provider secret names only.
-2026-11-16: Post-migration 019 and post-E2E read-only audit: verify provider secret names, GSC storage state, editorial inventory, and zero leftover temporary records.
-2026-11-16: verify no E2E article, source, link, or administrator identity remains after source-attachment lifecycle test.
-2026-11-16: final post-E2E read-only check after all duplicate E2E runs completed; require zero temporary users, articles, and source fixtures.
-2026-11-16: final post-manual-source E2E audit; verify no temporary source, article, version, approval, or auth identity remains.
+Run the read-only Staging integration inventory after the isolated Worker deployment. Report secret names only; never read or print secret values. No deployment, database mutation, or Production action.
