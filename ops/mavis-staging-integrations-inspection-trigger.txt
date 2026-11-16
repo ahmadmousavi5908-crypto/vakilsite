@@ -1,1 +1,2 @@
 Read-only Staging integration audit: inspect secret names and connection metadata; run bounded Crossref and Semantic Scholar metadata-only smoke tests. No secrets or credentials are read or printed.
+2026-11-16: rerun integration secret-name audit with the actual MAVIS_OPENAI_API_KEY variable.
