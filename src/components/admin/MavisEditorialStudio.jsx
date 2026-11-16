@@ -104,7 +104,7 @@ export default function MavisEditorialStudio({ articles }) {
       metadata.publication ? "نشریه: " + metadata.publication : "",
       metadata.publicationDate ? "تاریخ: " + metadata.publicationDate : "",
       metadata.documentNumber ? "DOI: " + metadata.documentNumber : "",
-    ].filter(Boolean).join("؛ ").replace(/[|\\r\\n]+/g, " ").trim();
+    ].filter(Boolean).join("؛ ").replace(/[|\r\n]+/g, " ").trim();
 
     setForm((current) => {
       const sourceLine = (sourceLabel || metadata.title || "منبع پژوهشی") + " | " + metadata.sourceUrl;
