@@ -13,8 +13,14 @@ on:
         required: true
         type: boolean
         default: false
+      deploy_production:
+        description: "After migration verification, trigger and wait for the Production Worker deployment"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
+  actions: write
   contents: read
 
 concurrency:
@@ -53,6 +59,10 @@ jobs:
           NODE
           if [ "${{ inputs.apply_migrations }}" = "true" ] && [ "${{ inputs.backup_confirmed }}" != "true" ]; then
             echo "::error::A current recoverable production backup must be confirmed before applying migrations."
+            exit 1
+          fi
+          if [ "${{ inputs.deploy_production }}" = "true" ] && { [ "${{ inputs.apply_migrations }}" != "true" ] || [ "${{ inputs.backup_confirmed }}" != "true" ]; }; then
+            echo "::error::Production deployment is allowed only after an explicitly confirmed backup and migration apply."
             exit 1
           fi
 
@@ -234,3 +244,31 @@ jobs:
         run: |
           set -euo pipefail
           npx --yes supabase@3.0.0 migration list --remote="$SUPABASE_PRODUCTION_DB_URL"
+
+      - name: Trigger Production Worker deployment after verified migration
+        if: ${{ inputs.apply_migrations == true && inputs.backup_confirmed == true && inputs.deploy_production == true }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          CURRENT_MAIN="$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq '.sha')"
+          if [ "$CURRENT_MAIN" != "$EXPECTED_SHA" ]; then
+            echo "::error::main changed while the production migration was running. Review the new main revision before deploying."
+            exit 1
+          fi
+
+          gh workflow run deploy-cloudflare.yml --ref main
+          RUN_ID=""
+          for attempt in $(seq 1 30); do
+            RUN_ID="$(gh run list --workflow deploy-cloudflare.yml --branch main --event workflow_dispatch --limit 10 --json databaseId,headSha,createdAt --jq 'map(select(.headSha == env.EXPECTED_SHA)) | sort_by(.createdAt) | last | .databaseId // empty')"
+            if [ -n "$RUN_ID" ]; then break; fi
+            sleep 2
+          done
+          if [ -z "$RUN_ID" ]; then
+            echo "::error::Production deployment was dispatched but its run ID could not be located."
+            exit 1
+          fi
+
+          gh run watch "$RUN_ID" --exit-status
