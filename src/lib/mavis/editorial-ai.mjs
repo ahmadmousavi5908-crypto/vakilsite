@@ -180,65 +180,125 @@ async function readBoundedResponseJson(response) {
 }
 
 export async function generateMavisEditorialSuggestions(input, {
-  apiKey, model = "gpt-6-astra", fetchImpl = globalThis.fetch, timeoutMs = 30000
+  apiKey,
+  ai,
+  model = "gpt-6-astra",
+  fetchImpl = globalThis.fetch,
+  timeoutMs = 30000
 } = {}) {
-  if (!text(apiKey, 500)) return { ok: false, code: "MAVIS_AI_NOT_CONFIGURED" };
-  if (typeof fetchImpl !== "function") return { ok: false, code: "MAVIS_AI_TRANSPORT_UNAVAILABLE" };
-  let request;
-  try { request = buildMavisEditorialAiRequest(input, { model }); }
-  catch (error) { return { ok: false, code: "MAVIS_AI_INVALID_INPUT", message: error.message }; }
-
-  const timeout = Number.isInteger(timeoutMs) && timeoutMs >= 1 && timeoutMs <= 60000
-    ? timeoutMs
-    : 30000;
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeout);
-  let response;
-  let payload;
-  try {
-    try {
-      response = await fetchImpl("https://api.openai.com/v1/responses", {
-        method: "POST",
-        redirect: "error",
-        cache: "no-store",
-        signal: controller.signal,
-        headers: { Authorization: "Bearer " + apiKey, "Content-Type": "application/json" },
-        body: JSON.stringify(request)
-      });
-    } catch {
-      return {
-        ok: false,
-        code: controller.signal.aborted ? "MAVIS_AI_TIMEOUT" : "MAVIS_AI_NETWORK_ERROR"
-      };
-    }
-
-    if (!response?.ok) return { ok: false, code: "MAVIS_AI_PROVIDER_ERROR", status: response?.status || 0 };
-
-    try {
-      payload = await readBoundedResponseJson(response);
-    } catch (error) {
-      return {
-        ok: false,
-        code: error?.message === "MAVIS_AI_RESPONSE_TOO_LARGE"
-          ? "MAVIS_AI_RESPONSE_TOO_LARGE"
-          : "MAVIS_AI_INVALID_RESPONSE"
-      };
-    }
-  } finally {
-    clearTimeout(timer);
+  const hasWorkersAi = typeof ai?.run === "function";
+  if (!hasWorkersAi && !text(apiKey, 500)) {
+    return { ok: false, code: "MAVIS_AI_NOT_CONFIGURED" };
+  }
+  if (!hasWorkersAi && typeof fetchImpl !== "function") {
+    return { ok: false, code: "MAVIS_AI_TRANSPORT_UNAVAILABLE" };
   }
 
-  if (payload?.status === "incomplete" || payload?.incomplete_details) return { ok: false, code: "MAVIS_AI_INCOMPLETE_RESPONSE" };
+  let request;
+  try {
+    request = buildMavisEditorialAiRequest(input, { model });
+  } catch (error) {
+    return { ok: false, code: "MAVIS_AI_INVALID_INPUT", message: error.message };
+  }
 
-  let raw;
-  try { raw = outputText(payload); }
-  catch { return { ok: false, code: "MAVIS_AI_REFUSED" }; }
-  if (!raw) return { ok: false, code: "MAVIS_AI_EMPTY_RESPONSE" };
+  let raw = "";
+  if (hasWorkersAi) {
+    let payload;
+    try {
+      payload = await ai.run(model, {
+        messages: [
+          { role: "system", content: INSTRUCTIONS },
+          { role: "user", content: request.input }
+        ],
+        response_format: {
+          type: "json_schema",
+          json_schema: SCHEMA
+        },
+        max_tokens: 2600,
+        temperature: 0.2
+      });
+    } catch {
+      return { ok: false, code: "MAVIS_AI_PROVIDER_ERROR" };
+    }
+
+    if (new TextEncoder().encode(JSON.stringify(payload)).byteLength > MAX_RESPONSE_BYTES) {
+      return { ok: false, code: "MAVIS_AI_RESPONSE_TOO_LARGE" };
+    }
+    if (typeof payload?.response === "string") {
+      raw = payload.response.trim();
+    } else if (payload?.response && typeof payload.response === "object" && !Array.isArray(payload.response)) {
+      raw = JSON.stringify(payload.response);
+    } else {
+      return { ok: false, code: "MAVIS_AI_INVALID_RESPONSE" };
+    }
+    if (!raw) return { ok: false, code: "MAVIS_AI_EMPTY_RESPONSE" };
+  } else {
+    const timeout = Number.isInteger(timeoutMs) && timeoutMs >= 1 && timeoutMs <= 60000
+      ? timeoutMs
+      : 30000;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+    let response;
+    let payload;
+    try {
+      try {
+        response = await fetchImpl("https://api.openai.com/v1/responses", {
+          method: "POST",
+          redirect: "error",
+          cache: "no-store",
+          signal: controller.signal,
+          headers: {
+            Authorization: "Bearer " + apiKey,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(request)
+        });
+      } catch {
+        return {
+          ok: false,
+          code: controller.signal.aborted ? "MAVIS_AI_TIMEOUT" : "MAVIS_AI_NETWORK_ERROR"
+        };
+      }
+
+      if (!response?.ok) {
+        return { ok: false, code: "MAVIS_AI_PROVIDER_ERROR", status: response?.status || 0 };
+      }
+
+      try {
+        payload = await readBoundedResponseJson(response);
+      } catch (error) {
+        return {
+          ok: false,
+          code: error?.message === "MAVIS_AI_RESPONSE_TOO_LARGE"
+            ? "MAVIS_AI_RESPONSE_TOO_LARGE"
+            : "MAVIS_AI_INVALID_RESPONSE"
+        };
+      }
+    } finally {
+      clearTimeout(timer);
+    }
+
+    if (payload?.status === "incomplete" || payload?.incomplete_details) {
+      return { ok: false, code: "MAVIS_AI_INCOMPLETE_RESPONSE" };
+    }
+
+    try {
+      raw = outputText(payload);
+    } catch {
+      return { ok: false, code: "MAVIS_AI_REFUSED" };
+    }
+    if (!raw) return { ok: false, code: "MAVIS_AI_EMPTY_RESPONSE" };
+  }
 
   try {
     const parsed = JSON.parse(raw);
     const allowedIds = new Set(normalizeMavisEditorialAiInput(input).sources.map((source) => source.id));
-    return { ok: true, model: request.model, suggestions: normalizeOutput(parsed, allowedIds) };
+    return {
+      ok: true,
+      model,
+      provider: hasWorkersAi ? "cloudflare_workers_ai" : "openai",
+      suggestions: normalizeOutput(parsed, allowedIds)
+    };
   } catch {
     return { ok: false, code: "MAVIS_AI_INVALID_OUTPUT" };
   }

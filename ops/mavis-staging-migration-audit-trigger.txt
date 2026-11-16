@@ -1,0 +1,2 @@
+Read-only Staging migration history, SQL parity and dry-run audit.
+This trigger must never apply migrations. The workflow's apply condition remains restricted to explicit approval on the dedicated migration path.

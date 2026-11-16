@@ -7,6 +7,12 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
+  "ai": {
+    "binding": "AI"
+  },
+  "browser": {
+    "binding": "BROWSER"
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"

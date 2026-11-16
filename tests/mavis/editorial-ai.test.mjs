@@ -112,3 +112,69 @@ test("maps transport failures separately from invalid JSON", async () => {
   assert.equal(result.ok, false);
   assert.equal(result.code, "MAVIS_AI_NETWORK_ERROR");
 });
+
+
+test("uses Cloudflare Workers AI without requiring an OpenAI API key", async () => {
+  let providerCalled = false;
+  const result = await generateMavisEditorialSuggestions(
+    { topic: "مسئولیت مدنی", sources: [source] },
+    {
+      apiKey: "",
+      ai: {
+        run: async (model, request) => {
+          providerCalled = true;
+          assert.equal(model, "@cf/meta/llama-3.3-70b-instruct-fp8-fast");
+          assert.equal(request.messages[0].role, "system");
+          assert.match(request.messages[0].content, /Never invent statutes/);
+          assert.equal(request.messages[1].role, "user");
+          assert.equal(request.response_format.type, "json_schema");
+          assert.equal(request.response_format.json_schema.type, "object");
+          assert.equal(request.max_tokens, 2600);
+          return { response: output, usage: { prompt_tokens: 20 } };
+        }
+      },
+      model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+      fetchImpl: async () => {
+        throw new Error("OpenAI fallback must not be called when Workers AI is bound");
+      }
+    }
+  );
+
+  assert.equal(providerCalled, true);
+  assert.equal(result.ok, true);
+  assert.equal(result.provider, "cloudflare_workers_ai");
+  assert.equal(result.model, "@cf/meta/llama-3.3-70b-instruct-fp8-fast");
+  assert.equal(result.suggestions.sourceCitations.length, 1);
+});
+
+test("rejects malformed Workers AI output", async () => {
+  const result = await generateMavisEditorialSuggestions(
+    { topic: "مسئولیت مدنی" },
+    { ai: { run: async () => ({ response: "not-json" }) }, model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast" }
+  );
+  assert.equal(result.ok, false);
+  assert.equal(result.code, "MAVIS_AI_INVALID_OUTPUT");
+});
+
+test("maps Workers AI provider failures without leaking upstream details", async () => {
+  const result = await generateMavisEditorialSuggestions(
+    { topic: "مسئولیت مدنی" },
+    { ai: { run: async () => { throw new Error("private upstream diagnostic"); } }, model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast" }
+  );
+  assert.equal(result.ok, false);
+  assert.equal(result.code, "MAVIS_AI_PROVIDER_ERROR");
+  assert.equal(JSON.stringify(result).includes("private upstream diagnostic"), false);
+});
+
+
+test("accepts string-encoded JSON from Workers AI compatibility responses", async () => {
+  const result = await generateMavisEditorialSuggestions(
+    { topic: "مسئولیت مدنی", sources: [source] },
+    {
+      ai: { run: async () => ({ response: JSON.stringify(output) }) },
+      model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    }
+  );
+  assert.equal(result.ok, true);
+  assert.equal(result.provider, "cloudflare_workers_ai");
+});

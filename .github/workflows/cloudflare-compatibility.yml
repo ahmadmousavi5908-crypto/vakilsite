@@ -115,7 +115,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npx opennextjs-cloudflare preview --ip 127.0.0.1 --port 8787 > /tmp/opennext-preview.log 2>&1 &
+          npx opennextjs-cloudflare preview --config wrangler.preview.jsonc --ip 127.0.0.1 --port 8787 > /tmp/opennext-preview.log 2>&1 &
           PREVIEW_PID=$!
           trap 'kill "$PREVIEW_PID" 2>/dev/null || true' EXIT
 
