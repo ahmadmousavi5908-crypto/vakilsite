@@ -12,6 +12,7 @@ on:
       - "next.config.mjs"
       - "wrangler.staging.jsonc"
       - ".github/workflows/deploy-mavis-editorial-staging.yml"
+      - "ops/mavis-staging-migration-019-apply.txt"
   workflow_dispatch:
 
 permissions:
