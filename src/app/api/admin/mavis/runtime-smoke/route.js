@@ -102,6 +102,7 @@ export async function POST(request) {
   const result = await generateMavisEditorialSuggestions({
     topic: "MAVIS Staging runtime integration smoke test",
     title: "آزمون اتصال دستیار تحریریه ماویس",
+    slug: "mavis-staging-runtime-smoke",
     category: "آزمون فنی",
     excerpt: "آزمون کوتاه اتصال مدل در محیط آزمایشی، بدون ذخیره یا انتشار محتوا.",
     intro: "یک طرح آموزشی عمومی درباره اهمیت بررسی و استناد به منابع معتبر حقوقی تهیه کن.",
@@ -113,7 +114,10 @@ export async function POST(request) {
   }, { ai: env.AI, model });
 
   if (!result.ok) {
-    return Response.json({ error: { code: result.code || "WORKERS_AI_FAILED" } }, { status: 502 });
+    return Response.json({ error: {
+      code: result.code || "WORKERS_AI_FAILED",
+      ...(result.reason ? { validationReason: result.reason } : {})
+    } }, { status: 502 });
   }
 
   return Response.json({

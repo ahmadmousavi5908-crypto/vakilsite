@@ -38,6 +38,8 @@ jobs:
         run: npm run test:site-url
       - name: Test IndexNow key and URL validation
         run: npm run test:indexnow
+      - name: Test IndexNow publication notification client
+        run: node --test tests/mavis/indexnow-client.test.mjs
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data

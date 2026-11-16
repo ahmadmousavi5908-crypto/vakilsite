@@ -6,7 +6,7 @@ const SCHEMA = {
     title: { type: "string" }, slug: { type: "string" }, category: { type: "string" },
     excerpt: { type: "string" }, intro: { type: "string" }, warning: { type: "string" },
     checklist: { type: "array", items: { type: "string" } },
-    sections: { type: "array", items: {
+    sections: { type: "array", minItems: 2, maxItems: 10, items: {
       type: "object", additionalProperties: false,
       properties: { heading: { type: "string" }, body: { type: "string" } },
       required: ["heading", "body"]
@@ -28,6 +28,8 @@ const SCHEMA = {
 const INSTRUCTIONS = [
   "You are MAVIS, a Persian legal editorial assistant for public educational content about Iranian law.",
   "Write in clear Iranian Persian. Never act as counsel for a specific client.",
+  "The slug must be a concise lowercase English ASCII slug using only a-z, 0-9, and hyphens. Never return a Persian or Arabic slug.",
+  "Return at least two non-empty sections, each with both heading and body.",
   "Never invent statutes, article numbers, regulations, unifying opinions, court decisions, dates, authorities, quotations, URLs, or source titles.",
   "Use only supplied source records. A title or abstract is metadata, not proof that the full source was read.",
   "Only cite source IDs supplied in the input. If evidence is insufficient, use cautious wording and list the missing evidence in evidenceGaps.",
@@ -113,9 +115,44 @@ function outputText(response) {
   return chunks.join("\n").trim();
 }
 
-function normalizeOutput(value, allowedIds) {
-  const slug = text(value?.slug, 120).toLowerCase();
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw new TypeError("Invalid slug");
+function slugifyEditorialValue(value) {
+  const replacements = {
+    "آ": "a", "ا": "a", "أ": "a", "إ": "e", "ب": "b", "پ": "p", "ت": "t", "ث": "s",
+    "ج": "j", "چ": "ch", "ح": "h", "خ": "kh", "د": "d", "ذ": "z", "ر": "r", "ز": "z",
+    "ژ": "zh", "س": "s", "ش": "sh", "ص": "s", "ض": "z", "ط": "t", "ظ": "z", "ع": "a",
+    "غ": "gh", "ف": "f", "ق": "gh", "ک": "k", "ك": "k", "گ": "g", "ل": "l", "م": "m",
+    "ن": "n", "و": "v", "ه": "h", "ۀ": "h", "ة": "h", "ی": "y", "ي": "y", "ئ": "y",
+    "ؤ": "v", "ء": "", "‌": "-", "۰": "0", "۱": "1", "۲": "2", "۳": "3", "۴": "4",
+    "۵": "5", "۶": "6", "۷": "7", "۸": "8", "۹": "9"
+  };
+  return [...text(value, 300).toLowerCase()]
+    .map((character) => replacements[character] ?? character)
+    .join("")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-")
+    .slice(0, 120)
+    .replace(/-+$/g, "");
+}
+
+function fallbackEditorialSlug(input = {}) {
+  const candidate = slugifyEditorialValue(input.slug || input.title || input.topic);
+  if (candidate) return candidate;
+  let hash = 2166136261;
+  for (const character of text(input.topic || input.title, 300)) {
+    hash = Math.imul(hash ^ character.charCodeAt(0), 16777619);
+  }
+  return "mavis-legal-draft-" + (hash >>> 0).toString(36);
+}
+
+function normalizeOutput(value, allowedIds, input = {}) {
+  const modelSlug = slugifyEditorialValue(value?.slug);
+  const slug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(modelSlug)
+    ? modelSlug
+    : fallbackEditorialSlug(input);
+  if (!slug) throw new TypeError("Invalid slug");
   const sections = (Array.isArray(value.sections) ? value.sections : []).slice(0, 10)
     .map((s) => ({ heading: text(s?.heading, 200), body: text(s?.body, 5000) }))
     .filter((s) => s.heading && s.body);
@@ -290,16 +327,25 @@ export async function generateMavisEditorialSuggestions(input, {
     if (!raw) return { ok: false, code: "MAVIS_AI_EMPTY_RESPONSE" };
   }
 
+  let parsed;
   try {
-    const parsed = JSON.parse(raw);
+    parsed = JSON.parse(raw);
+  } catch {
+    return { ok: false, code: "MAVIS_AI_INVALID_OUTPUT", reason: "invalid_json" };
+  }
+
+  try {
     const allowedIds = new Set(normalizeMavisEditorialAiInput(input).sources.map((source) => source.id));
     return {
       ok: true,
       model,
       provider: hasWorkersAi ? "cloudflare_workers_ai" : "openai",
-      suggestions: normalizeOutput(parsed, allowedIds)
+      suggestions: normalizeOutput(parsed, allowedIds, input)
     };
-  } catch {
-    return { ok: false, code: "MAVIS_AI_INVALID_OUTPUT" };
+  } catch (error) {
+    const reason = error?.message === "Invalid slug" ? "invalid_slug"
+      : error?.message === "Insufficient sections" ? "insufficient_sections"
+        : "normalization_failed";
+    return { ok: false, code: "MAVIS_AI_INVALID_OUTPUT", reason };
   }
 }

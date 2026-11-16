@@ -178,3 +178,29 @@ test("accepts string-encoded JSON from Workers AI compatibility responses", asyn
   assert.equal(result.ok, true);
   assert.equal(result.provider, "cloudflare_workers_ai");
 });
+
+
+test("transliterates Persian model slugs into safe ASCII slugs", async () => {
+  const result = await generateMavisEditorialSuggestions(
+    { topic: "مسئولیت مدنی", title: "مسئولیت مدنی" },
+    {
+      ai: { run: async () => ({ response: { ...output, slug: "مسئولیت-مدنی" } }) },
+      model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+    }
+  );
+  assert.equal(result.ok, true);
+  assert.match(result.suggestions.slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+});
+
+test("returns safe validation reasons for malformed structured output", async () => {
+  const invalid = await generateMavisEditorialSuggestions(
+    { topic: "مسئولیت مدنی" },
+    { ai: { run: async () => ({ response: "not-json" }) }, model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast" }
+  );
+  const insufficient = await generateMavisEditorialSuggestions(
+    { topic: "مسئولیت مدنی" },
+    { ai: { run: async () => ({ response: { ...output, sections: [] } }) }, model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast" }
+  );
+  assert.equal(invalid.reason, "invalid_json");
+  assert.equal(insufficient.reason, "insufficient_sections");
+});
