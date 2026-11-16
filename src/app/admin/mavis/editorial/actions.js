@@ -101,6 +101,7 @@ export async function saveEditorialDraft(formData) {
     legal_review_status: legalReviewStatus,
     author_name: authorName,
     reviewer_name: reviewerName,
+    last_legal_review_at: legalReviewStatus === "approved" ? new Date().toISOString() : null,
     updated_by: user.sub,
     updated_at: new Date().toISOString(),
     draft_updated_at: new Date().toISOString(),
