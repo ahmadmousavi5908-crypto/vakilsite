@@ -225,13 +225,18 @@ export default async function MavisArticlesPage({ searchParams }) {
             <div>
               <span className="admin-eyebrow">MAVIS · CONTENT WORKSPACE</span>
               <h1>مدیریت و بازبینی مقالات</h1>
-              <p>مدیریت پیش‌نویس‌های دیتابیسی در کنار فهرست فقط‌خواندنی مقالات فعلی سایت.</p>
+              <p>جست‌وجوی وب، ساخت پیش‌نویس، ویرایش نسخه‌ها، بازبینی و انتشار کنترل‌شده مقالات.</p>
+              <Link href="/admin/mavis/articles/new">ایجاد مقاله جدید ←</Link>
             </div>
             <div className="admin-status"><i /> دسترسی مدیر تأیید شده</div>
           </section>
           <MavisArticlesAccordion>
-            <MavisSourceDiscovery />
-            <MavisSourceCandidateQueue rows={candidateRows} nextCursor={nextCandidateCursor} stateFilter={candidateState} error={candidateError} />
+            <details className="admin-help">
+              <summary>جست‌وجوی تخصصی چندمنبعی (اختیاری)</summary>
+              <p>مسیر اصلی تولید مقاله از جست‌وجوی عمومی وب و استخراج اطلاعات در فرم مقاله استفاده می‌کند. ابزارهای قدیمی منابع علمی در صورت نیاز اینجا در دسترس‌اند.</p>
+              <MavisSourceDiscovery />
+              <MavisSourceCandidateQueue rows={candidateRows} nextCursor={nextCandidateCursor} stateFilter={candidateState} error={candidateError} />
+            </details>
             <MavisReviewQueue rows={reviewRows} error={reviewError} />
             <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
             <MavisArchiveQueue rows={archivedRows} error={archiveError} />
