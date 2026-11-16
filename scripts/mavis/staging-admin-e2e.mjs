@@ -62,10 +62,38 @@ async function main() {
   assert(publishableKey, "Missing STAGING_SUPABASE_PUBLISHABLE_KEY.");
   assert(dbUrl, "Missing SUPABASE_STAGING_DB_URL and SUPABASE_STAGING_DB_PASSWORD.");
 
+  const parsedUrl = new URL(projectUrl);
+  assert(
+    parsedUrl.hostname === "srbwniqhaxwaoepjfizf.supabase.co" &&
+      parsedUrl.protocol === "https:",
+    "Refusing to run against a non-Staging Supabase project."
+  );
+
   const dbCandidates = [...new Set([configuredDbUrl, fallbackDbUrl].filter(Boolean))];
+  const isApprovedStagingDatabaseUrl = (value) => {
+    try {
+      const candidate = new URL(value);
+      const username = decodeURIComponent(candidate.username);
+      return (
+        ["postgres:", "postgresql:"].includes(candidate.protocol) &&
+        candidate.hostname === "aws-1-eu-central-1.pooler.supabase.com" &&
+        candidate.port === "5432" &&
+        username.endsWith(".srbwniqhaxwaoepjfizf") &&
+        !username.includes("jroflcmiczfwtmiaxmpd") &&
+        candidate.pathname === "/postgres"
+      );
+    } catch {
+      return false;
+    }
+  };
+
   let databaseConnectionVerified = false;
   let lastDatabaseConnectionError;
   for (const candidate of dbCandidates) {
+    assert(
+      isApprovedStagingDatabaseUrl(candidate),
+      "Refusing to connect to a database URI outside the approved Staging pooler."
+    );
     dbUrl = candidate;
     try {
       runDbQuery("SELECT 1;", { readOnly: true });
@@ -82,25 +110,6 @@ async function main() {
   assert(
     databaseConnectionVerified,
     `Unable to authenticate to the isolated Staging database: ${lastDatabaseConnectionError?.message || "unknown connection error"}`
-  );
-
-  const parsedUrl = new URL(projectUrl);
-  assert(
-    parsedUrl.hostname === "srbwniqhaxwaoepjfizf.supabase.co" &&
-      parsedUrl.protocol === "https:",
-    "Refusing to run against a non-Staging Supabase project."
-  );
-
-  const parsedDbUrl = new URL(dbUrl);
-  const dbUsername = decodeURIComponent(parsedDbUrl.username);
-  assert(
-    ["postgres:", "postgresql:"].includes(parsedDbUrl.protocol) &&
-      parsedDbUrl.hostname.endsWith(".pooler.supabase.com") &&
-      parsedDbUrl.port === "5432" &&
-      dbUsername.endsWith(".srbwniqhaxwaoepjfizf") &&
-      !dbUsername.includes("jroflcmiczfwtmiaxmpd") &&
-      parsedDbUrl.pathname === "/postgres",
-    "Refusing to run against a non-Staging database connection."
   );
 
   let userSeedAttempted = false;
