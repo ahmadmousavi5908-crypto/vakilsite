@@ -3,6 +3,7 @@ name: MAVIS authenticated Staging editorial E2E
 on:
   push:
     branches:
+      - main
       - feature/mavis-third-arm-delivery-20261116
     paths:
       - "ops/mavis-staging-admin-e2e-trigger.txt"
