@@ -1,3 +1,4 @@
 MAVIS staging-only deployment trigger.
-Deploys the reviewed branch to the isolated vakilsite-staging Supabase project and the dedicated staging Worker only.
+Deploys the reviewed main revision to the isolated vakilsite-staging Supabase project and the dedicated staging Worker only.
 No Production routes or database are targeted.
+Refreshed after Workers AI output validation and IndexNow publication notification fixes on 2026-11-17.
