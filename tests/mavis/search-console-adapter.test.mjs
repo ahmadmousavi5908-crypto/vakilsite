@@ -201,7 +201,7 @@ test("supports Persian metric digits and rejects malformed CSV safely", () => {
   const csv = [
     "عبارت جستجو,کلیک,نمایش,نرخ کلیک,میانگین جایگاه",
     "قانون مدنی,۱۲,۱۲۰,۱۰٪,۸٫۵",
-  ].join("\\n");
+  ].join("\n");
   const result = normalizeSearchConsoleCsv(csv, {
     startDate: "2026-10-01",
     endDate: "2026-10-31",
