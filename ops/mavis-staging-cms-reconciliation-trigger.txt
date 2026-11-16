@@ -1,1 +1,2 @@
 Run the read-only JSON audit query for Staging CMS columns, policies, indexes, functions, relations, migration history, and dry-run. No database mutation.
+2026-11-16: read-only post-migration CMS schema, RLS, functions, inventory and migration history audit.
