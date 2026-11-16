@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { normalizeSearchAnalyticsResponse } from "../../src/lib/mavis/search-console-adapter.mjs";
+import { normalizeSearchAnalyticsResponse, normalizeSearchConsoleCsv } from "../../src/lib/mavis/search-console-adapter.mjs";
 
 const request = {
   startDate: "2026-10-01",
@@ -157,4 +157,63 @@ test("masks personal identifiers embedded in page URL paths", () => {
   assert.equal(result.ok, true);
   assert.equal(result.rows[0].dimensions.page, null);
   assert.equal(result.rows[0].privacyReviewRequired, true);
+});
+
+
+test("imports a standard Google Search Console CSV locally and preserves quoted commas", () => {
+  const csv = [
+    "Top queries,Top pages,Date,Clicks,Impressions,CTR,Position",
+    '"قانون, مدنی",https://vakilahmadmousavi.ir/legal,2026-10-12,12,120,10%,8.5',
+    '"۰۹۱۲۳۴۵۶۷۸۹",https://vakilahmadmousavi.ir/contact,2026-10-13,1,2,50%,4',
+  ].join("\\r\\n");
+  const result = normalizeSearchConsoleCsv(csv, {
+    startDate: "2026-10-01",
+    endDate: "2026-10-31",
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.source, "google_search_console_csv_import");
+  assert.equal(result.rows[0].dimensions.query, "قانون, مدنی");
+  assert.equal(result.rows[0].metrics.ctr, 0.1);
+  assert.equal(result.rows[1].dimensions.query, null);
+  assert.equal(result.rows[1].privacyReviewRequired, true);
+  assert.match(result.disclaimer, /اتصال زنده نیست/);
+});
+
+test("filters CSV date rows to the selected range and marks capped imports", () => {
+  const csv = [
+    "Query,Clicks,Impressions,CTR,Position,Date",
+    "قانون مدنی,2,20,10%,5,2026-10-02",
+    "وکیل اهواز,3,30,10%,7,2026-11-02",
+  ].join("\\n");
+  const result = normalizeSearchConsoleCsv(csv, {
+    startDate: "2026-10-01",
+    endDate: "2026-10-31",
+    rowLimit: 1,
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.rows.length, 1);
+  assert.equal(result.rows[0].dimensions.date, "2026-10-02");
+});
+
+test("supports Persian metric digits and rejects malformed CSV safely", () => {
+  const csv = [
+    "عبارت جستجو,کلیک,نمایش,نرخ کلیک,میانگین جایگاه",
+    "قانون مدنی,۱۲,۱۲۰,۱۰٪,۸٫۵",
+  ].join("\\n");
+  const result = normalizeSearchConsoleCsv(csv, {
+    startDate: "2026-10-01",
+    endDate: "2026-10-31",
+  });
+  const malformed = normalizeSearchConsoleCsv('Query,Clicks,Impressions,Position\\n"broken,1,2,3', {
+    startDate: "2026-10-01",
+    endDate: "2026-10-31",
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.rows[0].metrics.clicks, 12);
+  assert.equal(result.rows[0].metrics.averagePosition, 8.5);
+  assert.equal(malformed.ok, false);
+  assert.equal(malformed.reason, "csv_unclosed_quote");
 });
