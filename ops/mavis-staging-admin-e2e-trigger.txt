@@ -1,1 +1,1 @@
-Run authenticated Staging editorial lifecycle with a temporary database-seeded Auth identity. No email delivery or production credentials are used; verify complete lifecycle and cleanup.
+Retry authenticated Staging E2E after aligning the email identity provider_id with the email login identifier; verify lifecycle and cleanup.
