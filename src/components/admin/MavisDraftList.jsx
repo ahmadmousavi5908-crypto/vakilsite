@@ -13,6 +13,7 @@ const STATUS_LABELS = {
   approved: "تأییدشده",
   published: "منتشرشده",
   archived: "آرشیوشده",
+  rejected: "ردشده",
 };
 
 export default function MavisDraftList({ rows = [], nextCursor = null, nextHref = null, rowStart = 0, initialQuery = "", initialStatus = "all", error = null }) {
@@ -25,7 +26,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, nextHref 
     const normalized = query.trim().toLocaleLowerCase();
     return [...rows]
       .filter((article) => statusFilter === "all" || article.status === statusFilter)
-      .filter((article) => !normalized || [article.title, article.slug, article.category].some((value) => String(value || "").toLocaleLowerCase().includes(normalized)))
+      .filter((article) => !normalized || [article.title, article.slug, article.category, article.author_name].some((value) => String(value || "").toLocaleLowerCase().includes(normalized)))
       .sort((a, b) => {
         const left = a[sortBy] ?? "";
         const right = b[sortBy] ?? "";
@@ -130,7 +131,13 @@ export default function MavisDraftList({ rows = [], nextCursor = null, nextHref 
                         <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
                         <td>{Number(article.current_version).toLocaleString("fa-IR")}</td>
                         <td><time dateTime={article.updated_at}>{new Date(article.updated_at).toLocaleString("fa-IR")}</time></td>
-                        <td><Link href={`/admin/mavis/articles/${article.id}/edit`}>ویرایش</Link></td>
+                        <td>
+                          {["draft", "changes_requested", "needs_update"].includes(article.status)
+                            ? <Link href={`/admin/mavis/articles/${article.id}/edit`}>ویرایش پیش‌نویس</Link>
+                            : article.status === "in_review"
+                              ? <Link href={`/admin/mavis/articles/${article.id}/review`}>بررسی مقاله</Link>
+                              : <Link href={`/admin/mavis/articles/${article.id}/manage`}>مدیریت و نسخه‌ها</Link>}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
