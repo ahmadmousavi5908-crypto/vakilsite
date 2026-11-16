@@ -1,11 +1,16 @@
 import { articles } from "../data/articles";
+import { getMavisPublishedArticles } from "../lib/mavis/published-editorial";
 import { practiceAreas } from "../data/practice-areas";
 import { getIndexableLegalRecords } from "../lib/legal-library";
 import { getSiteUrl } from "../lib/site-url.mjs";
 import { buildSitemapEntries } from "../lib/sitemap.mjs";
 
-export default function sitemap() {
+export const dynamic = "force-dynamic";
+
+export default async function sitemap() {
   const siteUrl = getSiteUrl(process.env, { required: true });
+  const publishedArticles = await getMavisPublishedArticles();
+  const publishedSlugs = new Set(publishedArticles.map((article) => article.slug));
   const entries = [
     { path: "/", changeFrequency: "weekly", priority: 1 },
     { path: "/ai-assistant", changeFrequency: "monthly", priority: 0.6 },
@@ -28,7 +33,12 @@ export default function sitemap() {
       changeFrequency: "monthly",
       priority: 0.55,
     })),
-    ...articles.map((article) => ({
+    ...articles.filter((article) => !publishedSlugs.has(article.slug)).map((article) => ({
+      path: "/articles/" + article.slug,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    })),
+    ...publishedArticles.filter((article) => article.isIndexable === true).map((article) => ({
       path: "/articles/" + article.slug,
       changeFrequency: "monthly",
       priority: 0.7,
