@@ -58,14 +58,14 @@ insert into public.mavis_source_candidates (
   'https://doi.org/10.5555/offline-remedy'
 );
 
-select ok((select search_vector @@ plainto_tsquery('simple','specific performance') from public.mavis_articles where id='00000000-0000-4000-8000-000000000093'),'article insert trigger indexes structured article content');
+select ok((select search_vector @@ plainto_tsquery('simple','specific performance') from public.mavis_editorial_articles where id='00000000-0000-4000-8000-000000000093'),'article insert trigger indexes structured article content');
 select ok((select search_vector @@ plainto_tsquery('simple','offline remedy') from public.mavis_sources where id='00000000-0000-4000-8000-000000000094'),'source insert trigger indexes source metadata');
 select ok((select search_vector @@ plainto_tsquery('simple','offline remedy') from public.mavis_source_candidates where id='00000000-0000-4000-8000-000000000095'),'candidate insert trigger indexes candidate metadata');
 
 update public.mavis_editorial_articles
 set content='{"intro":"Specific performance; revised archive trigger verification; مسئولیت مدنی"}'::jsonb
 where id='00000000-0000-4000-8000-000000000093';
-select ok((select search_vector @@ plainto_tsquery('simple','revised archive') from public.mavis_articles where id='00000000-0000-4000-8000-000000000093'),'article update trigger refreshes the local search vector');
+select ok((select search_vector @@ plainto_tsquery('simple','revised archive') from public.mavis_editorial_articles where id='00000000-0000-4000-8000-000000000093'),'article update trigger refreshes the local search vector');
 
 set local role authenticated;
 set local request.jwt.claim.sub='00000000-0000-4000-8000-000000000091';
