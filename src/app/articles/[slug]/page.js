@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { articles as siteArticles } from "../../../data/articles";
 import { getPublicArticleBySlug } from "../../../lib/mavis/published-editorial";
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
@@ -8,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
 export function generateStaticParams() {
-  return articles.map((article) => ({ slug: article.slug }));
+  return siteArticles.map((article) => ({ slug: article.slug }));
 }
 
 export async function generateMetadata({ params }) {
@@ -85,6 +86,18 @@ export default async function ArticleDetailPage({ params }) {
             <ul>{article.checklist.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
           </div>
           <div className="article-legal-note"><b>نکته مهم</b><p>{article.warning}</p></div>
+          {article.sourceMetadata && Object.values(article.sourceMetadata).some(Boolean) ? (
+            <section className="article-sources">
+              <h2>مشخصات انتشار و سند</h2>
+              <ul>
+                {article.sourceMetadata.publication ? <li>نشریه / پایگاه: {article.sourceMetadata.publication}</li> : null}
+                {article.sourceMetadata.publicationDate ? <li>تاریخ انتشار: {article.sourceMetadata.publicationDate}</li> : null}
+                {article.sourceMetadata.documentNumber ? <li>شماره سند / رأی: {article.sourceMetadata.documentNumber}</li> : null}
+                {article.sourceMetadata.issuingAuthority ? <li>مرجع صادرکننده: {article.sourceMetadata.issuingAuthority}</li> : null}
+                {article.sourceMetadata.documentType ? <li>نوع سند: {article.sourceMetadata.documentType}</li> : null}
+              </ul>
+            </section>
+          ) : null}
           <section className="article-sources">
             <h2>مستندات و منابع قانونی</h2>
             <p>برای مطالعه متن قوانین و تطبیق آخرین اصلاحات، از منابع زیر استفاده کنید:</p>
