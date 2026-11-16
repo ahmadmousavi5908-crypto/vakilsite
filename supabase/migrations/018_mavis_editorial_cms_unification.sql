@@ -48,13 +48,8 @@ ALTER TABLE public.mavis_editorial_articles
   ADD COLUMN IF NOT EXISTS draft_updated_at timestamptz NOT NULL DEFAULT now(),
   ADD COLUMN IF NOT EXISTS published_version integer;
 
-UPDATE public.mavis_editorial_articles
-SET author_name = ''
-WHERE author_name IS NULL;
-
 ALTER TABLE public.mavis_editorial_articles
-  ALTER COLUMN author_name SET DEFAULT '',
-  ALTER COLUMN author_name SET NOT NULL;
+  ALTER COLUMN author_name SET DEFAULT '';
 
 UPDATE public.mavis_editorial_articles
 SET published_version = current_version
