@@ -1,1 +1,1 @@
-Run read-only inventory of legacy Mother Two and current editorial CMS tables on isolated Staging.
+Read-only CMS inventory plus Staging PostgreSQL version for view security compatibility.
