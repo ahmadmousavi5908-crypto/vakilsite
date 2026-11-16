@@ -58,6 +58,7 @@ jobs:
           MAVIS_IRAN_SOURCE_SEARCH_API_KEY: ${{ secrets.MAVIS_IRAN_SOURCE_SEARCH_API_KEY }}
           MAVIS_GSC_CLIENT_ID: ${{ secrets.MAVIS_GSC_CLIENT_ID }}
           MAVIS_GSC_CLIENT_SECRET: ${{ secrets.MAVIS_GSC_CLIENT_SECRET }}
+          MAVIS_GSC_TOKEN_ENCRYPTION_KEY: ${{ secrets.MAVIS_GSC_TOKEN_ENCRYPTION_KEY }}
           MAVIS_GSC_REFRESH_TOKEN: ${{ secrets.MAVIS_GSC_REFRESH_TOKEN }}
           MAVIS_GSC_SITE_URL: ${{ secrets.MAVIS_GSC_SITE_URL }}
           NEXT_PUBLIC_SUPABASE_URL: https://jroflcmiczfwtmiaxmpd.supabase.co
@@ -83,14 +84,24 @@ jobs:
             "MAVIS_IRAN_SOURCE_SEARCH_API_KEY",
             "MAVIS_GSC_CLIENT_ID",
             "MAVIS_GSC_CLIENT_SECRET",
+            "MAVIS_GSC_TOKEN_ENCRYPTION_KEY",
             "MAVIS_GSC_REFRESH_TOKEN",
             "MAVIS_GSC_SITE_URL",
           ];
-          const gscNames = names.filter((name) => name.startsWith("MAVIS_GSC_"));
-          const configuredGsc = gscNames.filter((name) => Boolean(process.env[name]?.trim()));
-          if (configuredGsc.length > 0 && configuredGsc.length !== gscNames.length) {
-            const missing = gscNames.filter((name) => !process.env[name]?.trim());
-            throw new Error("Google Search Console credentials must be configured together: " + missing.join(", "));
+          const requiredGscNames = [
+            "MAVIS_GSC_CLIENT_ID",
+            "MAVIS_GSC_CLIENT_SECRET",
+            "MAVIS_GSC_TOKEN_ENCRYPTION_KEY",
+            "MAVIS_GSC_SITE_URL",
+          ];
+          const configuredGsc = requiredGscNames.filter((name) => Boolean(process.env[name]?.trim()));
+          if (configuredGsc.length > 0 && configuredGsc.length !== requiredGscNames.length) {
+            const missing = requiredGscNames.filter((name) => !process.env[name]?.trim());
+            throw new Error("Google Search Console OAuth secrets must be configured together: " + missing.join(", "));
+          }
+          if (process.env.MAVIS_GSC_TOKEN_ENCRYPTION_KEY &&
+              !/^[a-f0-9]{64}$/i.test(process.env.MAVIS_GSC_TOKEN_ENCRYPTION_KEY.trim())) {
+            throw new Error("MAVIS_GSC_TOKEN_ENCRYPTION_KEY must contain exactly 64 hexadecimal characters.");
           }
           const secrets = Object.fromEntries(
             names
