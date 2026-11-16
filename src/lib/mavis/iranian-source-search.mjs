@@ -127,7 +127,7 @@ function parseQavaninSearchResults(markup, limit) {
     if (!title) continue;
     const approved = cells[2]?.slice(0, 40) || "";
     const approver = cells[3]?.slice(0, 180) || "";
-    const repealed = /(?:^|\s)red(?:\s|$)/i.test(rowAttributes);
+    const repealed = /\bred\b/i.test(rowAttributes);
     const url = "https://qavanin.ir/Law/TreeText/?IDS=" + id;
     const matched = normalizeIranianSourceUrl(url);
     if (!matched) continue;
