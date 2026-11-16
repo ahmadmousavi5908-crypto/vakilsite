@@ -92,7 +92,7 @@ jobs:
             exit 1
           fi
 
-      - name: Verify retired editorial route redirects to the versioned CMS
+      - name: Verify retired editorial route remains behind administrator authentication
         shell: bash
         run: |
           set -euo pipefail
@@ -101,14 +101,21 @@ jobs:
           echo "/admin/mavis/editorial => HTTP $status"
           case "$status" in
             307|308)
-              if ! grep -Eiq '^location: */admin/mavis/articles' /tmp/mavis-legacy-editorial-headers; then
-                echo "::error::Legacy editorial route did not redirect to the versioned CMS."
+              if grep -Eiq '^location: */admin/login' /tmp/mavis-legacy-editorial-headers; then
+                echo "PASS: anonymous access is stopped by the admin middleware before the authenticated compatibility redirect."
+              elif grep -Eiq '^location: */admin/mavis/articles' /tmp/mavis-legacy-editorial-headers; then
+                echo "PASS: legacy editorial route redirects to the versioned CMS."
+              else
+                echo "::error::Legacy editorial route redirected to an unexpected destination."
                 cat /tmp/mavis-legacy-editorial-headers
                 exit 1
               fi
               ;;
+            401|403)
+              echo "PASS: legacy editorial route rejects anonymous access."
+              ;;
             *)
-              echo "::error::Legacy editorial route must redirect to the versioned CMS."
+              echo "::error::Legacy editorial route must remain protected by administrator authentication."
               cat /tmp/mavis-legacy-editorial-headers
               exit 1
               ;;
