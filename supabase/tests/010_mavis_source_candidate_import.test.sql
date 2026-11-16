@@ -130,7 +130,7 @@ select is(
 
 select is(
   (select count(*)::integer
-   from public.mavis_articles article
+   from public.mavis_editorial_articles article
    join public.mavis_article_sources link on link.article_id = article.id
    join public.mavis_sources source on source.id = link.source_id
    where source.canonical_url = 'https://doi.org/10.5555/import-test'
