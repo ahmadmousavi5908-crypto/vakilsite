@@ -230,11 +230,13 @@ export function createIranianSourceSearchFallback({ browser, timeoutMs = 18000 }
             if (!response?.ok) {
               providerErrors.push({ provider: "qavanin_browser_run", code: "UPSTREAM_UNAVAILABLE" });
             } else {
-              const markup = await response.text();
-              if (markup.length > 2_000_000) {
+              const payload = await response.json();
+              if (payload?.success !== true || typeof payload.result !== "string") {
+                providerErrors.push({ provider: "qavanin_browser_run", code: "UPSTREAM_UNAVAILABLE" });
+              } else if (payload.result.length > 2_000_000) {
                 providerErrors.push({ provider: "qavanin_browser_run", code: "RESPONSE_TOO_LARGE" });
               } else {
-                results.push(...parseQavaninSearchResults(markup, limit));
+                results.push(...parseQavaninSearchResults(payload.result, limit));
                 if (!results.length) providerErrors.push({ provider: "qavanin_browser_run", code: "NO_PARSEABLE_RESULTS" });
               }
             }
