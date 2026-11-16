@@ -1,0 +1,113 @@
+name: Apply MAVIS CMS unification to Staging
+
+on:
+  push:
+    branches:
+      - feature/mavis-indexnow-publication-notify-20261114
+    paths:
+      - "ops/mavis-staging-cms-apply-trigger.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-staging-cms-migration
+  cancel-in-progress: false
+
+jobs:
+  apply-cms-migration:
+    name: Apply only the verified CMS migration to Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+      SUPABASE_STAGING_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+    steps:
+      - name: Check out reviewed Staging revision
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install pinned Supabase CLI
+        run: npx --yes supabase@3.0.0 --version
+
+      - name: Verify Staging target and exactly one pending migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ] || [ -z "${SUPABASE_STAGING_DB_PASSWORD:-}" ]; then
+            echo "::error::Required Staging database credentials are missing."
+            exit 1
+          fi
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          case "$DB_URL" in
+            *"aws-1-eu-central-1.pooler.supabase.com:5432"*) ;;
+            *) echo "::error::Refusing a non-Staging database host."; exit 1 ;;
+          esac
+          npx --yes supabase@3.0.0 migration list --remote="$DB_URL"
+          DRY_RUN="$(npx --yes supabase@3.0.0 db push --dry-run --remote="$DB_URL")"
+          printf '%s\n' "$DRY_RUN"
+          PENDING_COUNT="$(printf '%s\n' "$DRY_RUN" | grep -Fc '018_mavis_editorial_cms_unification.sql' || true)"
+          OTHER_PENDING="$(printf '%s\n' "$DRY_RUN" | grep -E '• [0-9]{3}_' | grep -v '018_mavis_editorial_cms_unification.sql' || true)"
+          if [ "$PENDING_COUNT" -ne 1 ] || [ -n "$OTHER_PENDING" ]; then
+            echo "::error::Refusing to apply migrations unless 018 is the only pending migration."
+            exit 1
+          fi
+
+      - name: Verify the Staging CMS is empty and in the expected pre-migration state
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          SQL="SELECT
+            to_regclass('public.mavis_articles') IS NOT NULL AS current_table_exists,
+            to_regclass('public.mavis_editorial_articles') IS NULL AS canonical_table_absent,
+            (SELECT count(*) = 0 FROM public.mavis_articles) AS articles_empty,
+            (SELECT count(*) = 0 FROM public.mavis_article_versions) AS versions_empty,
+            (SELECT count(*) = 0 FROM public.mavis_article_approvals) AS approvals_empty,
+            (SELECT count(*) = 0 FROM public.mavis_article_sources) AS article_sources_empty;"
+          RESULT="$(npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL")"
+          printf '%s\n' "$RESULT"
+          for expected in 'current_table_exists:true' 'canonical_table_absent:true' 'articles_empty:true' 'versions_empty:true' 'approvals_empty:true' 'article_sources_empty:true'; do
+            if ! printf '%s' "$RESULT" | grep -Fq "$expected"; then
+              echo "::error::Staging preflight did not match the verified empty CMS baseline: $expected"
+              exit 1
+            fi
+          done
+
+      - name: Apply the single reviewed Staging migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          npx --yes supabase@3.0.0 db push --yes --remote="$DB_URL"
+
+      - name: Verify migration history and canonical table security
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          npx --yes supabase@3.0.0 migration list --remote="$DB_URL"
+          SQL="SELECT
+            to_regclass('public.mavis_editorial_articles') IS NOT NULL AS canonical_table_exists,
+            (SELECT relkind = 'r' FROM pg_class WHERE oid = to_regclass('public.mavis_editorial_articles')) AS canonical_is_table,
+            (SELECT relkind = 'v' FROM pg_class WHERE oid = to_regclass('public.mavis_articles')) AS legacy_name_is_view,
+            (SELECT relrowsecurity FROM pg_class WHERE oid = to_regclass('public.mavis_editorial_articles')) AS canonical_rls_enabled,
+            (SELECT coalesce(array_to_string(reloptions, ','), '') LIKE '%security_invoker=true%' FROM pg_class WHERE oid = to_regclass('public.mavis_articles')) AS public_view_uses_invoker,
+            (SELECT count(*) = 0 FROM public.mavis_editorial_articles) AS articles_remain_empty,
+            NOT has_schema_privilege('authenticated', 'public', 'CREATE') AS no_persistent_schema_create;"
+          RESULT="$(npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL")"
+          printf '%s\n' "$RESULT"
+          for expected in 'canonical_table_exists:true' 'canonical_is_table:true' 'legacy_name_is_view:true' 'canonical_rls_enabled:true' 'public_view_uses_invoker:true' 'articles_remain_empty:true' 'no_persistent_schema_create:true'; do
+            if ! printf '%s' "$RESULT" | grep -Fq "$expected"; then
+              echo "::error::Post-migration security verification failed: $expected"
+              exit 1
+            fi
+          done
