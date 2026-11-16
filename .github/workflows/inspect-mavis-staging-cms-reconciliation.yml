@@ -34,37 +34,43 @@ jobs:
       - name: Install pinned Supabase CLI
         run: npx --yes supabase@3.0.0 --version
 
-      - name: Verify only the CMS unification migration is pending
+      - name: Report migration history and non-mutating dry run
         shell: bash
         run: |
           set -euo pipefail
           DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
           npx --yes supabase@3.0.0 migration list --remote="$DB_URL"
-          DRY_RUN="$(npx --yes supabase@3.0.0 db push --dry-run --remote="$DB_URL")"
-          printf '%s\n' "$DRY_RUN"
-          PENDING_COUNT="$(printf '%s\n' "$DRY_RUN" | grep -c '018_mavis_editorial_cms_unification.sql' || true)"
-          if [ "$PENDING_COUNT" -ne 1 ]; then
-            echo "::error::Expected exactly one pending migration: 018_mavis_editorial_cms_unification.sql"
-            exit 1
-          fi
-          OTHER_PENDING="$(printf '%s\n' "$DRY_RUN" | grep -E ' • [0-9]{3}_' | grep -v '018_mavis_editorial_cms_unification.sql' || true)"
-          if [ -n "$OTHER_PENDING" ]; then
-            echo "::error::Unexpected additional pending migrations detected."
-            printf '%s\n' "$OTHER_PENDING"
-            exit 1
-          fi
+          npx --yes supabase@3.0.0 db push --dry-run --remote="$DB_URL"
 
       - name: Inspect the Staging CMS schema and row counts
         shell: bash
         run: |
           set -euo pipefail
           DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
-          SQL="SELECT
-            current_setting('server_version') AS postgres_version,
-            to_regclass('public.mavis_editorial_articles') IS NOT NULL AS mother_two_table_exists,
-            to_regclass('public.mavis_articles') IS NOT NULL AS current_cms_table_exists,
-            (SELECT count(*) FROM public.mavis_articles) AS current_article_count,
-            (SELECT count(*) FROM public.mavis_article_versions) AS version_count,
-            (SELECT count(*) FROM public.mavis_article_approvals) AS approval_count,
-            (SELECT count(*) FROM public.mavis_article_sources) AS article_source_count;"
+          SQL="SELECT current_setting('server_version') AS postgres_version;
+          SELECT table_name, column_name, data_type, is_nullable, column_default
+          FROM information_schema.columns
+          WHERE table_schema = 'public' AND table_name LIKE 'mavis_%'
+          ORDER BY table_name, ordinal_position;
+          SELECT tablename, policyname, permissive, roles, cmd, qual, with_check
+          FROM pg_policies
+          WHERE schemaname = 'public' AND tablename LIKE 'mavis_%'
+          ORDER BY tablename, policyname;
+          SELECT tablename, indexname, indexdef
+          FROM pg_indexes
+          WHERE schemaname = 'public' AND tablename LIKE 'mavis_%'
+          ORDER BY tablename, indexname;
+          SELECT n.nspname AS schema_name, p.proname AS function_name,
+            pg_get_function_identity_arguments(p.oid) AS arguments,
+            pg_get_functiondef(p.oid) AS definition
+          FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+          WHERE n.nspname = 'public'
+            AND (p.proname LIKE 'mavis_%' OR p.proname IN ('is_site_admin', 'get_mavis_published_articles'))
+          ORDER BY p.proname;
+          SELECT to_regclass('public.mavis_editorial_articles') AS mother_two_table,
+            to_regclass('public.mavis_articles') AS current_cms_relation,
+            to_regclass('public.mavis_article_versions') AS versions_table,
+            to_regclass('public.mavis_article_approvals') AS approvals_table,
+            to_regclass('public.mavis_article_sources') AS article_sources_table;
+          SELECT version FROM supabase_migrations.schema_migrations ORDER BY version;"
           npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL"
