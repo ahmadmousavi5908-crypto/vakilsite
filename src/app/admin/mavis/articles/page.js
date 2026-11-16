@@ -9,6 +9,7 @@ import MavisReviewQueue from "../../../../components/admin/MavisReviewQueue";
 import MavisPublicationQueue from "../../../../components/admin/MavisPublicationQueue";
 import MavisArchiveQueue from "../../../../components/admin/MavisArchiveQueue";
 import { decodeMavisArticleCursor, encodeMavisArticleCursor } from "../../../../lib/mavis/editorial-cursor.mjs";
+import { queryMavisEditorialArticles } from "../../../../lib/mavis/editorial-table.mjs";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import { signOut } from "../../../admin/actions";
 
@@ -43,19 +44,20 @@ export default async function MavisArticlesPage({ searchParams }) {
     draftError = "نشانی صفحه‌بندی معتبر نیست. از صفحه اول کتابخانه شروع کنید.";
   } else {
     try {
-      let query = access.supabase
-        .from("mavis_editorial_articles")
-        .select("id, slug, title, category, status, current_version, updated_at")
-        .in("status", ["draft", "changes_requested", "needs_update"])
-        .order("updated_at", { ascending: false })
-        .order("id", { ascending: false })
-        .limit(26);
+      const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) => {
+        let query = table
+          .select("id, slug, title, category, status, current_version, updated_at")
+          .in("status", ["draft", "changes_requested", "needs_update"])
+          .order("updated_at", { ascending: false })
+          .order("id", { ascending: false })
+          .limit(26);
 
-      if (cursor) {
-        query = query.or(`updated_at.lt.${cursor.updatedAt},and(updated_at.eq.${cursor.updatedAt},id.lt.${cursor.id})`);
-      }
+        if (cursor) {
+          query = query.or(`updated_at.lt.${cursor.updatedAt},and(updated_at.eq.${cursor.updatedAt},id.lt.${cursor.id})`);
+        }
 
-      const { data, error } = await query;
+        return query;
+      });
       if (error) {
         draftError = error.code === "42P01" || error.code === "PGRST205"
           ? "جدول مقالات هنوز در این پایگاه داده ایجاد نشده است. migrationهای CMS باید در همین محیط اعمال شوند."
@@ -78,12 +80,13 @@ export default async function MavisArticlesPage({ searchParams }) {
   let reviewRows = [];
   let reviewError = null;
   try {
-    const { data, error } = await access.supabase
-      .from("mavis_editorial_articles")
-      .select("id, slug, title, category, current_version, updated_at")
-      .eq("status", "in_review")
-      .order("updated_at", { ascending: false })
-      .limit(50);
+    const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) =>
+      table
+        .select("id, slug, title, category, current_version, updated_at")
+        .eq("status", "in_review")
+        .order("updated_at", { ascending: false })
+        .limit(50)
+    );
     if (error) reviewError = "خواندن صف بازبینی انجام نشد. اتصال پایگاه داده را بررسی کنید.";
     else reviewRows = Array.isArray(data) ? data : [];
   } catch {
@@ -95,18 +98,20 @@ export default async function MavisArticlesPage({ searchParams }) {
   let publicationError = null;
   try {
     const [approvedResult, publishedResult] = await Promise.all([
-      access.supabase
-        .from("mavis_editorial_articles")
-        .select("id, slug, title, category, current_version, updated_at")
-        .eq("status", "approved")
-        .order("updated_at", { ascending: false })
-        .limit(50),
-      access.supabase
-        .from("mavis_editorial_articles")
-        .select("id, slug, title, category, current_version, updated_at, published_at")
-        .eq("status", "published")
-        .order("published_at", { ascending: false })
-        .limit(50),
+      queryMavisEditorialArticles(access.supabase, (table) =>
+        table
+          .select("id, slug, title, category, current_version, updated_at")
+          .eq("status", "approved")
+          .order("updated_at", { ascending: false })
+          .limit(50)
+      ),
+      queryMavisEditorialArticles(access.supabase, (table) =>
+        table
+          .select("id, slug, title, category, current_version, updated_at, published_at")
+          .eq("status", "published")
+          .order("published_at", { ascending: false })
+          .limit(50)
+      ),
     ]);
     if (approvedResult.error || publishedResult.error) {
       publicationError = "خواندن فهرست انتشار انجام نشد. migration انتشار باید در همین پایگاه داده اعمال شده باشد.";
@@ -121,12 +126,13 @@ export default async function MavisArticlesPage({ searchParams }) {
   let archivedRows = [];
   let archiveError = null;
   try {
-    const { data, error } = await access.supabase
-      .from("mavis_editorial_articles")
-      .select("id, slug, title, current_version, updated_at")
-      .eq("status", "archived")
-      .order("updated_at", { ascending: false })
-      .limit(50);
+    const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) =>
+      table
+        .select("id, slug, title, current_version, updated_at")
+        .eq("status", "archived")
+        .order("updated_at", { ascending: false })
+        .limit(50)
+    );
     if (error) archiveError = "خواندن فهرست آرشیو انجام نشد.";
     else archivedRows = Array.isArray(data) ? data : [];
   } catch {
