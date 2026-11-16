@@ -45,3 +45,4 @@
 .preview aside{background:#f7f4ed;padding:14px;border-radius:10px}
 .preview li{margin:6px 0}
 @media(max-width:760px){.headingActions{width:100%}.headingActions a,.headingActions button{flex:1;text-align:center;justify-content:center}.library,.editor{padding:15px;border-radius:14px}.sectionHeading{flex-direction:column}.fieldGrid{grid-template-columns:1fr}.fieldGrid .wide{grid-column:auto}.toolbar input{min-width:100%}.toolbar select{flex:1}.actions button{flex:1}.preview{padding:16px}.preview h1{font-size:21px}}
+.previewImage{display:block;width:100%;max-height:420px;object-fit:cover;border-radius:12px;margin:0 0 18px}
