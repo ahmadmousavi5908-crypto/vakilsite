@@ -1,1 +1,1 @@
-Read-only CMS inventory and exact 018 migration dry-run; no Staging writes.
+Run read-only inventory of the Staging CMS schema, RLS, indexes, RPC definitions, migration history, and the full db push dry-run. Do not apply migrations or modify migration history.
