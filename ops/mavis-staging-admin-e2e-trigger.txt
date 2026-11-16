@@ -1,13 +1,1 @@
-Retry authenticated Staging E2E with the provider_id set to the Supabase Auth user UUID and complete email identity metadata.
-Auth seed now initializes all GoTrue string token fields to empty strings.
-Verify public-column projection and private-field denial.
-Run full editorial lifecycle against the merged current-main branch.
-
-Post-Migration verification: run the authenticated Staging editorial lifecycle against the current branch head after migration 019.
-
-Retry after database connection preflight and password fallback fix; confirm lifecycle and cleanup.
-2026-11-16: rerun authenticated editorial lifecycle after latest staging Worker deployment.
-2026-11-16: verify one current static article can be copied into an unpublished versioned Staging draft, remains hidden from anonymous readers, and is fully cleaned up.
-2026-11-16: Post-security-hardening verification: re-run full authenticated Staging editorial lifecycle after validating database targets before any connection.
-2026-11-16: verify static draft manual HTTPS source attachment, version increment and cleanup.
-2026-11-16: validate manual HTTPS source attachment and version increment for a static-article draft; cleanup source and article fixtures.
+Run the authenticated Staging end-to-end suite after the isolated Worker deployment. Verify live Workers AI structured output, Browser Run binding availability, official-source fallback links, article lifecycle, and cleanup. No Production actions.
