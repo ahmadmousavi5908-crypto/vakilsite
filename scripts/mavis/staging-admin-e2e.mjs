@@ -257,27 +257,6 @@ async function main() {
       cookie: cookieHeader,
       "content-type": "application/json",
     };
-    const sourceSearchResponse = await fetch(new URL("/api/admin/mavis/source-search", stagingOrigin), {
-      method: "POST",
-      headers: runtimeHeaders,
-      body: JSON.stringify({ query: "قانون مدنی", group: "official", limit: 3 }),
-      redirect: "error",
-    });
-    const sourceSearchPayload = await sourceSearchResponse.json();
-    assert(sourceSearchResponse.status === 200 && sourceSearchPayload.ok === true,
-      "Authenticated Staging official-source search did not return a valid response.");
-    assert(Array.isArray(sourceSearchPayload.searchLinks) &&
-      sourceSearchPayload.searchLinks.some((item) => item.id === "qavanin"),
-      "Official Qavanin fallback link was not returned.");
-    assert(!sourceSearchPayload.providerErrors?.some((item) => item.code === "BROWSER_BINDING_UNAVAILABLE"),
-      "Staging Worker does not expose the configured Browser Run binding.");
-    console.log(
-      "PASS: authenticated Staging legal-source search returned Qavanin portal access; provider=" +
-      String(sourceSearchPayload.provider || "unknown") +
-      "; parsedResults=" + String(sourceSearchPayload.results?.length || 0) +
-      "; providerWarnings=" + String(sourceSearchPayload.providerErrors?.length || 0) + "."
-    );
-
     const aiSmokeResponse = await fetch(new URL("/api/admin/mavis/runtime-smoke", stagingOrigin), {
       method: "POST",
       headers: runtimeHeaders,
@@ -292,6 +271,21 @@ async function main() {
         aiSmokePayload.outputValidated === true,
       "Live Staging Workers AI inference or structured-output validation failed: " +
         String(aiSmokePayload.error?.code || aiSmokeResponse.status)
+    );
+    assert(
+      aiSmokePayload.sourceSearch?.browserBindingAvailable === true &&
+        aiSmokePayload.sourceSearch.officialPortalFallbackAvailable === true,
+      "Staging Browser Run binding or official portal fallback is unavailable."
+    );
+    assert(
+      !aiSmokePayload.sourceSearch.providerWarnings.includes("BROWSER_BINDING_UNAVAILABLE"),
+      "Staging Browser Run binding is not exposed to the Worker."
+    );
+    console.log(
+      "PASS: live Staging official-source fallback is available; provider=" +
+      aiSmokePayload.sourceSearch.provider +
+      "; parsedResults=" + String(aiSmokePayload.sourceSearch.parsedResults) +
+      "; warnings=" + aiSmokePayload.sourceSearch.providerWarnings.join(",") + "."
     );
     console.log(
       "PASS: live Staging Workers AI inference and structured JSON validation succeeded (" +
