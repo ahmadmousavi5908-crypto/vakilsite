@@ -61,6 +61,8 @@ jobs:
           const wrangler = JSON.parse(fs.readFileSync("wrangler.staging.jsonc", "utf8"));
           const workersAiReady = wrangler.ai?.binding === "AI";
           console.log(`${workersAiReady ? "DECLARED_IN_CONFIG" : "MISSING"}: Editorial AI Workers AI binding (${workersAiReady ? "AI" : "not configured"})`);
+          const browserRunReady = wrangler.browser?.binding === "BROWSER";
+          console.log(`${browserRunReady ? "DECLARED_IN_CONFIG" : "MISSING"}: Official-source Browser Run binding (${browserRunReady ? "BROWSER" : "not configured"})`);
           console.log(`${names.has("MAVIS_OPENAI_API_KEY") ? "CONFIGURED" : "OPTIONAL_MISSING"}: OpenAI fallback key`);
           console.log("Growth audit currently uses deterministic local content analysis; no external competitor-search secret is required.");
           console.log("Secret values were not requested, read, or printed.");
