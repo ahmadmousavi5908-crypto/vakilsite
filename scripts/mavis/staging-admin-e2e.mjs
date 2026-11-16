@@ -292,11 +292,13 @@ async function main() {
       aiSmokePayload.model + ")."
     );
 
+    console.log("CHECK: authenticated Iranian source-search API route.");
     const iranianSearchResponse = await fetch(new URL("/api/admin/mavis/source-search", stagingOrigin), {
       method: "POST",
       headers: runtimeHeaders,
       body: JSON.stringify({ query: "رأی وحدت رویه", group: "news", limit: 10 }),
       redirect: "error",
+      signal: AbortSignal.timeout(20000),
     });
     const iranianSearchPayload = await iranianSearchResponse.json();
     assert(
