@@ -8,9 +8,9 @@ function normalizeResult(result) {
   if (!matched) return null;
   const title = typeof result.title === "string" ? result.title.trim().slice(0, 300) : "";
   if (!title) return null;
-  const publishedDate = typeof result.published_date === "string" &&
-    /^\d{4}-\d{2}-\d{2}$/.test(result.published_date)
-    ? result.published_date
+  const parsedPublishedDate = typeof result.published_date === "string" ? Date.parse(result.published_date) : NaN;
+  const publishedDate = Number.isFinite(parsedPublishedDate)
+    ? new Date(parsedPublishedDate).toISOString().slice(0, 10)
     : null;
   return {
     title,
@@ -59,6 +59,7 @@ export function createIranianSourceSearch({ apiKey, fetchImpl = globalThis.fetch
             include_raw_content: false,
             include_images: false,
             include_usage: true,
+            include_published_date: true,
           }),
         });
         if (!response?.ok) throw new Error("Iranian source provider request failed.");
@@ -69,7 +70,7 @@ export function createIranianSourceSearch({ apiKey, fetchImpl = globalThis.fetch
           ok: true,
           query: cleanQuery,
           results,
-          usage: Number.isFinite(payload?.usage) ? payload.usage : null,
+          usageCredits: Number.isFinite(payload?.usage?.credits) ? payload.usage.credits : null,
           provider: "tavily",
           sourcePolicy: "iranian_allowlist_only",
         };
