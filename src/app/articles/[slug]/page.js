@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { articles } from "../../../data/articles";
+import { getPublicArticleBySlug } from "../../../lib/mavis/published-editorial";
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
+
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return articles.map((article) => ({ slug: article.slug }));
@@ -10,7 +13,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const article = await getPublicArticleBySlug(slug);
   if (!article) return { title: "مطلب پیدا نشد" };
   const canonicalPath = "/articles/" + article.slug;
   return {
@@ -29,7 +32,7 @@ export async function generateMetadata({ params }) {
 
 export default async function ArticleDetailPage({ params }) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const article = await getPublicArticleBySlug(slug);
   if (!article) notFound();
 
   const siteUrl = getSiteUrl();
