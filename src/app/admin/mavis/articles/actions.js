@@ -313,7 +313,7 @@ function revalidatePublicMavisArticlePaths() {
 async function notifyMavisArticleIndexNow(access, articleId) {
   try {
     const { data, error } = await access.supabase
-      .from("mavis_articles")
+      .from("mavis_editorial_articles")
       .select("slug")
       .eq("id", articleId)
       .maybeSingle();
