@@ -17,7 +17,7 @@ const STATUS_LABELS = {
   rejected: "ردشده",
 };
 
-export default function MavisDraftList({ rows = [], nextCursor = null, nextHref = null, rowStart = 0, initialQuery = "", initialStatus = "all", error = null }) {
+export default function MavisDraftList({ rows = [], nextCursor = null, nextHref = null, rowStart = 0, initialQuery = "", initialStatus = "all", totalCount = rows.length, error = null }) {
   const [query, setQuery] = useState(initialQuery);
   const [statusFilter, setStatusFilter] = useState(initialStatus);
   const [sortBy, setSortBy] = useState("updated_at");
@@ -85,7 +85,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, nextHref 
           <h2 id="mavis-draft-list-title">فهرست همه مقالات</h2>
           <p>مقالات با شماره ردیف پیوسته، جست‌وجوی سراسری، فیلتر وضعیت و صفحه‌بندی امن نمایش داده می‌شوند.</p>
         </div>
-        <strong className={styles.count}>{rows.length.toLocaleString("fa-IR")} ردیف · شماره‌گذاری پیوسته</strong>
+        <strong className={styles.count}>{totalCount.toLocaleString("fa-IR")} مقاله · شماره‌گذاری پیوسته</strong>
       </header>
 
       {error ? (
