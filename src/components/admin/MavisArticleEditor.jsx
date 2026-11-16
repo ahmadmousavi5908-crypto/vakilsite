@@ -229,6 +229,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
       author: metadata.author || "",
       publication: metadata.publication || "",
       publicationDate: metadata.publicationDate || "",
+      documentNumber: metadata.documentNumber || "",
       abstract: summary,
     };
     setManualSource(source);
