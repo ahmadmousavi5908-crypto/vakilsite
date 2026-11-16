@@ -1,0 +1,1 @@
+Read-only Production Worker integration audit. Report only configured secret names by integration group; never read or print secret values. Do not deploy, update secrets, or mutate Worker state.
