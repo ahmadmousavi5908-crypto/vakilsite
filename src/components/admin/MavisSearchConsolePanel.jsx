@@ -347,7 +347,7 @@ export default function MavisSearchConsolePanel() {
           <p className={styles.disclaimer}>{result.disclaimer} منطقه زمانی تاریخ‌ها در Search Console برابر America/Los_Angeles است.</p>
         </div>
       ) : null}
-      <MavisSearchConsoleTools />
+      <MavisSearchConsoleTools connected={connection.connected} />
     </section>
   );
 }
