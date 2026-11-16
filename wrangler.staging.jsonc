@@ -9,6 +9,9 @@
   "ai": {
     "binding": "AI"
   },
+  "browser": {
+    "binding": "BROWSER"
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
