@@ -66,21 +66,22 @@ jobs:
         run: |
           set -euo pipefail
           DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
-          SQL="SELECT
-            to_regclass('public.mavis_articles') IS NOT NULL AS current_table_exists,
-            to_regclass('public.mavis_editorial_articles') IS NULL AS canonical_table_absent,
-            (SELECT count(*) = 0 FROM public.mavis_articles) AS articles_empty,
-            (SELECT count(*) = 0 FROM public.mavis_article_versions) AS versions_empty,
-            (SELECT count(*) = 0 FROM public.mavis_article_approvals) AS approvals_empty,
-            (SELECT count(*) = 0 FROM public.mavis_article_sources) AS article_sources_empty;"
+          SQL="SELECT CASE WHEN
+            to_regclass('public.mavis_articles') IS NOT NULL
+            AND to_regclass('public.mavis_editorial_articles') IS NULL
+            AND (SELECT count(*) = 0 FROM public.mavis_articles)
+            AND (SELECT count(*) = 0 FROM public.mavis_article_versions)
+            AND (SELECT count(*) = 0 FROM public.mavis_article_approvals)
+            AND (SELECT count(*) = 0 FROM public.mavis_article_sources)
+            THEN 'STAGING_CMS_PREFLIGHT_OK'
+            ELSE 'STAGING_CMS_PREFLIGHT_FAILED'
+          END AS status;"
           RESULT="$(npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL")"
           printf '%s\n' "$RESULT"
-          for expected in 'current_table_exists:true' 'canonical_table_absent:true' 'articles_empty:true' 'versions_empty:true' 'approvals_empty:true' 'article_sources_empty:true'; do
-            if ! printf '%s' "$RESULT" | grep -Fq "$expected"; then
-              echo "::error::Staging preflight did not match the verified empty CMS baseline: $expected"
-              exit 1
-            fi
-          done
+          if ! printf '%s' "$RESULT" | grep -Fq 'STAGING_CMS_PREFLIGHT_OK'; then
+            echo "::error::Staging preflight failed or CMS data is not empty; migration was not applied."
+            exit 1
+          fi
 
       - name: Apply the single reviewed Staging migration
         shell: bash
@@ -95,19 +96,20 @@ jobs:
           set -euo pipefail
           DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
           npx --yes supabase@3.0.0 migration list --remote="$DB_URL"
-          SQL="SELECT
-            to_regclass('public.mavis_editorial_articles') IS NOT NULL AS canonical_table_exists,
-            (SELECT relkind = 'r' FROM pg_class WHERE oid = to_regclass('public.mavis_editorial_articles')) AS canonical_is_table,
-            (SELECT relkind = 'v' FROM pg_class WHERE oid = to_regclass('public.mavis_articles')) AS legacy_name_is_view,
-            (SELECT relrowsecurity FROM pg_class WHERE oid = to_regclass('public.mavis_editorial_articles')) AS canonical_rls_enabled,
-            (SELECT coalesce(array_to_string(reloptions, ','), '') LIKE '%security_invoker=true%' FROM pg_class WHERE oid = to_regclass('public.mavis_articles')) AS public_view_uses_invoker,
-            (SELECT count(*) = 0 FROM public.mavis_editorial_articles) AS articles_remain_empty,
-            NOT has_schema_privilege('authenticated', 'public', 'CREATE') AS no_persistent_schema_create;"
+          SQL="SELECT CASE WHEN
+            to_regclass('public.mavis_editorial_articles') IS NOT NULL
+            AND (SELECT relkind = 'r' FROM pg_class WHERE oid = to_regclass('public.mavis_editorial_articles'))
+            AND (SELECT relkind = 'v' FROM pg_class WHERE oid = to_regclass('public.mavis_articles'))
+            AND (SELECT relrowsecurity FROM pg_class WHERE oid = to_regclass('public.mavis_editorial_articles'))
+            AND (SELECT coalesce(array_to_string(reloptions, ','), '') LIKE '%security_invoker=true%' FROM pg_class WHERE oid = to_regclass('public.mavis_articles'))
+            AND (SELECT count(*) = 0 FROM public.mavis_editorial_articles)
+            AND NOT has_schema_privilege('authenticated', 'public', 'CREATE')
+            THEN 'STAGING_CMS_POSTFLIGHT_OK'
+            ELSE 'STAGING_CMS_POSTFLIGHT_FAILED'
+          END AS status;"
           RESULT="$(npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL")"
           printf '%s\n' "$RESULT"
-          for expected in 'canonical_table_exists:true' 'canonical_is_table:true' 'legacy_name_is_view:true' 'canonical_rls_enabled:true' 'public_view_uses_invoker:true' 'articles_remain_empty:true' 'no_persistent_schema_create:true'; do
-            if ! printf '%s' "$RESULT" | grep -Fq "$expected"; then
-              echo "::error::Post-migration security verification failed: $expected"
-              exit 1
-            fi
-          done
+          if ! printf '%s' "$RESULT" | grep -Fq 'STAGING_CMS_POSTFLIGHT_OK'; then
+            echo "::error::Staging post-migration security verification failed."
+            exit 1
+          fi
