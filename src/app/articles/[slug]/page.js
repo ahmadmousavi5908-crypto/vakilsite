@@ -71,7 +71,7 @@ export default async function ArticleDetailPage({ params }) {
           <span className="section-kicker">راهنمای حقوقی · قوانین ایران</span>
           <h1>{article.title}</h1>
           <p>{article.excerpt}</p>
-          <div className="article-meta article-detail-meta"><span>{article.readTime} مطالعه</span><span>ویژه قوانین ایران</span></div>
+          <div className="article-meta article-detail-meta"><span>{article.readTime} مطالعه</span>{article.authorName ? <span>نویسنده: {article.authorName}</span> : null}<span>ویژه قوانین ایران</span></div>
         </div>
       </section>
       <div className="container article-detail-layout">
