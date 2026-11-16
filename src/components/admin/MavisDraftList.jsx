@@ -145,7 +145,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, nextHref 
                   </tbody>
                 </table>
               </div>
-              {nextCursor && nextHref ? <nav className={styles.pagination} aria-label="صفحه‌بندی کتابخانه مقالات"><Link href={nextHref}>ردیف‌های بعدی ←</Link></nav> : null}
+              {nextCursor && nextHref && query === initialQuery && statusFilter === initialStatus ? <nav className={styles.pagination} aria-label="صفحه‌بندی کتابخانه مقالات"><Link href={nextHref}>ردیف‌های بعدی ←</Link></nav> : null}
             </>
           ) : <div className={styles.empty}>با این عبارت یا فیلتر، ردیفی در صفحه فعلی پیدا نشد.</div>}
         </>
