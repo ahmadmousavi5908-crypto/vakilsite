@@ -69,7 +69,7 @@ export default function MavisWebArticleResearch({ onApply }) {
         credentials: "same-origin",
         cache: "no-store",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: cleanQuery, group: "all", limit: 8 }),
+        body: JSON.stringify({ query: cleanQuery, limit: 8 }),
       });
       const payload = await readJson(response);
       if (!response.ok || payload?.ok !== true || !Array.isArray(payload.results)) {
