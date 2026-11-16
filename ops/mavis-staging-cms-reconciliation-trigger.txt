@@ -1,1 +1,1 @@
-Read-only CMS inventory plus Staging PostgreSQL version for view security compatibility.
+Read-only CMS inventory and exact 018 migration dry-run; no Staging writes.
