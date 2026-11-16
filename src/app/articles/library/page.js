@@ -5,6 +5,7 @@ import {
   encodePublishedArticleCursor,
 } from "../../../lib/mavis/published-article-cursor.mjs";
 import styles from "./page.module.css";
+import { mapPublishedEditorialRecord } from "../../../lib/mavis/editorial-content-core.mjs";
 
 export const metadata = {
   title: "فهرست مقالات حقوقی | سید احمد موسوی",
@@ -47,7 +48,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
       if (!supabase) throw new Error("Public CMS is not configured");
       let query = supabase
         .from("mavis_articles")
-        .select("id, slug, title, excerpt, category, author_name, published_at, content")
+        .select("id, slug, title, excerpt, category, author_name, published_at")
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .order("id", { ascending: false })
@@ -65,11 +66,23 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
       const { data, error } = await query;
       if (error) throw error;
       const resultRows = Array.isArray(data) ? data : [];
-      if (resultRows.length > 25) {
-        nextCursor = encodePublishedArticleCursor(resultRows[24]);
-        rows = resultRows.slice(0, 25);
+      const { data: publishedRecords, error: publishedError } = await supabase.rpc("get_mavis_published_articles");
+      if (publishedError || !Array.isArray(publishedRecords)) throw new Error("Published snapshots are unavailable");
+      const publishedContentBySlug = new Map(
+        publishedRecords.map((record) => {
+          const mapped = mapPublishedEditorialRecord({ ...record, status: "published" });
+          return mapped ? [mapped.slug, mapped.content || null] : null;
+        }).filter(Boolean)
+      );
+      const safeRows = resultRows.map((article) => ({
+        ...article,
+        content: publishedContentBySlug.get(article.slug) || null,
+      }));
+      if (safeRows.length > 25) {
+        nextCursor = encodePublishedArticleCursor(safeRows[24]);
+        rows = safeRows.slice(0, 25);
       } else {
-        rows = resultRows;
+        rows = safeRows;
       }
     } catch {
       loadError = "فهرست مقالات در حال حاضر در دسترس نیست. راهنماهای ثابت دانشنامه همچنان از صفحه مقالات قابل مطالعه‌اند.";
