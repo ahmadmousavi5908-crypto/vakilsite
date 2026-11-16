@@ -110,7 +110,7 @@ async function main() {
     runDbQuery(`
       INSERT INTO auth.users (
         instance_id, id, aud, role, email, encrypted_password,
-        email_confirmed_at, confirmed_at, raw_app_meta_data, raw_user_meta_data,
+        email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
         is_sso_user, is_anonymous, created_at, updated_at
       ) VALUES (
         '00000000-0000-0000-0000-000000000000'::uuid,
@@ -119,7 +119,6 @@ async function main() {
         'authenticated',
         ${sqlString(email)},
         extensions.crypt(${sqlString(password)}, extensions.gen_salt('bf')),
-        now(),
         now(),
         '{"provider":"email","providers":["email"]}'::jsonb,
         '{"full_name":"MAVIS Staging E2E"}'::jsonb,
