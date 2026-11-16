@@ -8,6 +8,7 @@ on:
       - fix/cloudflare-workers-edge-runtime-20261113
   pull_request:
     branches:
+      - main
       - work/mother-two-updated-mavis-20261110
     paths:
       - "src/**"
@@ -69,6 +70,8 @@ jobs:
           wrangler@4.161.0
 
       - name: Build Next.js for Cloudflare Workers
+        env:
+          NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi.ir
         shell: bash
         run: |
           set -o pipefail
@@ -137,7 +140,7 @@ jobs:
             exit 1
           fi
 
-          for route in /about /legal-library /admin/login; do
+          for route in /about /legal-library /admin/login /articles /articles/library /articles/civil-claim-checklist /sitemap.xml; do
             output="/tmp/vakilsite-route.html"
             if [ "$route" = "/about" ]; then output="/tmp/vakilsite-about.html"; fi
             status="$(curl --silent --show-error -o "$output" -w '%{http_code}' "http://127.0.0.1:8787$route")"

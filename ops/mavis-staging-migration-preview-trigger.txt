@@ -1,0 +1,5 @@
+MAVIS Staging migration preview trigger.
+
+Read-only only: inspect migration history and run db push --dry-run. No apply or repair operation is available in this workflow.
+
+Launch verification request: run the read-only Staging migration history comparison and dry-run before deployment.

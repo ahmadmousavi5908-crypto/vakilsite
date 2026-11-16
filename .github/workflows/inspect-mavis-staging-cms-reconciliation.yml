@@ -1,0 +1,160 @@
+name: Inspect MAVIS Staging CMS reconciliation state
+
+on:
+  push:
+    branches:
+      - feature/mavis-indexnow-publication-notify-20261114
+    paths:
+      - "ops/mavis-staging-cms-reconciliation-trigger.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    name: Read-only CMS table and record inventory
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+      SUPABASE_STAGING_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install pinned Supabase CLI
+        run: npx --yes supabase@3.0.0 --version
+
+      - name: Report migration history and non-mutating dry run
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          npx --yes supabase@3.0.0 migration list --remote="$DB_URL"
+          npx --yes supabase@3.0.0 db push --dry-run --remote="$DB_URL"
+
+      - name: Inspect the Staging CMS schema and row counts
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          SQL="SELECT jsonb_build_object(
+            'postgres_version', current_setting('server_version'),
+            'columns', COALESCE((
+              SELECT jsonb_agg(jsonb_build_object(
+                'table', table_name, 'column', column_name, 'type', data_type,
+                'nullable', is_nullable, 'default', column_default
+              ) ORDER BY table_name, ordinal_position)
+              FROM information_schema.columns
+              WHERE (table_schema = 'public' AND table_name LIKE 'mavis_%')
+                 OR (table_schema = 'mavis_private' AND table_name = 'editorial_ai_rate_limits')
+            ), '[]'::jsonb),
+            'policies', COALESCE((
+              SELECT jsonb_agg(jsonb_build_object(
+                'table', tablename, 'name', policyname, 'roles', roles,
+                'command', cmd, 'using', qual, 'check', with_check
+              ) ORDER BY tablename, policyname)
+              FROM pg_policies
+              WHERE (schemaname = 'public' AND tablename LIKE 'mavis_%')
+                OR (schemaname = 'mavis_private' AND tablename = 'editorial_ai_rate_limits')
+            ), '[]'::jsonb),
+            'indexes', COALESCE((
+              SELECT jsonb_agg(jsonb_build_object(
+                'table', tablename, 'name', indexname, 'definition', indexdef
+              ) ORDER BY tablename, indexname)
+              FROM pg_indexes
+              WHERE (schemaname = 'public' AND tablename LIKE 'mavis_%')
+                OR (schemaname = 'mavis_private' AND tablename = 'editorial_ai_rate_limits')
+            ), '[]'::jsonb),
+            'functions', COALESCE((
+              SELECT jsonb_agg(jsonb_build_object(
+                'schema', n.nspname,
+                'name', p.proname,
+                'arguments', pg_get_function_identity_arguments(p.oid),
+                'security_definer', p.prosecdef,
+                'configuration', p.proconfig,
+                'anon_execute', has_function_privilege('anon', p.oid, 'EXECUTE'),
+                'authenticated_execute', has_function_privilege('authenticated', p.oid, 'EXECUTE'),
+                'service_role_execute', has_function_privilege('service_role', p.oid, 'EXECUTE'),
+                'acl', COALESCE((
+                  SELECT jsonb_agg(jsonb_build_object(
+                    'grantee', CASE WHEN acl_entry.grantee = 0 THEN 'PUBLIC' ELSE acl_entry.grantee::regrole::text END,
+                    'privilege', acl_entry.privilege_type,
+                    'grantable', acl_entry.is_grantable
+                  ) ORDER BY acl_entry.grantee, acl_entry.privilege_type)
+                  FROM aclexplode(COALESCE(p.proacl, acldefault('f', p.proowner))) AS acl_entry
+                ), '[]'::jsonb)
+              ) ORDER BY n.nspname, p.proname)
+              FROM pg_proc p
+              JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname IN ('public', 'mavis_private')
+                AND (p.proname ILIKE '%mavis%' OR p.proname = 'is_site_admin' OR n.nspname = 'mavis_private')
+            ), '[]'::jsonb),
+            'relations', jsonb_build_object(
+              'mother_two_table', to_regclass('public.mavis_editorial_articles')::text,
+              'current_cms_relation', to_regclass('public.mavis_articles')::text,
+              'versions_table', to_regclass('public.mavis_article_versions')::text,
+              'approvals_table', to_regclass('public.mavis_article_approvals')::text,
+              'article_sources_table', to_regclass('public.mavis_article_sources')::text,
+              'private_rate_limit_table', to_regclass('mavis_private.editorial_ai_rate_limits')::text,
+              'private_rate_limit_rls_enabled', (
+                SELECT relrowsecurity FROM pg_class WHERE oid = to_regclass('mavis_private.editorial_ai_rate_limits')
+              ),
+              'private_schema_exists', EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'mavis_private'),
+              'compatibility_relation_kind', (
+                SELECT relkind FROM pg_class WHERE oid = to_regclass('public.mavis_articles')
+              ),
+              'canonical_relation_kind', (
+                SELECT relkind FROM pg_class WHERE oid = to_regclass('public.mavis_editorial_articles')
+              )
+            ),
+            'rls_tables', COALESCE((
+              SELECT jsonb_agg(jsonb_build_object(
+                'schema', n.nspname,
+                'table', c.relname,
+                'rls_enabled', c.relrowsecurity,
+                'rls_forced', c.relforcerowsecurity,
+                'anon_select', has_table_privilege('anon', c.oid, 'SELECT'),
+                'authenticated_select', has_table_privilege('authenticated', c.oid, 'SELECT')
+              ) ORDER BY n.nspname, c.relname)
+              FROM pg_class c
+              JOIN pg_namespace n ON n.oid = c.relnamespace
+              WHERE c.relkind IN ('r', 'p')
+                AND ((n.nspname = 'public' AND c.relname LIKE 'mavis_%')
+                  OR (n.nspname = 'mavis_private' AND c.relname = 'editorial_ai_rate_limits'))
+            ), '[]'::jsonb),
+            'counts', jsonb_build_object(
+              'canonical_articles', (SELECT count(*) FROM public.mavis_editorial_articles),
+              'compatibility_view_rows', (SELECT count(*) FROM public.mavis_articles),
+              'canonical_published', (SELECT count(*) FROM public.mavis_editorial_articles WHERE status = 'published'),
+              'compatibility_published', (SELECT count(*) FROM public.mavis_articles WHERE status = 'published'),
+              'published_without_snapshot', (
+                SELECT count(*) FROM public.mavis_editorial_articles
+                WHERE status = 'published' AND (published_content IS NULL OR published_version IS NULL)
+              ),
+              'duplicate_slugs', (
+                SELECT count(*) FROM (
+                  SELECT slug FROM public.mavis_editorial_articles GROUP BY slug HAVING count(*) > 1
+                ) AS duplicates
+              ),
+              'sources', (SELECT count(*) FROM public.mavis_sources),
+              'source_candidates', (SELECT count(*) FROM public.mavis_source_candidates),
+              'article_versions', (SELECT count(*) FROM public.mavis_article_versions),
+              'article_approvals', (SELECT count(*) FROM public.mavis_article_approvals),
+              'article_source_links', (SELECT count(*) FROM public.mavis_article_sources)
+            ),
+            'migration_history', COALESCE((
+              SELECT jsonb_agg(version ORDER BY version)
+              FROM supabase_migrations.schema_migrations
+            ), '[]'::jsonb)
+          ) AS staging_audit;"
+          npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL"

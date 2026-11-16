@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   aggregateSearchPerformanceRows,
   rankContentOpportunities,
 } from "../../lib/mavis/growth-metrics.mjs";
 import styles from "./MavisSearchConsolePanel.module.css";
+import MavisSearchConsoleTools from "./MavisSearchConsoleTools";
 
 function localDate(date) {
   const year = date.getFullYear();
@@ -32,6 +33,42 @@ export default function MavisSearchConsolePanel() {
   const [result, setResult] = useState(null);
   const [state, setState] = useState("idle");
   const [message, setMessage] = useState("");
+  const [connection, setConnection] = useState({ loading: true, connected: false, siteUrl: null, error: "" });
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/admin/mavis/search-console/status", { cache: "no-store" })
+      .then(async (response) => {
+        const payload = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(payload?.error || "وضعیت اتصال قابل دریافت نیست.");
+        if (active) setConnection({ loading: false, connected: payload.connected === true, siteUrl: payload.siteUrl || null, error: "" });
+      })
+      .catch(() => {
+        if (active) setConnection({ loading: false, connected: false, siteUrl: null, error: "وضعیت اتصال سرویس قابل دریافت نیست." });
+      });
+    return () => { active = false; };
+  }, []);
+
+  async function handleDisconnect() {
+    if (!window.confirm("اتصال Google Search Console قطع شود؟")) return;
+    setConnection((current) => ({ ...current, loading: true, error: "" }));
+    try {
+      const response = await fetch("/api/admin/mavis/search-console/disconnect", {
+        method: "POST",
+        cache: "no-store",
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || payload?.connected !== false) throw new Error("disconnect_failed");
+      setConnection({ loading: false, connected: false, siteUrl: null, error: "" });
+      setResult(null);
+      setState("idle");
+      setMessage(payload.revocationFailed
+        ? "اتصال محلی حذف شد، اما لغو دسترسی گوگل ناموفق بود. دسترسی برنامه را از تنظیمات حساب Google نیز لغو کنید."
+        : "اتصال Search Console قطع شد.");
+    } catch {
+      setConnection((current) => ({ ...current, loading: false, error: "قطع اتصال انجام نشد." }));
+    }
+  }
 
   function toggleDimension(value) {
     setDimensions((current) => current.includes(value)
@@ -121,6 +158,18 @@ export default function MavisSearchConsolePanel() {
         <span className={styles.scope}>webmasters.readonly</span>
       </div>
 
+      <div className={styles.connection}>
+        <div>
+          <strong>{connection.loading ? "در حال بررسی اتصال..." : connection.connected ? "اتصال برقرار است" : "Search Console متصل نیست"}</strong>
+          <span>{connection.connected ? connection.siteUrl : connection.error || "برای دریافت داده واقعی، ابتدا حساب مالک سایت را متصل کنید."}</span>
+        </div>
+        {connection.connected ? (
+          <button type="button" className={styles.disconnectButton} onClick={handleDisconnect} disabled={connection.loading}>قطع اتصال</button>
+        ) : (
+          <a className={styles.connectButton} href="/api/admin/mavis/search-console/connect">اتصال امن حساب گوگل</a>
+        )}
+      </div>
+
       <form className={styles.form} onSubmit={handleSubmit}>
         <label>
           <span>از تاریخ</span>
@@ -145,7 +194,7 @@ export default function MavisSearchConsolePanel() {
             تاریخ
           </label>
         </fieldset>
-        <button type="submit" disabled={state === "loading" || !dimensions.length || !startDate || !endDate || startDate > endDate}>
+        <button type="submit" disabled={!connection.connected || connection.loading || state === "loading" || !dimensions.length || !startDate || !endDate || startDate > endDate}>
           {state === "loading" ? "در حال دریافت..." : "دریافت گزارش"}
         </button>
       </form>
@@ -204,7 +253,7 @@ export default function MavisSearchConsolePanel() {
             {opportunities.length ? (
               <div className={styles.tableWrap}>
                 <table>
-                  <thead><tr><th>عبارت یا صفحه</th><th>کلیک</th><th>نمایش</th><th>CTR</th><th>جایگاه</th><th>امتیاز فرصت</th></tr></thead>
+                  <thead><tr><th>عبارت یا صفحه</th><th>کلیک</th><th>نمایش</th><th>CTR</th><th>جایگاه</th><th>امتیاز فرصت</th><th>اقدام</th></tr></thead>
                   <tbody>
                     {opportunities.map((item, index) => (
                       <tr key={item.page || item.query || String(index)}>
@@ -217,6 +266,7 @@ export default function MavisSearchConsolePanel() {
                         <td>{percentFormat.format(item.analysis.ctr ?? 0)}</td>
                         <td>{item.analysis.averagePosition === null ? "—" : numberFormat.format(item.analysis.averagePosition)}</td>
                         <td><strong>{numberFormat.format(item.analysis.opportunityScore)} / ۱۰۰</strong></td>
+                        <td>{item.query ? <a className={styles.draftLink} href={"/admin/mavis/articles/new?topic=" + encodeURIComponent(item.query)}>ایجاد بریف ↗</a> : <span>—</span>}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -230,6 +280,7 @@ export default function MavisSearchConsolePanel() {
           <p className={styles.disclaimer}>{result.disclaimer} منطقه زمانی تاریخ‌ها در Search Console برابر America/Los_Angeles است.</p>
         </div>
       ) : null}
+      <MavisSearchConsoleTools />
     </section>
   );
 }

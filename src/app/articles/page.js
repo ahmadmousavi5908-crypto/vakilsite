@@ -13,6 +13,41 @@ export default async function ArticlesPage() {
   const articles = await getPublicArticleCatalog();
   const featured = articles[0];
   const remaining = articles.slice(1);
+  const staticSlugs = new Set(articles.map((article) => article.slug));
+  const params = await searchParams;
+  const cursorValue = typeof params?.cursor === "string" ? params.cursor : "";
+  const cursor = decodePublishedArticleCursor(cursorValue);
+  let publishedArticles = [];
+  let nextCursor = null;
+
+  try {
+    const supabase = createPublicContentClient();
+    if (!supabase) throw new Error("Public CMS is not configured");
+    let query = supabase
+      .from("mavis_articles")
+      .select("id, slug, title, excerpt, category, published_at")
+      .eq("status", "published")
+      .order("published_at", { ascending: false })
+      .order("id", { ascending: false })
+      .limit(51);
+
+    if (cursor) {
+      query = query.or("published_at.lt." + cursor.publishedAt + ",and(published_at.eq." + cursor.publishedAt + ",id.lt." + cursor.id + ")");
+    }
+
+    const { data, error } = await query;
+    if (!error && Array.isArray(data)) {
+      const visibleRows = data.filter((row) => !staticSlugs.has(row.slug));
+      if (visibleRows.length > 25) {
+        nextCursor = encodePublishedArticleCursor(visibleRows[24]);
+        publishedArticles = visibleRows.slice(0, 25).map((row) => mapPublishedMavisArticleSummary(row)).filter(Boolean);
+      } else {
+        publishedArticles = visibleRows.map((row) => mapPublishedMavisArticleSummary(row)).filter(Boolean);
+      }
+    }
+  } catch {
+    // Keep the existing static library available when the CMS database is not configured.
+  }
   return (
     <main className="article-page editorial-page" dir="rtl">
       <header className="article-header"><div className="container article-header-inner">
@@ -55,6 +90,35 @@ export default async function ArticlesPage() {
               </div>
             </details>)}
           </div>
+          {/* MAVIS_PUBLISHED_CMS_SECTION_START */}
+          {publishedArticles.length ? (
+            <>
+              <div className="editorial-section-heading editorial-all-heading">
+                <div><span className="section-kicker">LATEST PUBLISHED ARTICLES</span><h2>مقالات منتشرشده</h2></div>
+                <p>مطالبی که پس از تکمیل و بازبینی مدیر منتشر شده‌اند.</p>
+                {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START */}
+                <Link className="editorial-read-link" href="/articles/library">فهرست کامل و جست‌وجوی مقالات ←</Link>
+                {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_END */}
+              </div>
+              <div className="editorial-accordion-list">
+                {publishedArticles.map((article, index) => (
+                  <details className="editorial-accordion" key={article.id}>
+                    <summary>
+                      <span className="editorial-accordion-number">{String(index + 1).padStart(2, "0")}</span>
+                      <span className="editorial-accordion-title"><strong>{article.title}</strong><small>{article.category} · مقاله منتشرشده</small></span>
+                      <b aria-hidden="true">+</b>
+                    </summary>
+                    <div className="editorial-accordion-panel">
+                      <p>{article.excerpt}</p>
+                      <Link className="editorial-read-link" href={"/articles/" + article.slug}>مطالعه مقاله کامل <b>←</b></Link>
+                    </div>
+                  </details>
+                ))}
+              </div>
+              {nextCursor ? <nav className="editorial-db-pagination" aria-label="صفحه‌بندی مقالات منتشرشده"><Link href={"/articles?cursor=" + encodeURIComponent(nextCursor)}>مقالات قدیمی‌تر ←</Link></nav> : null}
+            </>
+          ) : null}
+          {/* MAVIS_PUBLISHED_CMS_SECTION_END */}
           <aside className="editorial-disclaimer"><span>نکته مهم</span><p>این مطالب برای آگاهی عمومی‌اند و جایگزین بررسی اختصاصی پرونده نیستند. قوانین و رویه‌ها ممکن است تغییر کنند؛ تصمیم درباره هر پرونده باید با توجه به اسناد، تاریخ‌ها، مرجع صالح و شرایط همان موضوع گرفته شود.</p></aside>
         </div>
       </section>

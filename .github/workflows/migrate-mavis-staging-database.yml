@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - feature/mavis-indexnow-publication-notify-20261114
     paths:
       - ".github/workflows/migrate-mavis-staging-database.yml"
       - "supabase/migrations/**"
+      - "ops/mavis-staging-migration-019-apply.txt"
   workflow_dispatch:
     inputs:
       apply_migrations:
@@ -114,8 +116,8 @@ jobs:
           REMOTE_DIR="$TEMP_WORKDIR/supabase/migrations"
           mapfile -t REMOTE_FILES < <(find "$REMOTE_DIR" -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sort)
           mapfile -t LOCAL_FILES < <(find supabase/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sort)
-          if [ "${#REMOTE_FILES[@]}" -ne "${#LOCAL_FILES[@]}" ]; then
-            echo "::error::Local and remote migration file counts differ."
+          if [ "${#REMOTE_FILES[@]}" -gt "${#LOCAL_FILES[@]}" ]; then
+            echo "::error::Remote migration history contains versions missing from the selected local revision."
             printf 'Remote files: %s\n' "${REMOTE_FILES[*]}"
             printf 'Local files: %s\n' "${LOCAL_FILES[*]}"
             exit 1
@@ -251,10 +253,17 @@ jobs:
           const remoteFiles = fs.readdirSync(remoteDirectory).filter((name) => name.endsWith(".sql")).sort();
           const localFiles = fs.readdirSync(localDirectory).filter((name) => name.endsWith(".sql")).sort();
 
-          if (JSON.stringify(remoteFiles) !== JSON.stringify(localFiles)) {
-            console.error("Local and remote migration filenames differ.");
-            console.error(JSON.stringify({ remoteFiles, localFiles }, null, 2));
+          const missingRemoteFiles = remoteFiles.filter((name) => !localFiles.includes(name));
+          if (missingRemoteFiles.length > 0) {
+            console.error("Remote migration history contains files missing from the selected local revision.");
+            console.error(JSON.stringify({ missingRemoteFiles, remoteFiles, localFiles }, null, 2));
             process.exit(1);
+          }
+
+          const pendingFiles = localFiles.filter((name) => !remoteFiles.includes(name));
+          console.log("Remote history contains " + remoteFiles.length + " applied migrations; selected revision contains " + localFiles.length + " migration files.");
+          if (pendingFiles.length > 0) {
+            console.log("Pending local migrations (not yet applied): " + pendingFiles.join(", "));
           }
 
           for (const name of remoteFiles) {
@@ -279,14 +288,14 @@ jobs:
           fi
 
       - name: Apply migrations to staging only
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true) || (github.event_name == 'push' && github.ref == 'refs/heads/feature/mavis-indexnow-publication-notify-20261114' && github.event.head_commit.message == 'apply approved MAVIS staging migration 019') }}
         run: >-
           npx --yes supabase@3.0.0 db push
           --yes
           --remote="$STAGING_DATABASE_URL"
 
       - name: Verify remote migration history
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true) || (github.event_name == 'push' && github.ref == 'refs/heads/feature/mavis-indexnow-publication-notify-20261114' && github.event.head_commit.message == 'apply approved MAVIS staging migration 019') }}
         run: >-
           npx --yes supabase@3.0.0 migration list
           --remote="$STAGING_DATABASE_URL"

@@ -1,0 +1,127 @@
+name: Inspect Staging Auth test prerequisites
+
+on:
+  push:
+    branches:
+      - feature/mavis-indexnow-publication-notify-20261114
+    paths:
+      - "ops/mavis-staging-auth-inspection-trigger.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+      SUPABASE_STAGING_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Install pinned Supabase CLI
+        run: npx --yes supabase@3.0.0 --version
+      - name: Inspect Auth schema and password-hash functions read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          SQL="SELECT
+            (SELECT string_agg(column_name || ':' || is_nullable, ',' ORDER BY ordinal_position)
+             FROM information_schema.columns WHERE table_schema='auth' AND table_name='users') AS users_columns,
+            (SELECT string_agg(column_name || ':' || is_nullable, ',' ORDER BY ordinal_position)
+             FROM information_schema.columns WHERE table_schema='auth' AND table_name='identities') AS identities_columns,
+            to_regprocedure('extensions.crypt(text,text)') IS NOT NULL AS extensions_crypt_available,
+            to_regprocedure('extensions.gen_salt(text)') IS NOT NULL AS extensions_gen_salt_available,
+            to_regprocedure('crypt(text,text)') IS NOT NULL AS public_crypt_available,
+            to_regprocedure('gen_salt(text)') IS NOT NULL AS public_gen_salt_available;"
+          npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL"
+
+
+  runtime-secrets:
+    name: Inspect Staging Worker integration secret names
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: staging
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
+      CHECK_MAVIS_GSC_CLIENT_ID: ${{ secrets.MAVIS_GSC_CLIENT_ID }}
+      CHECK_MAVIS_GSC_CLIENT_SECRET: ${{ secrets.MAVIS_GSC_CLIENT_SECRET }}
+      CHECK_MAVIS_GSC_TOKEN_ENCRYPTION_KEY: ${{ secrets.MAVIS_GSC_TOKEN_ENCRYPTION_KEY }}
+      CHECK_MAVIS_OPENAI_API_KEY: ${{ secrets.MAVIS_OPENAI_API_KEY }}
+      CHECK_OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      CHECK_MAVIS_IRAN_SOURCE_SEARCH_API_KEY: ${{ secrets.MAVIS_IRAN_SOURCE_SEARCH_API_KEY }}
+      CHECK_MAVIS_GROWTH_SEARCH_API_KEY: ${{ secrets.MAVIS_GROWTH_SEARCH_API_KEY }}
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install pinned Wrangler
+        run: npm install --no-save --package-lock=false --no-audit --no-fund wrangler@4.161.0
+
+      - name: List Staging Worker secret names without reading values
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Missing Staging Cloudflare setting: $name"
+              exit 1
+            fi
+          done
+          npx wrangler secret list --name vakilahmadmousavi-ir-staging --format json > /tmp/mavis-staging-secret-names.json
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const rows = JSON.parse(fs.readFileSync("/tmp/mavis-staging-secret-names.json", "utf8"));
+          const names = new Set(rows.map((row) => row.name).filter((name) => typeof name === "string"));
+          const requiredGroups = [
+            ["MAVIS_GSC_CLIENT_ID"],
+            ["MAVIS_GSC_CLIENT_SECRET"],
+            ["MAVIS_GSC_TOKEN_ENCRYPTION_KEY"],
+            ["MAVIS_OPENAI_API_KEY", "OPENAI_API_KEY"],
+            ["MAVIS_IRAN_SOURCE_SEARCH_API_KEY"],
+            ["MAVIS_GROWTH_SEARCH_API_KEY"],
+          ];
+          const labels = [
+            "Google Search Console OAuth client ID",
+            "Google Search Console OAuth client secret",
+            "Google Search Console token encryption key",
+            "MAVIS editorial AI API key",
+            "Iranian legal-source search API key",
+            "Competitor research API key",
+          ];
+          const githubGroups = [
+            ["CHECK_MAVIS_GSC_CLIENT_ID"],
+            ["CHECK_MAVIS_GSC_CLIENT_SECRET"],
+            ["CHECK_MAVIS_GSC_TOKEN_ENCRYPTION_KEY"],
+            ["CHECK_MAVIS_OPENAI_API_KEY", "CHECK_OPENAI_API_KEY"],
+            ["CHECK_MAVIS_IRAN_SOURCE_SEARCH_API_KEY"],
+            ["CHECK_MAVIS_GROWTH_SEARCH_API_KEY"],
+          ];
+          let missing = 0;
+          console.log("Configured Staging Worker secret names (values are never requested):");
+          for (const name of [...names].sort()) console.log(" - " + name);
+          for (let i = 0; i < requiredGroups.length; i += 1) {
+            const present = requiredGroups[i].some((name) => names.has(name));
+            const githubAvailable = githubGroups[i].some((name) => Boolean(process.env[name]?.trim()));
+            console.log((present ? "PASS: " : "MISSING: ") + labels[i] + " on Cloudflare Staging");
+            console.log((githubAvailable ? "AVAILABLE: " : "NOT AVAILABLE: ") + labels[i] + " in GitHub Staging secrets");
+            if (!present) missing += 1;
+          }
+          if (missing) {
+            console.log("Staging integrations are not fully configured; no secrets were changed.");
+            process.exitCode = 1;
+          } else {
+            console.log("PASS: required Staging integration secret names are present.");
+          }
+          NODE

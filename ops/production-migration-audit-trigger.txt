@@ -1,0 +1,1 @@
+Trigger marker for read-only Production migration history inspection. This workflow performs migration list and db push --dry-run only; no production write or migration apply.
