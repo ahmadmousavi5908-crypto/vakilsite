@@ -80,6 +80,8 @@ jobs:
         run: npm run test:mavis-editorial-ai
       - name: Run MAVIS manual source input tests
         run: npm run test:mavis-manual-source-input
+      - name: Run MAVIS competitor research tests
+        run: npm run test:mavis-competitor-research
       - name: Run MAVIS knowledge retrieval tests
         run: >-
           node --test

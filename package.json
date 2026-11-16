@@ -24,7 +24,8 @@
     "test:mavis-editorial-export": "node --test tests/mavis/editorial-spreadsheet-export.test.mjs",
     "test:indexnow-client": "node --test tests/indexnow-client.test.mjs",
     "test:mavis-editorial-ai": "node --test tests/mavis/editorial-ai.test.mjs",
-    "test:mavis-manual-source-input": "node --test tests/mavis/manual-source-input.test.mjs"
+    "test:mavis-manual-source-input": "node --test tests/mavis/manual-source-input.test.mjs",
+    "test:mavis-competitor-research": "node --test tests/mavis/competitor-research.test.mjs tests/mavis/competitor-research-handler.test.mjs"
   },
   "dependencies": {
     "next": "16.4.6",
