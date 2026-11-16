@@ -24,6 +24,7 @@ export default function MavisIranianSourceSearch({ onImport }) {
   const [query, setQuery] = useState("");
   const [group, setGroup] = useState("all");
   const [results, setResults] = useState([]);
+  const [searchLinks, setSearchLinks] = useState([]);
   const [selected, setSelected] = useState(null);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
@@ -40,6 +41,7 @@ export default function MavisIranianSourceSearch({ onImport }) {
     setSelected(null);
     setMetadata(null);
     setResults([]);
+    setSearchLinks([]);
     try {
       const response = await fetch("/api/admin/mavis/source-search", {
         method: "POST",
@@ -50,8 +52,15 @@ export default function MavisIranianSourceSearch({ onImport }) {
       });
       const payload = await response.json().catch(() => null);
       if (!response.ok) throw new Error(payload?.error?.message || "جست‌وجو انجام نشد.");
-      setResults(Array.isArray(payload?.results) ? payload.results : []);
-      setNotice(payload?.results?.length ? "نتایج فقط از دامنه‌های منتخب ایرانی دریافت شده‌اند." : "در منابع انتخاب‌شده نتیجه‌ای پیدا نشد.");
+      const nextResults = Array.isArray(payload?.results) ? payload.results : [];
+      const nextSearchLinks = Array.isArray(payload?.searchLinks) ? payload.searchLinks : [];
+      setResults(nextResults);
+      setSearchLinks(nextSearchLinks);
+      setNotice(nextResults.length
+        ? "نتایج از دامنه‌های منتخب ایرانی دریافت شده‌اند؛ وضعیت و اعتبار هر سند را در منبع اصلی بررسی کنید."
+        : nextSearchLinks.length
+          ? "جست‌وجوی خودکار در دسترس نبود؛ پیوندهای مستقیم درگاه‌های رسمی و دامنه‌های منتخب آماده‌اند."
+          : "در منابع انتخاب‌شده نتیجه‌ای پیدا نشد.");
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "خطای ناشناخته در جست‌وجو.");
     } finally {
@@ -179,6 +188,25 @@ export default function MavisIranianSourceSearch({ onImport }) {
           ) : null}
         </div>
       ) : null}
+      {searchLinks.length ? (
+        <div className={styles.resultsList} aria-label="درگاه‌های جست‌وجوی مستقیم">
+          <div className={styles.resultsHeading}>
+            <strong>درگاه‌های رسمی برای بررسی مستقیم</strong>
+            <span>{searchLinks.length.toLocaleString("fa-IR")} پیوند</span>
+          </div>
+          {searchLinks.map((item) => (
+            <article className={styles.result} key={item.id}>
+              <div className={styles.resultMeta}><span>جست‌وجوی مستقیم</span><span data-authority="official_primary">درگاه / دامنه مرجع</span></div>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+              <div className={styles.resultActions}>
+                <a href={item.url} target="_blank" rel="noopener noreferrer">بازکردن درگاه و جست‌وجو ↗</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : null}
+
     </section>
   );
 }
