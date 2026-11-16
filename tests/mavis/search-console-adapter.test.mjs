@@ -177,7 +177,7 @@ test("imports a standard Google Search Console CSV locally and preserves quoted 
   assert.equal(result.rows[0].metrics.ctr, 0.1);
   assert.equal(result.rows[1].dimensions.query, null);
   assert.equal(result.rows[1].privacyReviewRequired, true);
-  assert.match(result.disclaimer, /اتصال زنده نیست/);
+  assert.match(result.disclaimer, /اتصال زنده به Google Search Console نیست/);
 });
 
 test("filters CSV date rows to the selected range and marks capped imports", () => {
