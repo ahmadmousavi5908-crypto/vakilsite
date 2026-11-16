@@ -98,7 +98,7 @@ export function createIranianSourceSearchFromEnv(env = process.env, options = {}
 
 function decodeHtmlText(value) {
   return String(value || "")
-    .replace(/<br\\s*\\/?\\s*>/gi, " ")
+    .replace(/<br\s*\/?\s*>/gi, " ")
     .replace(/<[^>]*>/g, " ")
     .replace(/&nbsp;|&#160;/gi, " ")
     .replace(/&amp;/gi, "&")
@@ -106,28 +106,28 @@ function decodeHtmlText(value) {
     .replace(/&#39;|&apos;/gi, "'")
     .replace(/&lt;/gi, "<")
     .replace(/&gt;/gi, ">")
-    .replace(/&#(\\d+);/g, (_match, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#(\d+);/g, (_match, code) => String.fromCodePoint(Number(code)))
     .replace(/&#x([0-9a-f]+);/gi, (_match, code) => String.fromCodePoint(parseInt(code, 16)))
-    .replace(/\\s+/g, " ")
+    .replace(/\s+/g, " ")
     .trim()
     .normalize("NFC");
 }
 
 function parseQavaninSearchResults(markup, limit) {
   const results = [];
-  const rows = String(markup || "").matchAll(/<tr\\b([^>]*)>([\\s\\S]*?)<\\/tr>/gi);
+  const rows = String(markup || "").matchAll(/<tr\b([^>]*)>([\s\S]*?)<\/tr>/gi);
   for (const row of rows) {
     const rowAttributes = row[1] || "";
     const rowHtml = row[2] || "";
-    const id = rowHtml.match(/IDS=(\\d{1,20})/i)?.[1];
+    const id = rowHtml.match(/IDS=(\d{1,20})/i)?.[1];
     if (!id) continue;
-    const cells = [...rowHtml.matchAll(/<td\\b[^>]*>([\\s\\S]*?)<\\/td>/gi)].map((cell) => decodeHtmlText(cell[1]));
+    const cells = [...rowHtml.matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/gi)].map((cell) => decodeHtmlText(cell[1]));
     if (cells.length < 4) continue;
     const title = cells[1]?.slice(0, 300);
     if (!title) continue;
     const approved = cells[2]?.slice(0, 40) || "";
     const approver = cells[3]?.slice(0, 180) || "";
-    const repealed = /(?:^|\\s)red(?:\\s|$)/i.test(rowAttributes);
+    const repealed = /(?:^|\s)red(?:\s|$)/i.test(rowAttributes);
     const url = "https://qavanin.ir/Law/TreeText/?IDS=" + id;
     const matched = normalizeIranianSourceUrl(url);
     if (!matched) continue;
