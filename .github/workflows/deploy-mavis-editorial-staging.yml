@@ -33,7 +33,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: ${{ vars.STAGING_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.STAGING_SUPABASE_PUBLISHABLE_KEY }}
     steps:
-      - name: Check out selected Staging revision
+      - name: Check out the selected Staging revision
         uses: actions/checkout@v7
         with:
           ref: ${{ github.sha }}
@@ -76,6 +76,11 @@ jobs:
           }
           if (
             supabase.protocol !== "https:" ||
+            supabase.username ||
+            supabase.password ||
+            supabase.pathname !== "/" ||
+            supabase.search ||
+            supabase.hash ||
             supabase.hostname !== "srbwniqhaxwaoepjfizf.supabase.co" ||
             supabase.hostname === "jroflcmiczfwtmiaxmpd.supabase.co"
           ) {
@@ -109,8 +114,8 @@ jobs:
         run: >-
           npx wrangler deploy --dry-run --config wrangler.staging.jsonc
           --var "NEXT_PUBLIC_SITE_URL:${NEXT_PUBLIC_SITE_URL}"
-          "NEXT_PUBLIC_SUPABASE_URL:${NEXT_PUBLIC_SUPABASE_URL}"
-          "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}"
+          --var "NEXT_PUBLIC_SUPABASE_URL:${NEXT_PUBLIC_SUPABASE_URL}"
+          --var "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}"
 
       - name: Deploy only the isolated Staging Worker
         env:
@@ -118,5 +123,5 @@ jobs:
         run: >-
           npx wrangler deploy --config wrangler.staging.jsonc
           --var "NEXT_PUBLIC_SITE_URL:${NEXT_PUBLIC_SITE_URL}"
-          "NEXT_PUBLIC_SUPABASE_URL:${NEXT_PUBLIC_SUPABASE_URL}"
-          "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}"
+          --var "NEXT_PUBLIC_SUPABASE_URL:${NEXT_PUBLIC_SUPABASE_URL}"
+          --var "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}"
