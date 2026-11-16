@@ -165,6 +165,10 @@ DECLARE
   latest_reviewer_name text;
   latest_reviewed_at timestamptz;
 BEGIN
+  -- Imported and manually authored drafts may omit an author; preserve the
+  -- legacy Mother Two contract without rejecting otherwise valid drafts.
+  NEW.author_name := COALESCE(NEW.author_name, '');
+
   IF NEW.status = 'published' THEN
     IF TG_OP = 'INSERT' THEN
       NEW.published_version := NEW.current_version;
@@ -277,7 +281,17 @@ FROM public.mavis_editorial_articles;
 REVOKE ALL ON TABLE public.mavis_articles
   FROM public, anon, authenticated, service_role;
 
+-- A security-invoker view requires the caller to hold matching privileges
+-- on its base table; RLS remains the row-level access boundary.
+GRANT SELECT ON TABLE public.mavis_editorial_articles TO authenticated;
+
 GRANT SELECT ON TABLE public.mavis_articles TO authenticated;
+
+GRANT SELECT (
+  id, slug, title, author_name, excerpt, category, tags, content,
+  content_schema_version, seo_title, seo_description, status,
+  current_version, created_at, updated_at, published_at
+) ON TABLE public.mavis_editorial_articles TO anon;
 
 GRANT SELECT (
   id, slug, title, author_name, excerpt, category, tags, content,
