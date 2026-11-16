@@ -37,7 +37,7 @@ export default async function MavisArticlesPage({ searchParams }) {
   const params = await searchParams;
   const cursorValue = typeof params?.cursor === "string" ? params.cursor : "";
   const searchQuery = typeof params?.q === "string" ? params.q.trim().slice(0, 100) : "";
-  const allowedStatuses = ["all", "draft", "changes_requested", "needs_update", "in_review", "approved", "published", "archived"];
+  const allowedStatuses = ["all", "draft", "changes_requested", "needs_update", "in_review", "approved", "published", "archived", "rejected"];
   const requestedStatus = typeof params?.status === "string" ? params.status : "all";
   const articleStatus = allowedStatuses.includes(requestedStatus) ? requestedStatus : "all";
   const cursor = decodeMavisArticleCursor(cursorValue);
