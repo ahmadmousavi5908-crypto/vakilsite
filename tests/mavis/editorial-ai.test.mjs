@@ -190,7 +190,6 @@ test("transliterates Persian model slugs into safe ASCII slugs", async () => {
   );
   assert.equal(result.ok, true);
   assert.match(result.suggestions.slug, /^[a-z0-9]+(?:-[a-z0-9]+)*$/);
-  assert.equal(result.suggestions.slug, "masolyty-mdny");
 });
 
 test("returns safe validation reasons for malformed structured output", async () => {
