@@ -9,3 +9,4 @@ Post-E2E cleanup verification: confirm the temporary administrator identity and 
 2026-11-16: post-static-import E2E audit; verify no temporary rows remain and report Staging provider secret names only.
 2026-11-16: Post-migration 019 and post-E2E read-only audit: verify provider secret names, GSC storage state, editorial inventory, and zero leftover temporary records.
 2026-11-16: verify no E2E article, source, link, or administrator identity remains after source-attachment lifecycle test.
+2026-11-16: final post-E2E read-only check after all duplicate E2E runs completed; require zero temporary users, articles, and source fixtures.
