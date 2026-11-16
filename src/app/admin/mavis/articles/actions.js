@@ -7,13 +7,12 @@ import { parseMavisArticleDraftInput } from "../../../../lib/mavis/article-draft
 import { normalizeMavisManualSourceInput } from "../../../../lib/mavis/manual-source-input.mjs";
 import { generateMavisEditorialSuggestions } from "../../../../lib/mavis/editorial-ai.mjs";
 import { queryMavisEditorialArticles } from "../../../../lib/mavis/editorial-table.mjs";
+import { buildMavisStaticArticleImport } from "../../../../lib/mavis/static-article-import.mjs";
 
 export async function saveMavisArticleDraft(formData) {
   const parsed = parseMavisArticleDraftInput(formData);
   if (!parsed.ok) return { ok: false, error: parsed.error };
-  if (publicStaticArticles.some((article) => article.slug === parsed.payload.slug)) {
-    return { ok: false, error: "این نامک متعلق به یکی از راهنماهای ثابت سایت است. برای مقاله جدید، نامک دیگری انتخاب کنید." };
-  }
+  const isStaticArticleSlug = publicStaticArticles.some((article) => article.slug === parsed.payload.slug);
 
   let access;
   try {
@@ -24,6 +23,19 @@ export async function saveMavisArticleDraft(formData) {
 
   if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
     return { ok: false, error: "برای ذخیره پیش‌نویس، ورود با حساب مدیر الزامی است." };
+  }
+
+  if (isStaticArticleSlug) {
+    if (!parsed.articleId) {
+      return { ok: false, error: "این مقاله از محتوای فعلی سایت آمده است. ابتدا آن را به‌صورت پیش‌نویس نسخه‌دار وارد کنید." };
+    }
+    const { data: existing, error: lookupError } = await queryMavisEditorialArticles(access.supabase, (table) =>
+      table.select("id, slug, status").eq("id", parsed.articleId).maybeSingle()
+    );
+    if (lookupError || !existing || existing.slug !== parsed.payload.slug
+      || !["draft", "changes_requested", "needs_update"].includes(existing.status)) {
+      return { ok: false, error: "فقط پیش‌نویس واردشده از همان مقاله فعلی قابل ویرایش است." };
+    }
   }
 
   try {
@@ -49,6 +61,85 @@ export async function saveMavisArticleDraft(formData) {
     return { ok: false, error: "ارتباط امن با پایگاه داده برقرار نشد." };
   }
 }
+
+export async function importMavisStaticArticleToDraft(rawSlug) {
+  const slug = typeof rawSlug === "string" ? rawSlug.trim() : "";
+  const article = publicStaticArticles.find((item) => item.slug === slug);
+  if (!article) return { ok: false, error: "مقاله ثابت موردنظر پیدا نشد." };
+
+  let access;
+  try {
+    access = await requireAdmin();
+  } catch {
+    return { ok: false, error: "احراز هویت مدیر در دسترس نیست. دوباره وارد پنل شوید." };
+  }
+  if (!access?.isAdmin || !access?.supabase || !access?.user?.sub) {
+    return { ok: false, error: "برای ورود مقاله به CMS، دسترسی مدیر الزامی است." };
+  }
+
+  try {
+    const { data: existing, error: lookupError } = await queryMavisEditorialArticles(access.supabase, (table) =>
+      table.select("id, slug, status, current_version").eq("slug", slug).maybeSingle()
+    );
+    if (lookupError) return { ok: false, error: "وضعیت مقاله در CMS بررسی نشد." };
+    if (existing) {
+      if (["draft", "changes_requested", "needs_update"].includes(existing.status)) {
+        return { ok: true, articleId: existing.id, alreadyImported: true, importedSources: 0, skippedSources: 0 };
+      }
+      return { ok: false, error: "این مقاله از قبل در CMS ثبت شده و در وضعیت قابل ورود مجدد نیست." };
+    }
+
+    const imported = buildMavisStaticArticleImport(article);
+    const { data: articleId, error } = await access.supabase.rpc("save_mavis_article_draft", {
+      p_payload: imported.payload,
+      p_article_id: null,
+      p_expected_version: null,
+      p_change_note: "Imported current static article as a versioned draft; public content unchanged.",
+    });
+    if (error?.code === "23505") {
+      return { ok: false, error: "این نامک هم‌زمان در CMS ثبت شده است. فهرست را تازه‌سازی کنید." };
+    }
+    if (error?.code === "42501") return { ok: false, error: "دسترسی مدیر برای ورود مقاله تأیید نشد." };
+    if (error?.code === "22023") return { ok: false, error: "ساختار مقاله فعلی با محدودیت‌های CMS سازگار نیست." };
+    if (error || typeof articleId !== "string" || !articleId) {
+      return { ok: false, error: "ساخت پیش‌نویس نسخه‌دار انجام نشد." };
+    }
+
+    let currentVersion = 1;
+    let importedSources = 0;
+    let skippedSources = imported.skippedSources;
+    for (const source of imported.sources) {
+      const result = await addMavisManualArticleSource(articleId, currentVersion, source);
+      if (result?.ok) {
+        currentVersion = result.currentVersion;
+        importedSources += 1;
+      } else {
+        skippedSources += 1;
+      }
+    }
+
+    revalidatePath("/admin/mavis/articles");
+    revalidatePath("/admin/mavis/articles/" + articleId + "/edit");
+    revalidatePath("/articles");
+    revalidatePath("/articles/library");
+
+    return {
+      ok: true,
+      articleId,
+      alreadyImported: false,
+      importedSources,
+      skippedSources,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof TypeError
+        ? error.message
+        : "ورود امن مقاله به CMS انجام نشد.",
+    };
+  }
+}
+
 
 
 export async function searchMavisLocalArchive(rawQuery) {
