@@ -257,6 +257,23 @@ async function main() {
       cookie: cookieHeader,
       "content-type": "application/json",
     };
+    const gscStatusResponse = await fetch(new URL("/api/admin/mavis/search-console/status", stagingOrigin), {
+      headers: runtimeHeaders,
+      redirect: "error",
+    });
+    const gscStatusPayload = await gscStatusResponse.json();
+    assert(
+      gscStatusResponse.status === 200 &&
+        typeof gscStatusPayload.configured === "boolean" &&
+        typeof gscStatusPayload.connected === "boolean",
+      "Staging Search Console OAuth status endpoint did not return a safe configuration state."
+    );
+    console.log(
+      "PASS: Search Console status is available; configured=" +
+      String(gscStatusPayload.configured) +
+      "; connected=" + String(gscStatusPayload.connected) + "."
+    );
+
     const aiSmokeResponse = await fetch(new URL("/api/admin/mavis/runtime-smoke", stagingOrigin), {
       method: "POST",
       headers: runtimeHeaders,
