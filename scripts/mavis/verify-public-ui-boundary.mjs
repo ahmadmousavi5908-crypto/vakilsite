@@ -30,7 +30,8 @@ const isAllowedMetadataRoute = (file) =>
   file === "src/app/sitemap.js";
 
 const isAllowedAdminApiRoute = (file) =>
-  file.startsWith("src/app/api/admin/mavis/search-console/");
+  file.startsWith("src/app/api/admin/mavis/search-console/") ||
+  file === "src/app/api/admin/mavis/growth/competitors/route.js";
 
 const isAllowedPublicArticleLibrarySurface = (file) =>
   file === "src/app/articles/library/page.js" ||
