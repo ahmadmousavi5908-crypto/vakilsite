@@ -23,13 +23,9 @@ function sqlString(value) {
 }
 
 function runDbQuery(sql, { readOnly = false } = {}) {
-  const args = [
-    "--yes",
-    "supabase@3.0.0",
-    "db",
-    "query",
-    `--remote=${dbUrl}`,
-  ];
+  const args = ["--yes", "supabase@3.0.0", "db", "query"];
+  if (!readOnly) args.push("--yes");
+  args.push(`--remote=${dbUrl}`);
   if (readOnly) args.push("--read-only");
   args.push(sql);
 
@@ -67,7 +63,6 @@ async function main() {
     "Refusing to run against a non-Staging Supabase project."
   );
 
-  let articleCreated = false;
   let userSeedAttempted = false;
   let client;
 
@@ -168,7 +163,6 @@ async function main() {
       }
     );
     requireRpc(articleId, draftError, "Create draft");
-    articleCreated = true;
     assert(typeof articleId === "string", "Draft RPC did not return an article UUID.");
 
     const { data: adminRead, error: adminReadError } = await client
