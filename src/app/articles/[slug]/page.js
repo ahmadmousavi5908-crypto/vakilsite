@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { articles as siteArticles } from "../../../data/articles";
 import { getPublicArticleBySlug } from "../../../lib/mavis/published-editorial";
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
@@ -8,23 +7,20 @@ import { getSiteUrl } from "../../../lib/site-url.mjs";
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
 
-export function generateStaticParams() {
-  return siteArticles.map((article) => ({ slug: article.slug }));
-}
-
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const article = await getPublicArticleBySlug(slug);
   if (!article) return { title: "مطلب پیدا نشد" };
   const canonicalPath = "/articles/" + article.slug;
   return {
-    title: article.metaTitle || article.title,
-    description: article.excerpt,
+    title: article.seoTitle || article.metaTitle || article.title,
+    description: article.seoDescription || article.excerpt,
+    ...(article.isIndexable === false ? { robots: { index: false, follow: false } } : {}),
     alternates: { canonical: canonicalPath },
     openGraph: {
       type: "article",
       title: article.title,
-      description: article.excerpt,
+      description: article.seoDescription || article.excerpt,
       locale: "fa_IR",
       url: canonicalPath,
     },
@@ -51,6 +47,9 @@ export default async function ArticleDetailPage({ params }) {
           "@id": articleUrl,
         },
         url: articleUrl,
+        ...(article.publishedAt ? { datePublished: article.publishedAt } : {}),
+        ...(article.updatedAt ? { dateModified: article.updatedAt } : {}),
+        ...(article.authorName ? { author: { "@type": "Person", name: article.authorName } } : {}),
       }
     : null;
 
