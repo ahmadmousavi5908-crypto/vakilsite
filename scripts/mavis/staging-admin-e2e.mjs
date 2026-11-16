@@ -293,14 +293,26 @@ async function main() {
     );
 
     console.log("CHECK: authenticated Iranian source-search API route.");
-    const iranianSearchResponse = await fetch(new URL("/api/admin/mavis/source-search", stagingOrigin), {
-      method: "POST",
-      headers: runtimeHeaders,
-      body: JSON.stringify({ query: "رأی وحدت رویه", group: "news", limit: 10 }),
-      redirect: "error",
-      signal: AbortSignal.timeout(20000),
-    });
-    const iranianSearchPayload = await iranianSearchResponse.json();
+    let iranianSearchResponse;
+    try {
+      iranianSearchResponse = await fetch(new URL("/api/admin/mavis/source-search", stagingOrigin), {
+        method: "POST",
+        headers: runtimeHeaders,
+        body: JSON.stringify({ query: "رأی وحدت رویه", group: "news", limit: 10 }),
+        redirect: "manual",
+        signal: AbortSignal.timeout(20000),
+      });
+    } catch (error) {
+      console.error("DEBUG: source-search fetch failed", error?.message, error?.cause?.code || error?.cause?.message || "");
+      throw error;
+    }
+    const iranianSearchText = await iranianSearchResponse.text();
+    let iranianSearchPayload;
+    try { iranianSearchPayload = JSON.parse(iranianSearchText); }
+    catch { iranianSearchPayload = { raw: iranianSearchText.slice(0, 500) }; }
+    console.log("DEBUG: source-search status=" + iranianSearchResponse.status +
+      "; location=" + String(iranianSearchResponse.headers.get("location") || "") +
+      "; payload=" + JSON.stringify(iranianSearchPayload));
     assert(
       iranianSearchResponse.status === 200 &&
         iranianSearchPayload.ok === true &&
