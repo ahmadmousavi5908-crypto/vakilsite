@@ -132,7 +132,7 @@ select set_config('test.article_without_approval_id', public.save_mavis_article_
 )::text, true);
 
 reset role;
-update public.mavis_articles
+update public.mavis_editorial_articles
 set status = 'approved'
 where id = current_setting('test.article_without_approval_id')::uuid;
 

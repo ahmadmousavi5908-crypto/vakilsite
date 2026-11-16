@@ -1,0 +1,176 @@
+name: Preview MAVIS Staging migrations
+
+on:
+  push:
+    branches:
+      - feature/mavis-indexnow-publication-notify-20261114
+    paths:
+      - "supabase/migrations/**"
+      - ".github/workflows/preview-mavis-staging-migrations.yml"
+      - "ops/mavis-staging-migration-preview-trigger.txt"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-staging-migration-preview
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    name: Read-only Staging migration preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+      SUPABASE_STAGING_DB_URL: ${{ secrets.SUPABASE_STAGING_DB_URL }}
+      SUPABASE_STAGING_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: srbwniqhaxwaoepjfizf
+      STAGING_BASE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+    steps:
+      - name: Check out the selected migration revision
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Validate Staging-only target
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+            echo "::error::SUPABASE_STAGING_ACCESS_TOKEN is not configured in the staging environment."
+            exit 1
+          fi
+          if [ -z "${SUPABASE_STAGING_DB_URL:-}" ] && [ -z "${SUPABASE_STAGING_DB_PASSWORD:-}" ]; then
+            echo "::error::Configure a Staging database URI or password secret."
+            exit 1
+          fi
+          if [ "$SUPABASE_PROJECT_REF" != "srbwniqhaxwaoepjfizf" ]; then
+            echo "::error::Refusing to inspect any database except vakilsite-staging."
+            exit 1
+          fi
+          if [ -n "${SUPABASE_STAGING_DB_URL:-}" ]; then
+            node <<'NODE'
+          const connection = new URL(process.env.SUPABASE_STAGING_DB_URL);
+          const user = decodeURIComponent(connection.username);
+          const validProtocol = ["postgres:", "postgresql:"].includes(connection.protocol);
+          const validHost = connection.hostname === "aws-1-eu-central-1.pooler.supabase.com" && connection.port === "5432";
+          const validUser = user.endsWith(".srbwniqhaxwaoepjfizf");
+          if (!validProtocol || !validHost || !validUser || connection.pathname !== "/postgres") {
+            throw new Error("Database URI is not the approved Staging session-pooler target.");
+          }
+          NODE
+          fi
+          case "${STAGING_BASE_URL:-}" in
+            https://vakilahmadmousavi-ir-staging.*.workers.dev) ;;
+            *) echo "::error::Staging base URL is missing or not the isolated workers.dev host."; exit 1 ;;
+          esac
+          echo "Database target is locked to vakilsite-staging."
+          echo "Web smoke target is locked to the isolated Staging Worker."
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Verify Supabase CLI
+        run: npx --yes supabase@3.0.0 --version
+
+      - name: Resolve a read-only Staging connection
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "${SUPABASE_STAGING_DB_URL:-}" ]; then
+            if npx --yes supabase@3.0.0 migration list --remote="$SUPABASE_STAGING_DB_URL"; then
+              STAGING_DATABASE_URL="$SUPABASE_STAGING_DB_URL"
+            else
+              echo "Configured URI did not authenticate; trying the password-only secret."
+            fi
+          fi
+          if [ -z "${STAGING_DATABASE_URL:-}" ] && [ -n "${SUPABASE_STAGING_DB_PASSWORD:-}" ]; then
+            STAGING_DATABASE_URL="$(node -e 'const u = new URL("postgresql://postgres.srbwniqhaxwaoepjfizf@aws-1-eu-central-1.pooler.supabase.com:5432/postgres"); u.password = process.env.SUPABASE_STAGING_DB_PASSWORD; process.stdout.write(u.toString())')"
+            if ! npx --yes supabase@3.0.0 migration list --remote="$STAGING_DATABASE_URL"; then
+              echo "::error::Staging password secret could not authenticate. No migration was applied."
+              exit 1
+            fi
+          fi
+          if [ -z "${STAGING_DATABASE_URL:-}" ]; then
+            echo "::error::No working Staging connection was resolved."
+            exit 1
+          fi
+          echo "::add-mask::$STAGING_DATABASE_URL"
+          echo "STAGING_DATABASE_URL=$STAGING_DATABASE_URL" >> "$GITHUB_ENV"
+
+      - name: List local and remote migration versions
+        run: npx --yes supabase@3.0.0 migration list --remote="$STAGING_DATABASE_URL"
+
+      - name: Preview pending migrations without applying
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes supabase@3.0.0 db push --dry-run --remote="$STAGING_DATABASE_URL"
+          echo "Read-only preview completed. This workflow contains no migration apply command."
+
+      - name: Smoke-test public Staging routes and sitemap isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="${STAGING_BASE_URL%/}"
+          routes=(/ /robots.txt /sitemap.xml /articles /articles/library /admin/login)
+          for route in "${routes[@]}"; do
+            status="$(curl --silent --show-error --connect-timeout 5 --max-time 15 -o /tmp/mavis-staging-body -w '%{http_code}' "$BASE_URL$route")"
+            echo "$route => HTTP $status"
+            if [ "$status" != "200" ]; then
+              echo "::error::Staging route failed: $route"
+              cat /tmp/mavis-staging-body 2>/dev/null || true
+              exit 1
+            fi
+          done
+          curl --silent --show-error --fail --connect-timeout 5 --max-time 15 "$BASE_URL/sitemap.xml" -o /tmp/mavis-staging-sitemap.xml
+          grep -Fq "$BASE_URL" /tmp/mavis-staging-sitemap.xml
+          if grep -Fq "https://vakilahmadmousavi.ir" /tmp/mavis-staging-sitemap.xml; then
+            echo "::error::Staging sitemap contains the Production canonical origin."
+            exit 1
+          fi
+
+      - name: Verify anonymous Growth Intelligence access boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="${STAGING_BASE_URL%/}"
+          status="$(curl --silent --show-error --max-time 20 -o /tmp/mavis-growth-body -D /tmp/mavis-growth-headers -w '%{http_code}' "$BASE_URL/admin/mavis/growth")"
+          echo "/admin/mavis/growth => HTTP $status"
+          case "$status" in
+            301|302|303|307|308)
+              if ! grep -Eiq '^location:.*/admin/login' /tmp/mavis-growth-headers; then
+                echo "::error::Anonymous Growth Intelligence request did not redirect to login."
+                cat /tmp/mavis-growth-headers
+                exit 1
+              fi
+              ;;
+            401|403) ;;
+            *)
+              echo "::error::Anonymous Growth Intelligence page must not render with HTTP $status."
+              exit 1
+              ;;
+          esac
+          api_status="$(curl --silent --show-error --max-time 20 -X POST -H 'content-type: application/json' -d '{"query":"وکیل اهواز"}' -o /tmp/mavis-growth-api-body -w '%{http_code}' "$BASE_URL/api/admin/mavis/growth/competitors")"
+          echo "Competitor research API anonymous POST => HTTP $api_status"
+          if [ "$api_status" != "401" ]; then
+            echo "::error::Competitor research API must reject anonymous POST requests."
+            cat /tmp/mavis-growth-api-body
+            exit 1
+          fi
+
+      - name: Verify Staging is explicitly noindex
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="${STAGING_BASE_URL%/}"
+          curl --silent --show-error --fail --max-time 20 "$BASE_URL/" -D /tmp/mavis-staging-headers -o /tmp/mavis-staging-home
+          if ! grep -Eiq '^x-robots-tag:.*noindex' /tmp/mavis-staging-headers; then
+            echo "::error::Staging homepage is missing an explicit noindex signal."
+            exit 1
+          fi
+          echo "Staging noindex signal verified."

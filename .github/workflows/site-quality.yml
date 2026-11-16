@@ -24,10 +24,9 @@ jobs:
         uses: actions/checkout@v7
       - name: Protect approved public UI baseline
         if: github.event_name == 'pull_request'
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          git fetch --no-tags origin "$BASE_SHA" --depth=1
+          git fetch --no-tags origin main --depth=1
+          BASE_SHA="$(git rev-parse FETCH_HEAD)"
           node scripts/mavis/verify-public-ui-boundary.mjs "$BASE_SHA" "$GITHUB_SHA"
 
       - name: Set up Node.js
@@ -41,6 +40,8 @@ jobs:
         run: npm run test:site-url
       - name: Test IndexNow key and URL validation
         run: npm run test:indexnow
+      - name: Test automatic IndexNow notifications
+        run: npm run test:indexnow-client
       - name: Validate legal research dataset
         run: python3 src/data/legal-library/validation/validate_library.py
       - name: Validate legal library SEO data
@@ -57,8 +58,12 @@ jobs:
         run: node --test tests/mavis/admin-auth.test.mjs
       - name: Run MAVIS article draft input tests
         run: node --test tests/mavis/article-draft-input.test.mjs
+      - name: Run MAVIS static article import tests
+        run: node --test tests/mavis/static-article-import.test.mjs
       - name: Run MAVIS editorial cursor tests
         run: node --test tests/mavis/editorial-cursor.test.mjs
+      - name: Run MAVIS editorial table compatibility tests
+        run: node --test tests/mavis/editorial-table.test.mjs
       - name: Run MAVIS spreadsheet export tests
         run: npm run test:mavis-editorial-export
 
@@ -69,6 +74,16 @@ jobs:
         run: node --test tests/mavis/evidence-ranker.test.mjs
       - name: Run MAVIS Search Console tests
         run: npm run test:mavis-search-console
+      - name: Run Iranian legal source search tests
+        run: npm run test:mavis-iranian-source-search
+      - name: Run MAVIS editorial content core tests
+        run: npm run test:mavis-editorial-core
+      - name: Run MAVIS editorial AI tests
+        run: npm run test:mavis-editorial-ai
+      - name: Run MAVIS manual source input tests
+        run: npm run test:mavis-manual-source-input
+      - name: Run MAVIS competitor research tests
+        run: npm run test:mavis-competitor-research
       - name: Run MAVIS knowledge retrieval tests
         run: >-
           node --test

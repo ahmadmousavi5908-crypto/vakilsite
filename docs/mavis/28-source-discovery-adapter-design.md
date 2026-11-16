@@ -1,8 +1,8 @@
 # MAVIS Source Discovery — Adapter and Rights-Safe Design
 
-**Status:** Research-backed implementation contract; no provider adapter is active yet.  
-**Priority:** Next CMS vertical slice after authenticated draft inventory/editor.  
-**Scope:** Metadata discovery only. No full-text or PDF fetching, importing, approval, or publication.
+**Status:** Implemented metadata-discovery baseline; this document now records the provider contract and remaining hardening work.  
+**Priority:** Complete the end-to-end editorial experience and production-grade provider coordination.  
+**Scope:** Crossref and Semantic Scholar metadata search, candidate persistence, explicit metadata-only import, and draft-first editorial workflow. Full-text/PDF ingestion is not implemented and is not implied by metadata discovery.
 
 ## 1. Design decision
 
@@ -11,7 +11,7 @@ Use independent provider adapters behind one normalized metadata contract. Prefe
 Initial provider order:
 1. Crossref Works: DOI, title, author, journal, publisher, and publication metadata.
 2. Semantic Scholar Academic Graph: scholarly paper metadata and author identifiers.
-3. OpenAlex Works: broad scholarly discovery, enabled only after an explicit API-key and usage-budget configuration.
+3. OpenAlex Works: broad scholarly discovery, enabled behind an atomic shared USD 0.05 UTC daily budget; an API key is optional for low-volume use and may be configured server-side.
 
 Provider results are candidates, not verified legal authority and not permission to republish.
 
@@ -23,7 +23,7 @@ Provider results are candidates, not verified legal authority and not permission
 - The current Crossref access/authentication page lists the polite pool as 10 requests/second with concurrency 3. A Crossref community update from December 2025 reports concurrency 5, so the published sources are not fully aligned.
 - Include a valid `mailto` parameter or `agent` header to use the polite pool.
 - A 429 response means the adapter must honor rate-limit guidance and retry only within a bounded policy.
-- Initial implementation deliberately avoids depending on the disputed ceiling: one in-flight request per process and bounded retries.
+- Current adapter requests are sequential in the discovery action and bounded; the per-admin durable rate limiter is enforced separately. Cross-instance provider concurrency coordination remains outstanding.
 - Crossref metadata may include abstracts that are subject to copyright. Do not fetch or store abstract/full text by default.
 
 Official references:
@@ -44,8 +44,8 @@ Official references:
 
 ### OpenAlex
 - Works API supports text search, filters, selected fields, and pagination.
-- The current API documentation describes usage-based pricing and API keys. Do not assume that an unkeyed endpoint is an unlimited free production dependency.
-- Enable only when `OPENALEX_API_KEY` and an explicit per-request usage budget are configured. Send the key through the Authorization header.
+- OpenAlex documents a free USD 1/day budget with a verified key and USD 0.10/day without a key; text search costs USD 1 per 1,000 calls. A key is optional for low-volume use.
+- MAVIS reserves USD 0.001 per search through a server-side atomic ledger with a shared USD 0.05/day ceiling. The optional `OPENALEX_API_KEY` is sent only as a Bearer header; never expose it to the browser.
 - Search and semantic search have different costs/limits; semantic search is not the default discovery path.
 - Select only the metadata fields required for the candidate card.
 
@@ -105,9 +105,9 @@ Do not discard a candidate solely because its title resembles another record. Pr
 
 ## 7. Persistence and workflow
 
-Discovery is read-only. Search results remain transient until an administrator explicitly selects a candidate.
+Provider search itself is read-only. Search candidates are persisted in the administrator-only candidate queue; an administrator must explicitly select a candidate before import.
 
-The future import action must:
+The implemented import action must:
 1. Re-check administrator authorization.
 2. Re-check provider identity and candidate shape server-side.
 3. Resolve duplicate signals against existing `mavis_sources` and `mavis_articles`.
@@ -118,15 +118,22 @@ The future import action must:
 
 The source insert and draft creation should be one atomic database operation. Direct browser writes to CMS tables remain prohibited.
 
-## 8. Implementation sequence
+## 8. Implemented baseline and remaining sequence
 
-1. Build pure provider normalizers and fixtures.
-2. Add injected-fetch adapters with timeout, response-size, and retry guards.
-3. Add provider-specific tests for empty results, malformed JSON, 429, 5xx, timeout, invalid fields, and partial provider failure.
-4. Add an admin-only search action with per-provider enablement and server-side rate limits.
-5. Add transient candidate cards and explicit metadata-only import.
-6. Add an atomic import RPC and pgTAP tests for duplicate handling, rights defaults, audit events, and draft-first invariants.
-7. Only after the above, evaluate any AI-assisted field completion. AI suggestions remain editable and never publish.
+Implemented and covered by application/database tests:
+1. Crossref, Semantic Scholar, and OpenAlex metadata normalizers and fixed-endpoint adapters with bounded timeout, response-size limits, redirect rejection, and safe upstream error mapping.
+2. OpenAlex search is gated by an atomic, cross-admin USD 0.05 UTC daily usage ledger (USD 0.001 reserved per text-search request).
+3. Admin-only source search with a durable per-admin rate limiter and sequential provider requests.
+4. Persisted candidate queue, duplicate-aware metadata-only import, atomic source/draft creation, rights defaulting to `unknown`, and audit events.
+5. Explicit draft, review, approval, publication, unpublication, archive, restore, and rollback transitions bound to immutable versions.
+6. Spreadsheet-compatible TSV export for the currently loaded filtered draft inventory.
+
+Remaining engineering sequence:
+1. Add cross-instance provider concurrency coordination and provider circuit-breakers before increasing search throughput.
+2. Improve the editorial workspace into one coherent, keyboard-accessible RTL data workspace with clear bulk-safe actions, saved filters, and responsive detail editing.
+3. Add richer field provenance and per-field AI-assisted completion with editable suggestions and human review.
+4. Add a legally reviewed, SSRF-safe document retrieval pipeline only for sources whose licences or permissions explicitly allow it; do not infer rights from public availability.
+5. Complete production migration parity, live provider checks, end-to-end publication tests, and scale benchmarks before declaring the editorial arm production-ready.
 
 ## 9. Explicit non-goals
 

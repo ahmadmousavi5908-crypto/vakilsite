@@ -1,8 +1,19 @@
 begin;
 
-select plan(33);
+select plan(36);
 
-select has_table('public', 'mavis_articles', 'CMS articles table exists');
+select has_table('public', 'mavis_editorial_articles', 'canonical Mother Two CMS table exists');
+select has_view('public', 'mavis_articles', 'legacy CMS name remains a compatibility view');
+select is(
+  (select is_updatable from information_schema.views where table_schema = 'public' and table_name = 'mavis_articles'),
+  'YES',
+  'compatibility view remains automatically updatable'
+);
+select ok(
+  (select coalesce(array_to_string(reloptions, ','), '') like '%security_invoker=true%'
+   from pg_class where oid = 'public.mavis_articles'::regclass),
+  'public compatibility view enforces base-table RLS'
+);
 select ok(to_regclass('public.mavis_articles_editable_updated_idx') is not null, 'editable draft keyset pagination has a dedicated partial index');
 select has_table('public', 'mavis_sources', 'CMS source registry table exists');
 select has_table('public', 'mavis_article_sources', 'CMS article-source relation table exists');
@@ -10,7 +21,7 @@ select has_table('public', 'mavis_article_versions', 'CMS article versions table
 select has_table('public', 'mavis_article_approvals', 'CMS approval table exists');
 select has_table('public', 'mavis_article_audit_events', 'CMS audit table exists');
 
-select ok((select relrowsecurity from pg_class where oid = 'public.mavis_articles'::regclass), 'article table has RLS enabled');
+select ok((select relrowsecurity from pg_class where oid = 'public.mavis_editorial_articles'::regclass), 'canonical article table has RLS enabled');
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_sources'::regclass), 'source table has RLS enabled');
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_article_sources'::regclass), 'article-source table has RLS enabled');
 select ok((select relrowsecurity from pg_class where oid = 'public.mavis_article_versions'::regclass), 'version table has RLS enabled');
@@ -20,9 +31,9 @@ select ok((select relrowsecurity from pg_class where oid = 'public.mavis_article
 select ok(
   has_column_privilege('anon', 'public.mavis_articles', 'slug', 'SELECT')
   and has_column_privilege('anon', 'public.mavis_articles', 'content', 'SELECT')
-  and not has_column_privilege('anon', 'public.mavis_articles', 'created_by', 'SELECT')
-  and not has_column_privilege('anon', 'public.mavis_articles', 'updated_by', 'SELECT')
-  and not has_column_privilege('anon', 'public.mavis_articles', 'last_change_note', 'SELECT'),
+  and not has_column_privilege('anon', 'public.mavis_editorial_articles', 'created_by', 'SELECT')
+  and not has_column_privilege('anon', 'public.mavis_editorial_articles', 'updated_by', 'SELECT')
+  and not has_column_privilege('anon', 'public.mavis_editorial_articles', 'last_change_note', 'SELECT'),
   'anonymous role can read public article fields but not internal editorial metadata'
 );
 select ok(not has_table_privilege('anon', 'public.mavis_sources', 'SELECT'), 'anonymous role cannot select source/rights records');
@@ -53,7 +64,7 @@ values
   ('00000000-0000-4000-8000-000000000011', 'editor'),
   ('00000000-0000-4000-8000-000000000012', 'admin');
 
-insert into public.mavis_articles (
+insert into public.mavis_editorial_articles (
   id, slug, title, excerpt, category, content, status, origin_type, current_version, published_at
 )
 values

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { requireAdmin } from "../../../../../../lib/supabase/admin";
 import MavisPublicationManager from "../../../../../../components/admin/MavisPublicationManager";
+import { queryMavisEditorialArticles } from "../../../../../../lib/mavis/editorial-table.mjs";
 import { signOut } from "../../../../../admin/actions";
 
 export const metadata = {
@@ -27,11 +28,12 @@ export default async function ManageMavisArticlePage({ params }) {
   const { id } = await params;
   if (!UUID_PATTERN.test(id || "")) notFound();
 
-  const { data: article, error: articleError } = await access.supabase
-    .from("mavis_articles")
-    .select("id, slug, title, category, status, current_version, updated_at, published_at, archived_from_status")
-    .eq("id", id)
-    .maybeSingle();
+  const { data: article, error: articleError } = await queryMavisEditorialArticles(access.supabase, (table) =>
+    table
+      .select("id, slug, title, category, status, current_version, updated_at, published_at, archived_from_status")
+      .eq("id", id)
+      .maybeSingle()
+  );
 
   if (articleError) redirect("/admin/mavis/articles?error=publication-read");
   if (!article) notFound();

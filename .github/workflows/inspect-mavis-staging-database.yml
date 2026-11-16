@@ -1,0 +1,198 @@
+name: Inspect MAVIS staging database
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/inspect-mavis-staging-database.yml"
+  workflow_dispatch:
+    inputs:
+      migration_ref:
+        description: "Migration source branch (leave the default unchanged)"
+        required: true
+        default: "work/mother-two-updated-mavis-20261110"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-staging-database-inspection
+  cancel-in-progress: false
+
+jobs:
+  inspect-staging:
+    name: Read-only staging database inspection
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: srbwniqhaxwaoepjfizf
+    steps:
+      - name: Validate selected migration source
+        shell: bash
+        env:
+          MIGRATION_REF: ${{ inputs.migration_ref || 'work/mother-two-updated-mavis-20261110' }}
+        run: |
+          set -euo pipefail
+          if [ "$MIGRATION_REF" != "work/mother-two-updated-mavis-20261110" ]; then
+            echo "::error::Only the reviewed MAVIS migration branch is permitted."
+            exit 1
+          fi
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ] || [ -z "${SUPABASE_DB_PASSWORD:-}" ]; then
+            echo "::error::Configure the staging Supabase access token and database password secrets."
+            exit 1
+          fi
+          if [ "$SUPABASE_PROJECT_REF" != "srbwniqhaxwaoepjfizf" ] || [ "$SUPABASE_PROJECT_REF" = "jroflcmiczfwtmiaxmpd" ]; then
+            echo "::error::Refusing to inspect any project except vakilsite-staging."
+            exit 1
+          fi
+          node <<'NODE'
+          const password = process.env.SUPABASE_DB_PASSWORD;
+          const projectRef = process.env.SUPABASE_PROJECT_REF;
+          const url = new URL(`postgresql://postgres.${projectRef}:${encodeURIComponent(password)}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres`);
+          if (url.username !== `postgres.${projectRef}` || url.hostname !== 'aws-1-eu-central-1.pooler.supabase.com' || url.port !== '5432' || url.pathname !== '/postgres') {
+            throw new Error('Staging database URL validation failed.');
+          }
+          require('node:fs').appendFileSync(process.env.GITHUB_ENV, `SUPABASE_DB_URL=${url.toString()}\n`);
+          NODE
+          echo "Staging target and migration source validated."
+
+      - name: Check out the reviewed migration branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.migration_ref || 'work/mother-two-updated-mavis-20261110' }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Verify Supabase CLI
+        run: npx --yes supabase@3.0.0 --version
+
+      - name: Read remote migration history
+        run: npx --yes supabase@3.0.0 migration list --remote="$SUPABASE_DB_URL"
+
+      - name: Fetch remote migration files into an isolated temporary workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          TEMP_WORKDIR="$(mktemp -d)"
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" init --force
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" migration fetch --remote="$SUPABASE_DB_URL"
+          node - "$TEMP_WORKDIR/supabase/migrations" <<'NODE'
+          const fs = require("node:fs");
+          const path = require("node:path");
+          const crypto = require("node:crypto");
+          const directory = process.argv[2];
+          const files = fs.readdirSync(directory).filter((name) => name.endsWith(".sql")).sort();
+          console.log(`Fetched migration files: ${files.length}`);
+          for (const name of files) {
+            const sql = fs.readFileSync(path.join(directory, name), "utf8");
+            const sha256 = crypto.createHash("sha256").update(sql).digest("hex");
+            const summary = {
+              file: name,
+              sha256,
+              hardensAdminAcl: /revoke\s+all\s+on\s+function\s+public\.is_site_admin/i.test(sql),
+              createsEditorialArticles: /create\s+table(?:\s+if\s+not\s+exists)?\s+public\.mavis_editorial_articles/i.test(sql),
+              createsMavisArticles: /create\s+table(?:\s+if\s+not\s+exists)?\s+public\.mavis_articles/i.test(sql),
+              renamesMavisArticles: /rename\s+to\s+mavis_editorial_articles/i.test(sql),
+              mentionsSearchConsole: /mavis_search_console_connections/i.test(sql),
+              mentionsSourceCandidates: /mavis_source_candidates/i.test(sql),
+            };
+            console.log(JSON.stringify(summary));
+          }
+          NODE
+
+      - name: Inspect existing site and MAVIS tables (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes supabase@3.0.0 db query --read-only --remote="$SUPABASE_DB_URL" "
+            SELECT
+              n.nspname AS schema_name,
+              c.relname AS table_name,
+              c.relrowsecurity AS rls_enabled,
+              array_agg(a.attname ORDER BY a.attnum)
+                FILTER (WHERE a.attnum > 0 AND NOT a.attisdropped) AS columns
+            FROM pg_class c
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            JOIN pg_attribute a ON a.attrelid = c.oid
+            WHERE c.relkind IN ('r', 'p', 'v', 'm')
+              AND (
+                (n.nspname = 'public' AND (
+                  c.relname IN ('profiles', 'social_links', 'site_settings')
+                  OR c.relname LIKE 'mavis_%'
+                ))
+                OR (n.nspname = 'mavis_private' AND c.relkind IN ('r', 'p'))
+              )
+            GROUP BY n.nspname, c.relname, c.relrowsecurity
+            ORDER BY n.nspname, c.relname;
+          "
+
+      - name: Inspect migration objects, policies, and function definitions (read-only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes supabase@3.0.0 db query --read-only --remote="$SUPABASE_DB_URL" "
+            SELECT
+              'columns' AS section,
+              table_schema || '.' || table_name AS object_name,
+              column_name || ' | ' || data_type || ' | nullable=' || is_nullable || ' | default=' || coalesce(column_default, '<none>') AS details
+            FROM information_schema.columns
+            WHERE (table_schema = 'public' AND table_name IN ('profiles', 'social_links', 'site_settings', 'mavis_editorial_articles'))
+               OR (table_schema = 'mavis_private' AND table_name = 'knowledge_search_rate_limits')
+            UNION ALL
+            SELECT
+              'constraints',
+              conrelid::regclass::text,
+              conname || ' | ' || pg_get_constraintdef(oid)
+            FROM pg_constraint
+            WHERE conrelid IN (
+              'public.profiles'::regclass,
+              'public.social_links'::regclass,
+              'public.site_settings'::regclass,
+              to_regclass('public.mavis_editorial_articles'),
+              to_regclass('mavis_private.knowledge_search_rate_limits')
+            )
+            UNION ALL
+            SELECT
+              'indexes',
+              schemaname || '.' || tablename,
+              indexname || ' | ' || indexdef
+            FROM pg_indexes
+            WHERE (schemaname = 'public' AND tablename IN ('profiles', 'social_links', 'site_settings', 'mavis_editorial_articles'))
+               OR (schemaname = 'mavis_private' AND tablename = 'knowledge_search_rate_limits')
+            UNION ALL
+            SELECT
+              'policies',
+              schemaname || '.' || tablename,
+              policyname || ' | roles=' || roles::text || ' | command=' || cmd || ' | using=' || coalesce(qual, '<none>') || ' | check=' || coalesce(with_check, '<none>')
+            FROM pg_policies
+            WHERE (schemaname = 'public' AND tablename IN ('profiles', 'social_links', 'site_settings', 'mavis_editorial_articles'))
+               OR (schemaname = 'mavis_private' AND tablename = 'knowledge_search_rate_limits')
+            UNION ALL
+            SELECT
+              'functions',
+              n.nspname || '.' || p.proname,
+              pg_get_function_identity_arguments(p.oid) || ' | ' || pg_get_functiondef(p.oid)
+            FROM pg_proc p
+            JOIN pg_namespace n ON n.oid = p.pronamespace
+            WHERE (n.nspname = 'public' AND p.proname IN ('is_site_admin', 'consume_mavis_knowledge_search_limit', 'get_mavis_published_articles'))
+               OR (n.nspname = 'mavis_private' AND p.proname = 'consume_knowledge_search_limit')
+            UNION ALL
+            SELECT
+              'migration_history',
+              'supabase_migrations.schema_migrations',
+              CASE WHEN to_regclass('supabase_migrations.schema_migrations') IS NULL
+                THEN 'table missing'
+                ELSE 'table exists; inspect with migration list output above'
+              END;
+          "
+
+      - name: Preview pending migrations (dry-run only)
+        run: npx --yes supabase@3.0.0 db push --dry-run --remote="$SUPABASE_DB_URL"

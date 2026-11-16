@@ -38,6 +38,7 @@ test("requests only Search Console read-only access with offline consent", () =>
   assert.equal(url.searchParams.get("scope"), SEARCH_CONSOLE_READ_ONLY_SCOPE);
   assert.equal(url.searchParams.get("access_type"), "offline");
   assert.equal(url.searchParams.get("prompt"), "consent");
+  assert.equal(url.searchParams.has("include_granted_scopes"), false);
   assert.equal(url.searchParams.get("state"), state);
 });
 
@@ -102,6 +103,17 @@ test("refuses token responses without refresh token or the exact read-only scope
       return { access_token: "access-token", refresh_token: "refresh-token-value", scope: "openid" };
     } }),
   }));
+  await assert.rejects(exchangeSearchConsoleAuthorizationCode({
+    code: "authorization-code-value",
+    config,
+    fetchImpl: async () => ({ ok: true, async json() {
+      return {
+        access_token: "access-token",
+        refresh_token: "refresh-token-value",
+        scope: SEARCH_CONSOLE_READ_ONLY_SCOPE + " openid",
+      };
+    } }),
+  }), /exact offline read-only Search Console scope/);
 });
 
 

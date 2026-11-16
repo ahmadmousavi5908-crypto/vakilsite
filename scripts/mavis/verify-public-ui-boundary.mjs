@@ -30,7 +30,8 @@ const isAllowedMetadataRoute = (file) =>
   file === "src/app/sitemap.js";
 
 const isAllowedAdminApiRoute = (file) =>
-  file.startsWith("src/app/api/admin/mavis/search-console/");
+  file.startsWith("src/app/api/admin/mavis/search-console/") ||
+  file === "src/app/api/admin/mavis/growth/competitors/route.js";
 
 const isAllowedPublicArticleLibrarySurface = (file) =>
   file === "src/app/articles/library/page.js" ||
@@ -41,17 +42,34 @@ function verifyPreservedArticleExtension(file) {
   const head = readAtRef(headRef, file);
 
   if (file === "src/app/articles/page.js") {
-    const startMarker = "                {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START */}";
-    const endMarker = "                {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_END */}";
+    const cmsStartMarker = "{/* MAVIS_PUBLISHED_CMS_SECTION_START */}";
+    const cmsEndMarker = "{/* MAVIS_PUBLISHED_CMS_SECTION_END */}";
+    const libraryLinkStartMarker = "{/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START */}";
+    const libraryLinkEndMarker = "{/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_END */}";
     const baseReturnIndex = base.indexOf("  return (");
     const headReturnIndex = head.indexOf("  return (");
     if (baseReturnIndex < 0 || headReturnIndex < 0) return false;
 
     let headReturn = head.slice(headReturnIndex);
-    const linkBlock = /\n[ \t]*\{\/\* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START \*\/\}[ \t]*\n[\s\S]*?\n[ \t]*\{\/\* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_END \*\/\}[ \t]*\n/;
-    if (!linkBlock.test(headReturn) || (headReturn.match(/MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START/g) || []).length !== 1) return false;
+    const countMarker = (value, marker) => value.split(marker).length - 1;
+    if (countMarker(headReturn, cmsStartMarker) !== 1 || countMarker(headReturn, cmsEndMarker) !== 1) return false;
 
-    headReturn = headReturn.replace(linkBlock, "\n");
+    const cmsStart = headReturn.indexOf(cmsStartMarker);
+    const cmsEnd = headReturn.indexOf(cmsEndMarker, cmsStart);
+    if (cmsStart < 0 || cmsEnd < cmsStart) return false;
+
+    const cmsBlockStart = headReturn.lastIndexOf("\n", cmsStart - 1) + 1;
+    const cmsSection = headReturn.slice(cmsStart, cmsEnd + cmsEndMarker.length);
+    if (countMarker(cmsSection, libraryLinkStartMarker) !== 1 ||
+        countMarker(cmsSection, libraryLinkEndMarker) !== 1 ||
+        cmsSection.indexOf(libraryLinkEndMarker) < cmsSection.indexOf(libraryLinkStartMarker) ||
+        !cmsSection.includes('href="/articles/library"')) return false;
+
+    let afterMarker = cmsEnd + cmsEndMarker.length;
+    if (headReturn.slice(afterMarker, afterMarker + 2) === "\r\n") afterMarker += 2;
+    else if (headReturn[afterMarker] === "\n") afterMarker += 1;
+
+    headReturn = headReturn.slice(0, cmsBlockStart) + headReturn.slice(afterMarker);
     return base.slice(baseReturnIndex) === headReturn;
   }
 

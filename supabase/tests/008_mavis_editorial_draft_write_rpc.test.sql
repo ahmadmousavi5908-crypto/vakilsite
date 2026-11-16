@@ -133,7 +133,7 @@ select is(
 );
 
 reset role;
-update public.mavis_articles
+update public.mavis_editorial_articles
 set status = 'changes_requested'
 where slug = 'secure-draft-test';
 

@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   createSearchConsoleClientFromStoredConnection,
+  disconnectStoredSearchConsoleConnection,
   readStoredSearchConsoleConnection,
 } from "../../src/lib/mavis/search-console-connection.mjs";
 import { encryptSearchConsoleRefreshToken } from "../../src/lib/mavis/search-console-oauth.mjs";
@@ -59,4 +60,49 @@ test("fails closed when stored property or server credentials do not match", asy
 test("does not expose database errors or accept malformed connection records", async () => {
   await assert.rejects(readStoredSearchConsoleConnection(createSupabase(null, new Error("private database details"))), /could not be read/);
   await assert.rejects(readStoredSearchConsoleConnection(createSupabase({ connected: true })), /invalid/);
+});
+
+
+test("removes the local connection even when provider token revocation fails", async () => {
+  const encryptedRefreshToken = encryptSearchConsoleRefreshToken("google-refresh-token-secret", env);
+  const calls = [];
+  const supabase = {
+    async rpc(name) {
+      calls.push(name);
+      if (name === "get_mavis_search_console_connection") {
+        return { data: { connected: true, encryptedRefreshToken, siteUrl: env.MAVIS_GSC_SITE_URL, connectedAt: "2026-11-14T12:00:00.000Z" } };
+      }
+      return { data: { connected: false }, error: null };
+    },
+  };
+  const result = await disconnectStoredSearchConsoleConnection({
+    supabase,
+    env,
+    revokeToken: async () => { throw new Error("Google unavailable"); },
+  });
+  assert.deepEqual(result, { connected: false, revoked: false, revocationFailed: true });
+  assert.deepEqual(calls, ["get_mavis_search_console_connection", "disconnect_mavis_search_console"]);
+});
+
+test("reports successful provider revocation and removes the local connection", async () => {
+  const encryptedRefreshToken = encryptSearchConsoleRefreshToken("google-refresh-token-secret", env);
+  const calls = [];
+  const supabase = {
+    async rpc(name) {
+      calls.push(name);
+      if (name === "get_mavis_search_console_connection") {
+        return { data: { connected: true, encryptedRefreshToken, siteUrl: env.MAVIS_GSC_SITE_URL, connectedAt: "2026-11-14T12:00:00.000Z" } };
+      }
+      return { data: { connected: false }, error: null };
+    },
+  };
+  let revokedToken;
+  const result = await disconnectStoredSearchConsoleConnection({
+    supabase,
+    env,
+    revokeToken: async ({ refreshToken }) => { revokedToken = refreshToken; },
+  });
+  assert.deepEqual(result, { connected: false, revoked: true, revocationFailed: false });
+  assert.equal(revokedToken, "google-refresh-token-secret");
+  assert.deepEqual(calls, ["get_mavis_search_console_connection", "disconnect_mavis_search_console"]);
 });

@@ -71,13 +71,13 @@ select is(
 );
 
 select is(
-  (select status from public.mavis_articles where origin_type = 'metadata_only' and title = 'A metadata-only legal research source'),
+  (select status from public.mavis_editorial_articles where origin_type = 'metadata_only' and title = 'A metadata-only legal research source'),
   'draft',
   'imported article is always a draft'
 );
 
 select is(
-  (select origin_type from public.mavis_articles where title = 'A metadata-only legal research source'),
+  (select origin_type from public.mavis_editorial_articles where title = 'A metadata-only legal research source'),
   'metadata_only',
   'imported article is explicitly marked metadata-only'
 );
@@ -130,7 +130,7 @@ select is(
 
 select is(
   (select count(*)::integer
-   from public.mavis_articles article
+   from public.mavis_editorial_articles article
    join public.mavis_article_sources link on link.article_id = article.id
    join public.mavis_sources source on source.id = link.source_id
    where source.canonical_url = 'https://doi.org/10.5555/import-test'

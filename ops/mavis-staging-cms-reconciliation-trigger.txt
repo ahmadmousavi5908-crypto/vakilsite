@@ -1,0 +1,10 @@
+Run the read-only JSON audit query for Staging CMS columns, policies, indexes, functions, relations, migration history, and dry-run. No database mutation.
+2026-11-16: read-only post-migration CMS schema, RLS, functions, inventory and migration history audit.
+
+Repeat compact read-only CMS audit: verify canonical table/view parity, publication snapshots, unique slugs, source and version counts, and migration history.
+2026-11-16: Post-migration 019 final read-only CMS schema, RLS, function ACL, publication and migration-history reconciliation.
+2026-11-16: expanded read-only reconciliation includes mavis_private RLS, full MAVIS RPC inventory, and effective anon/authenticated/service_role function execution privileges.
+2026-11-16: include private rate-limit indexes in final read-only inventory.
+2026-11-16: include function schema names in complete MAVIS RPC ACL audit.
+2026-11-16: include all mavis_private helper functions in effective ACL inventory.
+2026-11-16: final post-source-attachment E2E cleanup audit; require zero residual article, version, approval, source, and link records.

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { importMavisSourceCandidateById, searchMavisEditorialSources } from "../../app/admin/mavis/articles/actions";
+import { importMavisSourceCandidateById, searchMavisEditorialSources, searchMavisLocalArchive } from "../../app/admin/mavis/articles/actions";
 import styles from "./MavisSourceDiscovery.module.css";
 
 const PROVIDER_LABELS = {
@@ -11,7 +11,9 @@ const PROVIDER_LABELS = {
 };
 
 const PROVIDER_ERRORS = {
-  PROVIDER_DISABLED: "این منبع تا زمان تنظیم کلید و بودجه مصرف غیرفعال است.",
+  PROVIDER_DISABLED: "این منبع غیرفعال است.",
+  DAILY_BUDGET_EXHAUSTED: "سقف روزانه ۰٫۰۵ دلار برای جست‌وجوی OpenAlex مصرف شده است.",
+  BUDGET_CONTROL_UNAVAILABLE: "کنترل سقف هزینه در دسترس نیست؛ جست‌وجوی OpenAlex برای ایمنی اجرا نشد.",
   RATE_LIMITED: "محدودیت درخواست منبع فعال شده است.",
   UPSTREAM_TIMEOUT: "پاسخ منبع بیش از زمان مجاز طول کشید.",
   UPSTREAM_UNAVAILABLE: "منبع موقتاً پاسخ‌گو نیست.",
@@ -27,6 +29,8 @@ function candidateKey(item) {
 
 export default function MavisSourceDiscovery() {
   const [query, setQuery] = useState("");
+  const [mode, setMode] = useState("all");
+  const [localResponse, setLocalResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [error, setError] = useState("");
@@ -52,10 +56,29 @@ export default function MavisSourceDiscovery() {
     setLoading(true);
     setError("");
     setResponse(null);
+    setLocalResponse(null);
     try {
-      const result = await searchMavisEditorialSources(query);
-      if (!result?.ok) setError(result?.error || "جست‌وجو انجام نشد.");
-      else setResponse(result);
+      if (mode === "offline") {
+        const result = await searchMavisLocalArchive(query);
+        if (!result?.ok) setError(result?.error || "جست‌وجو در آرشیو انجام نشد.");
+        else setLocalResponse(result);
+      } else if (mode === "all") {
+        const [localResult, onlineResult] = await Promise.all([
+          searchMavisLocalArchive(query),
+          searchMavisEditorialSources(query),
+        ]);
+        if (localResult?.ok) setLocalResponse(localResult);
+        if (onlineResult?.ok) setResponse(onlineResult);
+        const failures = [
+          !localResult?.ok ? localResult?.error || "جست‌وجوی آرشیو انجام نشد." : "",
+          !onlineResult?.ok ? onlineResult?.error || "جست‌وجوی منابع آنلاین انجام نشد." : "",
+        ].filter(Boolean);
+        if (failures.length) setError(failures.join(" "));
+      } else {
+        const result = await searchMavisEditorialSources(query);
+        if (!result?.ok) setError(result?.error || "جست‌وجو انجام نشد.");
+        else setResponse(result);
+      }
     } catch {
       setError("ارتباط امن با سرور برقرار نشد. دوباره تلاش کنید.");
     } finally {
@@ -108,23 +131,61 @@ export default function MavisSourceDiscovery() {
         <div>
           <span className={styles.eyebrow}>MAVIS · SOURCE INTELLIGENCE</span>
           <h2 id="mavis-source-title">موتور کشف و جست‌وجوی منابع</h2>
-          <p>جست‌وجوی هم‌زمان فراداده علمی در سه منبع معتبر؛ بدون دریافت متن کامل یا مجوز بازنشر.</p>
+          <p>یک درگاه واحد برای جست‌وجوی آنلاین منابع علمی و جست‌وجوی آفلاین در آرشیو ذخیره‌شده MAVIS.</p>
         </div>
         <span className={styles.readOnly}>جست‌وجوی امن · فقط فراداده</span>
+        <a className={styles.offlineLink} href="/mavis-offline/index.html">کتابخانه عمومی آفلاین MAVIS ↗</a>
       </header>
+
+      <div className={styles.modeTabs} role="group" aria-label="نوع جست‌وجو">
+        <button type="button" className={mode === "all" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("all")}>جست‌وجوی یکپارچه</button>
+        <button type="button" className={mode === "online" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("online")}>فقط منابع آنلاین</button>
+        <button type="button" className={mode === "offline" ? styles.modeButtonActive : styles.modeButton} onClick={() => setMode("offline")}>فقط آرشیو داخلی</button>
+      </div>
 
       <form className={styles.searchForm} onSubmit={handleSearch}>
         <label htmlFor="mavis-source-query">موضوع، عنوان مقاله یا کلیدواژه</label>
         <div className={styles.searchRow}>
           <input id="mavis-source-query" value={query} onChange={(event) => setQuery(event.target.value)} minLength={2} maxLength={160} placeholder="مثلاً مسئولیت مدنی ناشی از تقصیر..." required />
-          <button type="submit" disabled={loading || query.trim().length < 2}>{loading ? "در حال جست‌وجو..." : "جست‌وجوی منابع"}</button>
+          <button type="submit" disabled={loading || query.trim().length < 2}>{loading ? "در حال جست‌وجو..." : mode === "offline" ? "جست‌وجو در آرشیو داخلی" : mode === "online" ? "جست‌وجوی منابع آنلاین" : "جست‌وجوی یکپارچه"}</button>
         </div>
-        <small>برای رعایت محدودیت سرویس‌ها، درخواست‌ها به‌صورت کنترل‌شده و پشت‌سرهم ارسال می‌شوند.</small>
+        <small>{mode === "offline" ? "بدون فراخوانی سرویس خارجی؛ فقط داده‌های ذخیره‌شده داخل MAVIS." : mode === "online" ? "جست‌وجو در منابع علمی آنلاین با درخواست‌های محدود و کنترل‌شده." : "جست‌وجوی هم‌زمان آرشیو داخلی و منابع علمی آنلاین در یک مرحله."}</small>
       </form>
 
       {error ? <div className={styles.error} role="alert">{error}</div> : null}
 
-      {response ? (
+      {mode !== "online" && localResponse ? (
+        <div className={styles.resultsArea}>
+          <div className={styles.resultsToolbar}>
+            <div><strong>{localResponse.results.length.toLocaleString("fa-IR")} نتیجه در آرشیو داخلی</strong><small>جست‌وجوی آرشیو داخلی: «{localResponse.query}»</small></div>
+            <span className={styles.sourceTag}>بدون API خارجی</span>
+          </div>
+          {localResponse.results.length ? (
+            <div className={styles.tableWrap}>
+              <table className={styles.table}>
+                <thead><tr><th>نوع رکورد</th><th>عنوان</th><th>خلاصه / اطلاعات</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+                <tbody>
+                  {localResponse.results.map((item) => (
+                    <tr key={item.record_type + ":" + item.record_id}>
+                      <td><span className={styles.sourceTag}>{item.record_type === "article" ? "مقاله" : item.record_type === "candidate" ? "نتیجه ذخیره‌شده" : "منبع"}</span></td>
+                      <td><strong>{item.title}</strong><small dir="ltr">{item.record_id}</small></td>
+                      <td>{item.excerpt || "اطلاعات تکمیلی ثبت نشده است."}</td>
+                      <td>{item.status || "نامشخص"}</td>
+                      <td className={styles.actions}>
+                        {item.source_url ? <a href={item.source_url} target="_blank" rel="noopener noreferrer">پیوند منبع</a> : null}
+                        <a href={item.target_path}>بازکردن رکورد</a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : <div className={styles.empty}>در آرشیو ذخیره‌شده نتیجه‌ای پیدا نشد. برای دریافت مقاله تازه، جست‌وجوی آنلاین را انتخاب کنید.</div>}
+          <p className={styles.disclaimer}>این حالت بدون فراخوانی API خارجی، داده‌های ذخیره‌شده در پایگاه داده MAVIS را جست‌وجو می‌کند و برای استفاده همچنان به اتصال پنل و دیتابیس نیاز دارد. برای جست‌وجوی متن کامل PDFها و اسناد واردشده، مخزن اسناد محلی مرحله بعدی است.</p>
+        </div>
+      ) : null}
+
+      {mode !== "offline" && response ? (
         <div className={styles.resultsArea}>
           <div className={styles.resultsToolbar}>
             <div><strong>{results.length.toLocaleString("fa-IR")} نتیجه یکتا</strong><small>عبارت: «{response.query}»</small></div>

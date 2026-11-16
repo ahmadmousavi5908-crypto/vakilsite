@@ -62,7 +62,9 @@ export default function MavisSearchConsolePanel() {
       setConnection({ loading: false, connected: false, siteUrl: null, error: "" });
       setResult(null);
       setState("idle");
-      setMessage("اتصال Search Console قطع شد.");
+      setMessage(payload.revocationFailed
+        ? "اتصال محلی حذف شد، اما لغو دسترسی گوگل ناموفق بود. دسترسی برنامه را از تنظیمات حساب Google نیز لغو کنید."
+        : "اتصال Search Console قطع شد.");
     } catch {
       setConnection((current) => ({ ...current, loading: false, error: "قطع اتصال انجام نشد." }));
     }
@@ -251,7 +253,7 @@ export default function MavisSearchConsolePanel() {
             {opportunities.length ? (
               <div className={styles.tableWrap}>
                 <table>
-                  <thead><tr><th>عبارت یا صفحه</th><th>کلیک</th><th>نمایش</th><th>CTR</th><th>جایگاه</th><th>امتیاز فرصت</th></tr></thead>
+                  <thead><tr><th>عبارت یا صفحه</th><th>کلیک</th><th>نمایش</th><th>CTR</th><th>جایگاه</th><th>امتیاز فرصت</th><th>اقدام</th></tr></thead>
                   <tbody>
                     {opportunities.map((item, index) => (
                       <tr key={item.page || item.query || String(index)}>
@@ -264,6 +266,7 @@ export default function MavisSearchConsolePanel() {
                         <td>{percentFormat.format(item.analysis.ctr ?? 0)}</td>
                         <td>{item.analysis.averagePosition === null ? "—" : numberFormat.format(item.analysis.averagePosition)}</td>
                         <td><strong>{numberFormat.format(item.analysis.opportunityScore)} / ۱۰۰</strong></td>
+                        <td>{item.query ? <a className={styles.draftLink} href={"/admin/mavis/articles/new?topic=" + encodeURIComponent(item.query)}>ایجاد بریف ↗</a> : <span>—</span>}</td>
                       </tr>
                     ))}
                   </tbody>

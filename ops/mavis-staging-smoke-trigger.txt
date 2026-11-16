@@ -1,0 +1,12 @@
+Verify live Staging after migration 018: public compatibility view, public routes, anonymous admin boundary, and noindex signals.
+Verify deployed article library, robots, sitemap, admin redirects, and API boundaries.
+
+2026-11-16: verify growth dashboard and anonymous competitor API access boundaries.
+2026-11-16: post-migration 019 live route, SEO, admin/API boundary and noindex smoke verification.
+2026-11-16: live metadata-only provider smoke tests for Crossref, Semantic Scholar and OpenAlex; no candidate imports or database writes.
+2026-11-16: post-deploy smoke verification for Worker version 90e70a5b-846d-4e4b-8c50-012109e9b410.
+2026-11-16: rerun all live Staging route, auth-boundary and scholarly provider checks after Worker version a4dd474c-fb1d-42b1-82aa-c3c889c58b8d; legacy editorial assertion accounts for middleware authentication.
+2026-11-16: re-run Staging route and provider checks with optional-provider rate limits reported as warnings.
+2026-11-16: post-deploy smoke against Worker version 475e50cc-a4e0-4d90-ba7f-d5da35222c9b and current static-draft import release at 8a2fcac4f21aaa4ede22da3be30874fea008e26e.
+2026-11-16: post-deployment live route, admin boundary and source-provider smoke for Worker version 475e50cc-a4e0-4d90-ba7f-d5da35222c9b.
+2026-11-16: Final post-deploy Staging smoke: public routes, sitemap and robots isolation, admin authorization, growth API boundary, and scholarly source provider checks.

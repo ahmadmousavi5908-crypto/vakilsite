@@ -28,7 +28,10 @@ const row = {
 test("maps only the public editorial fields", () => {
   const article = mapPublishedMavisArticle(row, [
     { title: "منبع رسمی", url: "https://example.org/law", sourceType: "official_law" },
-    { title: "Unsafe", url: "javascript:alert(1)" },
+    { title: "Unsafe protocol", url: "javascript:alert(1)" },
+    { title: "Credential URL", url: "https://user:secret@example.org/law" },
+    { title: "Malformed URL", url: "https://%" },
+    { title: "Whitespace URL", url: " https://example.org/law" },
   ]);
   assert.equal(article.slug, row.slug);
   assert.equal(article.author, row.author_name);
@@ -43,7 +46,6 @@ test("estimates reading time and rejects malformed records", () => {
   assert.equal(mapPublishedMavisArticle(null), null);
   assert.equal(mapPublishedMavisArticle({ slug: "missing-title" }), null);
 });
-
 
 test("maps a lightweight public article summary without requiring full content", () => {
   const summary = mapPublishedMavisArticleSummary({

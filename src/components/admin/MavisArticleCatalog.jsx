@@ -4,6 +4,7 @@ import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
 import { safeExternalHttpUrl } from "../../lib/mavis/request-guards.mjs";
 import styles from "./MavisArticleCatalog.module.css";
+import { importMavisStaticArticleToDraft } from "../../app/admin/mavis/articles/actions";
 
 function normalize(value) {
   return String(value ?? "")
@@ -22,6 +23,8 @@ export default function MavisArticleCatalog({ articles }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [expanded, setExpanded] = useState({});
+  const [importingSlug, setImportingSlug] = useState("");
+  const [importFeedback, setImportFeedback] = useState({});
   const categories = useMemo(
     () => [...new Set(articles.map((item) => item.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, "fa")),
     [articles]
@@ -46,6 +49,36 @@ export default function MavisArticleCatalog({ articles }) {
       ].join(" ")).includes(needle);
     });
   }, [articles, category, query]);
+
+  async function handleImportToDraft(slug) {
+    if (importingSlug) return;
+    setImportingSlug(slug);
+    setImportFeedback((current) => ({ ...current, [slug]: null }));
+    try {
+      const result = await importMavisStaticArticleToDraft(slug);
+      if (!result?.ok) {
+        setImportFeedback((current) => ({
+          ...current,
+          [slug]: { error: result?.error || "ورود مقاله به پیش‌نویس انجام نشد." },
+        }));
+        return;
+      }
+      const message = result.alreadyImported
+        ? `پیش‌نویس از قبل وجود داشت؛ ${result.importedSources.toLocaleString("fa-IR")} منبع پیوست یا تطبیق داده شد.${result.skippedSources ? ` ${result.skippedSources.toLocaleString("fa-IR")} منبع برای بررسی دستی کنار گذاشته شد.` : ""}`
+        : `پیش‌نویس ساخته شد؛ ${result.importedSources.toLocaleString("fa-IR")} منبع پیوست شد.${result.skippedSources ? ` ${result.skippedSources.toLocaleString("fa-IR")} منبع برای بررسی دستی کنار گذاشته شد.` : ""}`;
+      setImportFeedback((current) => ({
+        ...current,
+        [slug]: { articleId: result.articleId, message },
+      }));
+    } catch {
+      setImportFeedback((current) => ({
+        ...current,
+        [slug]: { error: "ارتباط امن با سرور برقرار نشد. دوباره تلاش کنید." },
+      }));
+    } finally {
+      setImportingSlug("");
+    }
+  }
 
   const sourceCount = articles.reduce((sum, article) => sum + (article.sources?.length || 0), 0);
   const sectionCount = articles.reduce((sum, article) => sum + (article.sections?.length || 0), 0);
@@ -103,6 +136,20 @@ export default function MavisArticleCatalog({ articles }) {
                       <td className={styles.actions}>
                         <button type="button" aria-expanded={open} onClick={() => setExpanded((current) => ({ ...current, [article.slug]: !current[article.slug] }))}>{open ? "بستن" : "جزئیات"}</button>
                         <Link href={`/articles/${encodeURIComponent(article.slug)}`} target="_blank" rel="noopener noreferrer">صفحه عمومی</Link>
+                        {importFeedback[article.slug]?.articleId ? (
+                          <Link className={styles.draftLink} href={`/admin/mavis/articles/${importFeedback[article.slug].articleId}/edit`}>ویرایش پیش‌نویس</Link>
+                        ) : (
+                          <button
+                            type="button"
+                            className={styles.importButton}
+                            disabled={Boolean(importingSlug)}
+                            onClick={() => handleImportToDraft(article.slug)}
+                          >
+                            {importingSlug === article.slug ? "در حال ورود..." : importFeedback[article.slug]?.error ? "تلاش دوباره" : "ورود به پیش‌نویس"}
+                          </button>
+                        )}
+                        {importFeedback[article.slug]?.message ? <small className={styles.importFeedback} role="status">{importFeedback[article.slug].message}</small> : null}
+                        {importFeedback[article.slug]?.error ? <small className={styles.importError} role="alert">{importFeedback[article.slug].error}</small> : null}
                       </td>
                     </tr>
                     {open && (
@@ -134,7 +181,7 @@ export default function MavisArticleCatalog({ articles }) {
             </tbody>
           </table>
         </div>
-        <p className={styles.footnote}>وضعیت «فهرست فعلی» به معنی تأیید حقوقی یا مجوز بازنشر نیست. گردش تأیید، نسخه‌بندی و انتشار از این صفحه فعال نشده است.</p>
+        <p className={styles.footnote}>وضعیت «فهرست فعلی» به معنی تأیید حقوقی یا مجوز بازنشر نیست. ورود به پیش‌نویس یک نسخه مستقل و منتشرنشده می‌سازد؛ محتوای عمومی تا تأیید و انتشار جداگانه مدیر بدون تغییر می‌ماند.</p>
       </section>
     </section>
   );

@@ -1,5 +1,5 @@
 begin;
-select plan(44);
+select plan(48);
 select has_table('public','mavis_source_candidates','candidate queue table exists');
 select has_table('public','mavis_source_candidate_events','candidate event history exists');
 select ok((select relrowsecurity from pg_class where oid='public.mavis_source_candidates'::regclass),'candidate queue has RLS enabled');
@@ -70,7 +70,7 @@ select set_config('test.import_result', public.import_mavis_source_candidate_fro
 select is((current_setting('test.import_result')::jsonb->>'status'),'imported','stored candidate imports atomically into a draft');
 select is((select state from public.mavis_source_candidates where id=current_setting('test.candidate_id')::uuid),'imported','candidate state changes to imported');
 select is((select status from public.mavis_articles where id=(current_setting('test.import_result')::jsonb->>'articleId')::uuid),'draft','queue import always creates a draft');
-select is((select origin_type from public.mavis_articles where id=(current_setting('test.import_result')::jsonb->>'articleId')::uuid),'metadata_only','queue import marks article as metadata-only');
+select is((select origin_type from public.mavis_editorial_articles where id=(current_setting('test.import_result')::jsonb->>'articleId')::uuid),'metadata_only','queue import marks article as metadata-only');
 select is((select rights_status from public.mavis_sources where id=(current_setting('test.import_result')::jsonb->>'sourceId')::uuid),'unknown','imported source rights remain unknown');
 select is((public.import_mavis_source_candidate_from_queue(current_setting('test.candidate_id')::uuid)->>'status'),'existing','repeated queue import returns the existing draft');
 select throws_ok(
@@ -91,6 +91,16 @@ select throws_ok(
 );
 select is((select count(*)::integer from public.mavis_source_candidate_events where candidate_id=current_setting('test.ignored_candidate_id')::uuid and event_type='ignored'),1,'ignore action is audited');
 
+select set_config('test.openalex_candidate_id', (
+ public.store_mavis_source_candidates(
+ '[{"provider":"openalex","providerRecordId":"https://openalex.org/W888888","doi":"10.5555/openalex-e2e","title":"OpenAlex legal research integration candidate","authors":["OpenAlex Author"],"publisher":"OpenAlex Publisher","venue":"International Law Review","publicationDate":"2025-06-12","sourceUrl":"https://openalex.org/W888888","sourceType":"academic"}]'::jsonb
+ )->'candidates'->0->>'id'
+),true);
+select set_config('test.openalex_import_result', public.import_mavis_source_candidate_from_queue(current_setting('test.openalex_candidate_id')::uuid)::text,true);
+select is((current_setting('test.openalex_import_result')::jsonb->>'status'),'imported','OpenAlex candidate imports through the full queue workflow');
+select is((select status from public.mavis_articles where id=(current_setting('test.openalex_import_result')::jsonb->>'articleId')::uuid),'draft','OpenAlex import creates a non-public draft');
+select is((select canonical_url from public.mavis_sources where id=(current_setting('test.openalex_import_result')::jsonb->>'sourceId')::uuid),'https://doi.org/10.5555/openalex-e2e','OpenAlex DOI is preserved as the canonical source URL');
+
 select throws_ok(
  $$select public.store_mavis_source_candidates('[{"provider":"untrusted","providerRecordId":"x","title":"Invalid provider candidate","sourceUrl":"https://example.org/source","sourceType":"academic"}]'::jsonb)$$,
  '22023','Unsupported source provider or type','unrecognized providers are rejected'
@@ -104,8 +114,12 @@ select throws_ok(
  '22023','Candidate contains unsupported fields','source text fields are rejected'
 );
 select throws_ok(
- $$select public.store_mavis_source_candidates('[{"provider":"crossref","providerRecordId":"x","title":"Invalid date candidate","sourceUrl":"https://example.org/source","sourceType":"academic","publicationDate":"2024-02-31"}]'::jsonb)$$,
+ $test$select public.store_mavis_source_candidates('[{"provider":"crossref","providerRecordId":"x","title":"Invalid date candidate","sourceUrl":"https://example.org/source","sourceType":"academic","publicationDate":"2024-02-31"}]'::jsonb)$test$,
  '22023','Invalid candidate publication date','invalid calendar dates are rejected'
+);
+select throws_ok(
+ $test$select public.store_mavis_source_candidates('[{"provider":"crossref","providerRecordId":"x-year","title":"Out of range year candidate","sourceUrl":"https://example.org/source","sourceType":"academic","publicationDate":"0999-05"}]'::jsonb)$test$,
+ '22023','Invalid candidate publication date','publication years below 1000 are rejected'
 );
 
 reset role;

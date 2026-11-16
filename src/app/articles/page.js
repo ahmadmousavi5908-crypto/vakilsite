@@ -1,8 +1,5 @@
 import Link from "next/link";
-import { articles } from "../../data/articles";
-import { createPublicContentClient } from "../../lib/supabase/public-content";
-import { decodePublishedArticleCursor, encodePublishedArticleCursor } from "../../lib/mavis/published-article-cursor.mjs";
-import { mapPublishedMavisArticleSummary } from "../../lib/mavis/public-article-mapper.mjs";
+import { getPublicArticleCatalog } from "../../lib/mavis/published-editorial";
 
 export const metadata = {
   title: "راهنماها و مقالات حقوقی | سید احمد موسوی",
@@ -10,7 +7,10 @@ export const metadata = {
   alternates: { canonical: "/articles" },
 };
 
-export default async function ArticlesPage({ searchParams }) {
+export const dynamic = "force-dynamic";
+
+export default async function ArticlesPage() {
+  const articles = await getPublicArticleCatalog();
   const featured = articles[0];
   const remaining = articles.slice(1);
   const staticSlugs = new Set(articles.map((article) => article.slug));
@@ -96,7 +96,7 @@ export default async function ArticlesPage({ searchParams }) {
               <div className="editorial-section-heading editorial-all-heading">
                 <div><span className="section-kicker">LATEST PUBLISHED ARTICLES</span><h2>مقالات منتشرشده</h2></div>
                 <p>مطالبی که پس از تکمیل و بازبینی مدیر منتشر شده‌اند.</p>
-                                {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START */}
+                {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_START */}
                 <Link className="editorial-read-link" href="/articles/library">فهرست کامل و جست‌وجوی مقالات ←</Link>
                 {/* MAVIS_PUBLIC_ARTICLE_LIBRARY_LINK_END */}
               </div>

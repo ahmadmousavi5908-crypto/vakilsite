@@ -2,7 +2,7 @@ import { articles } from "../data/articles";
 import { practiceAreas } from "../data/practice-areas";
 import { getIndexableLegalRecords } from "../lib/legal-library";
 import { getSiteUrl } from "../lib/site-url.mjs";
-import { createPublicContentClient } from "../lib/supabase/public-content.js";
+import { createPublicContentClient } from "../lib/supabase/public-content";
 import {
   getPublishedMavisArticleSitemapEntries,
   PublishedMavisSitemapCapacityError,
@@ -46,10 +46,12 @@ export default async function sitemap() {
   const publicClient = createPublicContentClient();
   if (publicClient) {
     try {
-      const availableSlots = MAX_SITEMAP_URLS - entries.length;
-      entries.push(...await getPublishedMavisArticleSitemapEntries(publicClient, {
+      const availableSlots = Math.max(0, MAX_SITEMAP_URLS - entries.length);
+      const publishedEntries = await getPublishedMavisArticleSitemapEntries(publicClient, {
         maxEntries: availableSlots,
-      }));
+      });
+      const existingPaths = new Set(entries.map((entry) => entry.path));
+      entries.push(...publishedEntries.filter((entry) => !existingPaths.has(entry.path)));
     } catch (error) {
       if (error instanceof PublishedMavisSitemapCapacityError) throw error;
       console.warn("MAVIS CMS sitemap entries are unavailable; retaining static sitemap entries.");
