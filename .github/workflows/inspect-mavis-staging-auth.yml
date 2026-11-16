@@ -43,3 +43,68 @@ jobs:
             to_regprocedure('crypt(text,text)') IS NOT NULL AS public_crypt_available,
             to_regprocedure('gen_salt(text)') IS NOT NULL AS public_gen_salt_available;"
           npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL"
+
+
+  runtime-secrets:
+    name: Inspect Staging Worker integration secret names
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: staging
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install pinned Wrangler
+        run: npm install --no-save --package-lock=false --no-audit --no-fund wrangler@4.161.0
+
+      - name: List Staging Worker secret names without reading values
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::Missing Staging Cloudflare setting: $name"
+              exit 1
+            fi
+          done
+          npx wrangler secret list --name vakilahmadmousavi-ir-staging --format json > /tmp/mavis-staging-secret-names.json
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const rows = JSON.parse(fs.readFileSync("/tmp/mavis-staging-secret-names.json", "utf8"));
+          const names = new Set(rows.map((row) => row.name).filter((name) => typeof name === "string"));
+          const requiredGroups = [
+            ["MAVIS_GSC_CLIENT_ID"],
+            ["MAVIS_GSC_CLIENT_SECRET"],
+            ["MAVIS_GSC_TOKEN_ENCRYPTION_KEY"],
+            ["MAVIS_OPENAI_API_KEY", "OPENAI_API_KEY"],
+            ["MAVIS_IRAN_SOURCE_SEARCH_API_KEY"],
+            ["MAVIS_GROWTH_SEARCH_API_KEY"],
+          ];
+          const labels = [
+            "Google Search Console OAuth client ID",
+            "Google Search Console OAuth client secret",
+            "Google Search Console token encryption key",
+            "MAVIS editorial AI API key",
+            "Iranian legal-source search API key",
+            "Competitor research API key",
+          ];
+          let missing = 0;
+          console.log("Configured Staging Worker secret names (values are never requested):");
+          for (const name of [...names].sort()) console.log(" - " + name);
+          for (let i = 0; i < requiredGroups.length; i += 1) {
+            const present = requiredGroups[i].some((name) => names.has(name));
+            console.log((present ? "PASS: " : "MISSING: ") + labels[i]);
+            if (!present) missing += 1;
+          }
+          if (missing) {
+            console.log("Staging integrations are not fully configured; no secrets were changed.");
+            process.exitCode = 1;
+          } else {
+            console.log("PASS: required Staging integration secret names are present.");
+          }
+          NODE
