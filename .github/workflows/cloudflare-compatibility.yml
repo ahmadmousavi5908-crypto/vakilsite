@@ -8,6 +8,7 @@ on:
       - fix/cloudflare-workers-edge-runtime-20261113
   pull_request:
     branches:
+      - main
       - work/mother-two-updated-mavis-20261110
     paths:
       - "src/**"
@@ -137,7 +138,7 @@ jobs:
             exit 1
           fi
 
-          for route in /about /legal-library /admin/login; do
+          for route in /about /legal-library /articles/library /admin/login; do
             output="/tmp/vakilsite-route.html"
             if [ "$route" = "/about" ]; then output="/tmp/vakilsite-about.html"; fi
             status="$(curl --silent --show-error -o "$output" -w '%{http_code}' "http://127.0.0.1:8787$route")"
@@ -148,7 +149,7 @@ jobs:
             fi
           done
 
-          for route in /admin /admin/mavis; do
+          for route in /admin /admin/mavis /admin/mavis/articles; do
             status="$(curl --silent --show-error -D /tmp/vakilsite-admin.headers -o /tmp/vakilsite-admin.html -w '%{http_code}' "http://127.0.0.1:8787$route")"
             echo "$route -> HTTP $status"
             if [ "$status" = "302" ] || [ "$status" = "307" ]; then
