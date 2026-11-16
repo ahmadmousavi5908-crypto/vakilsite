@@ -346,7 +346,7 @@ COMMENT ON TABLE public.mavis_editorial_articles IS
   'Canonical MAVIS editorial CMS table. Versioning, source provenance, approvals, and publication share this single record store.';
 
 COMMENT ON VIEW public.mavis_articles IS
-  'Automatically updatable compatibility view over public.mavis_editorial_articles; not a second CMS table.';
+  'Read-only public-column compatibility view over the canonical public.mavis_editorial_articles table.';
 
 -- Preserve the existing administrator predicate boundary after the table reconciliation.
 REVOKE ALL ON FUNCTION public.is_site_admin()
