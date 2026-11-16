@@ -155,7 +155,6 @@ function parseQavaninSearchResults(markup, limit) {
 }
 
 function buildOfficialSearchLinks(query, group) {
-  const encoded = encodeURIComponent(query);
   const links = [];
   if (group === "all" || group === "official") {
     const qavanin = new URL("https://qavanin.ir/");
