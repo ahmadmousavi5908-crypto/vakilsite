@@ -137,8 +137,50 @@ function normalizeOutput(value, allowedIds) {
   };
 }
 
+const MAX_RESPONSE_BYTES = 512 * 1024;
+
+async function readBoundedResponseJson(response) {
+  if (response?.body && typeof response.body.getReader === "function") {
+    const reader = response.body.getReader();
+    const chunks = [];
+    let totalBytes = 0;
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalBytes += value.byteLength;
+        if (totalBytes > MAX_RESPONSE_BYTES) {
+          try { await reader.cancel(); } catch { /* Best-effort cancellation. */ }
+          throw new Error("MAVIS_AI_RESPONSE_TOO_LARGE");
+        }
+        chunks.push(value);
+      }
+    } finally {
+      reader.releaseLock?.();
+    }
+    const bytes = new Uint8Array(totalBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    try {
+      return JSON.parse(new TextDecoder().decode(bytes));
+    } catch {
+      throw new Error("MAVIS_AI_INVALID_RESPONSE");
+    }
+  }
+
+  if (typeof response?.json !== "function") throw new Error("MAVIS_AI_INVALID_RESPONSE");
+  const payload = await response.json();
+  if (new TextEncoder().encode(JSON.stringify(payload)).byteLength > MAX_RESPONSE_BYTES) {
+    throw new Error("MAVIS_AI_RESPONSE_TOO_LARGE");
+  }
+  return payload;
+}
+
 export async function generateMavisEditorialSuggestions(input, {
-  apiKey, model = "gpt-6-astra", fetchImpl = globalThis.fetch
+  apiKey, model = "gpt-6-astra", fetchImpl = globalThis.fetch, timeoutMs = 30000
 } = {}) {
   if (!text(apiKey, 500)) return { ok: false, code: "MAVIS_AI_NOT_CONFIGURED" };
   if (typeof fetchImpl !== "function") return { ok: false, code: "MAVIS_AI_TRANSPORT_UNAVAILABLE" };
@@ -146,21 +188,34 @@ export async function generateMavisEditorialSuggestions(input, {
   try { request = buildMavisEditorialAiRequest(input, { model }); }
   catch (error) { return { ok: false, code: "MAVIS_AI_INVALID_INPUT", message: error.message }; }
 
+  const timeout = Number.isInteger(timeoutMs) && timeoutMs >= 1 && timeoutMs <= 60000
+    ? timeoutMs
+    : 30000;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
   let response;
+  let payload;
   try {
     response = await fetchImpl("https://api.openai.com/v1/responses", {
       method: "POST",
+      redirect: "error",
+      cache: "no-store",
+      signal: controller.signal,
       headers: { Authorization: "Bearer " + apiKey, "Content-Type": "application/json" },
       body: JSON.stringify(request)
     });
-  } catch {
-    return { ok: false, code: "MAVIS_AI_NETWORK_ERROR" };
+    if (!response?.ok) return { ok: false, code: "MAVIS_AI_PROVIDER_ERROR", status: response?.status || 0 };
+    payload = await readBoundedResponseJson(response);
+  } catch (error) {
+    if (controller.signal.aborted) return { ok: false, code: "MAVIS_AI_TIMEOUT" };
+    if (error?.message === "MAVIS_AI_RESPONSE_TOO_LARGE") {
+      return { ok: false, code: "MAVIS_AI_RESPONSE_TOO_LARGE" };
+    }
+    return { ok: false, code: "MAVIS_AI_INVALID_RESPONSE" };
+  } finally {
+    clearTimeout(timer);
   }
 
-  let payload;
-  try { payload = await response.json(); }
-  catch { return { ok: false, code: "MAVIS_AI_INVALID_RESPONSE" }; }
-  if (!response.ok) return { ok: false, code: "MAVIS_AI_PROVIDER_ERROR", status: response.status };
   if (payload?.status === "incomplete" || payload?.incomplete_details) return { ok: false, code: "MAVIS_AI_INCOMPLETE_RESPONSE" };
 
   let raw;
