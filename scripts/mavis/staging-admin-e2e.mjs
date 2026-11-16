@@ -112,7 +112,13 @@ async function main() {
         extensions.crypt(${sqlString(password)}, extensions.gen_salt('bf')),
         now(),
         '{"provider":"email","providers":["email"]}'::jsonb,
-        '{"full_name":"MAVIS Staging E2E"}'::jsonb,
+        jsonb_build_object(
+          'sub', ${sqlString(userId)},
+          'email', ${sqlString(email)},
+          'email_verified', true,
+          'phone_verified', false,
+          'full_name', 'MAVIS Staging E2E'
+        ),
         false,
         false,
         now(),
@@ -125,12 +131,13 @@ async function main() {
         id, provider_id, user_id, identity_data, provider, created_at, updated_at
       ) VALUES (
         gen_random_uuid(),
-        ${sqlString(email)},
+        ${sqlString(userId)},
         ${sqlString(userId)}::uuid,
         jsonb_build_object(
           'sub', ${sqlString(userId)},
           'email', ${sqlString(email)},
-          'email_verified', true
+          'email_verified', true,
+          'phone_verified', false
         ),
         'email',
         now(),
