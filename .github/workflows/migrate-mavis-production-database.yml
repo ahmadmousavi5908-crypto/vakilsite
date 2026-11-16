@@ -31,7 +31,7 @@ jobs:
   migrate:
     name: Verify and optionally apply MAVIS migration 019
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 75
     environment: production
     env:
       SUPABASE_PRODUCTION_DB_URL: ${{ secrets.SUPABASE_PRODUCTION_DB_URL }}
@@ -39,7 +39,7 @@ jobs:
       - name: Check out the reviewed main revision
         uses: actions/checkout@v7
         with:
-          ref: main
+          ref: ${{ github.sha }}
 
       - name: Validate production target and explicit apply confirmations
         shell: bash
