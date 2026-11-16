@@ -40,6 +40,7 @@ jobs:
           set -euo pipefail
           DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
           SQL="SELECT
+            current_setting('server_version') AS postgres_version,
             to_regclass('public.mavis_editorial_articles') IS NOT NULL AS mother_two_table_exists,
             to_regclass('public.mavis_articles') IS NOT NULL AS current_cms_table_exists,
             (SELECT count(*) FROM public.mavis_articles) AS current_article_count,
