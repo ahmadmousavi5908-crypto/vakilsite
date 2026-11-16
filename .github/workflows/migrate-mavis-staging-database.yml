@@ -1,6 +1,12 @@
 name: Migrate MAVIS staging database
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/migrate-mavis-staging-database.yml"
+      - "supabase/migrations/**"
   workflow_dispatch:
     inputs:
       apply_migrations:
@@ -72,14 +78,14 @@ jobs:
           --remote="$SUPABASE_STAGING_DB_URL"
 
       - name: Apply migrations to staging only
-        if: ${{ inputs.apply_migrations }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true }}
         run: >-
           npx --yes supabase@3.0.0 db push
           --yes
           --remote="$SUPABASE_STAGING_DB_URL"
 
       - name: Verify remote migration history
-        if: ${{ inputs.apply_migrations }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true }}
         run: >-
           npx --yes supabase@3.0.0 migration list
           --remote="$SUPABASE_STAGING_DB_URL"
