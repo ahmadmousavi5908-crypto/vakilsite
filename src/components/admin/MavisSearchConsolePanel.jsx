@@ -205,7 +205,7 @@ export default function MavisSearchConsolePanel() {
           <h2 id="mavis-search-console-title">گزارش عملکرد Google Search Console</h2>
           <p>داده‌ها از اتصال فقط‌خواندنی دریافت می‌شوند یا فایل CSV در مرورگر پردازش می‌شود؛ شماره تماس، ایمیل و شناسه‌های حساس پیش از نمایش پالایش می‌شوند.</p>
         </div>
-        <span className={styles.scope}>{result?.importedFromCsv ? "CSV · پردازش محلی" : "webmasters.readonly"}</span>
+        <span className={styles.scope}>{result?.importedFromCsv ? "CSV · پردازش محلی" : connection.connected ? "webmasters.readonly" : "بدون اتصال زنده"}</span>
       </div>
 
       <div className={styles.connection}>
