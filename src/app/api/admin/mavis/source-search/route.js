@@ -7,7 +7,21 @@ import { parseKnowledgeSearchRateLimit } from "../../../../../lib/mavis/rate-lim
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const searchClient = createIranianSourceSearchFromEnv(process.env);
+const configuredSearchClient = createIranianSourceSearchFromEnv(process.env);
+const searchClient = {
+  async search(input) {
+    if (configuredSearchClient) return configuredSearchClient.search(input);
+    let browser;
+    try {
+      const { getCloudflareContext } = await import("@opennextjs/cloudflare");
+      browser = getCloudflareContext().env?.BROWSER;
+    } catch {
+      // Local Node.js development falls back to official portal search links.
+    }
+    const { createIranianSourceSearchFallback } = await import("../../../../../lib/mavis/iranian-source-search.mjs");
+    return createIranianSourceSearchFallback({ browser }).search(input);
+  }
+};
 
 export const POST = createIranianSourceSearchHandler({
   requireAdmin,
