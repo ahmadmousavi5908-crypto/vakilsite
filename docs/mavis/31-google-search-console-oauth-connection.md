@@ -82,3 +82,11 @@ If Google reports an unverified OAuth application during private testing, keep t
 ## Verification
 
 The `test:mavis-search-console` suite covers API response normalization, OAuth configuration/state, encryption and tamper detection, authorization-code exchange, token revocation, stored credential loading, admin-only request handling, privacy redaction, and deterministic opportunity metrics. The database test for migration 014 verifies RLS, table privileges, function ACLs, SECURITY DEFINER/search_path properties, admin authorization, ciphertext-only storage, and disconnect behavior.
+
+## Production isolation
+
+Do not copy the Staging OAuth client secret, refresh-token record, or encryption key into Production. After Staging verification, create a separate Google OAuth web client for Production with this exact redirect URI:
+
+`https://vakilahmadmousavi.ir/api/admin/mavis/search-console/callback`
+
+Store the Production values under GitHub Actions → Environments → `production` → Secrets using the same four names. The Production deploy workflow is scoped to the `production` environment. Generate a different 32-byte encryption key for Production. Keep the Staging and Production Search Console properties and stored refresh-token records isolated.
