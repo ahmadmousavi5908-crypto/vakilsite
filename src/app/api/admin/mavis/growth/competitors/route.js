@@ -1,3 +1,4 @@
+// Admin-only SERP observation endpoint. It never fetches or stores competitor pages.
 import { requireAdmin } from "../../../../../../lib/supabase/admin";
 import { createMavisCompetitorSearchFromEnv } from "../../../../../../lib/mavis/competitor-research.mjs";
 import { createMavisCompetitorResearchHandler } from "../../../../../../lib/mavis/competitor-research-handler.mjs";
