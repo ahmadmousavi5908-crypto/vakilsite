@@ -1,0 +1,1 @@
+Apply only migration 018 after CI verification. Require the verified empty Staging CMS baseline, exactly one pending migration, and post-migration RLS/view checks. Production must never be targeted.
