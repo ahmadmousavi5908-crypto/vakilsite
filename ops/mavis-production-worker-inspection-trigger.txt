@@ -1,1 +1,5 @@
-Read-only Production Worker secret inventory after Search Console OAuth workflow changes. Report secret names only; never read or print secret values. Do not deploy, change secrets, or access the Production database.
+Read-only Production Worker secret inventory and configuration audit.
+Verify secret names only; never read or print secret values.
+Report Workers AI and Browser Run as repository configuration declarations, not as proof of deployment.
+Triggered after the MAVIS Workers AI and no-key source-search integration changes are merged.
+No deployment, secret mutation, or database operation is permitted.
