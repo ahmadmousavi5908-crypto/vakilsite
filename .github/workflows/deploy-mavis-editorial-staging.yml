@@ -111,7 +111,7 @@ jobs:
           MAVIS_IRAN_SOURCE_SEARCH_API_KEY: ${{ secrets.MAVIS_IRAN_SOURCE_SEARCH_API_KEY }}
           MAVIS_GSC_CLIENT_ID: ${{ secrets.MAVIS_GSC_CLIENT_ID }}
           MAVIS_GSC_CLIENT_SECRET: ${{ secrets.MAVIS_GSC_CLIENT_SECRET }}
-          MAVIS_GSC_REFRESH_TOKEN: ${{ secrets.MAVIS_GSC_REFRESH_TOKEN }}
+          MAVIS_GSC_TOKEN_ENCRYPTION_KEY: ${{ secrets.MAVIS_GSC_TOKEN_ENCRYPTION_KEY }}
           MAVIS_GSC_SITE_URL: ${{ secrets.MAVIS_GSC_SITE_URL }}
         shell: bash
         run: |
@@ -125,7 +125,7 @@ jobs:
             "MAVIS_IRAN_SOURCE_SEARCH_API_KEY",
             "MAVIS_GSC_CLIENT_ID",
             "MAVIS_GSC_CLIENT_SECRET",
-            "MAVIS_GSC_REFRESH_TOKEN",
+            "MAVIS_GSC_TOKEN_ENCRYPTION_KEY",
             "MAVIS_GSC_SITE_URL",
           ];
           const gscNames = names.filter((name) => name.startsWith("MAVIS_GSC_"));
