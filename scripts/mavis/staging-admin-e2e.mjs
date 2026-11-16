@@ -293,18 +293,13 @@ async function main() {
     );
 
     console.log("CHECK: authenticated Iranian source-search API route.");
-    let iranianSearchResponse;
-    try {
-      iranianSearchResponse = await fetch(new URL("/api/admin/mavis/source-search", stagingOrigin), {
-        method: "POST",
-        headers: runtimeHeaders,
-        body: JSON.stringify({ query: "رأی وحدت رویه", group: "news", limit: 10 }),
-        redirect: "manual",
-        signal: AbortSignal.timeout(20000),
-      });
-    } catch (error) {
-      throw error;
-    }
+    const iranianSearchResponse = await fetch(new URL("/api/admin/mavis/source-search", stagingOrigin), {
+      method: "POST",
+      headers: runtimeHeaders,
+      body: JSON.stringify({ query: "رأی وحدت رویه", group: "news", limit: 10 }),
+      redirect: "manual",
+      signal: AbortSignal.timeout(20000),
+    });
     const iranianSearchText = await iranianSearchResponse.text();
     let iranianSearchPayload;
     try { iranianSearchPayload = JSON.parse(iranianSearchText); }
