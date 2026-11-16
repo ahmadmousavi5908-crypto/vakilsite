@@ -292,6 +292,25 @@ async function main() {
       aiSmokePayload.model + ")."
     );
 
+    const iranianSearchResponse = await fetch(new URL("/api/admin/mavis/source-search", stagingOrigin), {
+      method: "POST",
+      headers: runtimeHeaders,
+      body: JSON.stringify({ query: "رأی وحدت رویه", group: "news", limit: 10 }),
+      redirect: "error",
+    });
+    const iranianSearchPayload = await iranianSearchResponse.json();
+    assert(
+      iranianSearchResponse.status === 200 &&
+        iranianSearchPayload.ok === true &&
+        iranianSearchPayload.group === "news" &&
+        Array.isArray(iranianSearchPayload.searchLinks) &&
+        iranianSearchPayload.searchLinks.length === 2 &&
+        iranianSearchPayload.searchLinks.some((item) => item.url.includes("site%3Amizanonline.ir")) &&
+        iranianSearchPayload.searchLinks.some((item) => item.url.includes("site%3Aekhtebar.ir")),
+      "Authenticated Iranian source search did not return Google-restricted links for the two configured legal news sources."
+    );
+    console.log("PASS: authenticated Iranian source search returns Google site-restricted links for Mizan and Ekhtebar.");
+
     const { data: articleId, error: draftError } = await client.rpc(
       "save_mavis_article_draft",
       {
