@@ -74,7 +74,21 @@ jobs:
           SQL="SELECT jsonb_build_object(
             'storage_table_present', to_regclass('public.mavis_search_console_connections') IS NOT NULL,
             'connection_record_present', EXISTS (SELECT 1 FROM public.mavis_search_console_connections WHERE id = 1),
-            'editorial_ai_rate_limit_table_present', to_regclass('mavis_private.editorial_ai_rate_limits') IS NOT NULL
+            'editorial_ai_rate_limit_table_present', to_regclass('mavis_private.editorial_ai_rate_limits') IS NOT NULL,
+            'editorial_article_count', (SELECT count(*) FROM public.mavis_editorial_articles),
+            'editorial_status_counts', COALESCE((
+              SELECT jsonb_object_agg(status, total)
+              FROM (SELECT status, count(*) AS total FROM public.mavis_editorial_articles GROUP BY status) AS statuses
+            ), '{}'::jsonb),
+            'published_editorial_count', (SELECT count(*) FROM public.mavis_editorial_articles WHERE status = 'published'),
+            'legacy_article_count', (SELECT count(*) FROM public.mavis_articles),
+            'source_count', (SELECT count(*) FROM public.mavis_sources),
+            'source_candidate_count', (SELECT count(*) FROM public.mavis_source_candidates),
+            'article_source_link_count', (SELECT count(*) FROM public.mavis_article_sources),
+            'article_version_count', (SELECT count(*) FROM public.mavis_article_versions),
+            'article_approval_count', (SELECT count(*) FROM public.mavis_article_approvals),
+            'leftover_e2e_article_count', (SELECT count(*) FROM public.mavis_editorial_articles WHERE slug LIKE 'mavis-staging-e2e-%'),
+            'leftover_e2e_identity_count', (SELECT count(*) FROM auth.users WHERE email LIKE 'mavise2e%@example.invalid')
           ) AS integration_state;"
           npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL"
 
