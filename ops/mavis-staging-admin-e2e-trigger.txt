@@ -1,1 +1,1 @@
-Retry authenticated Staging editorial lifecycle after making all database seed and cleanup operations single-statement safe. Clean any prior interrupted E2E fixtures first, then verify the complete workflow and cleanup.
+Retry the authenticated Staging lifecycle with the generated confirmed_at field omitted from the temporary Auth user insert. Verify sign-in, editorial lifecycle, public visibility, and cleanup.
