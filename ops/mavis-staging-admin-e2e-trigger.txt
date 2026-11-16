@@ -6,3 +6,4 @@ Run full editorial lifecycle against the merged current-main branch.
 Post-Migration verification: run the authenticated Staging editorial lifecycle against the current branch head after migration 019.
 
 Retry after database connection preflight and password fallback fix; confirm lifecycle and cleanup.
+2026-11-16: rerun authenticated editorial lifecycle after latest staging Worker deployment.
