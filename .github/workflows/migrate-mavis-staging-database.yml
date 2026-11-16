@@ -295,7 +295,7 @@ jobs:
           --remote="$STAGING_DATABASE_URL"
 
       - name: Verify remote migration history
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true) || (github.event_name == 'push' && github.ref == 'refs/heads/feature/mavis-indexnow-publication-notify-20261114' && github.event.head_commit.message == 'ops: apply approved MAVIS staging migration 019') }}
         run: >-
           npx --yes supabase@3.0.0 migration list
           --remote="$STAGING_DATABASE_URL"
