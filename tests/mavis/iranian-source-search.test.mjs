@@ -77,7 +77,7 @@ test("no-key fallback searches Qavanin through Browser Run and normalizes offici
       quickAction: async (action, options) => {
         assert.equal(action, "content");
         capturedUrl = options.url;
-        return { ok: true, text: async () => markup };
+        return { ok: true, json: async () => ({ success: true, result: markup }) };
       }
     }
   });
