@@ -145,3 +145,172 @@ export function normalizeSearchAnalyticsResponse(response, request) {
     disclaimer: "داده‌های Search Analytics ممکن است همه ردیف‌های موجود را پوشش ندهند؛ خروجی این مبدل تضمین‌کننده کامل‌بودن داده نیست.",
   };
 }
+
+
+function parseCsvRows(input) {
+  const source = String(input || "").replace(/^\uFEFF/, "");
+  if (!source.trim() || source.length > 5 * 1024 * 1024) {
+    return { ok: false, reason: source.length > 5 * 1024 * 1024 ? "csv_too_large" : "csv_empty" };
+  }
+
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let quoted = false;
+
+  for (let index = 0; index < source.length; index++) {
+    const character = source[index];
+    if (quoted) {
+      if (character === '"' && source[index + 1] === '"') {
+        cell += '"';
+        index++;
+      } else if (character === '"') {
+        quoted = false;
+      } else {
+        cell += character;
+      }
+      continue;
+    }
+
+    if (character === '"' && cell.length === 0) {
+      quoted = true;
+    } else if (character === ",") {
+      row.push(cell);
+      cell = "";
+    } else if (character === "\n" || character === "\r") {
+      if (character === "\r" && source[index + 1] === "\n") index++;
+      row.push(cell);
+      if (row.some((value) => value.trim())) rows.push(row);
+      row = [];
+      cell = "";
+    } else {
+      cell += character;
+    }
+  }
+
+  if (quoted) return { ok: false, reason: "csv_unclosed_quote" };
+  row.push(cell);
+  if (row.some((value) => value.trim())) rows.push(row);
+  return { ok: true, rows };
+}
+
+function normalizeCsvHeader(value) {
+  return String(value || "")
+    .normalize("NFC")
+    .replace(/[\u200c\u200f\u202a-\u202e]/g, "")
+    .trim()
+    .toLocaleLowerCase("en-US")
+    .replace(/\s+/g, " ");
+}
+
+function csvNumber(value, { percent = false } = {}) {
+  const raw = normalizeDigits(String(value || "").trim())
+    .replace(/[٬،,]/g, "")
+    .replace(/\s/g, "");
+  if (!raw) return null;
+  const hasPercent = raw.endsWith("%");
+  const numeric = Number(hasPercent ? raw.slice(0, -1) : raw);
+  if (!Number.isFinite(numeric) || numeric < 0) return null;
+  const normalized = percent && (hasPercent || numeric > 1) ? numeric / 100 : numeric;
+  return Number.isFinite(normalized) ? normalized : null;
+}
+
+function csvDate(value) {
+  const raw = normalizeDigits(String(value || "").trim());
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return isDate(raw) ? raw : null;
+  const parsed = Date.parse(raw);
+  return Number.isFinite(parsed) ? new Date(parsed).toISOString().slice(0, 10) : null;
+}
+
+export function normalizeSearchConsoleCsv(input, { startDate, endDate, rowLimit = 5000 } = {}) {
+  if (!isDate(startDate) || !isDate(endDate) || startDate > endDate ||
+      !Number.isInteger(rowLimit) || rowLimit < 1 || rowLimit > 5000) {
+    return { ok: false, reason: "invalid_csv_import_range" };
+  }
+
+  const parsed = parseCsvRows(input);
+  if (!parsed.ok || parsed.rows.length < 2) return parsed.ok ? { ok: false, reason: "csv_missing_rows" } : parsed;
+
+  const headers = parsed.rows[0].map(normalizeCsvHeader);
+  const findColumn = (...names) => headers.findIndex((header) => names.includes(header));
+  const columns = {
+    query: findColumn("query", "top queries", "search query", "عبارت جستجو", "عبارت جست وجو", "عبارت"),
+    page: findColumn("page", "top pages", "landing page", "صفحه", "نشانی صفحه"),
+    date: findColumn("date", "تاریخ"),
+    clicks: findColumn("clicks", "کلیک"),
+    impressions: findColumn("impressions", "نمایش"),
+    ctr: findColumn("ctr", "click through rate", "نرخ کلیک"),
+    position: findColumn("position", "average position", "میانگین جایگاه", "موقعیت"),
+  };
+
+  const dimensions = ["query", "page", "date"].filter((name) => columns[name] >= 0);
+  if (!dimensions.some((name) => name === "query" || name === "page") ||
+      columns.clicks < 0 || columns.impressions < 0 || columns.position < 0) {
+    return { ok: false, reason: "csv_required_columns_missing" };
+  }
+
+  const rows = [];
+  for (let index = 1; index < parsed.rows.length; index++) {
+    const values = parsed.rows[index];
+    const read = (name) => columns[name] >= 0 ? String(values[columns[name]] ?? "").trim() : "";
+    const query = read("query");
+    const page = read("page");
+    if (!query && !page) continue;
+
+    const clicks = csvNumber(read("clicks"));
+    const impressions = csvNumber(read("impressions"));
+    const position = csvNumber(read("position"));
+    const rawCtr = columns.ctr >= 0 ? read("ctr") : "";
+    const ctr = rawCtr ? csvNumber(rawCtr, { percent: true }) : (
+      impressions > 0 && clicks !== null ? clicks / impressions : 0
+    );
+    if (clicks === null || impressions === null || position === null ||
+        ctr === null || clicks > impressions || ctr > 1) {
+      return { ok: false, reason: "csv_invalid_metric_row", row: index + 1 };
+    }
+
+    const rowDimensions = { query, page };
+    if (columns.date >= 0) {
+      const date = csvDate(read("date"));
+      if (!date) return { ok: false, reason: "csv_invalid_date_row", row: index + 1 };
+      if (date < startDate || date > endDate) continue;
+      rowDimensions.date = date;
+    }
+
+    rows.push({
+      keys: dimensions.map((dimension) => rowDimensions[dimension] || ""),
+      clicks,
+      impressions,
+      ctr,
+      position,
+    });
+    if (rows.length > rowLimit) break;
+  }
+
+  if (!rows.length) return { ok: false, reason: "csv_no_rows_in_selected_range" };
+  const normalized = normalizeSearchAnalyticsResponse({
+    responseAggregationType: "auto",
+    rows: rows.slice(0, rowLimit),
+  }, {
+    startDate,
+    endDate,
+    dimensions,
+    type: "web",
+    dataState: "final",
+    rowLimit,
+    startRow: 0,
+  });
+  if (!normalized.ok) return normalized;
+
+  return {
+    ...normalized,
+    source: "google_search_console_csv_import",
+    importedFromCsv: true,
+    coverage: {
+      ...normalized.coverage,
+      mayBeTruncated: rows.length > rowLimit || rows.length >= rowLimit,
+      apiCompletenessGuaranteed: false,
+    },
+    disclaimer: "این گزارش از فایل CSV وارد شده و اتصال زنده به Google Search Console نیست. داده فقط در مرورگر پردازش شده است؛ پوشش و بازه آن به فایل خروجی بستگی دارد.",
+  };
+}
