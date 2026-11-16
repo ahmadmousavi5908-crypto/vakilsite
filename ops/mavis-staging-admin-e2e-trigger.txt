@@ -1,1 +1,1 @@
-Retry the authenticated Staging lifecycle using Supabase Auth's supported signup flow, then promote the isolated temporary profile to admin and clean it up afterward.
+Retry Staging Auth E2E using a valid reserved example.com email address accepted by Supabase Auth. Any created account remains temporary and is deleted by the workflow cleanup.
