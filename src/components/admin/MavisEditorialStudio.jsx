@@ -104,6 +104,10 @@ export default function MavisEditorialStudio({ articles }) {
       metadata.publicationDate ? "تاریخ: " + metadata.publicationDate : "",
       metadata.documentNumber ? "DOI: " + metadata.documentNumber : "",
     ].filter(Boolean).join("؛ ").replace(/[|\r\n]+/g, " ").trim();
+    const extractedOutline = (Array.isArray(metadata.headings) ? metadata.headings : [])
+      .slice(0, 8)
+      .map((heading) => "## " + heading + "\n\nاین بخش پس از مطالعه منبع و با نگارش مستقل تکمیل شود.")
+      .join("\n\n");
 
     setForm((current) => {
       const sourceLine = (sourceLabel || metadata.title || "منبع پژوهشی") + " | " + metadata.sourceUrl;
@@ -118,7 +122,7 @@ export default function MavisEditorialStudio({ articles }) {
         readTime: current.readTime || "۶ دقیقه",
         excerpt: summary,
         intro: "این پیش‌نویس بر پایه اطلاعات کتاب‌شناختی منبع وب ایجاد شده است. متن تحلیلی باید پس از مطالعه منبع و با نگارش مستقل تکمیل و مستند شود.",
-        bodyMarkdown: current.bodyMarkdown || "## معرفی و محورهای پژوهش\nاین بخش پس از مطالعه منبع اصلی و بررسی مستندات حقوقی، با نگارش مستقل تکمیل شود.",
+        bodyMarkdown: current.bodyMarkdown || extractedOutline || "## معرفی و محورهای پژوهش\nاین بخش پس از مطالعه منبع اصلی و بررسی مستندات حقوقی، با نگارش مستقل تکمیل شود.",
         sources: nextSources,
         seoTitle: metadata.title || current.seoTitle,
         seoDescription: summary,
