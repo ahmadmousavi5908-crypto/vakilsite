@@ -6,8 +6,8 @@ import styles from "./MavisIranianSourceSearch.module.css";
 const GROUPS = [
   { value: "all", label: "همه منابع ایرانی" },
   { value: "official", label: "منابع رسمی و قضایی" },
-  { value: "academic", label: "نشریات و پژوهشگاه‌ها" },
-  { value: "secondary", label: "مراجع ثانویه برای کشف" },
+  { value: "academic", label: "پایگاه‌های علمی ایرانی" },
+  { value: "news", label: "رسانه‌های حقوقی ایرانی" },
 ];
 
 const AUTHORITY_LABELS = {
@@ -16,7 +16,9 @@ const AUTHORITY_LABELS = {
   official_research: "مرکز پژوهشی رسمی",
   official_judicial: "مرجع قضایی رسمی",
   academic: "پایگاه علمی / پژوهشی",
-  academic_index: "نمایه یا پایگاه ثانویه علمی",
+  academic_index: "پایگاه علمی / پژوهشی",
+  official_news: "خبرگزاری رسمی قضایی، نه مرجع قانون‌گذاری",
+  legal_news: "رسانه تخصصی حقوقی، نیازمند تطبیق با سند اصلی",
   secondary_reference: "مرجع ثانویه، نه مستند نهایی",
 };
 
@@ -30,6 +32,8 @@ export default function MavisIranianSourceSearch({ onImport }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [metadata, setMetadata] = useState(null);
+  const [importing, setImporting] = useState(false);
+  const [importFeedback, setImportFeedback] = useState("");
 
   async function search(event) {
     event.preventDefault();
@@ -85,6 +89,25 @@ export default function MavisIranianSourceSearch({ onImport }) {
 
   function updateField(key, value) {
     setMetadata((current) => ({ ...current, [key]: value }));
+  }
+
+  async function importSelectedSource() {
+    if (!metadata || typeof onImport !== "function" || importing) return;
+    setImporting(true);
+    setImportFeedback("");
+    try {
+      const result = await onImport(metadata);
+      if (!result?.ok) throw new Error(result?.error || "ثبت منبع انجام نشد.");
+      setImportFeedback(result.pending
+        ? "منبع انتخاب شد؛ پس از ذخیره پیش‌نویس به مقاله متصل می‌شود."
+        : result.alreadyAttached
+          ? "این منبع قبلاً به مقاله متصل شده است."
+          : "منبع به نسخه پیش‌نویس متصل شد.");
+    } catch (importError) {
+      setImportFeedback(importError instanceof Error ? importError.message : "ثبت منبع انجام نشد.");
+    } finally {
+      setImporting(false);
+    }
   }
 
   async function copyMetadata() {
@@ -181,7 +204,8 @@ export default function MavisIranianSourceSearch({ onImport }) {
                 <label className={styles.full}>چکیده / توضیح<textarea rows="4" value={metadata.abstract} onChange={(event) => updateField("abstract", event.target.value)} /></label>
                 <label className={styles.full}>پیوند منبع<input value={metadata.sourceUrl} onChange={(event) => updateField("sourceUrl", event.target.value)} dir="ltr" /></label>
               </div>
-              {typeof onImport === "function" ? <button className={styles.importButton} type="button" onClick={() => onImport(metadata)}>ساخت پیش‌نویس جدید از این منبع</button> : null}
+              {typeof onImport === "function" ? <button className={styles.importButton} type="button" onClick={importSelectedSource} disabled={importing}>{importing ? "در حال اتصال..." : "انتخاب و افزودن منبع به پیش‌نویس"}</button> : null}
+              {importFeedback ? <p className={styles.notice} role="status" aria-live="polite">{importFeedback}</p> : null}
               <button className={styles.copyButton} type="button" onClick={copyMetadata}>کپی مشخصات برای تحریریه</button>
               <p className={styles.disclaimer}>نوع سند، تاریخ و اعتبار حقوقی صرفاً با انتخاب یا تأیید مدیر ثبت می‌شود. نتیجه جست‌وجو به‌تنهایی اثبات‌کننده اعتبار قانون یا رأی نیست.</p>
             </aside>
