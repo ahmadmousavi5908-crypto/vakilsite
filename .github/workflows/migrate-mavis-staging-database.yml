@@ -9,6 +9,7 @@ on:
       - ".github/workflows/migrate-mavis-staging-database.yml"
       - "supabase/migrations/**"
       - "ops/mavis-staging-migration-019-apply.txt"
+      - "ops/mavis-staging-migration-audit-trigger.txt"
   workflow_dispatch:
     inputs:
       apply_migrations:
