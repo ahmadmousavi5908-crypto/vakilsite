@@ -6,3 +6,4 @@ Verify deployed article library, robots, sitemap, admin redirects, and API bound
 2026-11-16: live metadata-only provider smoke tests for Crossref, Semantic Scholar and OpenAlex; no candidate imports or database writes.
 2026-11-16: post-deploy smoke verification for Worker version 90e70a5b-846d-4e4b-8c50-012109e9b410.
 2026-11-16: rerun all live Staging route, auth-boundary and scholarly provider checks after Worker version a4dd474c-fb1d-42b1-82aa-c3c889c58b8d; legacy editorial assertion accounts for middleware authentication.
+2026-11-16: re-run Staging route and provider checks with optional-provider rate limits reported as warnings.
