@@ -1,1 +1,2 @@
 Retry authenticated Staging E2E with the provider_id set to the Supabase Auth user UUID and complete email identity metadata.
+Auth seed now initializes all GoTrue string token fields to empty strings.
