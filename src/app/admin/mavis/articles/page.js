@@ -8,6 +8,7 @@ import MavisSourceCandidateQueue from "../../../../components/admin/MavisSourceC
 import MavisReviewQueue from "../../../../components/admin/MavisReviewQueue";
 import MavisPublicationQueue from "../../../../components/admin/MavisPublicationQueue";
 import MavisArchiveQueue from "../../../../components/admin/MavisArchiveQueue";
+import MavisArticlesAccordion from "../../../../components/admin/MavisArticlesAccordion";
 import { decodeMavisArticleCursor, encodeMavisArticleCursor } from "../../../../lib/mavis/editorial-cursor.mjs";
 import { queryMavisEditorialArticles } from "../../../../lib/mavis/editorial-table.mjs";
 import { requireAdmin } from "../../../../lib/supabase/admin";
@@ -35,8 +36,13 @@ export default async function MavisArticlesPage({ searchParams }) {
 
   const params = await searchParams;
   const cursorValue = typeof params?.cursor === "string" ? params.cursor : "";
+  const searchQuery = typeof params?.q === "string" ? params.q.trim().slice(0, 100) : "";
+  const allowedStatuses = ["all", "draft", "changes_requested", "needs_update", "in_review", "approved", "published", "archived", "rejected"];
+  const requestedStatus = typeof params?.status === "string" ? params.status : "all";
+  const articleStatus = allowedStatuses.includes(requestedStatus) ? requestedStatus : "all";
   const cursor = decodeMavisArticleCursor(cursorValue);
   let draftRows = [];
+  let articleTotal = 0;
   let nextCursor = null;
   let draftError = null;
 
@@ -44,17 +50,26 @@ export default async function MavisArticlesPage({ searchParams }) {
     draftError = "نشانی صفحه‌بندی معتبر نیست. از صفحه اول کتابخانه شروع کنید.";
   } else {
     try {
-      const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) => {
+      const { data, error, count } = await queryMavisEditorialArticles(access.supabase, (table) => {
         let query = table
-          .select("id, slug, title, category, status, current_version, updated_at")
-          .in("status", ["draft", "changes_requested", "needs_update"])
+          .select("id, slug, title, author_name, category, status, current_version, updated_at", { count: "exact" })
           .order("updated_at", { ascending: false })
           .order("id", { ascending: false })
           .limit(26);
 
-        if (cursor) {
-          query = query.or(`updated_at.lt.${cursor.updatedAt},and(updated_at.eq.${cursor.updatedAt},id.lt.${cursor.id})`);
-        }
+        if (articleStatus !== "all") query = query.eq("status", articleStatus);
+        const term = searchQuery.replace(/[%,_()]/g, " ").replace(/\s+/g, " ").trim();
+        const pattern = term ? `%${term}%` : "";
+        const searchFilter = pattern
+          ? `or(title.ilike.${pattern},slug.ilike.${pattern},category.ilike.${pattern},author_name.ilike.${pattern})`
+          : "";
+        const cursorFilter = cursor
+          ? `or(updated_at.lt.${cursor.updatedAt},and(updated_at.eq.${cursor.updatedAt},id.lt.${cursor.id}))`
+          : "";
+
+        if (searchFilter && cursorFilter) query = query.or(`and(${searchFilter},${cursorFilter})`);
+        else if (searchFilter) query = query.or(searchFilter.slice(3, -1));
+        else if (cursorFilter) query = query.or(cursorFilter.slice(3, -1));
 
         return query;
       });
@@ -64,9 +79,10 @@ export default async function MavisArticlesPage({ searchParams }) {
           : "خواندن پیش‌نویس‌ها انجام نشد. دسترسی مدیر و اتصال پایگاه داده را بررسی کنید.";
       } else {
         const rows = Array.isArray(data) ? data : [];
+        articleTotal = Number.isInteger(count) ? count + (cursor?.ordinal || 0) : rows.length + (cursor?.ordinal || 0);
         if (rows.length > 25) {
           const lastVisible = rows[24];
-          nextCursor = encodeMavisArticleCursor(lastVisible);
+          nextCursor = encodeMavisArticleCursor(lastVisible, (cursor?.ordinal || 0) + 25);
           draftRows = rows.slice(0, 25);
         } else {
           draftRows = rows;
@@ -211,17 +227,30 @@ export default async function MavisArticlesPage({ searchParams }) {
             <div>
               <span className="admin-eyebrow">MAVIS · CONTENT WORKSPACE</span>
               <h1>مدیریت و بازبینی مقالات</h1>
-              <p>مدیریت پیش‌نویس‌های دیتابیسی در کنار فهرست فقط‌خواندنی مقالات فعلی سایت.</p>
+              <p>جست‌وجوی وب، ساخت پیش‌نویس، ویرایش نسخه‌ها، بازبینی و انتشار کنترل‌شده مقالات.</p>
+              <Link href="/admin/mavis/articles/new">ایجاد مقاله جدید ←</Link>
             </div>
             <div className="admin-status"><i /> دسترسی مدیر تأیید شده</div>
           </section>
-          <MavisSourceDiscovery />
-          <MavisSourceCandidateQueue rows={candidateRows} nextCursor={nextCandidateCursor} stateFilter={candidateState} error={candidateError} />
-          <MavisReviewQueue rows={reviewRows} error={reviewError} />
-          <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
-          <MavisArchiveQueue rows={archivedRows} error={archiveError} />
-          <MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} />
-          <MavisArticleCatalog articles={articles} />
+          <MavisArticlesAccordion>
+            <details className="admin-help">
+              <summary>جست‌وجوی تخصصی چندمنبعی (اختیاری)</summary>
+              <p>مسیر اصلی تولید مقاله از جست‌وجوی عمومی وب و استخراج اطلاعات در فرم مقاله استفاده می‌کند. ابزارهای قدیمی منابع علمی در صورت نیاز اینجا در دسترس‌اند.</p>
+              <MavisSourceDiscovery />
+              <MavisSourceCandidateQueue rows={candidateRows} nextCursor={nextCandidateCursor} stateFilter={candidateState} error={candidateError} />
+            </details>
+            <MavisReviewQueue rows={reviewRows} error={reviewError} />
+            <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
+            <MavisArchiveQueue rows={archivedRows} error={archiveError} />
+            <MavisDraftList rows={draftRows} nextCursor={nextCursor} nextHref={nextCursor ? (() => {
+              const next = new URLSearchParams();
+              next.set("cursor", nextCursor);
+              if (searchQuery) next.set("q", searchQuery);
+              if (articleStatus !== "all") next.set("status", articleStatus);
+              return "/admin/mavis/articles?" + next.toString();
+            })() : null} rowStart={cursor?.ordinal || 0} initialQuery={searchQuery} initialStatus={articleStatus} totalCount={articleTotal} error={draftError} />
+            <MavisArticleCatalog articles={articles} />
+          </MavisArticlesAccordion>
           <section className="admin-help">
             <strong>وضعیت این مرحله</strong>
             <p>جست‌وجوی منابع و ساخت پیش‌نویس فراداده‌ای فعال است. پیش‌نویس پس از ذخیره نسخه مشخص می‌تواند وارد صف بازبینی شود. تصمیم بازبین به همان نسخه متصل است؛ انتشار و لغو انتشار نیز عملیات جداگانه مدیر و نسخه‌محور هستند. صفحه عمومی فعلی تا تکمیل مسیر دیتابیسی بدون تغییر باقی می‌ماند. آرشیو و بازگردانی نسخه‌ها از فهرست آرشیو مدیریت می‌شود.</p>
