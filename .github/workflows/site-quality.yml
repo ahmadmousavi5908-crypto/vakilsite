@@ -54,6 +54,8 @@ jobs:
         run: node --test tests/mavis/offline-intake.test.mjs
       - name: Run MAVIS Search Console tests
         run: npm run test:mavis-search-console
+      - name: Run Search Console OAuth and tools tests
+        run: npm run test:mavis-search-console
       - name: Run Iranian legal source search tests
         run: npm run test:mavis-iranian-source-search
       - name: Run MAVIS editorial core tests
