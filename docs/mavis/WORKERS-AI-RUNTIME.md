@@ -49,3 +49,9 @@ Browser Run has plan-based usage limits. Keep this path administrator-only and m
 The isolated Staging Worker exposes an admin-only `/api/admin/mavis/runtime-smoke` endpoint only when `MAVIS_STAGING_DIAGNOSTICS_ENABLED=true` is present in the Staging Worker variables. It performs one quota-controlled inference, validates the structured output through the production normalizer, and returns only provider/model metadata. The Production Worker does not enable this diagnostic endpoint.
 
 The authenticated Staging E2E workflow also calls the real source-search route with a temporary administrator session. It verifies the Browser Run binding is available and that the official Qavanin portal fallback is returned. Browser Run may still be blocked by the destination website; in that case the direct portal links remain the expected safe fallback.
+
+## Search Console data without OAuth
+
+The admin Search Console panel accepts a Google Search Console CSV export as a local fallback. Files up to 5 MB are parsed in the browser, never uploaded to the Worker or stored in the database. The importer supports query/page/date dimensions and click, impression, CTR, and position metrics; it reuses the same privacy masking for phone numbers, email addresses, and national-ID-shaped query values as the live API adapter.
+
+When a CSV has a Date column, rows are filtered to the selected date range. When it has no Date column, the UI explicitly marks the selected range as unverified because the file itself cannot prove its export range. CSV import is a manual snapshot, not a live Search Console connection and not a substitute for OAuth.
