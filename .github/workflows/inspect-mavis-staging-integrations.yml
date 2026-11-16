@@ -1,0 +1,109 @@
+name: Inspect MAVIS Staging integrations
+
+on:
+  push:
+    branches:
+      - feature/mavis-indexnow-publication-notify-20261114
+    paths:
+      - "ops/mavis-staging-integrations-inspection-trigger.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-staging-integrations-inspection
+  cancel-in-progress: false
+
+jobs:
+  inspect:
+    name: Read-only integration and provider verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: staging
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      SUPABASE_STAGING_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+    steps:
+      - name: Check out reviewed Staging revision
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Inspect Staging Worker secret names without reading values
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_STAGING_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+          test -n "$CLOUDFLARE_API_TOKEN"
+          npx --yes wrangler@4.161.0 secret list --name vakilahmadmousavi-ir-staging --format json > "$RUNNER_TEMP/mavis-worker-secrets.json"
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const entries = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/mavis-worker-secrets.json", "utf8"));
+          const names = new Set(entries.map((entry) => entry.name));
+          const groups = {
+            "Google Search Console OAuth": ["MAVIS_GSC_CLIENT_ID", "MAVIS_GSC_CLIENT_SECRET", "MAVIS_GSC_TOKEN_ENCRYPTION_KEY"],
+            "Iranian legal source search": ["MAVIS_IRAN_SOURCE_SEARCH_API_KEY"],
+            "Competitor growth research": ["MAVIS_GROWTH_SEARCH_API_KEY", "MAVIS_IRAN_SOURCE_SEARCH_API_KEY"],
+            "Editorial AI": ["MAVIS_EDITORIAL_AI_API_KEY", "OPENAI_API_KEY"]
+          };
+          for (const [label, required] of Object.entries(groups)) {
+            const present = required.filter((name) => names.has(name));
+            const complete = label === "Competitor growth research"
+              ? present.length > 0
+              : label === "Editorial AI"
+                ? present.length > 0
+                : present.length === required.length;
+            console.log(`${complete ? "CONFIGURED" : "MISSING"}: ${label} (${present.length}/${required.length} candidate secrets present)`);
+          }
+          console.log("Secret values were not requested, read, or printed.");
+          NODE
+
+      - name: Verify Search Console storage state in Staging
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          SQL="SELECT jsonb_build_object(
+            'storage_table_present', to_regclass('public.mavis_search_console_connections') IS NOT NULL,
+            'connection_record_present', EXISTS (SELECT 1 FROM public.mavis_search_console_connections WHERE id = 1),
+            'editorial_ai_rate_limit_table_present', to_regclass('mavis_private.editorial_ai_rate_limits') IS NOT NULL
+          ) AS integration_state;"
+          npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL"
+
+      - name: Run live metadata-only scholarly discovery smoke tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { createMavisSourceDiscoveryAdapters } from "./src/lib/mavis/source-discovery-adapters.mjs";
+          const adapters = createMavisSourceDiscoveryAdapters({ timeoutMs: 12000, maxResponseBytes: 1000000 });
+          const checks = [
+            ["Crossref", () => adapters.searchCrossref("Iranian contract law", 5), true],
+            ["Semantic Scholar", () => adapters.searchSemanticScholar("Iranian contract law", 5), false],
+          ];
+          let failures = 0;
+          for (const [name, run, required] of checks) {
+            const result = await run();
+            const count = Array.isArray(result.candidates) ? result.candidates.length : 0;
+            const valid = result.ok === true && result.provider && result.candidates.every((item) =>
+              typeof item.title === "string" && item.title.length > 0 &&
+              typeof item.sourceUrl === "string" && item.sourceUrl.startsWith("https://") &&
+              item.sourceType === "academic" && item.rightsStatus === "unknown"
+            );
+            if (valid && count > 0) {
+              console.log(`PASS: ${name} returned ${count} metadata-only candidate(s); rights remain unknown.`);
+            } else {
+              console.log(`${required ? "FAIL" : "WARN"}: ${name} returned no verifiable candidates (${result.error || "empty_result"}).`);
+              if (required) failures += 1;
+            }
+          }
+          if (failures) process.exitCode = 1;
+          NODE
