@@ -215,7 +215,6 @@ function csvNumber(value, { percent = false } = {}) {
   const normalized = percent && (hasPercent || numeric > 1) ? numeric / 100 : numeric;
   return Number.isFinite(normalized) ? normalized : null;
 }
-}
 
 function csvDate(value) {
   const raw = normalizeDigits(String(value || "").trim());
