@@ -1,0 +1,1 @@
+Run read-only inventory of legacy Mother Two and current editorial CMS tables on isolated Staging.
