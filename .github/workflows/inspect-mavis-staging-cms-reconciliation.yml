@@ -1,0 +1,49 @@
+name: Inspect MAVIS Staging CMS reconciliation state
+
+on:
+  push:
+    branches:
+      - feature/mavis-indexnow-publication-notify-20261114
+    paths:
+      - "ops/mavis-staging-cms-reconciliation-trigger.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    name: Read-only CMS table and record inventory
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+      SUPABASE_STAGING_DB_PASSWORD: ${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install pinned Supabase CLI
+        run: npx --yes supabase@3.0.0 --version
+
+      - name: Inspect the Staging CMS schema and row counts
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_URL="$(node -e 'const p=encodeURIComponent(process.env.SUPABASE_STAGING_DB_PASSWORD); process.stdout.write(`postgresql://postgres.srbwniqhaxwaoepjfizf:${p}@aws-1-eu-central-1.pooler.supabase.com:5432/postgres?sslmode=require`)')"
+          SQL="SELECT
+            to_regclass('public.mavis_editorial_articles') IS NOT NULL AS mother_two_table_exists,
+            to_regclass('public.mavis_articles') IS NOT NULL AS current_cms_table_exists,
+            (SELECT count(*) FROM public.mavis_articles) AS current_article_count,
+            (SELECT count(*) FROM public.mavis_article_versions) AS version_count,
+            (SELECT count(*) FROM public.mavis_article_approvals) AS approval_count,
+            (SELECT count(*) FROM public.mavis_article_sources) AS article_source_count;"
+          npx --yes supabase@3.0.0 db query --read-only --remote="$DB_URL" "$SQL"
