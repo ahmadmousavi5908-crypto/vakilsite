@@ -65,6 +65,7 @@ async function main() {
 
   let userSeedAttempted = false;
   let client;
+  let executionError;
 
   const payload = {
     slug,
@@ -89,12 +90,30 @@ async function main() {
     console.log("Creating an isolated temporary Staging administrator identity.");
     userSeedAttempted = true;
 
-    const userSql = `
+    // Remove leftovers from any interrupted earlier E2E run before creating a new identity.
+    const staleSlug = "mavis-staging-e2e-%";
+    const staleEmail = "mavis-staging-e2e-%@example.invalid";
+    for (const statement of [
+      `DELETE FROM public.mavis_article_sources WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug LIKE ${sqlString(staleSlug)});`,
+      `DELETE FROM public.mavis_article_approvals WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug LIKE ${sqlString(staleSlug)});`,
+      `DELETE FROM public.mavis_article_versions WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug LIKE ${sqlString(staleSlug)});`,
+      `DELETE FROM public.mavis_article_audit_events WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug LIKE ${sqlString(staleSlug)});`,
+      `DELETE FROM public.mavis_editorial_articles WHERE slug LIKE ${sqlString(staleSlug)};`,
+      `DELETE FROM auth.identities WHERE user_id IN (SELECT id FROM auth.users WHERE email LIKE ${sqlString(staleEmail)});`,
+      `DELETE FROM public.profiles WHERE id IN (SELECT id FROM auth.users WHERE email LIKE ${sqlString(staleEmail)});`,
+      `DELETE FROM auth.users WHERE email LIKE ${sqlString(staleEmail)};`,
+    ]) {
+      runDbQuery(statement);
+    }
+
+    userSeedAttempted = true;
+    runDbQuery(`
       INSERT INTO auth.users (
-        id, aud, role, email, encrypted_password, email_confirmed_at,
-        confirmed_at, raw_app_meta_data, raw_user_meta_data,
+        instance_id, id, aud, role, email, encrypted_password,
+        email_confirmed_at, confirmed_at, raw_app_meta_data, raw_user_meta_data,
         is_sso_user, is_anonymous, created_at, updated_at
       ) VALUES (
+        '00000000-0000-0000-0000-000000000000'::uuid,
         ${sqlString(userId)}::uuid,
         'authenticated',
         'authenticated',
@@ -109,7 +128,9 @@ async function main() {
         now(),
         now()
       );
+    `);
 
+    runDbQuery(`
       INSERT INTO auth.identities (
         id, provider_id, user_id, identity_data, provider, email, created_at, updated_at
       ) VALUES (
@@ -125,13 +146,19 @@ async function main() {
         ${sqlString(email)},
         now(),
         now()
-      );
+      )
+      ON CONFLICT (provider_id, provider) DO UPDATE SET
+        user_id = EXCLUDED.user_id,
+        identity_data = EXCLUDED.identity_data,
+        email = EXCLUDED.email,
+        updated_at = now();
+    `);
 
+    runDbQuery(`
       INSERT INTO public.profiles (id, role)
       VALUES (${sqlString(userId)}::uuid, 'admin')
       ON CONFLICT (id) DO UPDATE SET role = EXCLUDED.role;
-    `;
-    runDbQuery(userSql);
+    `);
 
     client = createClient(projectUrl, publishableKey, {
       auth: {
@@ -291,44 +318,54 @@ async function main() {
 
     console.log("PASS: draft → review → approval → publish → public read → unpublish → archive → restore → republish → unpublish.");
     console.log("PASS: admin reads the canonical table; anonymous users read only the public compatibility view.");
+  } catch (error) {
+    executionError = error;
   } finally {
     if (client) {
       await client.auth.signOut().catch(() => {});
     }
 
     console.log("Cleaning temporary Staging E2E records.");
-    const cleanupSql = `
-      DELETE FROM public.mavis_article_sources
-      WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)});
-      DELETE FROM public.mavis_article_approvals
-      WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)});
-      DELETE FROM public.mavis_article_versions
-      WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)});
-      DELETE FROM public.mavis_article_audit_events
-      WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)});
-      DELETE FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)};
-      DELETE FROM auth.identities WHERE user_id = ${sqlString(userId)}::uuid;
-      DELETE FROM public.profiles WHERE id = ${sqlString(userId)}::uuid;
-      DELETE FROM auth.users WHERE id = ${sqlString(userId)}::uuid;
-    `;
+    try {
+      const cleanupStatements = [
+        `DELETE FROM public.mavis_article_sources WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)});`,
+        `DELETE FROM public.mavis_article_approvals WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)});`,
+        `DELETE FROM public.mavis_article_versions WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)});`,
+        `DELETE FROM public.mavis_article_audit_events WHERE article_id IN (SELECT id FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)});`,
+        `DELETE FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)};`,
+        `DELETE FROM auth.identities WHERE user_id = ${sqlString(userId)}::uuid;`,
+        `DELETE FROM public.profiles WHERE id = ${sqlString(userId)}::uuid;`,
+        `DELETE FROM auth.users WHERE id = ${sqlString(userId)}::uuid;`,
+      ];
 
-    if (userSeedAttempted) runDbQuery(cleanupSql);
+      if (userSeedAttempted) {
+        for (const statement of cleanupStatements) runDbQuery(statement);
+      }
 
-    const cleanupCheck = runDbQuery(
-      `SELECT CASE WHEN
-        NOT EXISTS (SELECT 1 FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)})
-        AND NOT EXISTS (SELECT 1 FROM auth.users WHERE id = ${sqlString(userId)}::uuid)
-        THEN 'MAVIS_STAGING_E2E_CLEANUP_OK'
-        ELSE 'MAVIS_STAGING_E2E_CLEANUP_FAILED'
-      END AS status;`,
-      { readOnly: true }
-    );
-    assert(
-      cleanupCheck.includes("MAVIS_STAGING_E2E_CLEANUP_OK"),
-      "Temporary Staging E2E records were not fully cleaned up."
-    );
-    console.log("PASS: all temporary Staging E2E records and identity were removed.");
+      const cleanupCheck = runDbQuery(
+        `SELECT CASE WHEN
+          NOT EXISTS (SELECT 1 FROM public.mavis_editorial_articles WHERE slug = ${sqlString(slug)})
+          AND NOT EXISTS (SELECT 1 FROM auth.users WHERE id = ${sqlString(userId)}::uuid)
+          THEN 'MAVIS_STAGING_E2E_CLEANUP_OK'
+          ELSE 'MAVIS_STAGING_E2E_CLEANUP_FAILED'
+        END AS status;`,
+        { readOnly: true }
+      );
+      assert(
+        cleanupCheck.includes("MAVIS_STAGING_E2E_CLEANUP_OK"),
+        "Temporary Staging E2E records were not fully cleaned up."
+      );
+      console.log("PASS: all temporary Staging E2E records and identity were removed.");
+    } catch (cleanupError) {
+      if (executionError) {
+        console.error("Temporary E2E cleanup also failed:", cleanupError?.stack || cleanupError);
+      } else {
+        executionError = cleanupError;
+      }
+    }
   }
+
+  if (executionError) throw executionError;
 }
 
 main().catch((error) => {
