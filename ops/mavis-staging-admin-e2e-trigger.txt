@@ -1,1 +1,1 @@
-Retry authenticated Staging E2E with a random syntactically valid Gmail test address after Supabase Auth rejected reserved example domains. The address is generated per run and deleted during cleanup.
+Run the authenticated Staging editorial lifecycle using a protected key resolved from the Supabase Management API when no dedicated Staging admin key is configured. Verify the complete workflow and confirm temporary records are removed.
