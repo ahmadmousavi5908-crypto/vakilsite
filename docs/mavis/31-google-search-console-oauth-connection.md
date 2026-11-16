@@ -27,6 +27,12 @@ This integration connects the administrator's Google Search Console property to 
 
    `https://vakilahmadmousavi.ir/api/admin/mavis/search-console/callback`
 
+   For isolated Staging verification, also register this additional redirect URI on the same dedicated OAuth Web client:
+
+   `https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev/api/admin/mavis/search-console/callback`
+
+   The Staging Worker derives its callback from `NEXT_PUBLIC_SITE_URL`; keep the Staging OAuth credentials and encrypted refresh token in the Staging Worker and Staging database only. Do not copy them to Production until a separate production rollout is approved.
+
 6. Confirm that the Google account used for consent has access to the Search Console property. Prefer Owner permission for initial setup.
 7. Copy the OAuth Client ID and Client Secret into the hosting provider's encrypted environment-variable settings. Do not put either value in GitHub, source code, chat, or a committed `.env` file.
 
