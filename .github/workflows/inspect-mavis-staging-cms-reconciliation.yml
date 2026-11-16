@@ -77,6 +77,7 @@ jobs:
             ), '[]'::jsonb),
             'functions', COALESCE((
               SELECT jsonb_agg(jsonb_build_object(
+                'schema', n.nspname,
                 'name', p.proname,
                 'arguments', pg_get_function_identity_arguments(p.oid),
                 'security_definer', p.prosecdef,
