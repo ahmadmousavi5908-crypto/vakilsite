@@ -5,6 +5,7 @@ import {
   encodePublishedArticleCursor,
 } from "../../../lib/mavis/published-article-cursor.mjs";
 import styles from "./page.module.css";
+import { mapPublishedEditorialRecord } from "../../../lib/mavis/editorial-content-core.mjs";
 
 export const metadata = {
   title: "فهرست مقالات حقوقی | سید احمد موسوی",
@@ -65,11 +66,23 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
       const { data, error } = await query;
       if (error) throw error;
       const resultRows = Array.isArray(data) ? data : [];
-      if (resultRows.length > 25) {
-        nextCursor = encodePublishedArticleCursor(resultRows[24]);
-        rows = resultRows.slice(0, 25);
+      const { data: publishedRecords, error: publishedError } = await supabase.rpc("get_mavis_published_articles");
+      if (publishedError || !Array.isArray(publishedRecords)) throw new Error("Published snapshots are unavailable");
+      const publishedContentBySlug = new Map(
+        publishedRecords.map((record) => {
+          const mapped = mapPublishedEditorialRecord({ ...record, status: "published" });
+          return mapped ? [mapped.slug, mapped.content || null] : null;
+        }).filter(Boolean)
+      );
+      const safeRows = resultRows.map((article) => ({
+        ...article,
+        content: publishedContentBySlug.get(article.slug) || null,
+      }));
+      if (safeRows.length > 25) {
+        nextCursor = encodePublishedArticleCursor(safeRows[24]);
+        rows = safeRows.slice(0, 25);
       } else {
-        rows = resultRows;
+        rows = safeRows;
       }
     } catch {
       loadError = "فهرست مقالات در حال حاضر در دسترس نیست. راهنماهای ثابت دانشنامه همچنان از صفحه مقالات قابل مطالعه‌اند.";
@@ -132,11 +145,11 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
                   {rows.map((article, index) => (
                     <tr key={article.id}>
                       <td className={styles.rowNumber}>{(index + 1).toLocaleString("fa-IR")}</td>
-                      <td><strong>{article.title}</strong><small>{article.excerpt || "برای مشاهده متن کامل مقاله وارد صفحه مطالعه شوید."}</small></td>
+                      <td><strong>{article.title}</strong><small>{article.excerpt || "برای مشاهده متن کامل، ردیف را باز کنید."}</small><details className={styles.articleExpand}><summary><span aria-hidden="true">＋</span> مطالعه متن کامل</summary><div className={styles.expandedArticle}>{article.content?.intro ? <p>{article.content.intro}</p> : null}{Array.isArray(article.content?.sections) ? article.content.sections.map((section, sectionIndex) => <section key={section.heading || sectionIndex}><h3>{section.heading || "بخش مقاله"}</h3><p>{section.body}</p></section>) : null}{Array.isArray(article.content?.checklist) && article.content.checklist.length ? <section><h3>نکات کلیدی</h3><ul>{article.content.checklist.map((item, itemIndex) => <li key={itemIndex}>{item}</li>)}</ul></section> : null}{article.content?.warning ? <p className={styles.articleWarning}>{article.content.warning}</p> : null}<Link href={"/articles/" + article.slug}>صفحه اختصاصی و نسخه قابل اشتراک مقاله ←</Link></div></details></td>
                       <td><span className={styles.category}>{article.category || "عمومی"}</span></td>
                       <td>{article.author_name || "سید احمد موسوی"}</td>
                       <td><time dateTime={article.published_at}>{formatDate(article.published_at)}</time></td>
-                      <td><Link href={"/articles/" + article.slug}>مشاهده مقاله ←</Link></td>
+                      <td><Link href={"/articles/" + article.slug}>صفحه مقاله ←</Link></td>
                     </tr>
                   ))}
                 </tbody>

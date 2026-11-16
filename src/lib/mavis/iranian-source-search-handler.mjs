@@ -70,7 +70,7 @@ export function createIranianSourceSearchHandler(dependencies) {
     const query = typeof payload.query === "string" ? payload.query.trim() : "";
     const group = payload.group ?? "all";
     const limit = payload.limit ?? 10;
-    if (query.length < 2 || query.length > 180 || !["all", "official", "academic", "secondary"].includes(group) ||
+    if (query.length < 2 || query.length > 180 || !["all", "official", "academic", "news"].includes(group) ||
         !Number.isInteger(limit) || limit < 1 || limit > 20) {
       return json({ error: { code: "INVALID_REQUEST", message: "عبارت، دسته منابع یا تعداد نتایج معتبر نیست." } }, 400);
     }

@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "../../../lib/supabase/admin";
 import { getMavisKnowledgeInventory } from "../../../lib/mavis/knowledge-registry";
 import MavisKnowledgeSearch from "../../../components/admin/MavisKnowledgeSearch";
-import MavisIranianSourceSearch from "../../../components/admin/MavisIranianSourceSearch";
 import MavisSearchConsolePanel from "../../../components/admin/MavisSearchConsolePanel";
 import { signOut } from "../actions";
 
@@ -34,7 +33,7 @@ export default async function MavisAdminPage() {
           <Link className="active" href="/admin/mavis">مرکز دانش MAVIS</Link>
           <Link href="/admin/mavis/growth">ممیزی محتوا و هوشمندی رشد</Link>
           <Link href="/admin/mavis/articles">کتابخانه مقالات</Link>
-          <a href="#iran-source-search">جست‌وجوی منابع ایرانی</a>
+          <Link href="/admin/mavis/articles/new">جست‌وجوی منابع ایرانی</Link>
           <a href="#knowledge-search">کتابخانه حقوقی داخلی</a>
           <a href="#growth-intelligence">هوشمندی رشد</a>
         </nav>
@@ -62,7 +61,11 @@ export default async function MavisAdminPage() {
             <article><span>قوانین ثبت‌شده</span><strong>{inventory.laws.toLocaleString("fa-IR")}</strong><small>همراه با وضعیت بررسی</small></article>
             <article><span>مقالات و خلاصه‌ها</span><strong>{(inventory.legalArticles + inventory.publishedArticles + inventory.researchNotes).toLocaleString("fa-IR")}</strong><small>{inventory.legalArticles.toLocaleString("fa-IR")} خلاصه ماده · {inventory.publishedArticles.toLocaleString("fa-IR")} مقاله سایت · {inventory.researchNotes.toLocaleString("fa-IR")} یادداشت پژوهشی</small></article>
           </section>
-          <section id="iran-source-search"><MavisIranianSourceSearch /></section>
+          <section className="admin-help">
+            <strong>موتور جست‌وجوی منابع حقوقی ایرانی</strong>
+            <p>برای جست‌وجوی منابع، انتخاب نتیجه و اتصال آن به پیش‌نویس مقاله وارد تحریریه شوید.</p>
+            <Link href="/admin/mavis/articles/new">ورود به جست‌وجو و تحریریه ←</Link>
+          </section>
           <section id="knowledge-search"><MavisKnowledgeSearch /></section>
           <section id="growth-intelligence"><MavisSearchConsolePanel /></section>
           <section className="admin-help">

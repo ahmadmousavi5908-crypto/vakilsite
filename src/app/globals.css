@@ -4582,3 +4582,17 @@ textarea:focus-visible,
 }
 
 .article-cover-image{margin:0 0 28px;overflow:hidden;border-radius:14px;background:#f4f1e9;border:1px solid #e8e2d8}.article-cover-image img{display:block;width:100%;max-height:520px;object-fit:cover}.article-cover-image figcaption{padding:9px 13px;color:#7b7568;font-size:10px;line-height:1.8}
+
+
+/* Compact, keyboard-accessible MAVIS admin accordions */
+.mavis-collapsible{border:1px solid #e1e6e9;border-radius:12px;background:#fff;padding:0 14px;margin-top:12px}
+.mavis-collapsible>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px;cursor:pointer;list-style:none}
+.mavis-collapsible>summary::-webkit-details-marker{display:none}
+.mavis-collapsible>summary::before{content:"＋";display:grid;place-items:center;flex:none;width:25px;height:25px;border-radius:50%;background:#f0f3f4;color:#8b7040;font-size:16px}
+.mavis-collapsible[open]>summary{border-bottom:1px solid #e8ecef;margin-bottom:14px}
+.mavis-collapsible[open]>summary::before{content:"−"}
+.mavis-collapsible>summary strong{font-size:12px;color:#243f55}
+.mavis-collapsible>summary span{margin-inline-start:auto;color:#87939d;font-size:10px;text-align:left}
+.mavis-collapsible> :not(summary){margin-bottom:14px}
+.mavis-collapsible>p{font-size:10px;color:#6f7d89;line-height:2}
+@media(max-width:650px){.mavis-collapsible{padding-inline:11px}.mavis-collapsible>summary{align-items:flex-start;padding:13px 0;flex-wrap:wrap}.mavis-collapsible>summary span{width:100%;margin-inline-start:37px;text-align:right}}

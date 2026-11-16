@@ -2,9 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { articles } from "../../../../data/articles";
 import MavisArticleCatalog from "../../../../components/admin/MavisArticleCatalog";
+import MavisArticleEditor from "../../../../components/admin/MavisArticleEditor";
 import MavisDraftList from "../../../../components/admin/MavisDraftList";
-import MavisSourceDiscovery from "../../../../components/admin/MavisSourceDiscovery";
-import MavisSourceCandidateQueue from "../../../../components/admin/MavisSourceCandidateQueue";
 import MavisReviewQueue from "../../../../components/admin/MavisReviewQueue";
 import MavisPublicationQueue from "../../../../components/admin/MavisPublicationQueue";
 import MavisArchiveQueue from "../../../../components/admin/MavisArchiveQueue";
@@ -46,7 +45,7 @@ export default async function MavisArticlesPage({ searchParams }) {
     try {
       const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) => {
         let query = table
-          .select("id, slug, title, category, status, current_version, updated_at")
+          .select("id, slug, title, category, content, status, current_version, updated_at")
           .in("status", ["draft", "changes_requested", "needs_update"])
           .order("updated_at", { ascending: false })
           .order("id", { ascending: false })
@@ -140,49 +139,6 @@ export default async function MavisArticlesPage({ searchParams }) {
   }
 
 
-  const candidateCursorValue = typeof params?.candidateCursor === "string" ? params.candidateCursor : "";
-  const candidateCursor = decodeMavisArticleCursor(candidateCursorValue);
-  const requestedCandidateState = typeof params?.candidateState === "string" ? params.candidateState : "all";
-  const candidateState = ["discovered", "imported", "ignored"].includes(requestedCandidateState) ? requestedCandidateState : "all";
-  let candidateRows = [];
-  let nextCandidateCursor = null;
-  let candidateError = null;
-
-  if (candidateCursorValue && !candidateCursor) {
-    candidateError = "نشانی صفحه‌بندی صف منابع معتبر نیست. از صفحه اول شروع کنید.";
-  } else {
-    try {
-      let candidateQuery = access.supabase
-        .from("mavis_source_candidates")
-        .select("id, provider, provider_record_id, doi, title, authors, publisher, venue, publication_date_text, state, canonical_url, imported_article_id, updated_at")
-        .order("updated_at", { ascending: false })
-        .order("id", { ascending: false })
-        .limit(26);
-
-      if (candidateState !== "all") candidateQuery = candidateQuery.eq("state", candidateState);
-      if (candidateCursor) {
-        candidateQuery = candidateQuery.or(`updated_at.lt.${candidateCursor.updatedAt},and(updated_at.eq.${candidateCursor.updatedAt},id.lt.${candidateCursor.id})`);
-      }
-
-      const { data, error } = await candidateQuery;
-      if (error) {
-        candidateError = error.code === "42P01" || error.code === "PGRST205"
-          ? "صف پایدار منابع هنوز روی این پایگاه داده فعال نشده است؛ migration شماره ۰۱۵ باید اعمال شود."
-          : "خواندن صف منابع انجام نشد. اتصال پایگاه داده و دسترسی مدیر را بررسی کنید.";
-      } else {
-        const rows = Array.isArray(data) ? data : [];
-        if (rows.length > 25) {
-          nextCandidateCursor = encodeMavisArticleCursor(rows[24]);
-          candidateRows = rows.slice(0, 25);
-        } else {
-          candidateRows = rows;
-        }
-      }
-    } catch {
-      candidateError = "ارتباط امن با پایگاه داده برای خواندن صف منابع برقرار نشد.";
-    }
-  }
-
   return (
     <div className="admin-shell" dir="rtl">
       <aside className="admin-sidebar">
@@ -215,16 +171,20 @@ export default async function MavisArticlesPage({ searchParams }) {
             </div>
             <div className="admin-status"><i /> دسترسی مدیر تأیید شده</div>
           </section>
-          <MavisSourceDiscovery />
-          <MavisSourceCandidateQueue rows={candidateRows} nextCursor={nextCandidateCursor} stateFilter={candidateState} error={candidateError} />
-          <MavisReviewQueue rows={reviewRows} error={reviewError} />
-          <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
-          <MavisArchiveQueue rows={archivedRows} error={archiveError} />
-          <MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} />
-          <MavisArticleCatalog articles={articles} />
+          <details className="admin-help mavis-collapsible">
+            <summary><strong>＋ ایجاد مقاله و جست‌وجوی منابع حقوقی</strong><span>برای خلوت‌ماندن پنل، فرم فقط هنگام نیاز باز می‌شود.</span></summary>
+            <MavisArticleEditor aiEnabled={Boolean(process.env.MAVIS_OPENAI_API_KEY || process.env.OPENAI_API_KEY)} />
+            <p>نتیجه جست‌وجو پس از انتخاب به پیش‌نویس متصل می‌شود؛ انتشار فقط پس از بازبینی و تأیید مدیر انجام خواهد شد.</p>
+            <Link href="/admin/mavis/articles/new">بازکردن تحریریه در صفحه مستقل ←</Link>
+          </details>
+          <details className="admin-help mavis-collapsible"><summary><strong>صف بازبینی مدیر</strong><span>نسخه‌هایی که برای بررسی ارسال شده‌اند</span></summary><MavisReviewQueue rows={reviewRows} error={reviewError} /></details>
+          <details className="admin-help mavis-collapsible"><summary><strong>انتشار و مدیریت وضعیت عمومی</strong><span>تأیید، انتشار و لغو انتشار</span></summary><MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} /></details>
+          <details className="admin-help mavis-collapsible"><summary><strong>آرشیو و بازیابی مقالات</strong><span>مقالات حذف‌شده به‌صورت امن</span></summary><MavisArchiveQueue rows={archivedRows} error={archiveError} /></details>
+          <details className="admin-help mavis-collapsible"><summary><strong>پیش‌نویس‌ها و کاربرگ مقالات</strong><span>جست‌وجو، ویرایش و انتقال به آرشیو</span></summary><MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} /></details>
+          <details className="admin-help mavis-collapsible"><summary><strong>مقالات فعلی سایت</strong><span>فهرست محتوای ثابت موجود</span></summary><MavisArticleCatalog articles={articles} /></details>
           <section className="admin-help">
             <strong>وضعیت این مرحله</strong>
-            <p>جست‌وجوی منابع و ساخت پیش‌نویس فراداده‌ای فعال است. پیش‌نویس پس از ذخیره نسخه مشخص می‌تواند وارد صف بازبینی شود. تصمیم بازبین به همان نسخه متصل است؛ انتشار و لغو انتشار نیز عملیات جداگانه مدیر و نسخه‌محور هستند. صفحه عمومی فعلی تا تکمیل مسیر دیتابیسی بدون تغییر باقی می‌ماند. آرشیو و بازگردانی نسخه‌ها از فهرست آرشیو مدیریت می‌شود.</p>
+            <p>جست‌وجوی منابع ایرانی، اتصال منبع به پیش‌نویس نسخه‌دار و گردش‌کار تأیید مدیر فعال است. پیش‌نویس پس از ذخیره نسخه مشخص می‌تواند وارد صف بازبینی شود. تصمیم بازبین به همان نسخه متصل است؛ انتشار و لغو انتشار نیز عملیات جداگانه مدیر و نسخه‌محور هستند. صفحه عمومی فعلی تا تکمیل مسیر دیتابیسی بدون تغییر باقی می‌ماند. آرشیو و بازگردانی نسخه‌ها از فهرست آرشیو مدیریت می‌شود.</p>
           </section>
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>
@@ -232,3 +192,4 @@ export default async function MavisArticlesPage({ searchParams }) {
     </div>
   );
 }
+

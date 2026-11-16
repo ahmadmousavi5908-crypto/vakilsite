@@ -1,26 +1,31 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { getIranianSourceDomains, normalizeIranianSourceUrl } from "../../src/lib/mavis/iranian-source-registry.mjs";
-import { createIranianSourceSearch } from "../../src/lib/mavis/iranian-source-search.mjs";
+import { createIranianSourceSearch, createIranianSourceSearchFallback } from "../../src/lib/mavis/iranian-source-search.mjs";
+import { normalizeMavisManualSourceInput } from "../../src/lib/mavis/manual-source-input.mjs";
 
-test("the source allowlist contains Iranian official and academic domains only", () => {
+test("the allowlist contains exactly ten selected Iranian legal and research sources", () => {
   const domains = getIranianSourceDomains("all");
-  assert.ok(domains.includes("qavanin.ir"));
-  assert.ok(domains.includes("sid.ir"));
-  assert.ok(domains.includes("magiran.com"));
+  assert.equal(domains.length, 10);
+  for (const domain of [
+    "qavanin.ir", "dotic.ir", "rrk.ir", "rc.majlis.ir", "shora-gc.ir",
+    "divan-edalat.ir", "divan-ali.ir", "sid.ir", "mizanonline.ir", "ekhtebar.ir",
+  ]) assert.ok(domains.includes(domain), domain);
   assert.ok(!domains.includes("crossref.org"));
   assert.ok(!domains.includes("semanticscholar.org"));
 });
 
-test("source URL validation accepts known sources and rejects unknown or unsafe URLs", () => {
+test("source URL validation accepts Iranian sources and rejects unknown or unsafe URLs", () => {
   assert.equal(normalizeIranianSourceUrl("https://www.qavanin.ir/Law/123").source.id, "qavanin");
+  assert.equal(normalizeIranianSourceUrl("https://www.ekhtebar.ir/news/123").source.id, "ekhtebar");
+  assert.equal(normalizeIranianSourceUrl("https://mizanonline.ir/news/123").source.id, "mizan");
   assert.equal(normalizeIranianSourceUrl("https://evil.example/qavanin.ir"), null);
   assert.equal(normalizeIranianSourceUrl("http://qavanin.ir"), null);
   assert.equal(normalizeIranianSourceUrl("https://user:pass@qavanin.ir"), null);
   assert.equal(normalizeIranianSourceUrl("https://qavanin.ir:8443"), null);
 });
 
-test("search restricts provider domains and filters out unapproved provider results", async () => {
+test("online search is restricted to the selected Iranian source group", async () => {
   let sentBody;
   const client = createIranianSourceSearch({
     apiKey: "test-key",
@@ -31,20 +36,32 @@ test("search restricts provider domains and filters out unapproved provider resu
         json: async () => ({
           usage: 1,
           results: [
-            { title: "قانون نمونه", url: "https://qavanin.ir/law/1", content: "متن نتیجه", score: 0.91 },
-            { title: "منبع خارجی", url: "https://example.com/law", content: "نباید نمایش داده شود", score: 0.99 },
+            { title: "خبر اختبار", url: "https://ekhtebar.ir/news/1", content: "گزارش حقوقی", score: 0.91 },
+            { title: "خبر خارجی", url: "https://example.com/law", content: "نباید نمایش داده شود", score: 0.99 },
           ],
         }),
       };
     },
   });
-  const result = await client.search({ query: "قانون مسئولیت مدنی", group: "official", limit: 10 });
+  const result = await client.search({ query: "رأی وحدت رویه", group: "news", limit: 10 });
   assert.equal(sentBody.include_domains_mode, "restrict");
-  assert.ok(sentBody.include_domains.includes("qavanin.ir"));
-  assert.ok(!sentBody.include_domains.includes("sid.ir"));
+  assert.deepEqual(sentBody.include_domains, ["mizanonline.ir", "ekhtebar.ir"]);
+  assert.equal(result.group, "news");
   assert.equal(result.results.length, 1);
-  assert.equal(result.results[0].sourceAuthority, "official_primary");
-  assert.equal(result.results[0].sourceId, "qavanin");
+  assert.equal(result.results[0].sourceAuthority, "legal_news");
+  assert.equal(result.results[0].sourceId, "ekhtebar");
+});
+
+test("Google fallback exposes a direct query for each configured Iranian news source", async () => {
+  const result = await createIranianSourceSearchFallback().search({
+    query: "رأی وحدت رویه",
+    group: "news",
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.group, "news");
+  assert.equal(result.searchLinks.length, 2);
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Aekhtebar.ir")));
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amizanonline.ir")));
 });
 
 test("invalid query and unsupported source group are rejected before network access", async () => {
@@ -59,7 +76,7 @@ test("invalid query and unsupported source group are rejected before network acc
 });
 
 
-test("no-key fallback searches Qavanin through Browser Run and normalizes official results", async () => {
+test("Qavanin Browser Run fallback parses official source metadata", async () => {
   let capturedUrl = "";
   const markup = `
     <table>
@@ -71,7 +88,6 @@ test("no-key fallback searches Qavanin through Browser Run and normalizes offici
       </tr>
     </table>
   `;
-  const { createIranianSourceSearchFallback } = await import("../../src/lib/mavis/iranian-source-search.mjs");
   const client = createIranianSourceSearchFallback({
     browser: {
       quickAction: async (action, options) => {
@@ -91,10 +107,12 @@ test("no-key fallback searches Qavanin through Browser Run and normalizes offici
   assert.ok(result.searchLinks.some((item) => item.id === "rrk"));
 });
 
-test("no-key fallback returns official portal links when Browser Run is unavailable or blocked", async () => {
-  const { createIranianSourceSearchFallback } = await import("../../src/lib/mavis/iranian-source-search.mjs");
-  const client = createIranianSourceSearchFallback();
-  const result = await client.search({ query: "قانون مدنی", group: "official", limit: 5 });
+test("no-key fallback returns official portal links when Browser Run is unavailable", async () => {
+  const result = await createIranianSourceSearchFallback().search({
+    query: "قانون مدنی",
+    group: "official",
+    limit: 5
+  });
   assert.equal(result.ok, true);
   assert.equal(result.provider, "official_portal_fallback");
   assert.equal(result.results.length, 0);
@@ -103,7 +121,6 @@ test("no-key fallback returns official portal links when Browser Run is unavaila
 });
 
 test("Browser Run failures degrade to verified portal links instead of a false search error", async () => {
-  const { createIranianSourceSearchFallback } = await import("../../src/lib/mavis/iranian-source-search.mjs");
   const client = createIranianSourceSearchFallback({
     browser: { quickAction: async () => { throw new Error("bot protection"); } }
   });
@@ -114,15 +131,40 @@ test("Browser Run failures degrade to verified portal links instead of a false s
   assert.ok(result.searchLinks.length >= 3);
 });
 
-
-test("all-source fallback includes academic domains instead of only legal portals", async () => {
-  const { createIranianSourceSearchFallback } = await import("../../src/lib/mavis/iranian-source-search.mjs");
+test("all-source fallback includes the selected Iranian academic and legal-news domains", async () => {
   const result = await createIranianSourceSearchFallback().search({
     query: "مسئولیت مدنی",
     group: "all",
     limit: 10
   });
   assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Asid.ir")));
-  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amagiran.com")));
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amizanonline.ir")));
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Aekhtebar.ir")));
   assert.ok(result.searchLinks.some((item) => item.id === "qavanin"));
+});
+
+
+test("Iranian legal-news results normalize as secondary news sources for article drafts", () => {
+  const normalized = normalizeMavisManualSourceInput({
+    title: "گزارش حقوقی اختبار",
+    sourceUrl: "https://ekhtebar.ir/news/123",
+    sourceAuthority: "legal_news",
+    sourceGroup: "news",
+    provider: "tavily",
+  });
+  assert.equal(normalized.source.sourceType, "news");
+  assert.equal(normalized.relationType, "secondary_reference");
+  assert.equal(normalized.source.sourceAuthority, "legal_news");
+});
+
+
+test("official research centers are treated as background, not binding primary authority", () => {
+  const normalized = normalizeMavisManualSourceInput({
+    title: "گزارش پژوهشی مرکز پژوهش‌های مجلس",
+    sourceUrl: "https://rc.majlis.ir/fa/report/123",
+    sourceAuthority: "official_research",
+    sourceGroup: "official",
+  });
+  assert.equal(normalized.source.sourceType, "government");
+  assert.equal(normalized.relationType, "research_background");
 });

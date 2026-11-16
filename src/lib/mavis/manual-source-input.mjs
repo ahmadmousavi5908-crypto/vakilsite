@@ -17,6 +17,7 @@ function inferSourceType(source) {
   if (authority === "official_primary") return "official_law";
   if (authority === "official_judicial" || authority === "official_portal") return "judiciary";
   if (authority === "official_research") return "government";
+  if (["official_news", "legal_news"].includes(authority) || group === "news") return "news";
   if (authority === "academic" || authority === "academic_index" || group === "academic") return "academic";
   if (authority === "secondary_reference" || group === "secondary") return "other";
   return "manual";
@@ -24,11 +25,13 @@ function inferSourceType(source) {
 
 function inferRelationType(sourceType, source) {
   const authority = text(source.sourceAuthority, 100);
-  if (["official_primary", "official_judicial", "official_portal", "official_research"].includes(authority)
-    || ["official_law", "judiciary", "government"].includes(sourceType)) {
+  if (["official_primary", "official_judicial", "official_portal"].includes(authority)
+    || ["official_law", "judiciary"].includes(sourceType)) {
     return "primary_authority";
   }
-  if (authority === "secondary_reference") return "secondary_reference";
+  if (["secondary_reference", "official_news", "legal_news"].includes(authority) || sourceType === "news") {
+    return "secondary_reference";
+  }
   return "research_background";
 }
 

@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feature/mavis-third-arm-delivery-20261116
+      - feature/mavis-iranian-editorial-finalize-20261117
     paths:
       - "ops/mavis-staging-admin-e2e-trigger.txt"
   workflow_dispatch:

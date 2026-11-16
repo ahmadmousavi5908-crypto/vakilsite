@@ -4,3 +4,11 @@ No Production routes or database are targeted.
 Refreshed after Workers AI output validation and IndexNow publication notification fixes on 2026-11-17.
 
 Deploy the merged secure Search Console OAuth and read-only inspection tools to the isolated Staging Worker. Do not deploy Production.
+
+Iranian-only editorial search workflow staging validation: 2026-11-17.
+
+Redeploy Staging with consistent Iranian source-search response metadata: 2026-11-17.
+
+Deploy final Iranian source authority classification and intake wiring to Staging: 2026-11-17.
+
+Deploy collapsible editorial workspace and expandable published article library: 2026-11-17.

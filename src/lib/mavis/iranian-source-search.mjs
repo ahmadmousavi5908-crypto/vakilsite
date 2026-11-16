@@ -36,7 +36,7 @@ export function createIranianSourceSearch({ apiKey, fetchImpl = globalThis.fetch
     async search({ query, group = "all", limit = 10 } = {}) {
       const cleanQuery = typeof query === "string" ? query.normalize("NFC").trim() : "";
       if (cleanQuery.length < 2 || cleanQuery.length > 180) return { ok: false, reason: "invalid_query" };
-      if (!["all", "official", "academic", "secondary"].includes(group)) return { ok: false, reason: "invalid_group" };
+      if (!["all", "official", "academic", "news"].includes(group)) return { ok: false, reason: "invalid_group" };
       if (!Number.isInteger(limit) || limit < 1 || limit > 20) return { ok: false, reason: "invalid_limit" };
 
       const controller = new AbortController();
@@ -69,6 +69,7 @@ export function createIranianSourceSearch({ apiKey, fetchImpl = globalThis.fetch
         return {
           ok: true,
           query: cleanQuery,
+          group,
           results,
           usageCredits: Number.isFinite(payload?.usage?.credits) ? payload.usage.credits : null,
           provider: "tavily",
@@ -184,20 +185,14 @@ function buildOfficialSearchLinks(query, group) {
       url: "https://rrk.ir/ords/r/rrs/rrs-front/home"
     });
   }
-  const domains = group === "all"
-    ? [
-        ...getIranianSourceDomains("official").slice(3, 6),
-        ...getIranianSourceDomains("academic").slice(0, 3),
-        ...getIranianSourceDomains("secondary").slice(0, 1)
-      ]
-    : group === "official"
-      ? getIranianSourceDomains("official").slice(3)
-      : getIranianSourceDomains(group);
-  for (const domain of domains.slice(0, 7)) {
+
+  const directDomains = new Set(["qavanin.ir", "dotic.ir", "rrk.ir"]);
+  const domains = getIranianSourceDomains(group).filter((domain) => !directDomains.has(domain));
+  for (const domain of domains) {
     links.push({
       id: "search-" + domain,
       title: "جست‌وجو در " + domain,
-      description: "پیوند جست‌وجوی وب محدود به دامنه منتخب؛ نتیجه باید در منبع اصلی راستی‌آزمایی شود",
+      description: "جست‌وجوی گوگل محدود به دامنه منتخب؛ نتیجه باید در منبع اصلی راستی‌آزمایی شود",
       url: "https://www.google.com/search?q=" + encodeURIComponent("site:" + domain + " " + query)
     });
   }
@@ -213,7 +208,7 @@ export function createIranianSourceSearchFallback({ browser, timeoutMs = 18000 }
     async search({ query, group = "all", limit = 10 } = {}) {
       const cleanQuery = typeof query === "string" ? query.normalize("NFC").trim() : "";
       if (cleanQuery.length < 2 || cleanQuery.length > 180) return { ok: false, reason: "invalid_query" };
-      if (!["all", "official", "academic", "secondary"].includes(group)) return { ok: false, reason: "invalid_group" };
+      if (!["all", "official", "academic", "news"].includes(group)) return { ok: false, reason: "invalid_group" };
       if (!Number.isInteger(limit) || limit < 1 || limit > 20) return { ok: false, reason: "invalid_limit" };
 
       const searchLinks = buildOfficialSearchLinks(cleanQuery, group);
@@ -251,6 +246,7 @@ export function createIranianSourceSearchFallback({ browser, timeoutMs = 18000 }
       return {
         ok: true,
         query: cleanQuery,
+        group,
         results: results.slice(0, limit),
         searchLinks,
         provider: results.length ? "cloudflare_browser_run_qavanin" : "official_portal_fallback",
