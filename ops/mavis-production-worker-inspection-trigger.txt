@@ -5,3 +5,5 @@ Triggered after the MAVIS Workers AI and no-key source-search integration change
 No deployment, secret mutation, or database operation is permitted.
 
 Read-only Production Worker integration inventory after Workers AI runtime changes. Never read secret values. No Production deployment or database changes.
+
+Recheck Production Worker secret names after Search Console OAuth rollout. Read-only only; never print values and do not deploy.
