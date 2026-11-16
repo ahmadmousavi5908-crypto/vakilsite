@@ -18,6 +18,7 @@ export default async function ArticlesPage() {
       <header className="article-header"><div className="container article-header-inner">
         <Link href="/" className="article-brand">خدمات حقوقی <span>سید احمد موسوی · اهواز و سراسر ایران</span></Link>
         <Link href="/#contact" className="article-header-cta">درخواست بررسی اولیه ←</Link>
+        <Link href="/articles/library" className="article-header-cta">فهرست کامل مقالات ←</Link>
       </div></header>
 
       <section className="editorial-hero">
