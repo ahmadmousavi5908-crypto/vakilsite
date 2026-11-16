@@ -1,1 +1,1 @@
-Retry authenticated Staging lifecycle after omitting the generated auth.identities.email column. Prior temporary fixtures were confirmed cleaned up.
+Retry authenticated Staging E2E with the email identity provider_id set to the Supabase Auth user UUID as required by the Auth schema.
