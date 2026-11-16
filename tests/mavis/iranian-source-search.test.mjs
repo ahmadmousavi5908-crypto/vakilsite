@@ -45,6 +45,7 @@ test("online search is restricted to the selected Iranian source group", async (
   const result = await client.search({ query: "رأی وحدت رویه", group: "news", limit: 10 });
   assert.equal(sentBody.include_domains_mode, "restrict");
   assert.deepEqual(sentBody.include_domains, ["mizanonline.ir", "ekhtebar.ir"]);
+  assert.equal(result.group, "news");
   assert.equal(result.results.length, 1);
   assert.equal(result.results[0].sourceAuthority, "legal_news");
   assert.equal(result.results[0].sourceId, "ekhtebar");
@@ -56,6 +57,7 @@ test("Google fallback exposes a direct query for each configured Iranian news so
     group: "news",
   });
   assert.equal(result.ok, true);
+  assert.equal(result.group, "news");
   assert.equal(result.searchLinks.length, 2);
   assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Aekhtebar.ir")));
   assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amizanonline.ir")));
