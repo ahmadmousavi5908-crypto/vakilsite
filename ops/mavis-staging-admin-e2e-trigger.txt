@@ -7,3 +7,4 @@ Post-Migration verification: run the authenticated Staging editorial lifecycle a
 
 Retry after database connection preflight and password fallback fix; confirm lifecycle and cleanup.
 2026-11-16: rerun authenticated editorial lifecycle after latest staging Worker deployment.
+2026-11-16: verify one current static article can be copied into an unpublished versioned Staging draft, remains hidden from anonymous readers, and is fully cleaned up.
