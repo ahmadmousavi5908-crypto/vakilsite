@@ -9,7 +9,7 @@ function normalizeResult(result) {
   const title = typeof result.title === "string" ? result.title.trim().slice(0, 300) : "";
   if (!title) return null;
   const publishedDate = typeof result.published_date === "string" &&
-    /^\\d{4}-\\d{2}-\\d{2}$/.test(result.published_date)
+    /^\d{4}-\d{2}-\d{2}$/.test(result.published_date)
     ? result.published_date
     : null;
   return {
