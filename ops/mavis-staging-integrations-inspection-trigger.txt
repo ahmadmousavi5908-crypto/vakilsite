@@ -1,3 +1,5 @@
 Run the read-only Staging integration inventory after the isolated Worker deployment. Report secret names only; never read or print secret values. No deployment, database mutation, or Production action.
 
 Post-merge verification after Workers AI output validation and IndexNow client fixes. Run on current main. No Production actions.
+
+Post-deploy verification after secure Search Console OAuth and read-only inspection integration. No Production actions.
