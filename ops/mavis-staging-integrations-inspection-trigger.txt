@@ -11,3 +11,5 @@ Post-E2E cleanup verification: confirm the temporary administrator identity and 
 2026-11-16: verify no E2E article, source, link, or administrator identity remains after source-attachment lifecycle test.
 2026-11-16: final post-E2E read-only check after all duplicate E2E runs completed; require zero temporary users, articles, and source fixtures.
 2026-11-16: final post-manual-source E2E audit; verify no temporary source, article, version, approval, or auth identity remains.
+
+2026-11-16: verify corrected runtime secret contract (GSC refresh token, no obsolete encryption key), local-only growth audit, current CMS inventory, and metadata-only source discovery. Read-only; do not mutate database or Worker.
