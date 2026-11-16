@@ -97,7 +97,7 @@ jobs:
               FROM pg_proc p
               JOIN pg_namespace n ON n.oid = p.pronamespace
               WHERE n.nspname IN ('public', 'mavis_private')
-                AND (p.proname ILIKE '%mavis%' OR p.proname = 'is_site_admin')
+                AND (p.proname ILIKE '%mavis%' OR p.proname = 'is_site_admin' OR n.nspname = 'mavis_private')
             ), '[]'::jsonb),
             'relations', jsonb_build_object(
               'mother_two_table', to_regclass('public.mavis_editorial_articles')::text,
