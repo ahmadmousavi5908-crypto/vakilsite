@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useMemo, useState } from "react";
 import MavisIranianSourceSearch from "./MavisIranianSourceSearch";
 import { saveEditorialDraft, publishEditorialArticle } from "../../app/admin/mavis/editorial/actions";
@@ -37,6 +39,8 @@ function toForm(article) {
     documentNumber: article.sourceMetadata?.documentNumber || "",
     issuingAuthority: article.sourceMetadata?.issuingAuthority || "",
     documentType: article.sourceMetadata?.documentType || "",
+    coverImageUrl: article.coverImageUrl || "",
+    coverImageAlt: article.coverImageAlt || "",
   };
 }
 
@@ -129,7 +133,7 @@ export default function MavisEditorialStudio({ articles }) {
   function createArticle() {
     const fresh = {
       title: "", slug: "", category: "", readTime: "۶ دقیقه", excerpt: "", intro: "",
-      sections: [], checklist: [], warning: "", sources: [], status: "draft", source: "new",
+      sections: [], checklist: [], warning: "", sources: [], coverImageUrl: "", coverImageAlt: "", status: "draft", source: "new",
     };
     setSelectedSlug("");
     setForm(toForm(fresh));
@@ -203,6 +207,8 @@ export default function MavisEditorialStudio({ articles }) {
               <label>دسته‌بندی<input name="category" value={form.category} onChange={update("category")} maxLength={120} /></label>
               <label>زمان مطالعه<input name="read_time" value={form.readTime} onChange={update("readTime")} maxLength={40} /></label>
               <label className={styles.wide}>خلاصه مقاله<textarea name="excerpt" value={form.excerpt} onChange={update("excerpt")} required rows="2" maxLength={1200} /></label>
+              <label className={styles.wide}>نشانی تصویر شاخص (HTTPS)<input name="cover_image_url" value={form.coverImageUrl} onChange={update("coverImageUrl")} maxLength={2048} dir="ltr" placeholder="https://..." /></label>
+              <label className={styles.wide}>متن جایگزین تصویر<input name="cover_image_alt" value={form.coverImageAlt} onChange={update("coverImageAlt")} maxLength={300} /></label>
               <label className={styles.wide}>مقدمه<textarea name="intro" value={form.intro} onChange={update("intro")} required rows="4" maxLength={4000} /></label>
               <label className={styles.wide}>متن مقاله (برای تیتر اصلی هر بخش از ## استفاده کن)<textarea name="body_markdown" value={form.bodyMarkdown} onChange={update("bodyMarkdown")} required rows="14" maxLength={50000} dir="rtl" placeholder={"## عنوان بخش اول\nمتن بخش اول...\n\n## عنوان بخش دوم\nمتن بخش دوم..."} /></label>
               <label className={styles.wide}>چک‌لیست (هر مورد در یک خط)<textarea name="checklist" value={form.checklist} onChange={update("checklist")} rows="4" maxLength={5000} /></label>
