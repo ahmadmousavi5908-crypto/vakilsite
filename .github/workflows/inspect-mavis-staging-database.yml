@@ -97,10 +97,10 @@ jobs:
             const summary = {
               file: name,
               sha256,
-              hardensAdminAcl: /revoke\\s+all\\s+on\\s+function\\s+public\\.is_site_admin/i.test(sql),
-              createsEditorialArticles: /create\\s+table(?:\\s+if\\s+not\\s+exists)?\\s+public\\.mavis_editorial_articles/i.test(sql),
-              createsMavisArticles: /create\\s+table(?:\\s+if\\s+not\\s+exists)?\\s+public\\.mavis_articles/i.test(sql),
-              renamesMavisArticles: /rename\\s+to\\s+mavis_editorial_articles/i.test(sql),
+              hardensAdminAcl: /revoke\s+all\s+on\s+function\s+public\.is_site_admin/i.test(sql),
+              createsEditorialArticles: /create\s+table(?:\s+if\s+not\s+exists)?\s+public\.mavis_editorial_articles/i.test(sql),
+              createsMavisArticles: /create\s+table(?:\s+if\s+not\s+exists)?\s+public\.mavis_articles/i.test(sql),
+              renamesMavisArticles: /rename\s+to\s+mavis_editorial_articles/i.test(sql),
               mentionsSearchConsole: /mavis_search_console_connections/i.test(sql),
               mentionsSourceCandidates: /mavis_source_candidates/i.test(sql),
             };
