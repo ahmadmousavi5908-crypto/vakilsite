@@ -86,11 +86,11 @@ test("extracts a single validated HTTPS article URL with bounded clean content",
     },
   });
 
-  const result = await client.extract({ url: "https://example.org/paper", query: "حقوق قراردادها" });
+  const result = await client.extract({ url: "https://example.org/paper" });
   const body = JSON.parse(request.options.body);
   assert.equal(request.url, "https://api.tavily.com/extract");
   assert.equal(body.urls[0], "https://example.org/paper");
-  assert.equal(body.query, "حقوق قراردادها");
+  assert.equal(Object.hasOwn(body, "query"), false);
   assert.equal(body.format, "markdown");
   assert.equal(result.ok, true);
   assert.match(result.content, /Extracted content/);
