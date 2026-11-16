@@ -30,7 +30,7 @@ This integration connects the administrator's Google Search Console property to 
    Do not add the Production callback or configure Production OAuth credentials as part of this Staging setup. A future Production rollout must use a separate Google Cloud project, OAuth client, redirect URI, Worker secrets, and database connection after explicit approval. The Staging Worker derives its callback from the Staging `NEXT_PUBLIC_SITE_URL`; keep its OAuth credentials and encrypted refresh token in Staging only.
 
 6. Confirm that the Google account used for consent has access to the Search Console property. Prefer Owner permission for initial setup.
-7. Copy the OAuth Client ID and Client Secret into the hosting provider's encrypted environment-variable settings. Do not put either value in GitHub, source code, chat, or a committed `.env` file.
+7. Add the OAuth Client ID, Client Secret, exact property URL, and encryption key to the GitHub Actions **`staging` environment secrets**. The Staging deploy workflow injects these values into the Worker secret store without printing them. Do not put values in source code, chat, or a committed `.env` file. Do not configure Production OAuth secrets during this Staging rollout.
 
 ## Required server environment
 
@@ -42,13 +42,15 @@ This integration connects the administrator's Google Search Console property to 
 | `MAVIS_GSC_TOKEN_ENCRYPTION_KEY` | 32 cryptographically random bytes encoded as 64 hexadecimal characters |
 | `NEXT_PUBLIC_SITE_URL` | Staging Worker origin: `https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev` |
 
+`MAVIS_GSC_REFRESH_TOKEN` is **not required** for this OAuth flow: the refresh token is issued during Google consent and stored encrypted in the Staging Supabase connection table. The legacy static refresh-token secret remains optional only for compatibility.
+
 Generate the encryption key on a trusted local device:
 
 ```sh
 openssl rand -hex 32
 ```
 
-Set the resulting value directly in the hosting provider's secret/environment settings. Do not send it in chat or commit it. Keep it stable: changing it makes the stored encrypted refresh token unreadable and requires reconnecting the Google account.
+Set the resulting value as `MAVIS_GSC_TOKEN_ENCRYPTION_KEY` in GitHub Actions → Environments → `staging` → Secrets. The deploy workflow injects it into the Staging Worker secret store. Do not send it in chat or commit it. Keep it stable: changing it makes the stored encrypted refresh token unreadable and requires reconnecting the Google account.
 
 The database migration `014_mavis_search_console_oauth_storage.sql` must be applied before the OAuth callback can save credentials. Apply migrations only through the approved deployment process; this pull request does not apply production migrations.
 
