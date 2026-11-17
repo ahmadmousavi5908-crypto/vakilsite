@@ -29,6 +29,8 @@ export default function MavisIranianSourceSearch({ onImport }) {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [extractingUrl, setExtractingUrl] = useState("");
+  const [extractReport, setExtractReport] = useState(null);
   const [metadata, setMetadata] = useState(null);
 
   async function search(event) {
@@ -65,6 +67,64 @@ export default function MavisIranianSourceSearch({ onImport }) {
       setError(requestError instanceof Error ? requestError.message : "خطای ناشناخته در جست‌وجو.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function extract(item) {
+    if (extractingUrl) return;
+    setSelected(item);
+    setExtractingUrl(item.url);
+    setExtractReport(null);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch("/api/admin/mavis/source-extract", {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: item.url }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || payload?.ok !== true || typeof payload.content !== "string") {
+        throw new Error(payload?.error?.message || "استخراج مشخصات منبع انجام نشد.");
+      }
+
+      const content = payload.content;
+      const headings = content.split("\\n")
+        .map((line) => line.match(/^#{1,3}\\s+(.+)$/)?.[1])
+        .filter(Boolean)
+        .map((heading) => heading.replace(/\\s+/g, " ").trim().slice(0, 120))
+        .slice(0, 8);
+      const match = (patterns, max = 180) => {
+        for (const pattern of patterns) {
+          const value = content.match(pattern)?.[1];
+          if (value) return value.replace(/\\s+/g, " ").trim().slice(0, max);
+        }
+        return "";
+      };
+      const author = match([/(?:نویسنده|مولف|مؤلف|پدیدآور|author)\\s*[:：-]\\s*([^\\n]{2,180})/i]);
+      const publication = match([/(?:نام نشریه|نشریه|مجله|فصلنامه|ژورنال|publication|journal|publisher|ناشر)\\s*[:：-]\\s*([^\\n]{2,180})/i]);
+      const publicationDate = match([/(?:تاریخ انتشار|تاریخ چاپ|published(?: on)?|publication date)\\s*[:：-]\\s*([^\\n]{4,80})/i], 40);
+      const doi = content.match(/\\b10\\.\\d{4,9}\\/[a-z0-9._;()/:+-]+\\b/i)?.[0] || "";
+      const wordCount = content.split(/\\s+/).filter(Boolean).length;
+      const hasAbstract = /(?:چکیده|abstract)/i.test(content);
+
+      setMetadata((current) => ({
+        ...(current || {}),
+        title: current?.title || item.title || "",
+        author: author || current?.author || "",
+        publication: publication || current?.publication || item.sourceName || "",
+        publicationDate: current?.publicationDate || item.publishedDate || publicationDate,
+        documentNumber: doi || current?.documentNumber || "",
+        sourceUrl: item.url,
+      }));
+      setExtractReport({ wordCount, hasAbstract, headings, sourceName: item.sourceName });
+      setNotice("اطلاعات قابل تشخیص به فرم منبع منتقل شد. متن کامل صفحه فقط برای تحلیل موقت دریافت شد و در بانک ذخیره نمی‌شود.");
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "استخراج منبع ناموفق بود.");
+    } finally {
+      setExtractingUrl("");
     }
   }
 
@@ -146,6 +206,13 @@ export default function MavisIranianSourceSearch({ onImport }) {
 
       {error ? <p className={styles.error} role="alert">{error}</p> : null}
       {notice ? <p className={styles.notice} role="status">{notice}</p> : null}
+      {extractReport ? (
+        <section className={styles.extractReport} aria-live="polite">
+          <strong>گزارش استخراج موقت · {extractReport.sourceName}</strong>
+          <span>{extractReport.wordCount.toLocaleString("fa-IR")} واژه · {extractReport.hasAbstract ? "نشانه چکیده شناسایی شد" : "چکیده مشخصی شناسایی نشد"}</span>
+          {extractReport.headings.length ? <ul>{extractReport.headings.map((heading, index) => <li key={index}>{heading}</li>)}</ul> : <small>سرفصل مشخصی از متن استخراج نشد.</small>}
+        </section>
+      ) : null}
 
       {results.length ? (
         <div className={styles.resultsLayout}>
@@ -161,6 +228,9 @@ export default function MavisIranianSourceSearch({ onImport }) {
                 <p>{item.snippet || "برای مشاهده جزئیات، به صفحه منبع اصلی مراجعه کنید."}</p>
                 <div className={styles.resultActions}>
                   <button type="button" onClick={() => choose(item)}>انتخاب و تکمیل مشخصات</button>
+                  <button type="button" onClick={() => extract(item)} disabled={Boolean(extractingUrl)}>
+                    {extractingUrl === item.url ? "در حال استخراج..." : "استخراج اطلاعات و سرفصل‌ها"}
+                  </button>
                   <a href={item.url} target="_blank" rel="noopener noreferrer">مشاهده منبع اصلی ↗</a>
                 </div>
               </article>
