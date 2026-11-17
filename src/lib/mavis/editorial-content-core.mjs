@@ -77,6 +77,9 @@ export function mapPublishedEditorialRecord(record) {
     ...snapshot,
     ...content,
     recordType: typeof content.record_type === "string" ? content.record_type : "article",
+    authorName: snapshot.author_name || snapshot.authorName || "",
+    seoTitle: snapshot.seo_title || snapshot.seoTitle || "",
+    seoDescription: snapshot.seo_description || snapshot.seoDescription || "",
     legalMetadata: content.legal_metadata && typeof content.legal_metadata === "object" && !Array.isArray(content.legal_metadata)
       ? content.legal_metadata
       : {},
