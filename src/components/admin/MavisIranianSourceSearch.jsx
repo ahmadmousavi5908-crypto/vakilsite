@@ -127,6 +127,8 @@ export default function MavisIranianSourceSearch({ onImport }) {
       documentType: "",
       abstract: item.snippet || "",
       sourceUrl: item.url || "",
+      sourceAuthority: item.sourceAuthority || "",
+      sourceGroup: item.sourceGroup || "",
     });
   }
 
