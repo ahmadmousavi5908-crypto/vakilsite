@@ -52,14 +52,21 @@ export async function searchMavisKnowledge(query, limit = 10) {
   });
 }
 
-export function getMavisKnowledgeInventory() {
+export async function getMavisKnowledgeInventory() {
+  const databasePublishedArticles = await getMavisPublishedArticles();
+  const dynamicArticleRecords = buildPublishedArticleRecords(databasePublishedArticles);
+  const dynamicSlugs = new Set(dynamicArticleRecords.map((record) => record.path?.slice("/articles/".length)));
+  const currentStaticArticles = publishedArticleRecords.filter((record) =>
+    !dynamicSlugs.has(record.path?.slice("/articles/".length))
+  );
+  const publishedCount = currentStaticArticles.length + dynamicArticleRecords.length;
   return {
     terms: legalLibraryCollections.terms.length,
     laws: legalLibraryCollections.laws.length,
     legalArticles: legalLibraryCollections.articles.length,
-    publishedArticles: publishedArticleRecords.length,
+    publishedArticles: publishedCount,
     researchNotes: legalResearchNoteRecords.length,
-    searchable: searchableRecords.length,
-    sources: ["src/data/legal-library", "src/data/legal-library/reports/source-review.json", "src/data/articles.js"],
+    searchable: searchableRecords.length - publishedArticleRecords.length + publishedCount,
+    sources: ["src/data/legal-library", "src/data/legal-library/reports/source-review.json", "src/data/articles.js", "mavis_editorial_articles"],
   };
 }
