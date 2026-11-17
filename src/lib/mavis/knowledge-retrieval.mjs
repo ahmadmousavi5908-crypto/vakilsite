@@ -37,7 +37,7 @@ export function createMavisKnowledgeRetriever(dependencies) {
     buildLegalResearchDossier,
   } = dependencies;
 
-  return function retrieveMavisKnowledge(query, limit = 10) {
+  return async function retrieveMavisKnowledge(query, limit = 10) {
     const normalizedQuery = typeof query === "string" ? query.trim() : "";
     if (normalizedQuery.length < 2 || normalizedQuery.length > 120) {
       throw new RangeError("MAVIS knowledge query must contain 2 to 120 characters");
@@ -47,7 +47,7 @@ export function createMavisKnowledgeRetriever(dependencies) {
       throw new RangeError("MAVIS knowledge result limit must be an integer from 1 to 20");
     }
 
-    const matchedRecords = searchMavisKnowledge(normalizedQuery, limit);
+    const matchedRecords = await searchMavisKnowledge(normalizedQuery, limit);
     if (!Array.isArray(matchedRecords)) {
       throw new TypeError("MAVIS knowledge search must return an array");
     }
