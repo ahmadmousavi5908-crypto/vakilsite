@@ -36,14 +36,26 @@ export default async function ArticleDetailPage({ params }) {
 
   const siteUrl = getSiteUrl();
   const articleUrl = siteUrl ? new URL("/articles/" + article.slug, siteUrl).href : null;
+  const legalMetadata = article.legalMetadata || {};
+  const recordType = article.recordType || "article";
+  const recordTypeLabels = { article: "مقاله حقوقی", law: "قانون یا مقرره", unifying_opinion: "رأی وحدت رویه", judicial_decision: "رأی قضایی", advisory_opinion: "نظریه مشورتی", legal_interpretation: "تفسیر و شرح قانون", legal_analysis: "تحلیل مسئله حقوقی", official_circular: "بخشنامه و دستورالعمل", academic_research: "پژوهش و مقاله علمی" };
+  const validityLabels = { unknown: "بررسی‌نشده", current: "معتبر در حال حاضر", amended: "اصلاح‌شده", repealed: "منسوخ", historical: "معتبر در بازه تاریخی", disputed: "مورد اختلاف / نیازمند بررسی" };
+  const schemaType = recordType === "law" ? "Legislation" : recordType === "academic_research" ? "ScholarlyArticle" : ["unifying_opinion", "judicial_decision", "advisory_opinion", "official_circular"].includes(recordType) ? "CreativeWork" : "Article";
   const structuredArticle = articleUrl
     ? {
         "@context": "https://schema.org",
-        "@type": "BlogPosting",
+        "@type": schemaType,
         headline: article.title,
         description: article.excerpt,
         inLanguage: "fa-IR",
         articleSection: article.category,
+        ...(recordType === "law" ? {
+          legislationType: recordTypeLabels[recordType],
+          ...(legalMetadata.document_number ? { legislationIdentifier: legalMetadata.document_number } : {}),
+          ...(legalMetadata.document_date ? { legislationDate: legalMetadata.document_date } : {}),
+          ...(legalMetadata.issuing_authority ? { legislationPassedBy: { "@type": "Organization", name: legalMetadata.issuing_authority } } : {}),
+          legislationJurisdiction: { "@type": "AdministrativeArea", name: "ایران" },
+        } : {}),
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": articleUrl,
@@ -68,7 +80,7 @@ export default async function ArticleDetailPage({ params }) {
       <section className="article-detail-hero">
         <div className="container">
           <div className="article-breadcrumb"><Link href="/">صفحه اصلی</Link><span>←</span><Link href="/articles">مقالات حقوقی</Link></div>
-          <span className="section-kicker">راهنمای حقوقی · قوانین ایران</span>
+          <span className="section-kicker">{recordTypeLabels[recordType] || "محتوای حقوقی"} · قوانین ایران</span>
           <h1>{article.title}</h1>
           <p>{article.excerpt}</p>
           <div className="article-meta article-detail-meta"><span>{article.readTime} مطالعه</span>{article.authorName ? <span>نویسنده: {article.authorName}</span> : null}<span>ویژه قوانین ایران</span></div>
@@ -89,6 +101,21 @@ export default async function ArticleDetailPage({ params }) {
             <ul>{article.checklist.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul>
           </div>
           <div className="article-legal-note"><b>نکته مهم</b><p>{article.warning}</p></div>
+          {Object.values(legalMetadata).some(Boolean) ? (
+            <section className="article-sources">
+              <h2>مشخصات حقوقی سند</h2>
+              <ul>
+                {legalMetadata.document_number ? <li>شماره / شناسه: {legalMetadata.document_number}</li> : null}
+                {legalMetadata.issuing_authority ? <li>مرجع صادرکننده: {legalMetadata.issuing_authority}</li> : null}
+                {legalMetadata.document_date ? <li>تاریخ صدور / تصویب: {legalMetadata.document_date}</li> : null}
+                {legalMetadata.publication_date ? <li>تاریخ انتشار: {legalMetadata.publication_date}</li> : null}
+                {legalMetadata.effective_from ? <li>لازم‌الاجرا از: {legalMetadata.effective_from}</li> : null}
+                {legalMetadata.effective_until ? <li>پایان اعتبار: {legalMetadata.effective_until}</li> : null}
+                {legalMetadata.validity_status ? <li>وضعیت اعتبار ثبت‌شده: {validityLabels[legalMetadata.validity_status] || validityLabels.unknown}</li> : null}
+                {legalMetadata.related_law ? <li>سند مرتبط: {legalMetadata.related_law}</li> : null}
+              </ul>
+            </section>
+          ) : null}
           {article.sourceMetadata && Object.values(article.sourceMetadata).some(Boolean) ? (
             <section className="article-sources">
               <h2>مشخصات انتشار و سند</h2>

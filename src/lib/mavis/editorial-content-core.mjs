@@ -69,8 +69,20 @@ export function validateEditorialSlug(value) {
 
 export function mapPublishedEditorialRecord(record) {
   if (!record || record.status !== "published" || !record.published_content) return null;
+  const snapshot = record.published_content;
+  const content = snapshot.content && typeof snapshot.content === "object" && !Array.isArray(snapshot.content)
+    ? snapshot.content
+    : {};
   return {
-    ...record.published_content,
+    ...snapshot,
+    ...content,
+    recordType: typeof content.record_type === "string" ? content.record_type : "article",
+    authorName: snapshot.author_name || snapshot.authorName || "",
+    seoTitle: snapshot.seo_title || snapshot.seoTitle || "",
+    seoDescription: snapshot.seo_description || snapshot.seoDescription || "",
+    legalMetadata: content.legal_metadata && typeof content.legal_metadata === "object" && !Array.isArray(content.legal_metadata)
+      ? content.legal_metadata
+      : {},
     slug: record.slug,
     publishedAt: record.published_at,
     updatedAt: record.updated_at,

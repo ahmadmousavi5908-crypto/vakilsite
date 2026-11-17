@@ -5,6 +5,9 @@ import { Fragment, useMemo, useState } from "react";
 import styles from "./MavisDraftList.module.css";
 import { createEditorialSpreadsheetTsv } from "../../lib/mavis/editorial-spreadsheet-export.mjs";
 
+const RECORD_TYPE_LABELS = { article: "مقاله حقوقی", law: "قانون یا مقرره", unifying_opinion: "رأی وحدت رویه", judicial_decision: "رأی قضایی", advisory_opinion: "نظریه مشورتی", legal_interpretation: "تفسیر قانون", legal_analysis: "تحلیل حقوقی", official_circular: "بخشنامه", academic_research: "پژوهش علمی" };
+const VALIDITY_LABELS = { unknown: "بررسی‌نشده", current: "معتبر", amended: "اصلاح‌شده", repealed: "منسوخ", historical: "تاریخی", disputed: "نیازمند بررسی" };
+
 const STATUS_LABELS = {
   draft: "پیش‌نویس",
   changes_requested: "نیازمند اصلاح",
@@ -22,7 +25,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
     const normalized = query.trim().toLocaleLowerCase();
     return [...rows]
       .filter((article) => statusFilter === "all" || article.status === statusFilter)
-      .filter((article) => !normalized || [article.title, article.slug, article.category, article.author_name, article.excerpt, ...(Array.isArray(article.tags) ? article.tags : [])].some((value) => String(value || "").toLocaleLowerCase().includes(normalized)))
+      .filter((article) => !normalized || [article.title, article.slug, article.category, article.author_name, article.excerpt, RECORD_TYPE_LABELS[article.record_type] || RECORD_TYPE_LABELS.article, ...Object.values(article.legal_metadata || {}), ...(Array.isArray(article.tags) ? article.tags : [])].some((value) => String(value || "").toLocaleLowerCase().includes(normalized)))
       .sort((a, b) => {
         const left = a[sortBy] ?? "";
         const right = b[sortBy] ?? "";
@@ -35,9 +38,13 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
 
   function downloadSpreadsheet() {
     const exportRows = [
-      ["عنوان مقاله", "نویسنده", "دسته‌بندی", "برچسب‌ها", "چکیده", "نامک", "وضعیت", "نسخه", "آخرین به‌روزرسانی"],
+      ["عنوان مدرک", "نوع مدرک", "شماره سند", "مرجع صادرکننده", "وضعیت اعتبار", "نویسنده", "دسته‌بندی", "برچسب‌ها", "چکیده", "نامک", "وضعیت انتشار", "نسخه", "آخرین به‌روزرسانی"],
       ...visibleRows.map((article) => [
         article.title,
+        RECORD_TYPE_LABELS[article.record_type] || RECORD_TYPE_LABELS.article,
+        article.legal_metadata?.document_number || "",
+        article.legal_metadata?.issuing_authority || "",
+        VALIDITY_LABELS[article.legal_metadata?.validity_status] || VALIDITY_LABELS.unknown,
         article.author_name || "",
         article.category,
         Array.isArray(article.tags) ? article.tags.join("، ") : "",
@@ -80,12 +87,12 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
       <header className={styles.header}>
         <div>
           <span className={styles.eyebrow}>DATABASE EDITORIAL RECORDS</span>
-          <h2 id="mavis-draft-list-title">کاربرگ مقالات و پیش‌نویس‌ها</h2>
+          <h2 id="mavis-draft-list-title">کاربرگ اسناد حقوقی و پیش‌نویس‌ها</h2>
           <p>جدول قابل جست‌وجو و مرتب‌سازی؛ داده‌ها از دیتابیس و با صفحه‌بندی امن دریافت می‌شوند.</p>
         </div>
         <div className={styles.headerActions}>
           <strong className={styles.count}>{rows.length.toLocaleString("fa-IR")} مورد در این صفحه</strong>
-          <Link href="/admin/mavis/articles/new" className={styles.createButton}>ثبت مقاله جدید <span aria-hidden="true">＋</span></Link>
+          <Link href="/admin/mavis/articles/new" className={styles.createButton}>ثبت مدرک جدید <span aria-hidden="true">＋</span></Link>
         </div>
       </header>
 
@@ -100,7 +107,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
           <div className={styles.toolbar}>
             <label className={styles.searchField}>
               <span>جست‌وجوی سریع</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="عنوان، نویسنده، چکیده، نامک یا دسته‌بندی..." />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="عنوان، نوع مدرک، شماره سند، نویسنده یا دسته‌بندی..." />
             </label>
             <label className={styles.filterField}>
               <span>وضعیت</span>
@@ -118,7 +125,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
             <>
               <div className={styles.tableWrap}>
                 <table className={styles.table}>
-                  <thead><tr><th>{sortLabel("title", "عنوان مقاله")}</th><th>{sortLabel("category", "دسته‌بندی")}</th><th>وضعیت</th><th>{sortLabel("current_version", "نسخه")}</th><th>{sortLabel("updated_at", "آخرین تغییر")}</th><th>جزئیات</th><th>عملیات</th></tr></thead>
+                  <thead><tr><th>{sortLabel("title", "عنوان مدرک")}</th><th>نوع مدرک</th><th>{sortLabel("category", "دسته‌بندی")}</th><th>وضعیت</th><th>{sortLabel("current_version", "نسخه")}</th><th>{sortLabel("updated_at", "آخرین تغییر")}</th><th>جزئیات</th><th>عملیات</th></tr></thead>
                   <tbody>
                     {visibleRows.map((article) => {
                       const isExpanded = expandedArticleId === article.id;
@@ -127,6 +134,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
                         <Fragment key={article.id}>
                           <tr className={isExpanded ? styles.expandedRow : undefined}>
                             <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
+                            <td><span className={styles.recordType}>{RECORD_TYPE_LABELS[article.record_type] || RECORD_TYPE_LABELS.article}</span></td>
                             <td>{article.category}</td>
                             <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
                             <td>{Number(article.current_version).toLocaleString("fa-IR")}</td>
@@ -136,8 +144,13 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
                           </tr>
                           {isExpanded ? (
                             <tr className={styles.detailRow} id={detailsId}>
-                              <td colSpan={7}>
+                              <td colSpan={8}>
                                 <div className={styles.detailPanel}>
+                                  <div><span>نوع مدرک</span><strong>{RECORD_TYPE_LABELS[article.record_type] || RECORD_TYPE_LABELS.article}</strong></div>
+                                  <div><span>شماره / شناسه سند</span><strong>{article.legal_metadata?.document_number || "ثبت نشده"}</strong></div>
+                                  <div><span>مرجع صادرکننده</span><strong>{article.legal_metadata?.issuing_authority || "ثبت نشده"}</strong></div>
+                                  <div><span>تاریخ سند</span><strong>{article.legal_metadata?.document_date || "ثبت نشده"}</strong></div>
+                                  <div><span>وضعیت اعتبار</span><strong>{VALIDITY_LABELS[article.legal_metadata?.validity_status] || VALIDITY_LABELS.unknown}</strong></div>
                                   <div><span>نویسنده</span><strong>{article.author_name || "ثبت نشده"}</strong></div>
                                   <div className={styles.detailExcerpt}><span>چکیده</span><p>{article.excerpt || "چکیده‌ای ثبت نشده است."}</p></div>
                                   <div className={styles.detailTags}><span>برچسب‌ها</span><div>{Array.isArray(article.tags) && article.tags.length ? article.tags.map((tag) => <span key={tag}>{tag}</span>) : <small>بدون برچسب</small>}</div></div>
