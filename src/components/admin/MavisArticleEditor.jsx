@@ -312,11 +312,25 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
         <input type="hidden" name="article_id" value={articleId} />
         <input type="hidden" name="expected_version" value={articleId ? expectedVersion : ""} />
         <div className={styles.grid}>
-          <label className={styles.field}><span>عنوان مقاله <b>*</b></span><input name="title" defaultValue={initialArticle?.title || initialTopic || ""} required minLength={3} maxLength={300} /></label>
+          <label className={styles.field}><span>نوع مدرک <b>*</b></span><select name="record_type" defaultValue={content.record_type || "article"}><option value="article">مقاله حقوقی</option><option value="law">قانون یا مقرره</option><option value="unifying_opinion">رأی وحدت رویه</option><option value="judicial_decision">رأی قضایی</option><option value="advisory_opinion">نظریه مشورتی</option><option value="legal_interpretation">تفسیر و شرح قانون</option><option value="legal_analysis">تحلیل مسئله حقوقی</option><option value="official_circular">بخشنامه و دستورالعمل</option><option value="academic_research">پژوهش و مقاله علمی</option></select></label>\n          <label className={styles.field}><span>عنوان مقاله <b>*</b></span><input name="title" defaultValue={initialArticle?.title || initialTopic || ""} required minLength={3} maxLength={300} /></label>
           <label className={styles.field}><span>نامک انگلیسی <b>*</b></span><input name="slug" defaultValue={initialArticle?.slug || ""} required minLength={3} maxLength={180} dir="ltr" pattern="[a-z0-9]+([a-z0-9-]*[a-z0-9])?" placeholder="contract-legal-guide" /><small>حروف کوچک انگلیسی، عدد و خط تیره</small></label>
           <label className={styles.field}><span>نام نویسنده</span><input name="author_name" defaultValue={initialArticle?.author_name || ""} maxLength={180} /></label>
           <label className={styles.field}><span>دسته‌بندی <b>*</b></span><input name="category" defaultValue={initialArticle?.category || ""} required minLength={2} maxLength={100} placeholder="حقوق کیفری، مدنی، خانواده..." /></label>
           <label className={styles.fieldWide}><span>خلاصه مقاله <b>*</b></span><textarea name="excerpt" defaultValue={initialArticle?.excerpt || ""} required minLength={10} maxLength={1200} rows={3} /></label>
+          <details className={styles.legalMetadata}>
+            <summary>مشخصات تکمیلی سند حقوقی <small>شماره، مرجع، تاریخ و وضعیت اعتبار؛ در صورت نیاز باز کنید</small></summary>
+            <div className={styles.legalMetadataGrid}>
+              <label className={styles.field}><span>شماره / شناسه سند</span><input name="document_number" defaultValue={content.legal_metadata?.document_number || ""} maxLength={500} /></label>
+              <label className={styles.field}><span>مرجع صادرکننده</span><input name="issuing_authority" defaultValue={content.legal_metadata?.issuing_authority || ""} maxLength={500} /></label>
+              <label className={styles.field}><span>تاریخ صدور / تصویب</span><input name="document_date" type="date" defaultValue={content.legal_metadata?.document_date || ""} /></label>
+              <label className={styles.field}><span>تاریخ انتشار</span><input name="publication_date" type="date" defaultValue={content.legal_metadata?.publication_date || ""} /></label>
+              <label className={styles.field}><span>تاریخ لازم‌الاجرا شدن</span><input name="effective_from" type="date" defaultValue={content.legal_metadata?.effective_from || ""} /></label>
+              <label className={styles.field}><span>تاریخ پایان اعتبار</span><input name="effective_until" type="date" defaultValue={content.legal_metadata?.effective_until || ""} /></label>
+              <label className={styles.field}><span>وضعیت اعتبار</span><select name="validity_status" defaultValue={content.legal_metadata?.validity_status || "unknown"}><option value="unknown">بررسی‌نشده</option><option value="current">معتبر در حال حاضر</option><option value="amended">اصلاح‌شده</option><option value="repealed">منسوخ</option><option value="historical">معتبر در بازه تاریخی</option><option value="disputed">مورد اختلاف / نیازمند بررسی</option></select></label>
+              <label className={styles.fieldWide}><span>قانون یا سند مرتبط</span><input name="related_law" defaultValue={content.legal_metadata?.related_law || ""} maxLength={500} placeholder="مثلاً قانون آیین دادرسی کیفری" /></label>
+            </div>
+            <p className={styles.legalMetadataNote}>انتخاب «معتبر» جایگزین بررسی منبع رسمی نیست. وضعیت نهایی حقوقی باید پیش از تأیید مدیر راستی‌آزمایی شود.</p>
+          </details>
           <label className={styles.fieldWide}><span>برچسب‌ها</span><input name="tags" defaultValue={Array.isArray(initialArticle?.tags) ? initialArticle.tags.join("، ") : ""} placeholder="قرارداد، حقوق مدنی، دعاوی" /><small>برچسب‌ها را با ویرگول فارسی یا انگلیسی جدا کنید.</small></label>
           <label className={styles.fieldWide}><span>مقدمه مقاله <b>*</b></span><textarea name="intro" defaultValue={content.intro || ""} required minLength={10} maxLength={8000} rows={5} /></label>
           <label className={styles.fieldWide}><span>هشدار یا توضیح حقوقی</span><textarea name="warning" defaultValue={content.warning || ""} maxLength={2000} rows={2} /></label>
