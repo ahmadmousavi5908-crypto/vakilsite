@@ -129,7 +129,7 @@ begin
       raise exception using errcode = '22023', message = 'Invalid legal metadata object';
     end if;
 
-    if (p_payload->'content'->'legal_metadata' - array[
+    if ((p_payload->'content'->'legal_metadata') - array[
       'document_number', 'issuing_authority', 'document_date',
       'publication_date', 'effective_from', 'effective_until',
       'validity_status', 'related_law'
@@ -144,8 +144,9 @@ begin
 
     if exists (
       select 1
-      from jsonb_each_text(p_payload->'content'->'legal_metadata') as entry(key, item_value)
-      where length(item_value) > 500
+      from jsonb_each(p_payload->'content'->'legal_metadata') as entry(key, item_value)
+      where jsonb_typeof(item_value) is distinct from 'string'
+        or length(item_value #>> '{}') > 500
     ) then
       raise exception using errcode = '22023', message = 'Invalid legal metadata value';
     end if;
