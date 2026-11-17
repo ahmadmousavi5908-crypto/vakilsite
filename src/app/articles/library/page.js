@@ -51,7 +51,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
       if (!supabase) throw new Error("Public CMS is not configured");
       let query = supabase
         .from("mavis_articles")
-        .select("id, slug, title, excerpt, category, author_name, published_at, content")
+        .select("id, slug, title, excerpt, category, author_name, published_at, record_type:content->>record_type")
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .order("id", { ascending: false })
@@ -146,7 +146,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
                     <tr key={article.id}>
                       <td className={styles.rowNumber}>{(index + 1).toLocaleString("fa-IR")}</td>
                       <td><strong>{article.title}</strong><small>{article.excerpt || "برای مشاهده متن کامل وارد صفحه مطالعه شوید."}</small></td>
-                      <td><span className={styles.category}>{recordTypeLabels[article.content?.record_type] || recordTypeLabels.article}</span></td>
+                      <td><span className={styles.category}>{recordTypeLabels[article.record_type] || recordTypeLabels.article}</span></td>
                       <td><span className={styles.category}>{article.category || "عمومی"}</span></td>
                       <td>{article.author_name || "سید احمد موسوی"}</td>
                       <td><time dateTime={article.published_at}>{formatDate(article.published_at)}</time></td>
