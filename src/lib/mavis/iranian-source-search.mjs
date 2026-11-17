@@ -1,30 +1,45 @@
 import { getIranianSourceDomains, normalizeIranianSourceUrl } from "./iranian-source-registry.mjs";
 
-const ENDPOINT = "https://api.tavily.com/search";
+const SEARCH_ENDPOINT = "https://api.exa.ai/search";
+const CONTENTS_ENDPOINT = "https://api.exa.ai/contents";
 const DEFAULT_TIMEOUT_MS = 12000;
+
+const LEGAL_METADATA_SCHEMA = {
+  type: "object",
+  properties: {
+    author: { type: "string", description: "Author or authors, only if explicitly stated; otherwise empty." },
+    publication: { type: "string", description: "Journal, publisher, court, or issuing publication explicitly named in the source." },
+    publicationDate: { type: "string", description: "Publication or issuance date exactly as stated in the source; do not infer." },
+    documentNumber: { type: "string", description: "Official opinion, decision, article, or document number exactly as stated; otherwise empty." },
+    issuingAuthority: { type: "string", description: "Court, council, legislature, or institution that issued the document, only when explicit." },
+    documentType: { type: "string", description: "Document type such as رأی وحدت رویه، رأی قضایی، قانون، مقاله علمی، نظریه مشورتی." },
+    abstract: { type: "string", description: "A concise neutral summary in Persian, maximum 500 characters, grounded only in the source." },
+    headings: { type: "array", items: { type: "string" }, description: "Up to eight explicit section headings, preserving their original wording." }
+  }
+};
 
 function normalizeResult(result) {
   const matched = normalizeIranianSourceUrl(result?.url);
   if (!matched) return null;
   const title = typeof result.title === "string" ? result.title.trim().slice(0, 300) : "";
   if (!title) return null;
-  const parsedPublishedDate = typeof result.published_date === "string" ? Date.parse(result.published_date) : NaN;
-  const publishedDate = Number.isFinite(parsedPublishedDate)
-    ? new Date(parsedPublishedDate).toISOString().slice(0, 10)
-    : null;
+  const parsedPublishedDate = typeof result.publishedDate === "string" ? Date.parse(result.publishedDate) : NaN;
+  const publishedDate = Number.isFinite(parsedPublishedDate) ? new Date(parsedPublishedDate).toISOString().slice(0, 10) : null;
+  const highlights = Array.isArray(result.highlights) ? result.highlights.filter((item) => typeof item === "string").join("\n") : "";
   return {
-    title,
-    url: matched.url,
-    domain: matched.hostname,
-    snippet: typeof result.content === "string" ? result.content.trim().slice(0, 900) : "",
-    score: Number.isFinite(result.score) ? Math.max(0, Math.min(1, result.score)) : null,
-    publishedDate,
-    sourceId: matched.source.id,
-    sourceName: matched.source.name,
-    sourceGroup: matched.source.group,
-    sourceAuthority: matched.source.authority,
-    documentKinds: matched.source.documentKinds,
+    title, url: matched.url, domain: matched.hostname, snippet: highlights.trim().slice(0, 900),
+    score: null, publishedDate, sourceId: matched.source.id, sourceName: matched.source.name,
+    sourceGroup: matched.source.group, sourceAuthority: matched.source.authority, documentKinds: matched.source.documentKinds,
   };
+}
+
+function parseStructuredMetadata(value) {
+  if (value && typeof value === "object" && !Array.isArray(value)) return value;
+  if (typeof value !== "string") return null;
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : null;
+  } catch { return null; }
 }
 
 export function createIranianSourceSearch({ apiKey, fetchImpl = globalThis.fetch, timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
@@ -32,97 +47,80 @@ export function createIranianSourceSearch({ apiKey, fetchImpl = globalThis.fetch
   if (!key || typeof fetchImpl !== "function") throw new Error("Iranian source search is not configured.");
   const timeout = Number.isInteger(timeoutMs) && timeoutMs >= 1000 && timeoutMs <= 30000 ? timeoutMs : DEFAULT_TIMEOUT_MS;
 
+  async function postJson(endpoint, body, controller) {
+    const response = await fetchImpl(endpoint, {
+      method: "POST", redirect: "error", cache: "no-store", signal: controller.signal,
+      headers: { Authorization: "Bearer " + key, "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!response?.ok) throw new Error("Iranian source provider request failed.");
+    return response.json();
+  }
+
   return Object.freeze({
     async search({ query, group = "all", limit = 10 } = {}) {
       const cleanQuery = typeof query === "string" ? query.normalize("NFC").trim() : "";
       if (cleanQuery.length < 2 || cleanQuery.length > 180) return { ok: false, reason: "invalid_query" };
       if (!["all", "official", "academic", "secondary"].includes(group)) return { ok: false, reason: "invalid_group" };
       if (!Number.isInteger(limit) || limit < 1 || limit > 20) return { ok: false, reason: "invalid_limit" };
-
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), timeout);
       try {
-        const response = await fetchImpl(ENDPOINT, {
-          method: "POST",
-          redirect: "error",
-          cache: "no-store",
-          signal: controller.signal,
-          headers: { Authorization: "Bearer " + key, "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({
-            query: cleanQuery,
-            search_depth: "basic",
-            topic: "general",
-            max_results: limit,
-            include_domains: getIranianSourceDomains(group),
-            include_domains_mode: "restrict",
-            include_answer: false,
-            include_raw_content: false,
-            include_images: false,
-            include_usage: true,
-            include_published_date: true,
-          }),
-        });
-        if (!response?.ok) throw new Error("Iranian source provider request failed.");
-        const payload = await response.json();
-        const results = (Array.isArray(payload?.results) ? payload.results : [])
-          .map(normalizeResult).filter(Boolean).slice(0, limit);
+        const payload = await postJson(SEARCH_ENDPOINT, {
+          query: cleanQuery, type: "auto", numResults: limit,
+          includeDomains: getIranianSourceDomains(group), contents: { highlights: true },
+        }, controller);
+        const results = (Array.isArray(payload?.results) ? payload.results : []).map(normalizeResult).filter(Boolean).slice(0, limit);
         return {
-          ok: true,
-          query: cleanQuery,
-          results,
-          usageCredits: Number.isFinite(payload?.usage?.credits) ? payload.usage.credits : null,
-          provider: "tavily",
-          sourcePolicy: "iranian_allowlist_only",
+          ok: true, query: cleanQuery, results,
+          usageCostUsd: Number.isFinite(payload?.costDollars?.total) ? payload.costDollars.total : null,
+          provider: "exa", sourcePolicy: "iranian_allowlist_only",
         };
-      } finally {
-        clearTimeout(timer);
-      }
+      } finally { clearTimeout(timer); }
     },
     async extract({ url: rawUrl } = {}) {
       const target = normalizeIranianSourceUrl(rawUrl);
       if (!target) return { ok: false, reason: "invalid_url" };
-
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), Math.min(timeout, 30000));
       try {
-        const response = await fetchImpl("https://api.tavily.com/extract", {
-          method: "POST",
-          redirect: "error",
-          cache: "no-store",
-          signal: controller.signal,
-          headers: {
-            Authorization: "Bearer " + key,
-            "Content-Type": "application/json",
-            Accept: "application/json",
+        const payload = await postJson(CONTENTS_ENDPOINT, {
+          ids: [target.url],
+          summary: {
+            query: [
+              "این صفحه را فقط بر اساس اطلاعات صریح خود منبع تحلیل کن.",
+              "فیلدهای ناموجود را خالی برگردان؛ شماره، تاریخ، نویسنده یا مرجع را حدس نزن.",
+              "چکیده فارسی حداکثر ۵۰۰ نویسه باشد و متن کامل منبع را کپی نکن."
+            ].join(" "),
+            schema: LEGAL_METADATA_SCHEMA,
           },
-          body: JSON.stringify({
-            urls: [target.url],
-            extract_depth: "basic",
-            format: "markdown",
-            include_images: false,
-            include_usage: true,
-          }),
-        });
-        if (!response?.ok) throw new Error("Iranian source extraction provider request failed.");
-        const payload = await response.json();
+        }, controller);
         const extracted = Array.isArray(payload?.results)
-          ? payload.results.find((item) => normalizeIranianSourceUrl(item?.url)?.url === target.url)
-          : null;
-        const content = typeof extracted?.raw_content === "string"
-          ? extracted.raw_content.trim().slice(0, 12000)
-          : "";
-        if (!content) return { ok: false, reason: "content_unavailable" };
-        return {
-          ok: true,
-          url: target.url,
-          content,
-          sourceId: target.source.id,
-          sourceName: target.source.name,
-          usageCredits: Number.isFinite(payload?.usage?.credits) ? payload.usage.credits : null,
+          ? payload.results.find((item) => normalizeIranianSourceUrl(item?.url)?.url === target.url) : null;
+        const metadata = parseStructuredMetadata(extracted?.summary);
+        if (!metadata) return { ok: false, reason: "content_unavailable" };
+        const headings = Array.isArray(metadata.headings)
+          ? metadata.headings.filter((item) => typeof item === "string").map((item) => item.trim().slice(0, 120)).filter(Boolean).slice(0, 8) : [];
+        const normalizedMetadata = {
+          author: typeof metadata.author === "string" ? metadata.author.trim().slice(0, 180) : "",
+          publication: typeof metadata.publication === "string" ? metadata.publication.trim().slice(0, 180) : "",
+          publicationDate: typeof metadata.publicationDate === "string" ? metadata.publicationDate.trim().slice(0, 80) : "",
+          documentNumber: typeof metadata.documentNumber === "string" ? metadata.documentNumber.trim().slice(0, 120) : "",
+          issuingAuthority: typeof metadata.issuingAuthority === "string" ? metadata.issuingAuthority.trim().slice(0, 180) : "",
+          documentType: typeof metadata.documentType === "string" ? metadata.documentType.trim().slice(0, 100) : "",
+          abstract: typeof metadata.abstract === "string" ? metadata.abstract.trim().slice(0, 500) : "",
+          headings,
         };
-      } finally {
-        clearTimeout(timer);
-      }
+        const content = [normalizedMetadata.abstract, ...headings.map((heading) => "## " + heading)].filter(Boolean).join("\n\n");
+        if (!content && !Object.values(normalizedMetadata).some((value) => Array.isArray(value) ? value.length : Boolean(value))) {
+          return { ok: false, reason: "content_unavailable" };
+        }
+        return {
+          ok: true, url: target.url, content, metadata: normalizedMetadata, sourceId: target.source.id,
+          sourceName: target.source.name,
+          usageCostUsd: Number.isFinite(payload?.costDollars?.total) ? payload.costDollars.total : null,
+        };
+      } finally { clearTimeout(timer); }
     },
   });
 }
