@@ -6,6 +6,12 @@
   "compatibility_flags": ["nodejs_compat"],
   "upload_source_maps": true,
   "workers_dev": true,
+  "routes": [
+    {
+      "pattern": "staging.vakilahmadmousavi.ir",
+      "custom_domain": true
+    }
+  ],
   "ai": {
     "binding": "AI"
   },
