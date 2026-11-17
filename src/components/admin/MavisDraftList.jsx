@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import styles from "./MavisDraftList.module.css";
 import { createEditorialSpreadsheetTsv } from "../../lib/mavis/editorial-spreadsheet-export.mjs";
 
@@ -121,8 +121,8 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
                       const isExpanded = expandedArticleId === article.id;
                       const detailsId = `mavis-article-details-${article.id}`;
                       return (
-                        <>
-                          <tr key={article.id} className={isExpanded ? styles.expandedRow : undefined}>
+                        <Fragment key={article.id}>
+                          <tr className={isExpanded ? styles.expandedRow : undefined}>
                             <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
                             <td>{article.category}</td>
                             <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
@@ -142,7 +142,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
                               </td>
                             </tr>
                           ) : null}
-                        </>
+                        </Fragment>
                       );
                     })}
                   </tbody>
