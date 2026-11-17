@@ -28,3 +28,14 @@
 .aiReport small{color:#8a969e;font-size:9px}
 .aiEvidenceGaps{padding:10px;border-right:3px solid #c79b55;background:#fff9ef;color:#795d2d}
 @media(max-width:700px){.sourceTools> :not(summary){margin:8px}.manualSourceForm{padding:0}.sourceSubmit,.aiButton{width:100%;justify-self:stretch}}
+
+.collapsibleGroup{border:1px solid #e1e6e9;border-radius:12px;background:#fff;overflow:hidden}
+.collapsibleGroup>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;color:#193b54;cursor:pointer;list-style:none;font-size:13px;font-weight:800}
+.collapsibleGroup>summary::-webkit-details-marker{display:none}
+.collapsibleGroup>summary::before{content:"+";display:grid;place-items:center;flex:none;width:24px;height:24px;border-radius:7px;background:#edf2f5;color:#31566f;font-size:17px}
+.collapsibleGroup[open]>summary{border-bottom:1px solid #e8ecef;background:#f8faf9}
+.collapsibleGroup[open]>summary::before{content:"−"}
+.collapsibleGroup>summary small{margin-inline-start:auto;color:#83909b;font-size:10px;font-weight:500}
+.collapsibleGroup>.sourcePanel,.collapsibleGroup>.seo,.collapsibleGroup>.aiAssist{margin:14px;border:0}
+.collapsibleGroup>.sections{margin:14px}
+@media(max-width:700px){.collapsibleGroup>summary{align-items:flex-start;flex-wrap:wrap}.collapsibleGroup>summary small{width:100%;margin-inline-start:36px}.collapsibleGroup>.sourcePanel,.collapsibleGroup>.seo,.collapsibleGroup>.aiAssist{margin:9px}}
