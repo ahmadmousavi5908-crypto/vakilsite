@@ -331,7 +331,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           <div className={styles.grid}>
             <label className={styles.fieldWide}><span>مقدمه مقاله <b>*</b></span><textarea name="intro" defaultValue={content.intro || ""} required minLength={10} maxLength={8000} rows={5} /></label>
             <label className={styles.fieldWide}><span>هشدار یا توضیح حقوقی</span><textarea name="warning" defaultValue={content.warning || ""} maxLength={2000} rows={2} /></label>
-            <label className={styles.fieldWide}><span>چک‌لیست نکات (هر مورد در یک خط)</span><textarea name="checklist" defaultValue={Array.isArray(content.checklist) ? content.checklist.join("\\n") : ""} rows={3} /><small>تا ۶۰ مورد، هر مورد حداکثر ۵۰۰ نویسه</small></label>
+            <label className={styles.fieldWide}><span>چک‌لیست نکات (هر مورد در یک خط)</span><textarea name="checklist" defaultValue={Array.isArray(content.checklist) ? content.checklist.join("\n") : ""} rows={3} /><small>تا ۶۰ مورد، هر مورد حداکثر ۵۰۰ نویسه</small></label>
           </div>
 
         <section className={styles.sections} aria-labelledby="mavis-editor-sections">
