@@ -24,7 +24,7 @@ jobs:
     environment: staging
     env:
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev
       NEXT_PUBLIC_SUPABASE_URL: ${{ vars.STAGING_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.STAGING_SUPABASE_PUBLISHABLE_KEY }}
     steps:
@@ -53,7 +53,7 @@ jobs:
           const isWorkersDev =
             site.hostname.startsWith("vakilahmadmousavi-ir-staging.") &&
             site.hostname.endsWith(".workers.dev");
-          const isCustomStaging = site.hostname.startsWith("staging.");
+          const isCustomStaging = site.hostname === "staging.vakilahmadmousavi.ir";
 
           if (
             site.protocol !== "https:" ||

@@ -1,4 +1,7 @@
 MAVIS staging-only deployment trigger.
+Deploys to the isolated vakilsite-staging Supabase project and the dedicated workers.dev Worker endpoint. No Production routes or database are targeted.
+Refreshed after Workers AI output validation and IndexNow publication notification fixes on 2026-11-17.
+Deploy the secure Search Console OAuth and read-only inspection tools to isolated Staging only.
 Deploys the reviewed main revision to the isolated vakilsite-staging Supabase project and the dedicated staging Worker only.
 No Production routes or database are targeted.
 Refreshed after Workers AI output validation and IndexNow publication notification fixes on 2026-11-17.

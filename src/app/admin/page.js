@@ -44,6 +44,7 @@ export default async function AdminDashboard({ searchParams }) {
           <a className="active" href="#overview">نمای کلی</a>
           <Link href="/admin/mavis/articles">کتابخانه مقالات</Link>
           <Link href="/admin/mavis">مرکز دانش MAVIS</Link>
+          <a href="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev/admin" target="_blank" rel="noopener noreferrer">ورود به محیط آزمایشی MAVIS ↗</a>
           <a href="#office-settings">موقعیت و اطلاعات دفتر</a>
           <a href="#social-settings">راه‌های ارتباط و شبکه‌ها</a>
         </nav>
