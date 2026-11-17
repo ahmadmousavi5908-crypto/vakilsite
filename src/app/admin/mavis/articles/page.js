@@ -215,12 +215,12 @@ export default async function MavisArticlesPage({ searchParams }) {
             </div>
             <div className="admin-status"><i /> دسترسی مدیر تأیید شده</div>
           </section>
+          <MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} />
           <MavisSourceDiscovery />
           <MavisSourceCandidateQueue rows={candidateRows} nextCursor={nextCandidateCursor} stateFilter={candidateState} error={candidateError} />
           <MavisReviewQueue rows={reviewRows} error={reviewError} />
           <MavisPublicationQueue approvedRows={approvedRows} publishedRows={publishedRows} error={publicationError} />
           <MavisArchiveQueue rows={archivedRows} error={archiveError} />
-          <MavisDraftList rows={draftRows} nextCursor={nextCursor} error={draftError} />
           <MavisArticleCatalog articles={articles} />
           <section className="admin-help">
             <strong>وضعیت این مرحله</strong>
