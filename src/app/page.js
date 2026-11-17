@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ServiceFinder from "../components/ServiceFinder";
 import RequestForm from "../components/RequestForm";
-import { articles } from "../data/articles";
+import { getPublicArticleCatalog } from "../lib/mavis/published-editorial";
 import OfficeLocationPublic from "../components/OfficeLocationPublic";
 import JsonLd from "../components/JsonLd";
 import SocialLinksPublic from "../components/SocialLinksPublic";
@@ -39,7 +39,8 @@ const faqs = [
   ["چه مدت طول می‌کشد تا به درخواست من پاسخ داده شود؟", "زمان پاسخ‌گویی به حجم درخواست‌ها و کامل بودن اطلاعات اولیه بستگی دارد. اگر مهلت فوری یا جلسه نزدیک دارید، آن را در ابتدای شرح درخواست به‌وضوح بنویسید و برای موضوعات فوری صرفاً به فرم سایت اکتفا نکنید."]
 ];
 
-export default function Home() {
+export default async function Home() {
+  const [articles] = await Promise.all([getPublicArticleCatalog()]);
   const siteUrl = getSiteUrl();
   const structuredSite = siteUrl
     ? {
