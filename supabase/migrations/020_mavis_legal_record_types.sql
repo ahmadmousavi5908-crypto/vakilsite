@@ -188,7 +188,7 @@ begin
     v_article_id := gen_random_uuid();
     v_next_version := 1;
 
-    insert into public.mavis_articles (
+    insert into public.mavis_editorial_articles (
       id, slug, title, author_name, excerpt, category, tags, content,
       content_schema_version, seo_title, seo_description, status,
       origin_type, current_version, last_change_note, created_by, updated_by
@@ -220,7 +220,7 @@ begin
 
     select current_version, status
       into v_current_version, v_current_status
-      from public.mavis_articles
+      from public.mavis_editorial_articles
       where id = p_article_id
       for update;
 
@@ -240,7 +240,7 @@ begin
     v_next_version := v_current_version + 1;
     v_next_status := v_current_status;
 
-    update public.mavis_articles
+    update public.mavis_editorial_articles
     set slug = p_payload->>'slug',
         title = btrim(p_payload->>'title'),
         author_name = nullif(btrim(coalesce(p_payload->>'author_name', '')), ''),
@@ -272,7 +272,7 @@ begin
     'status', status
   )
   into v_snapshot
-  from public.mavis_articles
+  from public.mavis_editorial_articles
   where id = v_article_id;
 
   insert into public.mavis_article_versions (
@@ -351,7 +351,7 @@ comment on function public.save_mavis_article_draft(jsonb, uuid, integer, text) 
     v_article_id := gen_random_uuid();
     v_next_version := 1;
 
-    insert into public.mavis_articles (
+    insert into public.mavis_editorial_articles (
       id, slug, title, author_name, excerpt, category, tags, content,
       content_schema_version, seo_title, seo_description, status,
       origin_type, current_version, last_change_note, created_by, updated_by
@@ -383,7 +383,7 @@ comment on function public.save_mavis_article_draft(jsonb, uuid, integer, text) 
 
     select current_version, status
       into v_current_version, v_current_status
-      from public.mavis_articles
+      from public.mavis_editorial_articles
       where id = p_article_id
       for update;
 
@@ -403,7 +403,7 @@ comment on function public.save_mavis_article_draft(jsonb, uuid, integer, text) 
     v_next_version := v_current_version + 1;
     v_next_status := v_current_status;
 
-    update public.mavis_articles
+    update public.mavis_editorial_articles
     set slug = p_payload->>'slug',
         title = btrim(p_payload->>'title'),
         author_name = nullif(btrim(coalesce(p_payload->>'author_name', '')), ''),
@@ -435,7 +435,7 @@ comment on function public.save_mavis_article_draft(jsonb, uuid, integer, text) 
     'status', status
   )
   into v_snapshot
-  from public.mavis_articles
+  from public.mavis_editorial_articles
   where id = v_article_id;
 
   insert into public.mavis_article_versions (
