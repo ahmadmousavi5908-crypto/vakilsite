@@ -12,7 +12,7 @@ export const metadata = {
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-export default async function EditMavisArticlePage({ params }) {
+export default async function EditMavisArticlePage({ params, searchParams }) {
   let access;
   try {
     access = await requireAdmin();
@@ -26,6 +26,7 @@ export default async function EditMavisArticlePage({ params }) {
   if (!access.isAdmin) redirect("/admin/login?error=unauthorized");
 
   const { id } = await params;
+  const query = await searchParams;
   if (!UUID_PATTERN.test(id || "")) notFound();
 
   let article;
@@ -96,6 +97,13 @@ export default async function EditMavisArticlePage({ params }) {
         <header className="admin-topbar"><div><span>فضای مدیریت / MAVIS</span><strong>ویرایش پیش‌نویس</strong></div><form action={signOut}><button type="submit">خروج امن</button></form></header>
         <main className="admin-content">
           <section className="admin-welcome"><div><span className="admin-eyebrow">MAVIS · VERSIONED DRAFT</span><h1>ویرایش مقاله</h1><p>نسخه فعلی: {article.current_version.toLocaleString("fa-IR")} · آخرین تغییر: {new Date(article.updated_at).toLocaleString("fa-IR")}</p></div><div className="admin-status"><i /> دسترسی مدیر تأیید شده</div></section>
+          {query?.saved === "1" ? (
+            <section className="admin-notice" role="status">
+              <strong>پیش‌نویس ذخیره شد و در کتابخانه مقالات ثبت شده است.</strong>
+              <p>اکنون می‌توانید نسخه ذخیره‌شده را بازبینی کنید یا از دکمه ارسال برای بازبینی استفاده کنید.</p>
+              <Link href="/admin/mavis/articles">مشاهده همه پیش‌نویس‌ها ←</Link>
+            </section>
+          ) : null}
           <MavisArticleEditor initialArticle={article} initialSources={initialSources} sourceLoadError={sourceLoadError} aiEnabled={Boolean(process.env.MAVIS_OPENAI_API_KEY || process.env.OPENAI_API_KEY)} />
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>
