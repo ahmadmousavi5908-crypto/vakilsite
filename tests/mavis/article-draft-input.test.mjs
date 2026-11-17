@@ -61,7 +61,8 @@ test("rejects short section bodies and malformed forms", () => {
 test("preserves warning and checklist fields when editing a draft", () => {
   const result = parseMavisArticleDraftInput(formWith({
     warning: "این متن صرفاً آموزشی است.",
-    checklist: "بررسی منبع رسمی\nکنترل تاریخ اصلاح",
+    checklist: "بررسی منبع رسمی
+کنترل تاریخ اصلاح",
   }));
   assert.equal(result.ok, true);
   assert.deepEqual(result.payload.content.checklist, ["بررسی منبع رسمی", "کنترل تاریخ اصلاح"]);
@@ -91,7 +92,8 @@ test("requires a valid article id and expected version together", () => {
 
 test("rejects oversized warning and checklist", () => {
   assert.equal(parseMavisArticleDraftInput(formWith({ warning: "x".repeat(2001) })).ok, false);
-  assert.equal(parseMavisArticleDraftInput(formWith({ checklist: Array.from({ length: 61 }, () => "item").join("\n") })).ok, false);
+  assert.equal(parseMavisArticleDraftInput(formWith({ checklist: Array.from({ length: 61 }, () => "item").join("
+") })).ok, false);
 });
 
 
@@ -105,4 +107,42 @@ test("rejects drafts that exceed the total content budget", () => {
   assert.equal(result.ok, false);
   assert.match(result.error, /حجم کل متن/);
 });
-\n\ntest("accepts typed Iranian legal records and preserves their legal metadata", () => {\n  const form = new FormData();\n  form.set("title", "رأی وحدت رویه نمونه");\n  form.set("slug", "unifying-opinion-sample");\n  form.set("excerpt", "خلاصه‌ای معتبر برای آزمون ساختار مدرک حقوقی.");\n  form.set("category", "حقوق کیفری");\n  form.set("intro", "این متن صرفاً برای آزمون اعتبارسنجی ساختار فرم استفاده می‌شود.");\n  form.set("record_type", "unifying_opinion");\n  form.set("document_number", "۱۲۳");\n  form.set("issuing_authority", "دیوان عالی کشور");\n  form.set("document_date", "2026-01-15");\n  form.set("validity_status", "unknown");\n  form.append("section_heading", "موضوع رأی");\n  form.append("section_body", "شرح موضوع رأی برای آزمون باید حداقل ده نویسه داشته باشد.");\n\n  const result = parseMavisArticleDraftInput(form);\n  assert.equal(result.ok, true);\n  assert.equal(result.payload.content.record_type, "unifying_opinion");\n  assert.equal(result.payload.content.legal_metadata.document_number, "۱۲۳");\n  assert.equal(result.payload.content.legal_metadata.issuing_authority, "دیوان عالی کشور");\n});\n\ntest("rejects unsupported legal record types and malformed legal dates", () => {\n  const form = new FormData();\n  form.set("title", "قانون نمونه");\n  form.set("slug", "sample-law");\n  form.set("excerpt", "خلاصه‌ای معتبر برای آزمون ساختار مدرک حقوقی.");\n  form.set("category", "حقوق مدنی");\n  form.set("intro", "این متن صرفاً برای آزمون اعتبارسنجی ساختار فرم استفاده می‌شود.");\n  form.set("record_type", "invented_type");\n  form.set("document_date", "1405/01/01");\n  form.append("section_heading", "ماده نخست");\n  form.append("section_body", "متن ماده برای آزمون باید حداقل ده نویسه داشته باشد.");\n\n  const result = parseMavisArticleDraftInput(form);\n  assert.equal(result.ok, false);\n});\n
+
+
+test("accepts typed Iranian legal records and preserves their legal metadata", () => {
+  const form = new FormData();
+  form.set("title", "رأی وحدت رویه نمونه");
+  form.set("slug", "unifying-opinion-sample");
+  form.set("excerpt", "خلاصه‌ای معتبر برای آزمون ساختار مدرک حقوقی.");
+  form.set("category", "حقوق کیفری");
+  form.set("intro", "این متن صرفاً برای آزمون اعتبارسنجی ساختار فرم استفاده می‌شود.");
+  form.set("record_type", "unifying_opinion");
+  form.set("document_number", "۱۲۳");
+  form.set("issuing_authority", "دیوان عالی کشور");
+  form.set("document_date", "2026-01-15");
+  form.set("validity_status", "unknown");
+  form.append("section_heading", "موضوع رأی");
+  form.append("section_body", "شرح موضوع رأی برای آزمون باید حداقل ده نویسه داشته باشد.");
+
+  const result = parseMavisArticleDraftInput(form);
+  assert.equal(result.ok, true);
+  assert.equal(result.payload.content.record_type, "unifying_opinion");
+  assert.equal(result.payload.content.legal_metadata.document_number, "۱۲۳");
+  assert.equal(result.payload.content.legal_metadata.issuing_authority, "دیوان عالی کشور");
+});
+
+test("rejects unsupported legal record types and malformed legal dates", () => {
+  const form = new FormData();
+  form.set("title", "قانون نمونه");
+  form.set("slug", "sample-law");
+  form.set("excerpt", "خلاصه‌ای معتبر برای آزمون ساختار مدرک حقوقی.");
+  form.set("category", "حقوق مدنی");
+  form.set("intro", "این متن صرفاً برای آزمون اعتبارسنجی ساختار فرم استفاده می‌شود.");
+  form.set("record_type", "invented_type");
+  form.set("document_date", "1405/01/01");
+  form.append("section_heading", "ماده نخست");
+  form.append("section_body", "متن ماده برای آزمون باید حداقل ده نویسه داشته باشد.");
+
+  const result = parseMavisArticleDraftInput(form);
+  assert.equal(result.ok, false);
+});
