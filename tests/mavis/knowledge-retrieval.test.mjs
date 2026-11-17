@@ -88,10 +88,10 @@ test("returns an empty dossier without inventing results", async () => {
 
 test("rejects invalid query and result limits when called outside the HTTP route", async () => {
   const { retrieve } = createRetriever([]);
-  assert.rejects(() => retrieve("ق"), RangeError);
-  assert.rejects(() => retrieve("قانون مدنی", 0), RangeError);
-  assert.rejects(() => retrieve("قانون مدنی", 21), RangeError);
-  assert.rejects(() => retrieve("قانون".repeat(30)), RangeError);
+  await assert.rejects(() => retrieve("ق"), RangeError);
+  await assert.rejects(() => retrieve("قانون مدنی", 0), RangeError);
+  await assert.rejects(() => retrieve("قانون مدنی", 21), RangeError);
+  await assert.rejects(() => retrieve("قانون".repeat(30)), RangeError);
 });
 
 test("rejects a broken search adapter response", async () => {
