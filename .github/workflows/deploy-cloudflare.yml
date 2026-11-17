@@ -1,6 +1,9 @@
 name: Deploy Vakilsite to Cloudflare Workers
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
