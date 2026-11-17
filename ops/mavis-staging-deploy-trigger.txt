@@ -4,3 +4,5 @@ No Production routes or database are targeted.
 Refreshed after Workers AI output validation and IndexNow publication notification fixes on 2026-11-17.
 
 Deploy the merged secure Search Console OAuth and read-only inspection tools to the isolated Staging Worker. Do not deploy Production.
+
+Deploy the dedicated staging.vakilahmadmousavi.ir custom domain and update the staging admin entrypoint. Production must remain untouched.
