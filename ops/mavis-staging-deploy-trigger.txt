@@ -17,3 +17,5 @@ Deploy the offline-first manual article editor polish and numbered 25-item publi
 Deploy the admin dashboard article library entry point and manual article creation shortcuts from the reviewed Staging feature revision only. Keep Production untouched.
 
 Redeploy the isolated Staging Worker after fixing the public article library to include existing static articles alongside published CMS articles. Keep Production unchanged.
+
+Redeploy the isolated Staging Worker after exposing the MAVIS third arm as a compact collapsible entry in the admin dashboard. Keep Production unchanged.
