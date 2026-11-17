@@ -98,7 +98,7 @@ export default async function EditMavisArticlePage({ params, searchParams }) {
         <main className="admin-content">
           <section className="admin-welcome"><div><span className="admin-eyebrow">MAVIS · VERSIONED DRAFT</span><h1>ویرایش مقاله</h1><p>نسخه فعلی: {article.current_version.toLocaleString("fa-IR")} · آخرین تغییر: {new Date(article.updated_at).toLocaleString("fa-IR")}</p></div><div className="admin-status"><i /> دسترسی مدیر تأیید شده</div></section>
           {query?.saved === "1" ? (
-            <section className="admin-notice" role="status">
+            <section className="admin-help" role="status">
               <strong>پیش‌نویس ذخیره شد و در کتابخانه مقالات ثبت شده است.</strong>
               <p>اکنون می‌توانید نسخه ذخیره‌شده را بازبینی کنید یا از دکمه ارسال برای بازبینی استفاده کنید.</p>
               <Link href="/admin/mavis/articles">مشاهده همه پیش‌نویس‌ها ←</Link>
