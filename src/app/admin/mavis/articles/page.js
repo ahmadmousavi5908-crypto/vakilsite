@@ -46,7 +46,7 @@ export default async function MavisArticlesPage({ searchParams }) {
     try {
       const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) => {
         let query = table
-          .select("id, slug, title, category, status, current_version, updated_at")
+          .select("id, slug, title, author_name, excerpt, category, tags, status, current_version, updated_at")
           .in("status", ["draft", "changes_requested", "needs_update"])
           .order("updated_at", { ascending: false })
           .order("id", { ascending: false })
