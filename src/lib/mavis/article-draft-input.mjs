@@ -1,4 +1,6 @@
-export const MAVIS_LEGAL_RECORD_TYPES = Object.freeze(["article", "law", "unifying_opinion", "judicial_decision", "advisory_opinion", "legal_interpretation", "legal_analysis", "official_circular", "academic_research"]);\nconst VALIDITY_STATUSES = Object.freeze(["unknown", "current", "amended", "repealed", "historical", "disputed"]);\nconst LIMITS = { title: 300, slug: 180, excerpt: 1200, category: 100, author: 180, seoTitle: 300, seoDescription: 500, intro: 8000, heading: 240, body: 12000, tag: 60, tags: 40, sections: 80, warning: 2000, checklist: 60, checklistItem: 500, legalField: 500, totalContent: 200000 };
+export const MAVIS_LEGAL_RECORD_TYPES = Object.freeze(["article", "law", "unifying_opinion", "judicial_decision", "advisory_opinion", "legal_interpretation", "legal_analysis", "official_circular", "academic_research"]);
+const VALIDITY_STATUSES = Object.freeze(["unknown", "current", "amended", "repealed", "historical", "disputed"]);
+const LIMITS = { title: 300, slug: 180, excerpt: 1200, category: 100, author: 180, seoTitle: 300, seoDescription: 500, intro: 8000, heading: 240, body: 12000, tag: 60, tags: 40, sections: 80, warning: 2000, checklist: 60, checklistItem: 500, legalField: 500, totalContent: 200000 };
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function text(form, key) {
@@ -23,7 +25,17 @@ export function parseMavisArticleDraftInput(form) {
   const author = text(form, "author_name");
   const seoTitle = text(form, "seo_title");
   const seoDescription = text(form, "seo_description");
-  const warning = text(form, "warning");\n  const recordType = text(form, "record_type") || "article";\n  const legalMetadata = {\n    document_number: text(form, "document_number"),\n    issuing_authority: text(form, "issuing_authority"),\n    document_date: text(form, "document_date"),\n    publication_date: text(form, "publication_date"),\n    effective_from: text(form, "effective_from"),\n    effective_until: text(form, "effective_until"),\n    validity_status: text(form, "validity_status") || "unknown",\n    related_law: text(form, "related_law"),\n  };
+  const warning = text(form, "warning");
+  const recordType = text(form, "record_type") || "article";
+  const legalMetadata = {
+    document_number: text(form, "document_number"),
+    issuing_authority: text(form, "issuing_authority"),
+    document_date: text(form, "document_date"),
+    publication_date: text(form, "publication_date"),
+    effective_from: text(form, "effective_from"),
+    effective_until: text(form, "effective_until"),
+    validity_status: text(form, "validity_status") || "unknown",\n    related_law: text(form, "related_law"),
+  };
   const checklist = text(form, "checklist").split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   const tags = [...new Set(text(form, "tags").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
   const headings = form.getAll("section_heading");
@@ -32,7 +44,14 @@ export function parseMavisArticleDraftInput(form) {
   const expectedVersionText = text(form, "expected_version");
   const expectedVersion = expectedVersionText ? Number(expectedVersionText) : null;
 
-  if (!MAVIS_LEGAL_RECORD_TYPES.includes(recordType)) return { ok: false, error: "نوع مدرک حقوقی معتبر نیست." };\n  if (!VALIDITY_STATUSES.includes(legalMetadata.validity_status)) return { ok: false, error: "وضعیت اعتبار سند معتبر نیست." };\n  for (const [key, value] of Object.entries(legalMetadata)) {\n    if (value.length > LIMITS.legalField) return { ok: false, error: "یکی از مشخصات حقوقی بیش از حد مجاز است." };\n    if (["document_date", "publication_date", "effective_from", "effective_until"].includes(key) && value && !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) {\n      return { ok: false, error: "تاریخ‌های سند باید با قالب YYYY-MM-DD وارد شوند." };\n    }\n  }\n  if (!between(title, 3, LIMITS.title)) return { ok: false, error: "عنوان باید بین ۳ تا ۳۰۰ نویسه باشد." };
+  if (!MAVIS_LEGAL_RECORD_TYPES.includes(recordType)) return { ok: false, error: "نوع مدرک حقوقی معتبر نیست." };
+  if (!VALIDITY_STATUSES.includes(legalMetadata.validity_status)) return { ok: false, error: "وضعیت اعتبار سند معتبر نیست." };
+  for (const [key, value] of Object.entries(legalMetadata)) {
+    if (value.length > LIMITS.legalField) return { ok: false, error: "یکی از مشخصات حقوقی بیش از حد مجاز است." };
+    if (["document_date", "publication_date", "effective_from", "effective_until"].includes(key) && value && !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) {\n      return { ok: false, error: "تاریخ‌های سند باید با قالب YYYY-MM-DD وارد شوند." };
+    }
+  }
+  if (!between(title, 3, LIMITS.title)) return { ok: false, error: "عنوان باید بین ۳ تا ۳۰۰ نویسه باشد." };
   if (!between(slug, 3, LIMITS.slug) || !/^[a-z0-9]+([a-z0-9-]*[a-z0-9])?$/.test(slug)) {
     return { ok: false, error: "نامک باید انگلیسی، کوچک و شامل حروف، عدد و خط تیره باشد." };
   }
