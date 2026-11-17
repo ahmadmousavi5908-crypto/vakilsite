@@ -5,7 +5,10 @@ import { Fragment, useMemo, useState } from "react";
 import styles from "./MavisDraftList.module.css";
 import { createEditorialSpreadsheetTsv } from "../../lib/mavis/editorial-spreadsheet-export.mjs";
 
-const RECORD_TYPE_LABELS = { article: "مقاله حقوقی", law: "قانون یا مقرره", unifying_opinion: "رأی وحدت رویه", judicial_decision: "رأی قضایی", advisory_opinion: "نظریه مشورتی", legal_interpretation: "تفسیر قانون", legal_analysis: "تحلیل حقوقی", official_circular: "بخشنامه", academic_research: "پژوهش علمی" };\nconst VALIDITY_LABELS = { unknown: "بررسی‌نشده", current: "معتبر", amended: "اصلاح‌شده", repealed: "منسوخ", historical: "تاریخی", disputed: "نیازمند بررسی" };\n\nconst STATUS_LABELS = {
+const RECORD_TYPE_LABELS = { article: "مقاله حقوقی", law: "قانون یا مقرره", unifying_opinion: "رأی وحدت رویه", judicial_decision: "رأی قضایی", advisory_opinion: "نظریه مشورتی", legal_interpretation: "تفسیر قانون", legal_analysis: "تحلیل حقوقی", official_circular: "بخشنامه", academic_research: "پژوهش علمی" };
+const VALIDITY_LABELS = { unknown: "بررسی‌نشده", current: "معتبر", amended: "اصلاح‌شده", repealed: "منسوخ", historical: "تاریخی", disputed: "نیازمند بررسی" };
+
+const STATUS_LABELS = {
   draft: "پیش‌نویس",
   changes_requested: "نیازمند اصلاح",
   needs_update: "نیازمند به‌روزرسانی",
@@ -38,6 +41,10 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
       ["عنوان مدرک", "نوع مدرک", "شماره سند", "مرجع صادرکننده", "وضعیت اعتبار", "نویسنده", "دسته‌بندی", "برچسب‌ها", "چکیده", "نامک", "وضعیت انتشار", "نسخه", "آخرین به‌روزرسانی"],
       ...visibleRows.map((article) => [
         article.title,
+        RECORD_TYPE_LABELS[article.record_type] || RECORD_TYPE_LABELS.article,
+        article.legal_metadata?.document_number || "",
+        article.legal_metadata?.issuing_authority || "",
+        VALIDITY_LABELS[article.legal_metadata?.validity_status] || VALIDITY_LABELS.unknown,
         article.author_name || "",
         article.category,
         Array.isArray(article.tags) ? article.tags.join("، ") : "",
@@ -127,6 +134,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
                         <Fragment key={article.id}>
                           <tr className={isExpanded ? styles.expandedRow : undefined}>
                             <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
+                            <td><span className={styles.recordType}>{RECORD_TYPE_LABELS[article.record_type] || RECORD_TYPE_LABELS.article}</span></td>
                             <td>{article.category}</td>
                             <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
                             <td>{Number(article.current_version).toLocaleString("fa-IR")}</td>
@@ -138,6 +146,11 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
                             <tr className={styles.detailRow} id={detailsId}>
                               <td colSpan={8}>
                                 <div className={styles.detailPanel}>
+                                  <div><span>نوع مدرک</span><strong>{RECORD_TYPE_LABELS[article.record_type] || RECORD_TYPE_LABELS.article}</strong></div>
+                                  <div><span>شماره / شناسه سند</span><strong>{article.legal_metadata?.document_number || "ثبت نشده"}</strong></div>
+                                  <div><span>مرجع صادرکننده</span><strong>{article.legal_metadata?.issuing_authority || "ثبت نشده"}</strong></div>
+                                  <div><span>تاریخ سند</span><strong>{article.legal_metadata?.document_date || "ثبت نشده"}</strong></div>
+                                  <div><span>وضعیت اعتبار</span><strong>{VALIDITY_LABELS[article.legal_metadata?.validity_status] || VALIDITY_LABELS.unknown}</strong></div>
                                   <div><span>نویسنده</span><strong>{article.author_name || "ثبت نشده"}</strong></div>
                                   <div className={styles.detailExcerpt}><span>چکیده</span><p>{article.excerpt || "چکیده‌ای ثبت نشده است."}</p></div>
                                   <div className={styles.detailTags}><span>برچسب‌ها</span><div>{Array.isArray(article.tags) && article.tags.length ? article.tags.map((tag) => <span key={tag}>{tag}</span>) : <small>بدون برچسب</small>}</div></div>
