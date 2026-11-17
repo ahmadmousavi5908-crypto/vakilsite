@@ -105,7 +105,7 @@ test("rejects a broken search adapter response", async () => {
 
 test("rejects malformed records from the search adapter", async () => {
   const { retrieve } = createRetriever([null]);
-  assert.throws(() => retrieve("قانون مدنی"), TypeError);
+  await assert.rejects(() => retrieve("قانون مدنی"), TypeError);
 });
 
 test("requires all retrieval dependencies", () => {
