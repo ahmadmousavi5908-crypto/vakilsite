@@ -4,3 +4,5 @@ No Production routes or database are targeted.
 Refreshed after Workers AI output validation and IndexNow publication notification fixes on 2026-11-17.
 
 Deploy the merged secure Search Console OAuth and read-only inspection tools to the isolated Staging Worker. Do not deploy Production.
+
+Deploy the reviewed MAVIS source extraction and editorial intake changes from feature/mavis-web-extract-staging-20261117 to the isolated Staging Worker only. Keep Production unchanged.
