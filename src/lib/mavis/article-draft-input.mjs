@@ -34,7 +34,8 @@ export function parseMavisArticleDraftInput(form) {
     publication_date: text(form, "publication_date"),
     effective_from: text(form, "effective_from"),
     effective_until: text(form, "effective_until"),
-    validity_status: text(form, "validity_status") || "unknown",\n    related_law: text(form, "related_law"),
+    validity_status: text(form, "validity_status") || "unknown",
+    related_law: text(form, "related_law"),
   };
   const checklist = text(form, "checklist").split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   const tags = [...new Set(text(form, "tags").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
@@ -48,7 +49,8 @@ export function parseMavisArticleDraftInput(form) {
   if (!VALIDITY_STATUSES.includes(legalMetadata.validity_status)) return { ok: false, error: "وضعیت اعتبار سند معتبر نیست." };
   for (const [key, value] of Object.entries(legalMetadata)) {
     if (value.length > LIMITS.legalField) return { ok: false, error: "یکی از مشخصات حقوقی بیش از حد مجاز است." };
-    if (["document_date", "publication_date", "effective_from", "effective_until"].includes(key) && value && !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) {\n      return { ok: false, error: "تاریخ‌های سند باید با قالب YYYY-MM-DD وارد شوند." };
+    if (["document_date", "publication_date", "effective_from", "effective_until"].includes(key) && value && !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return { ok: false, error: "تاریخ‌های سند باید با قالب YYYY-MM-DD وارد شوند." };
     }
   }
   if (!between(title, 3, LIMITS.title)) return { ok: false, error: "عنوان باید بین ۳ تا ۳۰۰ نویسه باشد." };
