@@ -24,7 +24,7 @@ test("search restricts provider domains and filters out unapproved provider resu
   let sentBody;
   const client = createIranianSourceSearch({
     apiKey: "test-key",
-    fetchImpl: async (_url, options) => {
+    fetchImpl: async (url, options) => {\n      assert.equal(url, "https://api.exa.ai/search");
       sentBody = JSON.parse(options.body);
       return {
         ok: true,
@@ -43,7 +43,7 @@ test("search restricts provider domains and filters out unapproved provider resu
   assert.ok(sentBody.include_domains.includes("qavanin.ir"));
   assert.ok(!sentBody.include_domains.includes("sid.ir"));
   assert.equal(result.results.length, 1);
-  assert.equal(result.results[0].sourceAuthority, "official_primary");
+  assert.equal(result.results[0].sourceAuthority, "official_primary");\n  assert.equal(result.provider, "exa");\n  assert.equal(result.results[0].snippet, "متن نتیجه");
   assert.equal(result.results[0].sourceId, "qavanin");
 });
 
