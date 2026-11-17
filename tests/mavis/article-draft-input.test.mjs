@@ -144,3 +144,13 @@ test("rejects unsupported legal record types and malformed legal dates", () => {
   const result = parseMavisArticleDraftInput(form);
   assert.equal(result.ok, false);
 });
+
+
+test("rejects malformed dates when the legal record type is otherwise valid", () => {
+  const result = parseMavisArticleDraftInput(formWith({
+    record_type: "law",
+    document_date: "1405/01/01",
+  }));
+  assert.equal(result.ok, false);
+  assert.match(result.error, /تاریخ/);
+});
