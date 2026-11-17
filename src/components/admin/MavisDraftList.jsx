@@ -35,11 +35,14 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
 
   function downloadSpreadsheet() {
     const exportRows = [
-      ["عنوان مقاله", "نامک", "دسته‌بندی", "وضعیت", "نسخه", "آخرین به‌روزرسانی"],
+      ["عنوان مقاله", "نویسنده", "دسته‌بندی", "برچسب‌ها", "چکیده", "نامک", "وضعیت", "نسخه", "آخرین به‌روزرسانی"],
       ...visibleRows.map((article) => [
         article.title,
-        article.slug,
+        article.author_name || "",
         article.category,
+        Array.isArray(article.tags) ? article.tags.join("، ") : "",
+        article.excerpt || "",
+        article.slug,
         STATUS_LABELS[article.status] || article.status,
         article.current_version,
         article.updated_at,
