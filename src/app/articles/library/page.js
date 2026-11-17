@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createPublicContentClient } from "../../../lib/supabase/public-content";
+import { getPublicArticleCatalog } from "../../../lib/mavis/published-editorial";
 import styles from "./page.module.css";
 
 export const metadata = {
@@ -76,37 +76,31 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
   let loadError = "";
 
   try {
-    const supabase = createPublicContentClient();
-    if (!supabase) throw new Error("Public CMS is not configured");
+    const catalog = await getPublicArticleCatalog();
+    const normalizedSearch = search.toLocaleLowerCase("fa");
+    const filtered = catalog.filter((article) => {
+      const title = typeof article.title === "string" ? article.title : "";
+      const matchesSearch = !normalizedSearch
+        || title.toLocaleLowerCase("fa").includes(normalizedSearch);
+      const matchesCategory = !category
+        || String(article.category || "").trim() === category;
+      return matchesSearch && matchesCategory;
+    });
 
-    const buildQuery = (targetPage) => {
-      let query = supabase
-        .from("mavis_articles")
-        .select("id, slug, title, excerpt, category, author_name, published_at", { count: "exact" })
-        .eq("status", "published")
-        .order("published_at", { ascending: false })
-        .order("id", { ascending: false });
-
-      if (search) query = query.ilike("title", "%" + search + "%");
-      if (category) query = query.eq("category", category);
-
-      const from = (targetPage - 1) * PAGE_SIZE;
-      return query.range(from, from + PAGE_SIZE - 1);
-    };
-
-    let result = await buildQuery(page);
-    if (result.error) throw result.error;
-
-    totalCount = Number.isInteger(result.count) ? result.count : 0;
+    totalCount = filtered.length;
     totalPages = Math.ceil(totalCount / PAGE_SIZE);
+    page = totalPages > 0 ? Math.min(requestedPage, totalPages) : 1;
 
-    if (totalPages > 0 && page > totalPages) {
-      page = totalPages;
-      result = await buildQuery(page);
-      if (result.error) throw result.error;
-    }
-
-    rows = Array.isArray(result.data) ? result.data : [];
+    const from = (page - 1) * PAGE_SIZE;
+    rows = filtered.slice(from, from + PAGE_SIZE).map((article) => ({
+      id: article.id || article.slug,
+      slug: article.slug,
+      title: article.title,
+      excerpt: article.excerpt,
+      category: article.category,
+      author_name: article.author_name || article.authorName,
+      published_at: article.published_at || article.publishedAt,
+    }));
   } catch {
     loadError = "فهرست مقالات در حال حاضر در دسترس نیست. راهنماهای ثابت دانشنامه همچنان از صفحه مقالات قابل مطالعه‌اند.";
   }
