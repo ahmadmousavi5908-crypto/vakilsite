@@ -219,7 +219,7 @@ export default async function MavisArticlesPage({ searchParams }) {
           <MavisSourceDiscovery />
           <MavisSourceCandidateQueue rows={candidateRows} nextCursor={nextCandidateCursor} stateFilter={candidateState} error={candidateError} />
           {params?.review === "submitted" ? (
-            <section className="admin-notice" role="status">
+            <section className="admin-help" role="status">
               <strong>نسخه مقاله با موفقیت به صف بازبینی ارسال شد.</strong>
               <p>برای بررسی و ثبت تصمیم مدیر، از بخش زیر وارد پرونده مقاله شوید. این مرحله مقاله را عمومی نمی‌کند.</p>
             </section>
