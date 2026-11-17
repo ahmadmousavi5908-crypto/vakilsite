@@ -97,7 +97,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
           <div className={styles.toolbar}>
             <label className={styles.searchField}>
               <span>جست‌وجوی سریع</span>
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="عنوان، نامک یا دسته‌بندی..." />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="عنوان، نویسنده، چکیده، نامک یا دسته‌بندی..." />
             </label>
             <label className={styles.filterField}>
               <span>وضعیت</span>
@@ -128,7 +128,7 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
                             <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
                             <td>{Number(article.current_version).toLocaleString("fa-IR")}</td>
                             <td><time dateTime={article.updated_at}>{new Date(article.updated_at).toLocaleString("fa-IR")}</time></td>
-                            <td><button type="button" className={styles.detailsButton} aria-expanded={isExpanded} aria-controls={detailsId} onClick={() => setExpandedArticleId(isExpanded ? null : article.id)}>{isExpanded ? "بستن جزئیات −" : "نمایش جزئیات ＋"}</button></td>
+                            <td><button type="button" className={styles.detailsButton} aria-expanded={isExpanded} aria-controls={isExpanded ? detailsId : undefined} onClick={() => setExpandedArticleId(isExpanded ? null : article.id)}>{isExpanded ? "بستن جزئیات −" : "نمایش جزئیات ＋"}</button></td>
                             <td><Link href={`/admin/mavis/articles/${article.id}/edit`}>ویرایش کامل</Link></td>
                           </tr>
                           {isExpanded ? (
