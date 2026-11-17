@@ -105,3 +105,52 @@ test("rejects drafts that exceed the total content budget", () => {
   assert.equal(result.ok, false);
   assert.match(result.error, /حجم کل متن/);
 });
+
+
+test("accepts typed Iranian legal records and preserves their legal metadata", () => {
+  const form = new FormData();
+  form.set("title", "رأی وحدت رویه نمونه");
+  form.set("slug", "unifying-opinion-sample");
+  form.set("excerpt", "خلاصه‌ای معتبر برای آزمون ساختار مدرک حقوقی.");
+  form.set("category", "حقوق کیفری");
+  form.set("intro", "این متن صرفاً برای آزمون اعتبارسنجی ساختار فرم استفاده می‌شود.");
+  form.set("record_type", "unifying_opinion");
+  form.set("document_number", "۱۲۳");
+  form.set("issuing_authority", "دیوان عالی کشور");
+  form.set("document_date", "2026-01-15");
+  form.set("validity_status", "unknown");
+  form.append("section_heading", "موضوع رأی");
+  form.append("section_body", "شرح موضوع رأی برای آزمون باید حداقل ده نویسه داشته باشد.");
+
+  const result = parseMavisArticleDraftInput(form);
+  assert.equal(result.ok, true);
+  assert.equal(result.payload.content.record_type, "unifying_opinion");
+  assert.equal(result.payload.content.legal_metadata.document_number, "۱۲۳");
+  assert.equal(result.payload.content.legal_metadata.issuing_authority, "دیوان عالی کشور");
+});
+
+test("rejects unsupported legal record types and malformed legal dates", () => {
+  const form = new FormData();
+  form.set("title", "قانون نمونه");
+  form.set("slug", "sample-law");
+  form.set("excerpt", "خلاصه‌ای معتبر برای آزمون ساختار مدرک حقوقی.");
+  form.set("category", "حقوق مدنی");
+  form.set("intro", "این متن صرفاً برای آزمون اعتبارسنجی ساختار فرم استفاده می‌شود.");
+  form.set("record_type", "invented_type");
+  form.set("document_date", "1405/01/01");
+  form.append("section_heading", "ماده نخست");
+  form.append("section_body", "متن ماده برای آزمون باید حداقل ده نویسه داشته باشد.");
+
+  const result = parseMavisArticleDraftInput(form);
+  assert.equal(result.ok, false);
+});
+
+
+test("rejects malformed dates when the legal record type is otherwise valid", () => {
+  const result = parseMavisArticleDraftInput(formWith({
+    record_type: "law",
+    document_date: "1405/01/01",
+  }));
+  assert.equal(result.ok, false);
+  assert.match(result.error, /تاریخ/);
+});
