@@ -42,7 +42,7 @@ export default async function AdminDashboard({ searchParams }) {
         </Link>
         <nav className="admin-nav" aria-label="منوی مدیریت">
           <a className="active" href="#overview">نمای کلی</a>
-          <Link href="/admin/mavis/articles">کتابخانه مقالات</Link>
+          <Link href="/admin/mavis/articles">بازوی سوم: مرکز مقالات و جست‌وجوی حقوقی</Link>
           <Link href="/admin/mavis">مرکز دانش MAVIS</Link>
           <a href="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev/admin" target="_blank" rel="noopener noreferrer">ورود به محیط آزمایشی MAVIS ↗</a>
           <a href="#office-settings">موقعیت و اطلاعات دفتر</a>
@@ -74,20 +74,21 @@ export default async function AdminDashboard({ searchParams }) {
             <article><span>نمایش عمومی موقعیت</span><strong>{location.is_location_public ? "روشن" : "خاموش"}</strong><small>کنترل نمایش در وب‌سایت</small></article>
           </section>
 
-          <section className="admin-panel" id="article-library-access">
-            <div className="admin-panel-heading">
+          <details className="admin-panel admin-disclosure" id="article-library-access">
+            <summary className="admin-panel-heading">
               <div>
-                <span className="admin-eyebrow">EDITORIAL WORKSPACE</span>
-                <h2>مدیریت مقالات حقوقی</h2>
-                <p>ثبت دستی مقاله، ذخیره پیش‌نویس، بازبینی و انتشار با تأیید مدیر؛ بدون نیاز به جست‌وجوی آنلاین یا هوش مصنوعی برای نگارش.</p>
+                <span className="admin-eyebrow">MAVIS · THIRD ARM</span>
+                <h2>بازوی سوم: مرکز مقالات و جست‌وجوی حقوقی</h2>
+                <p>جست‌وجوی منابع حقوقی، بررسی و مدیریت مقاله‌ها؛ این بخش مستقل است و فقط با اقدام مدیر محتوا را منتشر می‌کند.</p>
               </div>
-              <span className="admin-panel-icon">✎</span>
-            </div>
+              <span className="admin-panel-icon" aria-hidden="true">⌕</span>
+            </summary>
             <div className="admin-form-actions">
-              <Link className="admin-button" href="/admin/mavis/articles">ورود به کتابخانه مقالات</Link>
-              <Link className="admin-button secondary" href="/admin/mavis/articles/new">ثبت مقاله جدید</Link>
+              <Link className="admin-button" href="/admin/mavis">ورود به مرکز جست‌وجو و پژوهش حقوقی</Link>
+              <Link className="admin-button secondary" href="/admin/mavis/articles">مدیریت، بازبینی و انتشار مقالات</Link>
+              <Link className="admin-button secondary" href="/admin/mavis/articles/new">ثبت مقاله دستی</Link>
             </div>
-          </section>
+          </details>
 
           <section className="admin-panel" id="office-settings">
             <div className="admin-panel-heading">
