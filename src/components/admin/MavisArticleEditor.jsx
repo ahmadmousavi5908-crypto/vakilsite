@@ -315,26 +315,23 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
         <input type="hidden" name="article_id" value={articleId} />
         <input type="hidden" name="expected_version" value={articleId ? expectedVersion : ""} />
         <details className={styles.collapsibleGroup} open>
-          <summary><span>۱. مشخصات اصلی مقاله</span><small>عنوان، نامک، نویسنده، دسته‌بندی و خلاصه</small></summary>
+          <summary><span>۱. مشخصات اصلی مقاله</span><small>عنوان، نامک، نویسنده، دسته‌بندی، خلاصه و برچسب‌ها</small></summary>
           <div className={styles.grid}>
-          <label className={styles.field}><span>عنوان مقاله <b>*</b></span><input name="title" defaultValue={initialArticle?.title || initialTopic || ""} required minLength={3} maxLength={300} /></label>
-          <label className={styles.field}><span>نامک انگلیسی <b>*</b></span><input name="slug" defaultValue={initialArticle?.slug || ""} required minLength={3} maxLength={180} dir="ltr" pattern="[a-z0-9]+([a-z0-9-]*[a-z0-9])?" placeholder="contract-legal-guide" /><small>حروف کوچک انگلیسی، عدد و خط تیره</small></label>
-          <label className={styles.field}><span>نام نویسنده</span><input name="author_name" defaultValue={initialArticle?.author_name || ""} maxLength={180} /></label>
-          <label className={styles.field}><span>دسته‌بندی <b>*</b></span><input name="category" defaultValue={initialArticle?.category || ""} required minLength={2} maxLength={100} placeholder="حقوق کیفری، مدنی، خانواده..." /></label>
-          <label className={styles.fieldWide}><span>خلاصه مقاله <b>*</b></span><textarea name="excerpt" defaultValue={initialArticle?.excerpt || ""} required minLength={10} maxLength={1200} rows={3} /></label>
-          <label className={styles.fieldWide}><span>برچسب‌ها</span><input name="tags" defaultValue={Array.isArray(initialArticle?.tags) ? initialArticle.tags.join("، ") : ""} placeholder="قرارداد، حقوق مدنی، دعاوی" /><small>برچسب‌ها را با ویرگول فارسی یا انگلیسی جدا کنید.</small></label>
-          <label className={styles.fieldWide}><span>مقدمه مقاله <b>*</b></span><textarea name="intro" defaultValue={content.intro || ""} required minLength={10} maxLength={8000} rows={5} /></label>
-          <label className={styles.fieldWide}><span>هشدار یا توضیح حقوقی</span><textarea name="warning" defaultValue={content.warning || ""} maxLength={2000} rows={2} /></label>
-          <label className={styles.fieldWide}><span>برچسب‌ها</span><input name="tags" defaultValue={Array.isArray(initialArticle?.tags) ? initialArticle.tags.join("، ") : ""} placeholder="قرارداد، حقوق مدنی، دعاوی" /><small>برچسب‌ها را با ویرگول فارسی یا انگلیسی جدا کنید.</small></label>
+            <label className={styles.field}><span>عنوان مقاله <b>*</b></span><input name="title" defaultValue={initialArticle?.title || initialTopic || ""} required minLength={3} maxLength={300} /></label>
+            <label className={styles.field}><span>نامک انگلیسی <b>*</b></span><input name="slug" defaultValue={initialArticle?.slug || ""} required minLength={3} maxLength={180} dir="ltr" pattern="[a-z0-9]+([a-z0-9-]*[a-z0-9])?" placeholder="contract-legal-guide" /><small>حروف کوچک انگلیسی، عدد و خط تیره</small></label>
+            <label className={styles.field}><span>نام نویسنده</span><input name="author_name" defaultValue={initialArticle?.author_name || ""} maxLength={180} /></label>
+            <label className={styles.field}><span>دسته‌بندی <b>*</b></span><input name="category" defaultValue={initialArticle?.category || ""} required minLength={2} maxLength={100} placeholder="حقوق کیفری، مدنی، خانواده..." /></label>
+            <label className={styles.fieldWide}><span>خلاصه مقاله <b>*</b></span><textarea name="excerpt" defaultValue={initialArticle?.excerpt || ""} required minLength={10} maxLength={1200} rows={3} /></label>
+            <label className={styles.fieldWide}><span>برچسب‌ها</span><input name="tags" defaultValue={Array.isArray(initialArticle?.tags) ? initialArticle.tags.join("، ") : ""} placeholder="قرارداد، حقوق مدنی، دعاوی" /><small>برچسب‌ها را با ویرگول فارسی یا انگلیسی جدا کنید.</small></label>
           </div>
         </details>
 
         <details className={styles.collapsibleGroup} open>
           <summary><span>۲. متن و ساختار مقاله</span><small>مقدمه، بخش‌ها، نکات و توضیحات حقوقی</small></summary>
           <div className={styles.grid}>
-          <label className={styles.fieldWide}><span>مقدمه مقاله <b>*</b></span><textarea name="intro" defaultValue={content.intro || ""} required minLength={10} maxLength={8000} rows={5} /></label>
-          <label className={styles.fieldWide}><span>هشدار یا توضیح حقوقی</span><textarea name="warning" defaultValue={content.warning || ""} maxLength={2000} rows={2} /></label>
-          <label className={styles.fieldWide}><span>چک‌لیست نکات (هر مورد در یک خط)</span><textarea name="checklist" defaultValue={Array.isArray(content.checklist) ? content.checklist.join("\n") : ""} rows={3} /><small>تا ۶۰ مورد، هر مورد حداکثر ۵۰۰ نویسه</small></label>
+            <label className={styles.fieldWide}><span>مقدمه مقاله <b>*</b></span><textarea name="intro" defaultValue={content.intro || ""} required minLength={10} maxLength={8000} rows={5} /></label>
+            <label className={styles.fieldWide}><span>هشدار یا توضیح حقوقی</span><textarea name="warning" defaultValue={content.warning || ""} maxLength={2000} rows={2} /></label>
+            <label className={styles.fieldWide}><span>چک‌لیست نکات (هر مورد در یک خط)</span><textarea name="checklist" defaultValue={Array.isArray(content.checklist) ? content.checklist.join("\\n") : ""} rows={3} /><small>تا ۶۰ مورد، هر مورد حداکثر ۵۰۰ نویسه</small></label>
           </div>
 
         <section className={styles.sections} aria-labelledby="mavis-editor-sections">
