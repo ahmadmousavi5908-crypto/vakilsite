@@ -4,7 +4,9 @@ import { detectIntakeTopic } from "./intake-core.mjs";
 import { normalizeOfflineQuery, rankOfflineRecords } from "./search.mjs";
 import { buildOfflineAnswer } from "./answer.mjs";
 const DATA_URL="./knowledge.json";
-const PUBLISHED_ARTICLES_URL="./published-articles.json";
+const PUBLISHED_ARTICLES_URL="/api/mavis/published-articles";
+const LEGACY_PUBLISHED_ARTICLES_URL="./published-articles.json";
+const ARTICLE_CACHE_NAME="mavis-offline-articles-v1";
 let corpus=null;
 const reviewLabels={verified_primary_source:"تطبیق‌شده با منبع اولیه",secondary_source_only:"منبع ثانویه؛ نیازمند تطبیق",needs_legal_review:"نیازمند بازبینی حقوقی",draft:"پیش‌نویس",service_information:"اطلاعات خدمات"};
 const typeLabels={term:"اصطلاح حقوقی",law:"قانون ثبت‌شده",article:"خلاصه ماده",faq:"پرسش متداول",research_note:"یادداشت پژوهشی · منبع ثانویه",published_article:"مقاله منتشرشده سایت"};
@@ -12,6 +14,23 @@ const intakeGuidance={family:"موضوع خانواده تشخیص داده شد
 const $=id=>document.getElementById(id);
 function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=String(text);return node;}
 function appendText(parent,tag,className,text){const node=el(tag,className,text);parent.append(node);return node;}
+async function loadPublishedArticleBundle(){
+  try{
+    const response=await fetch(PUBLISHED_ARTICLES_URL,{cache:"no-store"});
+    if(response.ok){
+      const cachedResponse=response.clone();
+      if("caches" in window){try{const cache=await caches.open(ARTICLE_CACHE_NAME);await cache.put(PUBLISHED_ARTICLES_URL,cachedResponse);}catch{}}
+      return await response.json();
+    }
+  }catch{}
+  if("caches" in window){
+    try{const cache=await caches.open(ARTICLE_CACHE_NAME);const cached=await cache.match(PUBLISHED_ARTICLES_URL);if(cached)return await cached.json();}catch{}
+  }
+  const legacy=await fetch(LEGACY_PUBLISHED_ARTICLES_URL,{cache:"force-cache"});
+  if(!legacy.ok)throw new Error("Published article bundle unavailable");
+  return legacy.json();
+}
+
 function render(records,root){root.replaceChildren();if(!records.length){root.append(el("div","empty","در داده‌های فعلی نتیجه‌ای پیدا نشد. این موضوع به معنی نبود قانون یا راهکار حقوقی مرتبط نیست؛ ممکن است عبارت شما با اصطلاحات کتابخانه متفاوت باشد."));return;}
 for(const item of records){const card=el("article","result");const top=el("div","top");top.append(el("span","type",typeLabels[item.record_type]||"مدخل حقوقی"),el("span","review",reviewLabels[item.review_status]||"وضعیت بررسی نامشخص"));card.append(top);appendText(card,"h2","",item.title||"مدخل حقوقی");const body=item.summary||item.definition||item.notes;if(body)appendText(card,"p","",body);if(item.notes&&body!==item.notes)appendText(card,"p","meta",item.notes);if(item.article_number)appendText(card,"div","meta","شماره ماده: "+item.article_number+(item.law_title?" · "+item.law_title:""));if(item.status)appendText(card,"div","meta","وضعیت رکورد: "+item.status);if(item.law_refs?.length||item.article_refs?.length){const refNames=[];for(const id of item.law_refs||[]){const law=corpus.records.find(x=>x.id===id);if(law)refNames.push(law.title);}for(const id of item.article_refs||[]){const a=corpus.records.find(x=>x.id===id);if(a)refNames.push(a.title);}if(refNames.length)appendText(card,"div","refs","ارجاعات مرتبط: "+refNames.join("؛ "));}
 const urls=[...(item.sources||[]).map(s=>({title:(s.verification_status==="secondary_source_only"?"منبع ثانویه: ":s.verification_status==="official_url_identified_not_retrieved"?"پیوند رسمی؛ دریافت‌نشده: ":"")+(s.title||"منبع"),url:s.url})),...(item.source_url?[{title:"پیوند کشف منبع؛ اعتبار مستقل تأیید نشده",url:item.source_url}]:[])].filter(x=>/^https:\/\//i.test(x.url||""));if(urls.length){const links=el("div","sources");for(const source of urls){const a=el("a","",source.title);a.href=source.url;a.target="_blank";a.rel="noopener noreferrer";links.append(a);}card.append(links);}root.append(card);}}
@@ -25,9 +44,7 @@ const baseStatus=()=> "کتابخانه آماده · "+corpus.counts.terms+" ا
 function updateCacheStatus(state){const messages={pending:"جست‌وجوی محلی آماده است؛ ذخیره آفلاین در حال تکمیل است.",ready:"جست‌وجوی محلی و ذخیره آفلاین آماده‌اند.",failed:"جست‌وجوی محلی آماده است؛ ذخیره آفلاین تأیید نشد. صفحه را با اینترنت باز نگه دارید و دوباره بارگذاری کنید.",unsupported:"جست‌وجوی محلی آماده است؛ این مرورگر ذخیره آفلاین را پشتیبانی نمی‌کند."};const status=$("bundle-status");if(status)status.textContent=baseStatus()+" · "+messages[state];}
 try{const response=await fetch(DATA_URL,{cache:"force-cache"});if(!response.ok)throw new Error("bundle unavailable");corpus=await response.json();
 try{
-const articleResponse=await fetch(PUBLISHED_ARTICLES_URL,{cache:"force-cache"});
-if(articleResponse.ok){
-const articleBundle=await articleResponse.json();
+const articleBundle=await loadPublishedArticleBundle();
 if(Array.isArray(articleBundle.records)){
 const existingIds=new Set(corpus.records.map(record=>record.id));
 const articleRecords=articleBundle.records.filter(record=>
@@ -44,9 +61,8 @@ publishedArticleState=articleRecords.length+" مقاله منتشرشده سای
 }else{
 publishedArticleState="ساختار بسته مقالات نامعتبر است";
 }
-}
 }catch{
-publishedArticleState="بسته مقالات در دسترس نیست";
+publishedArticleState="مقالات آنلاین در دسترس نیستند؛ نسخه ذخیره‌شده یا بسته محلی استفاده می‌شود";
 }
 $("submit").disabled=false;renderSourceRegistry();updateCacheStatus("pending");
 if("serviceWorker" in navigator){try{const registration=await navigator.serviceWorker.register("./sw.js",{scope:"./"});const worker=registration.installing||registration.waiting||registration.active;if(registration.active?.state==="activated"||worker?.state==="activated"){updateCacheStatus("ready");}else if(worker){worker.addEventListener("statechange",()=>{if(worker.state==="activated")updateCacheStatus("ready");else if(worker.state==="redundant")updateCacheStatus("failed");});}else{updateCacheStatus("failed");}}catch{updateCacheStatus("failed");}}else{updateCacheStatus("unsupported");}}
