@@ -86,41 +86,28 @@ export default function MavisIranianSourceSearch({ onImport }) {
         body: JSON.stringify({ url: item.url }),
       });
       const payload = await response.json().catch(() => null);
-      if (!response.ok || payload?.ok !== true || typeof payload.content !== "string") {
+      if (!response.ok || payload?.ok !== true || !payload.metadata || typeof payload.metadata !== "object") {
         throw new Error(payload?.error?.message || "استخراج مشخصات منبع انجام نشد.");
       }
-
-      const content = payload.content;
-      const headings = content.split("\n")
-        .map((line) => line.match(/^#{1,3}\s+(.+)$/)?.[1])
-        .filter(Boolean)
-        .map((heading) => heading.replace(/\s+/g, " ").trim().slice(0, 120))
-        .slice(0, 8);
-      const match = (patterns, max = 180) => {
-        for (const pattern of patterns) {
-          const value = content.match(pattern)?.[1];
-          if (value) return value.replace(/\s+/g, " ").trim().slice(0, max);
-        }
-        return "";
-      };
-      const author = match([/(?:نویسنده|مولف|مؤلف|پدیدآور|author)\s*[:：-]\s*([^\n]{2,180})/i]);
-      const publication = match([/(?:نام نشریه|نشریه|مجله|فصلنامه|ژورنال|publication|journal|publisher|ناشر)\s*[:：-]\s*([^\n]{2,180})/i]);
-      const publicationDate = match([/(?:تاریخ انتشار|تاریخ چاپ|published(?: on)?|publication date)\s*[:：-]\s*([^\n]{4,80})/i], 40);
-      const doi = content.match(/\b10\.\d{4,9}\/[a-z0-9._;()/:+-]+\b/i)?.[0] || "";
+      const extracted = payload.metadata;
+      const headings = Array.isArray(extracted.headings)
+        ? extracted.headings.filter((heading) => typeof heading === "string").slice(0, 8) : [];
+      const content = typeof payload.content === "string" ? payload.content : "";
       const wordCount = content.split(/\s+/).filter(Boolean).length;
-      const hasAbstract = /(?:چکیده|abstract)/i.test(content);
-
       setMetadata((current) => ({
         ...(current || {}),
         title: current?.title || item.title || "",
-        author: author || current?.author || "",
-        publication: publication || current?.publication || item.sourceName || "",
-        publicationDate: current?.publicationDate || item.publishedDate || publicationDate,
-        documentNumber: doi || current?.documentNumber || "",
+        author: extracted.author || current?.author || "",
+        publication: extracted.publication || current?.publication || item.sourceName || "",
+        publicationDate: extracted.publicationDate || current?.publicationDate || item.publishedDate || "",
+        documentNumber: extracted.documentNumber || current?.documentNumber || "",
+        issuingAuthority: extracted.issuingAuthority || current?.issuingAuthority || (item.sourceGroup === "official" ? item.sourceName : ""),
+        documentType: extracted.documentType || current?.documentType || "",
+        abstract: extracted.abstract || current?.abstract || item.snippet || "",
         sourceUrl: item.url,
       }));
-      setExtractReport({ wordCount, hasAbstract, headings, sourceName: item.sourceName });
-      setNotice("اطلاعات قابل تشخیص به فرم منبع منتقل شد. متن کامل صفحه فقط برای تحلیل موقت دریافت شد و در بانک ذخیره نمی‌شود.");
+      setExtractReport({ wordCount, hasAbstract: Boolean(extracted.abstract), headings, sourceName: item.sourceName });
+      setNotice("فیلدهای قابل‌استخراج از منبع پیشنهاد شدند؛ موارد ناموجود خالی می‌مانند و باید پیش از ثبت بررسی شوند.");
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "استخراج منبع ناموفق بود.");
     } finally {
