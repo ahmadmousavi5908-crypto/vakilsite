@@ -72,7 +72,7 @@ export default function MavisIranianSourceSearch({ onImport }) {
 
   async function extract(item) {
     if (extractingUrl) return;
-    setSelected(item);
+    choose(item);
     setExtractingUrl(item.url);
     setExtractReport(null);
     setError("");
