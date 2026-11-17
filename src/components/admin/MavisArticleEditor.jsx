@@ -64,9 +64,14 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
     try {
       const result = await saveMavisArticleDraft(new FormData(event.currentTarget));
       if (result?.ok) {
+        const isNewDraft = !articleId;
         setArticleId(result.articleId);
         setExpectedVersion((current) => current + 1);
         setFeedback({ type: "success", message: "پیش‌نویس با موفقیت ذخیره شد.", articleId: result.articleId });
+        if (isNewDraft) {
+          router.replace(`/admin/mavis/articles/${result.articleId}/edit?saved=1`);
+          router.refresh();
+        }
       } else {
         setFeedback({ type: "error", message: result?.error || "ذخیره پیش‌نویس انجام نشد." });
       }
@@ -90,7 +95,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
         setFeedback({ type: "error", message: result?.error || "ارسال برای بازبینی انجام نشد." });
         return;
       }
-      router.push("/admin/mavis/articles?review=submitted");
+      router.push("/admin/mavis/articles?review=submitted#mavis-review-queue");
       router.refresh();
     } catch {
       setFeedback({ type: "error", message: "ارتباط با سرور برقرار نشد. وضعیت مقاله را دوباره بررسی کنید." });
