@@ -22,7 +22,7 @@ Keep search and training policies separate. Do not open training crawlers merely
 - **Claude:** Keep `Claude-SearchBot` and `Claude-User` allowed. `ClaudeBot` is a separate training crawler.
 - **Google AI features:** Googlebot access and ordinary Search eligibility are the relevant controls for AI Overviews and AI Mode. `Google-Extended` is not a Google Search crawler and does not control inclusion in Google Search.
 - **Perplexity:** Keep `PerplexityBot` allowed for search discovery.
-- **DeepSeek and Grok:** No verified, vendor-published web-search crawler token was established in this audit. Do not invent `DeepSeekBot` or `GrokBot` rules. Their web retrieval may depend on search indexes, user-requested fetches, or infrastructure that cannot be reliably controlled through a guessed user-agent rule.
+- **Grok:** xAI documents a real-time Web Search tool for Grok, but the reviewed documentation does not publish a dedicated website-crawler user-agent for site owners. Keep public pages crawlable through ordinary search infrastructure; do not invent a `GrokBot` rule.\n- **DeepSeek:** No verified, vendor-published web-search crawler token was established in this audit. Do not invent a `DeepSeekBot` rule; maintain normal public crawlability and discoverability through established search indexes.
 
 ## Content requirements
 
