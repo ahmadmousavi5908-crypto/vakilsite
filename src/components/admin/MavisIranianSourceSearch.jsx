@@ -91,23 +91,23 @@ export default function MavisIranianSourceSearch({ onImport }) {
       }
 
       const content = payload.content;
-      const headings = content.split("\\n")
-        .map((line) => line.match(/^#{1,3}\\s+(.+)$/)?.[1])
+      const headings = content.split("\n")
+        .map((line) => line.match(/^#{1,3}\s+(.+)$/)?.[1])
         .filter(Boolean)
-        .map((heading) => heading.replace(/\\s+/g, " ").trim().slice(0, 120))
+        .map((heading) => heading.replace(/\s+/g, " ").trim().slice(0, 120))
         .slice(0, 8);
       const match = (patterns, max = 180) => {
         for (const pattern of patterns) {
           const value = content.match(pattern)?.[1];
-          if (value) return value.replace(/\\s+/g, " ").trim().slice(0, max);
+          if (value) return value.replace(/\s+/g, " ").trim().slice(0, max);
         }
         return "";
       };
-      const author = match([/(?:نویسنده|مولف|مؤلف|پدیدآور|author)\\s*[:：-]\\s*([^\\n]{2,180})/i]);
-      const publication = match([/(?:نام نشریه|نشریه|مجله|فصلنامه|ژورنال|publication|journal|publisher|ناشر)\\s*[:：-]\\s*([^\\n]{2,180})/i]);
-      const publicationDate = match([/(?:تاریخ انتشار|تاریخ چاپ|published(?: on)?|publication date)\\s*[:：-]\\s*([^\\n]{4,80})/i], 40);
-      const doi = content.match(/\\b10\\.\\d{4,9}\\/[a-z0-9._;()/:+-]+\\b/i)?.[0] || "";
-      const wordCount = content.split(/\\s+/).filter(Boolean).length;
+      const author = match([/(?:نویسنده|مولف|مؤلف|پدیدآور|author)\s*[:：-]\s*([^\n]{2,180})/i]);
+      const publication = match([/(?:نام نشریه|نشریه|مجله|فصلنامه|ژورنال|publication|journal|publisher|ناشر)\s*[:：-]\s*([^\n]{2,180})/i]);
+      const publicationDate = match([/(?:تاریخ انتشار|تاریخ چاپ|published(?: on)?|publication date)\s*[:：-]\s*([^\n]{4,80})/i], 40);
+      const doi = content.match(/\b10\.\d{4,9}\/[a-z0-9._;()/:+-]+\b/i)?.[0] || "";
+      const wordCount = content.split(/\s+/).filter(Boolean).length;
       const hasAbstract = /(?:چکیده|abstract)/i.test(content);
 
       setMetadata((current) => ({
