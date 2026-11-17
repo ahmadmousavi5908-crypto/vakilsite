@@ -28,3 +28,15 @@
 .aiReport small{color:#8a969e;font-size:9px}
 .aiEvidenceGaps{padding:10px;border-right:3px solid #c79b55;background:#fff9ef;color:#795d2d}
 @media(max-width:700px){.sourceTools> :not(summary){margin:8px}.manualSourceForm{padding:0}.sourceSubmit,.aiButton{width:100%;justify-self:stretch}}
+
+
+/* Slightly roomier editorial fields for comfortable long-form entry. */
+.form{padding:22px;gap:19px}
+.grid{gap:17px 18px}
+.field input,.field select,.field textarea,.fieldWide input,.fieldWide textarea{min-height:48px;padding:13px 14px;border-radius:9px}
+.field textarea,.fieldWide textarea{min-height:132px;resize:vertical}
+.sectionCard{gap:14px;padding:17px;border-radius:12px}
+.sourcePanel{padding:19px;gap:14px}
+.sourceCard{padding:15px;gap:11px;border-radius:12px}
+.sourceCard dd{font-size:11px;line-height:1.85}
+@media(max-width:700px){.form{padding:14px}.field input,.field select,.field textarea,.fieldWide input,.fieldWide textarea{min-height:46px;padding:12px}.field textarea,.fieldWide textarea{min-height:120px}.sectionCard{padding:14px}.sourcePanel{padding:14px}.sourceCard{padding:13px}}

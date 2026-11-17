@@ -17,3 +17,31 @@
 .detailTags small{color:#8994a0;font-size:10px}
 @media(max-width:700px){.headerActions{width:100%;justify-content:space-between}.createButton{flex:1}.detailPanel{grid-template-columns:1fr;gap:10px;padding:13px}.detailsButton{white-space:normal}}
 @media(prefers-reduced-motion:reduce){.createButton{transition:none}.createButton:hover{transform:none}}
+
+
+/* Refined article register: clearer hierarchy without losing the compact table workflow. */
+.panel{gap:16px;padding:19px}
+.tableWrap{border-radius:12px;max-height:60vh}
+.table{min-width:900px}
+.table th,.table td{padding:13px 11px}
+.table tbody tr:not(.detailRow):hover td{background:#faf8f3}
+.table td strong{font-size:12px;line-height:2}
+.table td small{line-height:1.7}
+.status{padding:5px 10px;font-weight:700}
+.detailsButton{padding:8px 11px;transition:background .16s ease,border-color .16s ease}
+.detailRow td{background:#f8fafb}
+.detailPanel{grid-template-columns:minmax(150px,.7fr) minmax(280px,2.2fr) minmax(170px,1fr);gap:18px;padding:19px 21px}
+.detailPanel>div{padding:11px 13px;border:1px solid #e6ebee;border-radius:10px;background:#fff}
+.detailPanel>div>span{margin-bottom:7px;font-size:10px}
+.detailPanel strong,.detailPanel p{font-size:12px;line-height:2}
+.detailTags>div{gap:7px}
+.detailTags>div>span{padding:5px 9px;font-size:10px}
+.toolbar{padding:14px;gap:12px}
+.searchField input,.filterField select{height:40px;border-radius:8px;font-size:12px}
+@media(max-width:700px){
+ .panel{padding:13px;gap:13px}
+ .table th,.table td{padding:11px 9px}
+ .detailPanel{grid-template-columns:1fr;gap:9px;padding:12px}
+ .detailPanel>div{padding:10px 11px}
+ .toolbar{padding:11px}
+}
