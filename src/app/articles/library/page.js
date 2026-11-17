@@ -33,8 +33,12 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
   const params = await searchParams;
   const search = normalizeTerm(params?.q, 100);
   const category = normalizeTerm(params?.category, 80);
+  const requestedType = normalizeTerm(params?.type, 40);
+  const allowedRecordTypes = new Set(["law", "unifying_opinion", "judicial_decision", "advisory_opinion", "legal_interpretation", "legal_analysis", "official_circular", "academic_research"]);
+  const selectedRecordType = allowedRecordTypes.has(requestedType) ? requestedType : "";
   const cursorValue = typeof params?.cursor === "string" ? params.cursor : "";
   const cursor = decodePublishedArticleCursor(cursorValue);
+  const recordTypeLabels = { article: "مقاله حقوقی", law: "قانون یا مقرره", unifying_opinion: "رأی وحدت رویه", judicial_decision: "رأی قضایی", advisory_opinion: "نظریه مشورتی", legal_interpretation: "تفسیر و شرح قانون", legal_analysis: "تحلیل مسئله حقوقی", official_circular: "بخشنامه و دستورالعمل", academic_research: "پژوهش علمی" };
   let rows = [];
   let nextCursor = null;
   let loadError = "";
@@ -47,7 +51,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
       if (!supabase) throw new Error("Public CMS is not configured");
       let query = supabase
         .from("mavis_articles")
-        .select("id, slug, title, excerpt, category, author_name, published_at")
+        .select("id, slug, title, excerpt, category, author_name, published_at, content")
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .order("id", { ascending: false })
@@ -55,6 +59,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
 
       if (search) query = query.ilike("title", "%" + search + "%");
       if (category) query = query.eq("category", category);
+      if (selectedRecordType) query = query.eq("content->>record_type", selectedRecordType);
       if (cursor) {
         query = query.or(
           "published_at.lt." + cursor.publishedAt +
@@ -79,6 +84,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
   const nextParams = new URLSearchParams();
   if (search) nextParams.set("q", search);
   if (category) nextParams.set("category", category);
+  if (selectedRecordType) nextParams.set("type", selectedRecordType);
   if (nextCursor) nextParams.set("cursor", nextCursor);
   const nextHref = "/articles/library?" + nextParams.toString();
 
@@ -109,6 +115,13 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
             <input name="q" type="search" maxLength={100} defaultValue={search} placeholder="عنوان مقاله را بنویسید..." />
           </label>
           <label>
+            <span>نوع مدرک</span>
+            <select name="type" defaultValue={selectedRecordType}>
+              <option value="">همه انواع</option>
+              {Object.entries(recordTypeLabels).filter(([key]) => key !== "article").map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+            </select>
+          </label>
+          <label>
             <span>دسته‌بندی دقیق</span>
             <input name="category" maxLength={80} defaultValue={category} placeholder="مثلاً حقوق مدنی" />
           </label>
@@ -127,12 +140,13 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
           <>
             <div className={styles.tableWrap}>
               <table>
-                <thead><tr><th scope="col">ردیف</th><th scope="col">عنوان مقاله</th><th scope="col">دسته‌بندی</th><th scope="col">نویسنده</th><th scope="col">تاریخ انتشار</th><th scope="col">مطالعه</th></tr></thead>
+                <thead><tr><th scope="col">ردیف</th><th scope="col">عنوان مدرک</th><th scope="col">نوع مدرک</th><th scope="col">دسته‌بندی</th><th scope="col">نویسنده</th><th scope="col">تاریخ انتشار</th><th scope="col">مطالعه</th></tr></thead>
                 <tbody>
                   {rows.map((article, index) => (
                     <tr key={article.id}>
                       <td className={styles.rowNumber}>{(index + 1).toLocaleString("fa-IR")}</td>
-                      <td><strong>{article.title}</strong><small>{article.excerpt || "برای مشاهده متن کامل مقاله وارد صفحه مطالعه شوید."}</small></td>
+                      <td><strong>{article.title}</strong><small>{article.excerpt || "برای مشاهده متن کامل وارد صفحه مطالعه شوید."}</small></td>
+                      <td><span className={styles.category}>{recordTypeLabels[article.content?.record_type] || recordTypeLabels.article}</span></td>
                       <td><span className={styles.category}>{article.category || "عمومی"}</span></td>
                       <td>{article.author_name || "سید احمد موسوی"}</td>
                       <td><time dateTime={article.published_at}>{formatDate(article.published_at)}</time></td>
