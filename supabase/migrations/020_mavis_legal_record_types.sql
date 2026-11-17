@@ -27,7 +27,7 @@ BEGIN
   IF p_payload->'content' ? 'record_type'
     AND (
       jsonb_typeof(p_payload->'content'->'record_type') IS DISTINCT FROM 'string'
-      OR p_payload->>'content'->>'record_type' NOT IN (
+      OR (p_payload->'content'->>'record_type') NOT IN (
         'article', 'law', 'unifying_opinion', 'judicial_decision',
         'advisory_opinion', 'legal_interpretation', 'legal_analysis',
         'official_circular', 'academic_research'
