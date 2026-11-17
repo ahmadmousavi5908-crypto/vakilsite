@@ -20,44 +20,47 @@ test("source URL validation accepts known sources and rejects unknown or unsafe 
   assert.equal(normalizeIranianSourceUrl("https://qavanin.ir:8443"), null);
 });
 
-test("search restricts provider domains and filters out unapproved provider results", async () => {
+test("search uses Exa and restricts results to approved Iranian domains", async () => {
   let sentBody;
   const client = createIranianSourceSearch({
     apiKey: "test-key",
-    fetchImpl: async (url, options) => {\n      assert.equal(url, "https://api.exa.ai/search");
+    fetchImpl: async (url, options) => {
+      assert.equal(url, "https://api.exa.ai/search");
       sentBody = JSON.parse(options.body);
       return {
         ok: true,
         json: async () => ({
-          usage: 1,
+          costDollars: { total: 0.007 },
           results: [
-            { title: "قانون نمونه", url: "https://qavanin.ir/law/1", content: "متن نتیجه", score: 0.91 },
-            { title: "منبع خارجی", url: "https://example.com/law", content: "نباید نمایش داده شود", score: 0.99 },
-          ],
-        }),
+            { title: "قانون نمونه", url: "https://qavanin.ir/law/1", highlights: ["متن نتیجه"], publishedDate: "2026-11-01T00:00:00.000Z" },
+            { title: "منبع خارجی", url: "https://example.com/law", highlights: ["نباید نمایش داده شود"] }
+          ]
+        })
       };
-    },
+    }
   });
   const result = await client.search({ query: "قانون مسئولیت مدنی", group: "official", limit: 10 });
-  assert.equal(sentBody.include_domains_mode, "restrict");
-  assert.ok(sentBody.include_domains.includes("qavanin.ir"));
-  assert.ok(!sentBody.include_domains.includes("sid.ir"));
+  assert.equal(sentBody.type, "auto");
+  assert.ok(sentBody.includeDomains.includes("qavanin.ir"));
+  assert.ok(!sentBody.includeDomains.includes("sid.ir"));
+  assert.equal(sentBody.contents.highlights, true);
   assert.equal(result.results.length, 1);
-  assert.equal(result.results[0].sourceAuthority, "official_primary");\n  assert.equal(result.provider, "exa");\n  assert.equal(result.results[0].snippet, "متن نتیجه");
+  assert.equal(result.results[0].sourceAuthority, "official_primary");
   assert.equal(result.results[0].sourceId, "qavanin");
+  assert.equal(result.results[0].snippet, "متن نتیجه");
+  assert.equal(result.provider, "exa");
 });
 
 test("invalid query and unsupported source group are rejected before network access", async () => {
   let called = false;
   const client = createIranianSourceSearch({
     apiKey: "test-key",
-    fetchImpl: async () => { called = true; throw new Error("unexpected"); },
+    fetchImpl: async () => { called = true; throw new Error("unexpected"); }
   });
   assert.deepEqual(await client.search({ query: "x" }), { ok: false, reason: "invalid_query" });
   assert.deepEqual(await client.search({ query: "ماده ۱۰", group: "global" }), { ok: false, reason: "invalid_group" });
   assert.equal(called, false);
 });
-
 
 test("no-key fallback searches Qavanin through Browser Run and normalizes official results", async () => {
   let capturedUrl = "";
@@ -113,7 +116,6 @@ test("Browser Run failures degrade to verified portal links instead of a false s
   assert.equal(result.providerErrors[0].code, "UPSTREAM_UNAVAILABLE");
   assert.ok(result.searchLinks.length >= 3);
 });
-
 
 test("all-source fallback includes academic domains instead of only legal portals", async () => {
   const { createIranianSourceSearchFallback } = await import("../../src/lib/mavis/iranian-source-search.mjs");
