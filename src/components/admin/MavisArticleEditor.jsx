@@ -233,16 +233,16 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
     <section className={styles.workspace} aria-labelledby="mavis-editor-title">
       <header className={styles.intro}>
         <div>
-          <span className={styles.eyebrow}>EDITORIAL WORKSPACE · DRAFT ONLY</span>
+          <span className={styles.eyebrow}>MANUAL EDITORIAL WORKSPACE · DRAFT ONLY</span>
           <h2 id="mavis-editor-title">{isEditing ? "ویرایش پیش‌نویس مقاله" : "ساخت پیش‌نویس مقاله"}</h2>
-          <p>ذخیره، نسخه جدیدی از پیش‌نویس می‌سازد. انتشار و تغییر وضعیت از این فرم امکان‌پذیر نیست.</p>
+          <p>مقاله را مستقیم در فیلدهای زیر ثبت کنید؛ برای نوشتن و ذخیره پیش‌نویس به جست‌وجوی آنلاین یا دستیار هوشمند نیازی نیست. انتشار پس از بازبینی، جداگانه و با تأیید شما انجام می‌شود.</p>
         </div>
         <Link href="/admin/mavis/articles" className={styles.backLink}>بازگشت به کتابخانه</Link>
       </header>
 
       {sourceLoadError ? <p className={styles.sourceError} role="status">{sourceLoadError}</p> : null}
       <details className={styles.collapsibleGroup}>
-        <summary><span>منابع و مستندات مقاله</span><small>{sources.length.toLocaleString("fa-IR")} منبع متصل · ثبت دستی و جست‌وجوی اختیاری</small></summary>
+        <summary><span>منابع و مستندات مقاله</span><small>{sources.length.toLocaleString("fa-IR")} منبع متصل · ثبت دستی؛ جست‌وجوی آنلاین اختیاری</small></summary>
         <section className={styles.sourcePanel} aria-labelledby="mavis-source-metadata-title">
         <header>
           <div>
