@@ -36,14 +36,26 @@ export default async function ArticleDetailPage({ params }) {
 
   const siteUrl = getSiteUrl();
   const articleUrl = siteUrl ? new URL("/articles/" + article.slug, siteUrl).href : null;
+  const legalMetadata = article.legalMetadata || {};
+  const recordType = article.recordType || "article";
+  const recordTypeLabels = { article: "مقاله حقوقی", law: "قانون یا مقرره", unifying_opinion: "رأی وحدت رویه", judicial_decision: "رأی قضایی", advisory_opinion: "نظریه مشورتی", legal_interpretation: "تفسیر و شرح قانون", legal_analysis: "تحلیل مسئله حقوقی", official_circular: "بخشنامه و دستورالعمل", academic_research: "پژوهش و مقاله علمی" };
+  const validityLabels = { unknown: "بررسی‌نشده", current: "معتبر در حال حاضر", amended: "اصلاح‌شده", repealed: "منسوخ", historical: "معتبر در بازه تاریخی", disputed: "مورد اختلاف / نیازمند بررسی" };
+  const schemaType = recordType === "law" ? "Legislation" : recordType === "academic_research" ? "ScholarlyArticle" : ["unifying_opinion", "judicial_decision", "advisory_opinion", "official_circular"].includes(recordType) ? "CreativeWork" : "Article";
   const structuredArticle = articleUrl
     ? {
         "@context": "https://schema.org",
-        "@type": "BlogPosting",
+        "@type": schemaType,
         headline: article.title,
         description: article.excerpt,
         inLanguage: "fa-IR",
-        articleSection: article.category,\n        ...(recordType === "law" ? {\n          legislationType: recordTypeLabels[recordType],\n          ...(legalMetadata.document_number ? { legislationIdentifier: legalMetadata.document_number } : {}),\n          ...(legalMetadata.document_date ? { legislationDate: legalMetadata.document_date } : {}),\n          ...(legalMetadata.issuing_authority ? { legislationPassedBy: { "@type": "Organization", name: legalMetadata.issuing_authority } } : {}),\n          legislationJurisdiction: { "@type": "AdministrativeArea", name: "ایران" },\n        } : {}),
+        articleSection: article.category,
+        ...(recordType === "law" ? {
+          legislationType: recordTypeLabels[recordType],
+          ...(legalMetadata.document_number ? { legislationIdentifier: legalMetadata.document_number } : {}),
+          ...(legalMetadata.document_date ? { legislationDate: legalMetadata.document_date } : {}),
+          ...(legalMetadata.issuing_authority ? { legislationPassedBy: { "@type": "Organization", name: legalMetadata.issuing_authority } } : {}),
+          legislationJurisdiction: { "@type": "AdministrativeArea", name: "ایران" },
+        } : {}),
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": articleUrl,
