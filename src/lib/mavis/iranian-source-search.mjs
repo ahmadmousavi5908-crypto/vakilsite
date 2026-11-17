@@ -78,6 +78,52 @@ export function createIranianSourceSearch({ apiKey, fetchImpl = globalThis.fetch
         clearTimeout(timer);
       }
     },
+    async extract({ url: rawUrl } = {}) {
+      const target = normalizeIranianSourceUrl(rawUrl);
+      if (!target) return { ok: false, reason: "invalid_url" };
+
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), Math.min(timeout, 30000));
+      try {
+        const response = await fetchImpl("https://api.tavily.com/extract", {
+          method: "POST",
+          redirect: "error",
+          cache: "no-store",
+          signal: controller.signal,
+          headers: {
+            Authorization: "Bearer " + key,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            urls: [target.url],
+            extract_depth: "basic",
+            format: "markdown",
+            include_images: false,
+            include_usage: true,
+          }),
+        });
+        if (!response?.ok) throw new Error("Iranian source extraction provider request failed.");
+        const payload = await response.json();
+        const extracted = Array.isArray(payload?.results)
+          ? payload.results.find((item) => normalizeIranianSourceUrl(item?.url)?.url === target.url)
+          : null;
+        const content = typeof extracted?.raw_content === "string"
+          ? extracted.raw_content.trim().slice(0, 12000)
+          : "";
+        if (!content) return { ok: false, reason: "content_unavailable" };
+        return {
+          ok: true,
+          url: target.url,
+          content,
+          sourceId: target.source.id,
+          sourceName: target.source.name,
+          usageCredits: Number.isFinite(payload?.usage?.credits) ? payload.usage.credits : null,
+        };
+      } finally {
+        clearTimeout(timer);
+      }
+    },
   });
 }
 
