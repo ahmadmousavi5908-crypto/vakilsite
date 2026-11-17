@@ -14,7 +14,7 @@ The application-generated `/robots.txt` already:
 - Blocks `/admin` and `/api`.
 - Separately disallows GPTBot, ClaudeBot, and Google-Extended. These are training/grounding controls, not the search crawlers needed for public search visibility.
 
-Keep search and training policies separate. Do not open training crawlers merely to improve search citations.
+Keep search, user-triggered fetch, and training policies separate. Do not open training crawlers merely to improve search citations.
 
 ## Provider notes
 
@@ -22,9 +22,9 @@ Keep search and training policies separate. Do not open training crawlers merely
 - **Claude:** Keep `Claude-SearchBot` and `Claude-User` allowed. `ClaudeBot` is a separate training crawler.
 - **Google AI features:** Googlebot access and ordinary Search eligibility are the relevant controls for AI Overviews and AI Mode. `Google-Extended` is not a Google Search crawler and does not control inclusion in Google Search.
 - **Perplexity:** Keep `PerplexityBot` allowed for search discovery.
-- **Grok:** xAI documents a real-time Web Search tool for Grok, but the reviewed documentation does not publish a dedicated website-crawler user-agent for site owners. Keep public pages crawlable through ordinary search infrastructure; do not invent a `GrokBot` rule.\n- **DeepSeek:** DeepSeek documents its own web-search index and Search/Fetch APIs, but the reviewed official API documentation does not identify a dedicated crawler user-agent for site-owner robots rules. Do not invent a `DeepSeekBot` rule; maintain normal public crawlability, stable canonical URLs, and source-rich public pages.
+- **Grok:** xAI documents a real-time Web Search tool for Grok, but the reviewed documentation does not publish a dedicated website-crawler user-agent for site owners. Keep public pages crawlable through ordinary search infrastructure; do not invent a `GrokBot` rule.\n- **DeepSeek:** DeepSeek documents a Search API powered by its in-house search engine and a Fetch API for retrieving pages. The reviewed official API documentation does not publish a dedicated website-crawler user-agent or robots.txt control. Do not invent a `DeepSeekBot` rule; maintain normal public crawlability, stable canonical URLs, and source-rich public pages.
 
-## Content requirements
+## CDN and firewall requirements\n\n- `robots.txt` is a crawl preference, not an access-control mechanism. Keep unpublished content protected by authentication and server-side authorization.\n- Review Cloudflare AI crawler/agent policies separately from application `robots.txt`: allow Search and user-directed Agent traffic, while retaining the deliberate Training restriction. A CDN challenge or block can override an otherwise permissive `robots.txt`.\n- Do not enable blanket AI crawler blocking or link-maze protections on public legal pages. Monitor Security Analytics and validate verified crawler identity using vendor-published IP/signature data.\n\n## Content requirements
 
 1. Only records with an explicit human approval and publication action may appear publicly.
 2. Each published record has one stable canonical URL, visible title, summary, record type, publication date, and source citations.
@@ -41,7 +41,7 @@ Keep search and training policies separate. Do not open training crawlers merely
 - Review access logs for verified crawler user agents; validate IP ranges against the vendor's own published files before treating a request as genuine.
 - Submit eligible new/updated URLs through the existing IndexNow workflow where supported; this does not replace Google sitemap/Search Console submission.
 - Track AI referrals and citations only where observable. No third-party service can guarantee placement in ChatGPT, Claude, DeepSeek, Grok, or another model's answers.
-- Recheck vendor crawler documentation quarterly and after provider announcements.
+- Recheck vendor crawler documentation quarterly and after provider announcements.\n- Verify that the production `robots.txt` and sitemap are publicly reachable after deployment; this web audit could not retrieve the current production endpoints, so repository configuration is not proof of live edge behavior.
 
 ## Deliberately not added
 
