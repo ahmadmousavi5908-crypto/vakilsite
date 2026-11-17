@@ -16,12 +16,13 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("updated_at");
   const [sortDirection, setSortDirection] = useState("desc");
+  const [expandedArticleId, setExpandedArticleId] = useState(null);
 
   const visibleRows = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase();
     return [...rows]
       .filter((article) => statusFilter === "all" || article.status === statusFilter)
-      .filter((article) => !normalized || [article.title, article.slug, article.category].some((value) => String(value || "").toLocaleLowerCase().includes(normalized)))
+      .filter((article) => !normalized || [article.title, article.slug, article.category, article.author_name, article.excerpt, ...(Array.isArray(article.tags) ? article.tags : [])].some((value) => String(value || "").toLocaleLowerCase().includes(normalized)))
       .sort((a, b) => {
         const left = a[sortBy] ?? "";
         const right = b[sortBy] ?? "";
@@ -79,7 +80,10 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
           <h2 id="mavis-draft-list-title">کاربرگ مقالات و پیش‌نویس‌ها</h2>
           <p>جدول قابل جست‌وجو و مرتب‌سازی؛ داده‌ها از دیتابیس و با صفحه‌بندی امن دریافت می‌شوند.</p>
         </div>
-        <strong className={styles.count}>{rows.length.toLocaleString("fa-IR")} مورد در این صفحه</strong>
+        <div className={styles.headerActions}>
+          <strong className={styles.count}>{rows.length.toLocaleString("fa-IR")} مورد در این صفحه</strong>
+          <Link href="/admin/mavis/articles/new" className={styles.createButton}>ثبت مقاله جدید <span aria-hidden="true">＋</span></Link>
+        </div>
       </header>
 
       {error ? (
@@ -111,18 +115,36 @@ export default function MavisDraftList({ rows = [], nextCursor = null, error = n
             <>
               <div className={styles.tableWrap}>
                 <table className={styles.table}>
-                  <thead><tr><th>{sortLabel("title", "عنوان مقاله")}</th><th>{sortLabel("category", "دسته‌بندی")}</th><th>وضعیت</th><th>{sortLabel("current_version", "نسخه")}</th><th>{sortLabel("updated_at", "آخرین تغییر")}</th><th>عملیات</th></tr></thead>
+                  <thead><tr><th>{sortLabel("title", "عنوان مقاله")}</th><th>{sortLabel("category", "دسته‌بندی")}</th><th>وضعیت</th><th>{sortLabel("current_version", "نسخه")}</th><th>{sortLabel("updated_at", "آخرین تغییر")}</th><th>جزئیات</th><th>عملیات</th></tr></thead>
                   <tbody>
-                    {visibleRows.map((article) => (
-                      <tr key={article.id}>
-                        <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
-                        <td>{article.category}</td>
-                        <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
-                        <td>{Number(article.current_version).toLocaleString("fa-IR")}</td>
-                        <td><time dateTime={article.updated_at}>{new Date(article.updated_at).toLocaleString("fa-IR")}</time></td>
-                        <td><Link href={`/admin/mavis/articles/${article.id}/edit`}>ویرایش</Link></td>
-                      </tr>
-                    ))}
+                    {visibleRows.map((article) => {
+                      const isExpanded = expandedArticleId === article.id;
+                      const detailsId = `mavis-article-details-${article.id}`;
+                      return (
+                        <>
+                          <tr key={article.id} className={isExpanded ? styles.expandedRow : undefined}>
+                            <td><strong>{article.title}</strong><small dir="ltr">/{article.slug}</small></td>
+                            <td>{article.category}</td>
+                            <td><span className={styles.status}>{STATUS_LABELS[article.status] || article.status}</span></td>
+                            <td>{Number(article.current_version).toLocaleString("fa-IR")}</td>
+                            <td><time dateTime={article.updated_at}>{new Date(article.updated_at).toLocaleString("fa-IR")}</time></td>
+                            <td><button type="button" className={styles.detailsButton} aria-expanded={isExpanded} aria-controls={detailsId} onClick={() => setExpandedArticleId(isExpanded ? null : article.id)}>{isExpanded ? "بستن جزئیات −" : "نمایش جزئیات ＋"}</button></td>
+                            <td><Link href={`/admin/mavis/articles/${article.id}/edit`}>ویرایش کامل</Link></td>
+                          </tr>
+                          {isExpanded ? (
+                            <tr className={styles.detailRow} id={detailsId}>
+                              <td colSpan={7}>
+                                <div className={styles.detailPanel}>
+                                  <div><span>نویسنده</span><strong>{article.author_name || "ثبت نشده"}</strong></div>
+                                  <div className={styles.detailExcerpt}><span>چکیده</span><p>{article.excerpt || "چکیده‌ای ثبت نشده است."}</p></div>
+                                  <div className={styles.detailTags}><span>برچسب‌ها</span><div>{Array.isArray(article.tags) && article.tags.length ? article.tags.map((tag) => <span key={tag}>{tag}</span>) : <small>بدون برچسب</small>}</div></div>
+                                </div>
+                              </td>
+                            </tr>
+                          ) : null}
+                        </>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
