@@ -52,7 +52,7 @@ jobs:
           const isWorkersDev =
             site.hostname.startsWith("vakilahmadmousavi-ir-staging.") &&
             site.hostname.endsWith(".workers.dev");
-          const isCustomStaging = site.hostname.startsWith("staging.");
+          const isCustomStaging = site.hostname === "staging.vakilahmadmousavi.ir";
 
           if (
             site.protocol !== "https:" ||
