@@ -23,7 +23,8 @@ export default async function MavisEditorialPage({ searchParams }) {
   const { data, error } = await supabase
     .from("mavis_editorial_articles")
     .select("id,slug,draft_content,published_content,status,legal_review_status,author_name,reviewer_name,is_indexable,published_at,updated_at,draft_updated_at")
-    .order("updated_at", { ascending: false });
+    .order("updated_at", { ascending: false })
+    .limit(1000);
 
   const records = Array.isArray(data) ? data : [];
   const bySlug = new Map(records.map((record) => [record.slug, record]));

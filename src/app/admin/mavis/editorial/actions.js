@@ -22,6 +22,13 @@ function readContent(formData) {
   const checklist = field(formData, "checklist", 5000)
     .split("\n").map((item) => item.trim()).filter(Boolean).slice(0, 30);
   const sources = parseEditorialSources(field(formData, "sources", 12000));
+  const sourceMetadata = {
+    title: field(formData, "source_title", 300),
+    author: field(formData, "source_author", 180),
+    publication: field(formData, "source_publication", 240),
+    publicationDate: field(formData, "source_publication_date", 60),
+    doi: field(formData, "source_doi", 200),
+  };
   const content = {
     title,
     category: field(formData, "category", 120),
@@ -32,6 +39,7 @@ function readContent(formData) {
     checklist,
     warning: field(formData, "warning", 3000),
     sources,
+    sourceMetadata,
     seoTitle: field(formData, "seo_title", 300),
     seoDescription: field(formData, "seo_description", 500),
     keywords: field(formData, "keywords", 1000).split(",").map((item) => item.trim()).filter(Boolean).slice(0, 20),
