@@ -9,6 +9,7 @@ import {
 import { searchLegalRecords } from "./knowledge-search.mjs";
 import { buildPublishedArticleRecords } from "./published-article-adapter.mjs";
 import { buildLegalResearchNoteRecords } from "./legal-research-note-adapter.mjs";
+import { getMavisPublishedArticles } from "./published-editorial.js";
 
 const publishedArticleRecords = buildPublishedArticleRecords(publishedArticles);
 const legalResearchNoteRecords = buildLegalResearchNoteRecords(sourceReviewReport);
@@ -37,10 +38,16 @@ const searchableRecords = [
  * Searches the existing legal library, published site articles and canonical
  * source-review notes. Articles and research notes remain secondary material.
  */
-export function searchMavisKnowledge(query, limit = 10) {
+export async function searchMavisKnowledge(query, limit = 10) {
+  const databasePublishedArticles = await getMavisPublishedArticles();
+  const dynamicArticleRecords = buildPublishedArticleRecords(databasePublishedArticles);
+  const dynamicSlugs = new Set(dynamicArticleRecords.map((record) => record.path?.slice("/articles/".length)));
+  const currentStaticRecords = searchableRecords.filter((record) =>
+    record.record_type !== "published_article" || !dynamicSlugs.has(record.path?.slice("/articles/".length))
+  );
   return searchLegalRecords({
     query,
-    records: searchableRecords,
+    records: [...currentStaticRecords, ...dynamicArticleRecords],
     limit,
   });
 }
