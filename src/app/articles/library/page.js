@@ -1,9 +1,5 @@
 import Link from "next/link";
 import { createPublicContentClient } from "../../../lib/supabase/public-content";
-import {
-  decodePublishedArticleCursor,
-  encodePublishedArticleCursor,
-} from "../../../lib/mavis/published-article-cursor.mjs";
 import styles from "./page.module.css";
 
 export const metadata = {
@@ -36,57 +32,62 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
   const requestedType = normalizeTerm(params?.type, 40);
   const allowedRecordTypes = new Set(["law", "unifying_opinion", "judicial_decision", "advisory_opinion", "legal_interpretation", "legal_analysis", "official_circular", "academic_research"]);
   const selectedRecordType = allowedRecordTypes.has(requestedType) ? requestedType : "";
-  const cursorValue = typeof params?.cursor === "string" ? params.cursor : "";
-  const cursor = decodePublishedArticleCursor(cursorValue);
+  const requestedPage = typeof params?.page === "string" && /^\d{1,5}$/.test(params.page)
+    ? Math.max(1, Number(params.page))
+    : 1;
+  let currentPage = requestedPage;
   const recordTypeLabels = { article: "مقاله حقوقی", law: "قانون یا مقرره", unifying_opinion: "رأی وحدت رویه", judicial_decision: "رأی قضایی", advisory_opinion: "نظریه مشورتی", legal_interpretation: "تفسیر و شرح قانون", legal_analysis: "تحلیل مسئله حقوقی", official_circular: "بخشنامه و دستورالعمل", academic_research: "پژوهش علمی" };
   let rows = [];
-  let nextCursor = null;
+  let totalCount = 0;
+  let totalPages = 1;
   let loadError = "";
 
-  if (cursorValue && !cursor) {
-    loadError = "نشانی صفحه‌بندی معتبر نیست. جست‌وجو را از صفحه اول آغاز کنید.";
-  } else {
-    try {
-      const supabase = createPublicContentClient();
-      if (!supabase) throw new Error("Public CMS is not configured");
+  try {
+    const supabase = createPublicContentClient();
+    if (!supabase) throw new Error("Public CMS is not configured");
+
+    const buildPageQuery = (pageNumber) => {
       let query = supabase
         .from("mavis_articles")
-        .select("id, slug, title, excerpt, category, author_name, published_at, record_type:content->>record_type")
+        .select("id, slug, title, excerpt, category, author_name, published_at, record_type:content->>record_type", { count: "exact" })
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .order("id", { ascending: false })
-        .limit(26);
+        .range((pageNumber - 1) * 25, pageNumber * 25 - 1);
 
       if (search) query = query.ilike("title", "%" + search + "%");
       if (category) query = query.eq("category", category);
       if (selectedRecordType) query = query.eq("content->>record_type", selectedRecordType);
-      if (cursor) {
-        query = query.or(
-          "published_at.lt." + cursor.publishedAt +
-          ",and(published_at.eq." + cursor.publishedAt + ",id.lt." + cursor.id + ")",
-        );
-      }
+      return query;
+    };
 
-      const { data, error } = await query;
-      if (error) throw error;
-      const resultRows = Array.isArray(data) ? data : [];
-      if (resultRows.length > 25) {
-        nextCursor = encodePublishedArticleCursor(resultRows[24]);
-        rows = resultRows.slice(0, 25);
-      } else {
-        rows = resultRows;
-      }
-    } catch {
-      loadError = "فهرست مقالات در حال حاضر در دسترس نیست. راهنماهای ثابت دانشنامه همچنان از صفحه مقالات قابل مطالعه‌اند.";
+    let result = await buildPageQuery(currentPage);
+    if (result.error) throw result.error;
+    totalCount = Number(result.count) || 0;
+    totalPages = Math.max(1, Math.ceil(totalCount / 25));
+
+    if (currentPage > totalPages) {
+      currentPage = totalPages;
+      result = await buildPageQuery(currentPage);
+      if (result.error) throw result.error;
     }
+
+    rows = Array.isArray(result.data) ? result.data : [];
+  } catch {
+    loadError = "فهرست مقالات در حال حاضر در دسترس نیست. راهنماهای ثابت دانشنامه همچنان از صفحه مقالات قابل مطالعه‌اند.";
   }
 
-  const nextParams = new URLSearchParams();
-  if (search) nextParams.set("q", search);
-  if (category) nextParams.set("category", category);
-  if (selectedRecordType) nextParams.set("type", selectedRecordType);
-  if (nextCursor) nextParams.set("cursor", nextCursor);
-  const nextHref = "/articles/library?" + nextParams.toString();
+  const buildPageHref = (pageNumber) => {
+    const pageParams = new URLSearchParams();
+    if (search) pageParams.set("q", search);
+    if (category) pageParams.set("category", category);
+    if (selectedRecordType) pageParams.set("type", selectedRecordType);
+    if (pageNumber > 1) pageParams.set("page", String(pageNumber));
+    const queryString = pageParams.toString();
+    return "/articles/library" + (queryString ? "?" + queryString : "");
+  };
+  const previousHref = buildPageHref(currentPage - 1);
+  const nextHref = buildPageHref(currentPage + 1);
 
   return (
     <main className={styles.page} dir="rtl">
@@ -131,7 +132,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
 
         <div className={styles.tableHeading}>
           <div><span className={styles.kicker}>PUBLISHED RECORDS</span><h2>فهرست اسناد منتشرشده</h2></div>
-          <span className={styles.count}>{rows.length.toLocaleString("fa-IR")} مدرک در این صفحه</span>
+          <span className={styles.count}>{totalCount.toLocaleString("fa-IR")} مدرک منتشرشده · صفحه {currentPage.toLocaleString("fa-IR")} از {totalPages.toLocaleString("fa-IR")}</span>
         </div>
 
         {loadError ? (
@@ -144,7 +145,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
                 <tbody>
                   {rows.map((article, index) => (
                     <tr key={article.id}>
-                      <td className={styles.rowNumber}>{(index + 1).toLocaleString("fa-IR")}</td>
+                      <td className={styles.rowNumber}>{((currentPage - 1) * 25 + index + 1).toLocaleString("fa-IR")}</td>
                       <td><strong>{article.title}</strong><small>{article.excerpt || "برای مشاهده متن کامل وارد صفحه مطالعه شوید."}</small></td>
                       <td><span className={styles.category}>{recordTypeLabels[article.record_type] || recordTypeLabels.article}</span></td>
                       <td><span className={styles.category}>{article.category || "عمومی"}</span></td>
@@ -156,7 +157,13 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
                 </tbody>
               </table>
             </div>
-            {nextCursor ? <nav className={styles.pagination} aria-label="صفحه‌بندی مقالات"><Link href={nextHref}>مقالات قدیمی‌تر ←</Link></nav> : null}
+            {totalPages > 1 ? (
+              <nav className={styles.pagination} aria-label="صفحه‌بندی کتابخانه">
+                {currentPage > 1 ? <Link href={previousHref}>→ جدیدتر</Link> : <span aria-hidden="true" />}
+                <span className={styles.pageStatus}>صفحه {currentPage.toLocaleString("fa-IR")} از {totalPages.toLocaleString("fa-IR")}</span>
+                {currentPage < totalPages ? <Link href={nextHref}>قدیمی‌تر ←</Link> : <span aria-hidden="true" />}
+              </nav>
+            ) : null}
           </>
         ) : (
           <div className={styles.empty}>در این جست‌وجو مقاله منتشرشده‌ای پیدا نشد.</div>
