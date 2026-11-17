@@ -46,8 +46,9 @@ BEGIN
       RAISE EXCEPTION USING errcode = '22023', message = 'Invalid legal metadata object';
     END IF;
 
-    IF p_payload->'content'->'legal_metadata'->>'validity_status'
-      NOT IN ('unknown', 'current', 'amended', 'repealed', 'historical', 'disputed') THEN
+    IF jsonb_typeof(p_payload->'content'->'legal_metadata'->'validity_status') IS DISTINCT FROM 'string'
+      OR p_payload->'content'->'legal_metadata'->>'validity_status'
+        NOT IN ('unknown', 'current', 'amended', 'repealed', 'historical', 'disputed') THEN
       RAISE EXCEPTION USING errcode = '22023', message = 'Invalid legal validity status';
     END IF;
 
@@ -81,7 +82,7 @@ $validation$,
   );
 
   IF v_definition = v_original
-    OR position('record_type' IN v_definition) = 0
+    OR position('ARRAY[''intro'', ''sections'', ''checklist'', ''warning'', ''record_type'', ''legal_metadata'']::text[]' IN v_definition) = 0
     OR position('Invalid legal record type' IN v_definition) = 0 THEN
     RAISE EXCEPTION 'Could not safely extend the MAVIS draft RPC contract; no function was changed.';
   END IF;
