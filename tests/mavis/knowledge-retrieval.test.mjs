@@ -21,7 +21,7 @@ function createRetriever(records = []) {
   return { retrieve, calls };
 }
 
-test("retrieves existing records and assembles evidence without a parallel corpus", () => {
+test("retrieves existing records and assembles evidence without a parallel corpus", async () => {
   const { retrieve, calls } = createRetriever([
     {
       id: "law_civil_code",
@@ -39,7 +39,7 @@ test("retrieves existing records and assembles evidence without a parallel corpu
     },
   ]);
 
-  const result = retrieve("  قانون مدنی  ", 2);
+  const result = await retrieve("  قانون مدنی  ", 2);
 
   assert.equal(result.query, "قانون مدنی");
   assert.equal(result.count, 2);
@@ -54,31 +54,31 @@ test("retrieves existing records and assembles evidence without a parallel corpu
   assert.equal(result.notice.includes("نظر حقوقی"), true);
 });
 
-test("maps article summaries and legal terms to conservative source classes", () => {
+test("maps article summaries and legal terms to conservative source classes", async () => {
   const { retrieve, calls } = createRetriever([
     { id: "article_1", record_type: "article", title: "مقاله" },
     { id: "term_1", record_type: "term", title: "اصطلاح" },
   ]);
 
-  retrieve("موضوع حقوقی");
+  await retrieve("موضوع حقوقی");
 
   assert.equal(calls.dossier.records[0].source_class, "educational_summary");
   assert.equal(calls.dossier.records[1].source_class, "legal_term");
 });
 
-test("does not misclassify future record types as legal terms", () => {
+test("does not misclassify future record types as legal terms", async () => {
   const { retrieve, calls } = createRetriever([
     { id: "judgment_1", record_type: "judicial_decision", title: "رأی نمونه" },
   ]);
 
-  retrieve("رأی نمونه");
+  await retrieve("رأی نمونه");
 
   assert.equal(calls.dossier.records[0].source_class, "unclassified");
 });
 
-test("returns an empty dossier without inventing results", () => {
+test("returns an empty dossier without inventing results", async () => {
   const { retrieve, calls } = createRetriever([]);
-  const result = retrieve("قانون مدنی");
+  const result = await retrieve("قانون مدنی");
 
   assert.equal(result.count, 0);
   assert.deepEqual(result.results, []);
@@ -86,26 +86,26 @@ test("returns an empty dossier without inventing results", () => {
   assert.deepEqual(calls.dossier.records, []);
 });
 
-test("rejects invalid query and result limits when called outside the HTTP route", () => {
+test("rejects invalid query and result limits when called outside the HTTP route", async () => {
   const { retrieve } = createRetriever([]);
-  assert.throws(() => retrieve("ق"), RangeError);
-  assert.throws(() => retrieve("قانون مدنی", 0), RangeError);
-  assert.throws(() => retrieve("قانون مدنی", 21), RangeError);
-  assert.throws(() => retrieve("قانون".repeat(30)), RangeError);
+  await assert.rejects(() => retrieve("ق"), RangeError);
+  await assert.rejects(() => retrieve("قانون مدنی", 0), RangeError);
+  await assert.rejects(() => retrieve("قانون مدنی", 21), RangeError);
+  await assert.rejects(() => retrieve("قانون".repeat(30)), RangeError);
 });
 
-test("rejects a broken search adapter response", () => {
+test("rejects a broken search adapter response", async () => {
   const retrieve = createMavisKnowledgeRetriever({
     searchMavisKnowledge: () => null,
     buildLegalEvidence: () => ({}),
     buildLegalResearchDossier: () => ({}),
   });
-  assert.throws(() => retrieve("قانون مدنی"), TypeError);
+  await assert.rejects(() => retrieve("قانون مدنی"), TypeError);
 });
 
-test("rejects malformed records from the search adapter", () => {
+test("rejects malformed records from the search adapter", async () => {
   const { retrieve } = createRetriever([null]);
-  assert.throws(() => retrieve("قانون مدنی"), TypeError);
+  await assert.rejects(() => retrieve("قانون مدنی"), TypeError);
 });
 
 test("requires all retrieval dependencies", () => {
@@ -113,13 +113,13 @@ test("requires all retrieval dependencies", () => {
 });
 
 
-test("maps published articles and research notes to conservative source classes", () => {
+test("maps published articles and research notes to conservative source classes", async () => {
   const { retrieve, calls } = createRetriever([
     { id: "published_article_1", record_type: "published_article", title: "مقاله آموزشی" },
     { id: "research_note_1", record_type: "research_note", title: "یادداشت پژوهشی" },
   ]);
 
-  retrieve("موضوع پژوهشی");
+  await retrieve("موضوع پژوهشی");
 
   assert.equal(calls.dossier.records[0].source_class, "educational_summary");
   assert.equal(calls.dossier.records[1].source_class, "research_note");

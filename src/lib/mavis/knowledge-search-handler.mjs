@@ -199,7 +199,7 @@ export function createKnowledgeSearchHandler(dependencies) {
     }
 
     try {
-      return jsonResponse(retrieveMavisKnowledge(query, limit), 200);
+      return jsonResponse(await retrieveMavisKnowledge(query, limit), 200);
     } catch {
       return jsonResponse(
         { error: { code: "SEARCH_FAILED", message: "جست‌وجوی داخلی انجام نشد." } },

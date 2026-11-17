@@ -233,15 +233,17 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
     <section className={styles.workspace} aria-labelledby="mavis-editor-title">
       <header className={styles.intro}>
         <div>
-          <span className={styles.eyebrow}>EDITORIAL WORKSPACE · DRAFT ONLY</span>
+          <span className={styles.eyebrow}>MANUAL EDITORIAL WORKSPACE · DRAFT ONLY</span>
           <h2 id="mavis-editor-title">{isEditing ? "ویرایش پیش‌نویس مقاله" : "ساخت پیش‌نویس مقاله"}</h2>
-          <p>ذخیره، نسخه جدیدی از پیش‌نویس می‌سازد. انتشار و تغییر وضعیت از این فرم امکان‌پذیر نیست.</p>
+          <p>مقاله را مستقیم در فیلدهای زیر ثبت کنید؛ برای نوشتن و ذخیره پیش‌نویس به جست‌وجوی آنلاین یا دستیار هوشمند نیازی نیست. انتشار پس از بازبینی، جداگانه و با تأیید شما انجام می‌شود.</p>
         </div>
         <Link href="/admin/mavis/articles" className={styles.backLink}>بازگشت به کتابخانه</Link>
       </header>
 
       {sourceLoadError ? <p className={styles.sourceError} role="status">{sourceLoadError}</p> : null}
-      <section className={styles.sourcePanel} aria-labelledby="mavis-source-metadata-title">
+      <details className={styles.collapsibleGroup}>
+        <summary><span>منابع و مستندات مقاله</span><small>{sources.length.toLocaleString("fa-IR")} منبع متصل · ثبت دستی؛ جست‌وجوی آنلاین اختیاری</small></summary>
+        <section className={styles.sourcePanel} aria-labelledby="mavis-source-metadata-title">
         <header>
           <div>
             <span className={styles.eyebrow}>SOURCE PROVENANCE · VERSIONED</span>
@@ -306,22 +308,31 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           <p className={styles.sourceEmpty}>برای افزودن منبع، ابتدا پیش‌نویس را ذخیره کنید تا شناسه و نسخه مشخص داشته باشد.</p>
         )}
         {sourceFeedback ? <p className={styles.sourceFeedback} role="status" aria-live="polite">{sourceFeedback}</p> : null}
-      </section>
+        </section>
+      </details>
 
       <form ref={formRef} className={styles.form} onSubmit={handleSubmit}>
         <input type="hidden" name="article_id" value={articleId} />
         <input type="hidden" name="expected_version" value={articleId ? expectedVersion : ""} />
-        <div className={styles.grid}>
-          <label className={styles.field}><span>عنوان مقاله <b>*</b></span><input name="title" defaultValue={initialArticle?.title || initialTopic || ""} required minLength={3} maxLength={300} /></label>
-          <label className={styles.field}><span>نامک انگلیسی <b>*</b></span><input name="slug" defaultValue={initialArticle?.slug || ""} required minLength={3} maxLength={180} dir="ltr" pattern="[a-z0-9]+([a-z0-9-]*[a-z0-9])?" placeholder="contract-legal-guide" /><small>حروف کوچک انگلیسی، عدد و خط تیره</small></label>
-          <label className={styles.field}><span>نام نویسنده</span><input name="author_name" defaultValue={initialArticle?.author_name || ""} maxLength={180} /></label>
-          <label className={styles.field}><span>دسته‌بندی <b>*</b></span><input name="category" defaultValue={initialArticle?.category || ""} required minLength={2} maxLength={100} placeholder="حقوق کیفری، مدنی، خانواده..." /></label>
-          <label className={styles.fieldWide}><span>خلاصه مقاله <b>*</b></span><textarea name="excerpt" defaultValue={initialArticle?.excerpt || ""} required minLength={10} maxLength={1200} rows={3} /></label>
-          <label className={styles.fieldWide}><span>برچسب‌ها</span><input name="tags" defaultValue={Array.isArray(initialArticle?.tags) ? initialArticle.tags.join("، ") : ""} placeholder="قرارداد، حقوق مدنی، دعاوی" /><small>برچسب‌ها را با ویرگول فارسی یا انگلیسی جدا کنید.</small></label>
-          <label className={styles.fieldWide}><span>مقدمه مقاله <b>*</b></span><textarea name="intro" defaultValue={content.intro || ""} required minLength={10} maxLength={8000} rows={5} /></label>
-          <label className={styles.fieldWide}><span>هشدار یا توضیح حقوقی</span><textarea name="warning" defaultValue={content.warning || ""} maxLength={2000} rows={2} /></label>
-          <label className={styles.fieldWide}><span>چک‌لیست نکات (هر مورد در یک خط)</span><textarea name="checklist" defaultValue={Array.isArray(content.checklist) ? content.checklist.join("\n") : ""} rows={3} /><small>تا ۶۰ مورد، هر مورد حداکثر ۵۰۰ نویسه</small></label>
-        </div>
+        <details className={styles.collapsibleGroup} open>
+          <summary><span>۱. مشخصات اصلی مقاله</span><small>عنوان، نامک، نویسنده، دسته‌بندی، خلاصه و برچسب‌ها</small></summary>
+          <div className={styles.grid}>
+            <label className={styles.field}><span>عنوان مقاله <b>*</b></span><input name="title" defaultValue={initialArticle?.title || initialTopic || ""} required minLength={3} maxLength={300} /></label>
+            <label className={styles.field}><span>نامک انگلیسی <b>*</b></span><input name="slug" defaultValue={initialArticle?.slug || ""} required minLength={3} maxLength={180} dir="ltr" pattern="[a-z0-9]+([a-z0-9-]*[a-z0-9])?" placeholder="contract-legal-guide" /><small>حروف کوچک انگلیسی، عدد و خط تیره</small></label>
+            <label className={styles.field}><span>نام نویسنده</span><input name="author_name" defaultValue={initialArticle?.author_name || ""} maxLength={180} /></label>
+            <label className={styles.field}><span>دسته‌بندی <b>*</b></span><input name="category" defaultValue={initialArticle?.category || ""} required minLength={2} maxLength={100} placeholder="حقوق کیفری، مدنی، خانواده..." /></label>
+            <label className={styles.fieldWide}><span>خلاصه مقاله <b>*</b></span><textarea name="excerpt" defaultValue={initialArticle?.excerpt || ""} required minLength={10} maxLength={1200} rows={3} /></label>
+            <label className={styles.fieldWide}><span>برچسب‌ها</span><input name="tags" defaultValue={Array.isArray(initialArticle?.tags) ? initialArticle.tags.join("، ") : ""} placeholder="قرارداد، حقوق مدنی، دعاوی" /><small>برچسب‌ها را با ویرگول فارسی یا انگلیسی جدا کنید.</small></label>
+          </div>
+        </details>
+
+        <details className={styles.collapsibleGroup} open>
+          <summary><span>۲. متن و ساختار مقاله</span><small>مقدمه، بخش‌ها، نکات و توضیحات حقوقی</small></summary>
+          <div className={styles.grid}>
+            <label className={styles.fieldWide}><span>مقدمه مقاله <b>*</b></span><textarea name="intro" defaultValue={content.intro || ""} required minLength={10} maxLength={8000} rows={5} /></label>
+            <label className={styles.fieldWide}><span>هشدار یا توضیح حقوقی</span><textarea name="warning" defaultValue={content.warning || ""} maxLength={2000} rows={2} /></label>
+            <label className={styles.fieldWide}><span>چک‌لیست نکات (هر مورد در یک خط)</span><textarea name="checklist" defaultValue={Array.isArray(content.checklist) ? content.checklist.join("\n") : ""} rows={3} /><small>تا ۶۰ مورد، هر مورد حداکثر ۵۰۰ نویسه</small></label>
+          </div>
 
         <section className={styles.sections} aria-labelledby="mavis-editor-sections">
           <div className={styles.sectionHeading}>
@@ -337,7 +348,10 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
             </fieldset>
           ))}
         </section>
+        </details>
 
+        <details className={styles.collapsibleGroup}>
+        <summary><span>۳. اطلاعات سئو</span><small>عنوان و توضیحات اختصاصی برای موتورهای جست‌وجو</small></summary>
         <section className={styles.seo} aria-labelledby="mavis-editor-seo">
           <h3 id="mavis-editor-seo">اطلاعات سئو</h3>
           <div className={styles.grid}>
@@ -345,7 +359,10 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
             <label className={styles.field}><span>توضیحات سئو</span><textarea name="seo_description" defaultValue={initialArticle?.seo_description || ""} maxLength={500} rows={3} /></label>
           </div>
         </section>
+        </details>
 
+        <details className={styles.collapsibleGroup}>
+        <summary><span>۴. دستیار هوشمند ماویس</span><small>اختیاری · پیشنهاد متن و سئو، بدون ذخیره یا انتشار خودکار</small></summary>
         <section className={styles.aiAssist} aria-labelledby="mavis-ai-assist-title">
           <header><span className={styles.eyebrow}>MAVIS EDITORIAL ASSISTANT</span><h3 id="mavis-ai-assist-title">دستیار تولید و بهینه‌سازی پیش‌نویس</h3><p>پیشنهادها فقط در فرم قرار می‌گیرند؛ ذخیره، تأیید حقوقی و انتشار همچنان اقدام مستقل مدیر است.</p></header>
           <button type="button" className={styles.aiButton} onClick={handleGenerateAiDraft} disabled={!aiEnabled || aiGenerating || saving}>{aiGenerating ? "در حال تهیه پیش‌نویس..." : "تهیه پیش‌نویس و پیشنهادهای سئو با ماویس"}</button>
@@ -362,6 +379,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           ) : null}
           <p className={styles.aiNotice}>اطلاعات پرونده، نام موکل یا داده محرمانه وارد نکنید. هیچ قانون یا رأیی بدون تطبیق با منبع معتبر، مستند نهایی محسوب نمی‌شود.</p>
         </section>
+        </details>
 
         <div className={styles.footer}>
           <p>وضعیت: <strong>{isEditing ? "پیش‌نویس نسخه‌بندی‌شده" : "پیش‌نویس"}</strong>. بازبینی حقوقی و انتشار فقط در مراحل مستقل بعدی انجام می‌شود.</p>

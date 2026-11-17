@@ -42,9 +42,11 @@ export default async function AdminDashboard({ searchParams }) {
         </Link>
         <nav className="admin-nav" aria-label="منوی مدیریت">
           <a className="active" href="#overview">نمای کلی</a>
+          <Link href="/admin/mavis/articles">بازوی سوم: مرکز مقالات و جست‌وجوی حقوقی</Link>
+          <Link href="/admin/mavis">مرکز دانش MAVIS</Link>
+          <a href="https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev/admin" target="_blank" rel="noopener noreferrer">ورود به محیط آزمایشی MAVIS ↗</a>
           <a href="#office-settings">موقعیت و اطلاعات دفتر</a>
           <a href="#social-settings">راه‌های ارتباط و شبکه‌ها</a>
-          <a href="https://staging.vakilahmadmousavi.ir/admin" target="_blank" rel="noopener noreferrer">ورود به محیط آزمایشی MAVIS ↗</a>
         </nav>
         <div className="admin-sidebar-foot">
           <span>دسترسی مدیر</span>
@@ -71,6 +73,22 @@ export default async function AdminDashboard({ searchParams }) {
             <article><span>موقعیت دفتر</span><strong>{location.address ? "ثبت شده" : "تکمیل نشده"}</strong><small>قابل ویرایش در هر زمان</small></article>
             <article><span>نمایش عمومی موقعیت</span><strong>{location.is_location_public ? "روشن" : "خاموش"}</strong><small>کنترل نمایش در وب‌سایت</small></article>
           </section>
+
+          <details className="admin-panel admin-disclosure" id="article-library-access">
+            <summary className="admin-panel-heading">
+              <div>
+                <span className="admin-eyebrow">MAVIS · THIRD ARM</span>
+                <h2>بازوی سوم: مرکز مقالات و جست‌وجوی حقوقی</h2>
+                <p>جست‌وجوی منابع حقوقی، بررسی و مدیریت مقاله‌ها؛ این بخش مستقل است و فقط با اقدام مدیر محتوا را منتشر می‌کند.</p>
+              </div>
+              <span className="admin-panel-icon" aria-hidden="true">⌕</span>
+            </summary>
+            <div className="admin-form-actions">
+              <Link className="admin-button" href="/admin/mavis">ورود به مرکز جست‌وجو و پژوهش حقوقی</Link>
+              <Link className="admin-button secondary" href="/admin/mavis/articles">مدیریت، بازبینی و انتشار مقالات</Link>
+              <Link className="admin-button secondary" href="/admin/mavis/articles/new">ثبت مقاله دستی</Link>
+            </div>
+          </details>
 
           <section className="admin-panel" id="office-settings">
             <div className="admin-panel-heading">

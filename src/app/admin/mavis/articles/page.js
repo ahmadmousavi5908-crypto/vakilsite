@@ -85,7 +85,7 @@ export default async function MavisArticlesPage({ searchParams }) {
         .select("id, slug, title, category, current_version, updated_at")
         .eq("status", "in_review")
         .order("updated_at", { ascending: false })
-        .limit(50)
+        .limit(750)
     );
     if (error) reviewError = "خواندن صف بازبینی انجام نشد. اتصال پایگاه داده را بررسی کنید.";
     else reviewRows = Array.isArray(data) ? data : [];
@@ -103,14 +103,14 @@ export default async function MavisArticlesPage({ searchParams }) {
           .select("id, slug, title, category, current_version, updated_at")
           .eq("status", "approved")
           .order("updated_at", { ascending: false })
-          .limit(50)
+          .limit(750)
       ),
       queryMavisEditorialArticles(access.supabase, (table) =>
         table
           .select("id, slug, title, category, current_version, updated_at, published_at")
           .eq("status", "published")
           .order("published_at", { ascending: false })
-          .limit(50)
+          .limit(750)
       ),
     ]);
     if (approvedResult.error || publishedResult.error) {
@@ -131,7 +131,7 @@ export default async function MavisArticlesPage({ searchParams }) {
         .select("id, slug, title, current_version, updated_at")
         .eq("status", "archived")
         .order("updated_at", { ascending: false })
-        .limit(50)
+        .limit(750)
     );
     if (error) archiveError = "خواندن فهرست آرشیو انجام نشد.";
     else archivedRows = Array.isArray(data) ? data : [];

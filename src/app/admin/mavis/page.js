@@ -20,7 +20,7 @@ export default async function MavisAdminPage() {
   if (adminCheckAvailable === false) redirect("/admin/login?error=authorization");
   if (!isAdmin) redirect("/admin/login?error=unauthorized");
 
-  const inventory = getMavisKnowledgeInventory();
+  const inventory = await getMavisKnowledgeInventory();
 
   return (
     <div className="admin-shell" dir="rtl">

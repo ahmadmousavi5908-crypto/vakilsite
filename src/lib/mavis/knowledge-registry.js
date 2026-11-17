@@ -9,6 +9,7 @@ import {
 import { searchLegalRecords } from "./knowledge-search.mjs";
 import { buildPublishedArticleRecords } from "./published-article-adapter.mjs";
 import { buildLegalResearchNoteRecords } from "./legal-research-note-adapter.mjs";
+import { getMavisPublishedArticles } from "./published-editorial.js";
 
 const publishedArticleRecords = buildPublishedArticleRecords(publishedArticles);
 const legalResearchNoteRecords = buildLegalResearchNoteRecords(sourceReviewReport);
@@ -37,22 +38,35 @@ const searchableRecords = [
  * Searches the existing legal library, published site articles and canonical
  * source-review notes. Articles and research notes remain secondary material.
  */
-export function searchMavisKnowledge(query, limit = 10) {
+export async function searchMavisKnowledge(query, limit = 10) {
+  const databasePublishedArticles = await getMavisPublishedArticles();
+  const dynamicArticleRecords = buildPublishedArticleRecords(databasePublishedArticles);
+  const dynamicSlugs = new Set(dynamicArticleRecords.map((record) => record.path?.slice("/articles/".length)));
+  const currentStaticRecords = searchableRecords.filter((record) =>
+    record.record_type !== "published_article" || !dynamicSlugs.has(record.path?.slice("/articles/".length))
+  );
   return searchLegalRecords({
     query,
-    records: searchableRecords,
+    records: [...currentStaticRecords, ...dynamicArticleRecords],
     limit,
   });
 }
 
-export function getMavisKnowledgeInventory() {
+export async function getMavisKnowledgeInventory() {
+  const databasePublishedArticles = await getMavisPublishedArticles();
+  const dynamicArticleRecords = buildPublishedArticleRecords(databasePublishedArticles);
+  const dynamicSlugs = new Set(dynamicArticleRecords.map((record) => record.path?.slice("/articles/".length)));
+  const currentStaticArticles = publishedArticleRecords.filter((record) =>
+    !dynamicSlugs.has(record.path?.slice("/articles/".length))
+  );
+  const publishedCount = currentStaticArticles.length + dynamicArticleRecords.length;
   return {
     terms: legalLibraryCollections.terms.length,
     laws: legalLibraryCollections.laws.length,
     legalArticles: legalLibraryCollections.articles.length,
-    publishedArticles: publishedArticleRecords.length,
+    publishedArticles: publishedCount,
     researchNotes: legalResearchNoteRecords.length,
-    searchable: searchableRecords.length,
-    sources: ["src/data/legal-library", "src/data/legal-library/reports/source-review.json", "src/data/articles.js"],
+    searchable: searchableRecords.length - publishedArticleRecords.length + publishedCount,
+    sources: ["src/data/legal-library", "src/data/legal-library/reports/source-review.json", "src/data/articles.js", "mavis_editorial_articles"],
   };
 }

@@ -1,9 +1,5 @@
 import Link from "next/link";
-import { createPublicContentClient } from "../../../lib/supabase/public-content";
-import {
-  decodePublishedArticleCursor,
-  encodePublishedArticleCursor,
-} from "../../../lib/mavis/published-article-cursor.mjs";
+import { getPublicArticleCatalog } from "../../../lib/mavis/published-editorial";
 import styles from "./page.module.css";
 
 export const metadata = {
@@ -11,6 +7,8 @@ export const metadata = {
   description: "فهرست قابل جست‌وجو و دسته‌بندی مقالات حقوقی منتشرشده؛ با دسترسی مستقیم به متن هر مقاله و اطلاعات انتشار.",
   alternates: { canonical: "/articles/library" },
 };
+
+const PAGE_SIZE = 25;
 
 function normalizeTerm(value, maxLength) {
   if (typeof value !== "string") return "";
@@ -22,6 +20,12 @@ function normalizeTerm(value, maxLength) {
     .slice(0, maxLength);
 }
 
+function parsePage(value) {
+  if (typeof value !== "string" || !/^\d{1,6}$/.test(value)) return 1;
+  const parsed = Number(value);
+  return Number.isSafeInteger(parsed) && parsed > 0 ? parsed : 1;
+}
+
 function formatDate(value) {
   if (!value) return "نامشخص";
   const date = new Date(value);
@@ -29,58 +33,79 @@ function formatDate(value) {
   return new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium" }).format(date);
 }
 
+function buildPageItems(currentPage, totalPages) {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const pages = [...new Set([
+    1,
+    2,
+    currentPage - 1,
+    currentPage,
+    currentPage + 1,
+    totalPages - 1,
+    totalPages,
+  ])].filter((page) => page >= 1 && page <= totalPages).sort((a, b) => a - b);
+
+  return pages.reduce((items, page, index) => {
+    if (index > 0 && page - pages[index - 1] > 1) items.push("ellipsis-" + page);
+    items.push(page);
+    return items;
+  }, []);
+}
+
+function buildPageHref(page, search, category) {
+  const params = new URLSearchParams();
+  if (search) params.set("q", search);
+  if (category) params.set("category", category);
+  if (page > 1) params.set("page", String(page));
+  const query = params.toString();
+  return query ? "/articles/library?" + query : "/articles/library";
+}
+
 export default async function PublicArticleLibraryPage({ searchParams }) {
   const params = await searchParams;
   const search = normalizeTerm(params?.q, 100);
   const category = normalizeTerm(params?.category, 80);
-  const cursorValue = typeof params?.cursor === "string" ? params.cursor : "";
-  const cursor = decodePublishedArticleCursor(cursorValue);
+  const requestedPage = parsePage(params?.page);
   let rows = [];
-  let nextCursor = null;
+  let totalCount = 0;
+  let page = requestedPage;
+  let totalPages = 0;
   let loadError = "";
 
-  if (cursorValue && !cursor) {
-    loadError = "نشانی صفحه‌بندی معتبر نیست. جست‌وجو را از صفحه اول آغاز کنید.";
-  } else {
-    try {
-      const supabase = createPublicContentClient();
-      if (!supabase) throw new Error("Public CMS is not configured");
-      let query = supabase
-        .from("mavis_articles")
-        .select("id, slug, title, excerpt, category, author_name, published_at")
-        .eq("status", "published")
-        .order("published_at", { ascending: false })
-        .order("id", { ascending: false })
-        .limit(26);
+  try {
+    const catalog = await getPublicArticleCatalog();
+    const normalizedSearch = search.toLocaleLowerCase("fa");
+    const filtered = catalog.filter((article) => {
+      const title = typeof article.title === "string" ? article.title : "";
+      const matchesSearch = !normalizedSearch
+        || title.toLocaleLowerCase("fa").includes(normalizedSearch);
+      const matchesCategory = !category
+        || String(article.category || "").trim() === category;
+      return matchesSearch && matchesCategory;
+    });
 
-      if (search) query = query.ilike("title", "%" + search + "%");
-      if (category) query = query.eq("category", category);
-      if (cursor) {
-        query = query.or(
-          "published_at.lt." + cursor.publishedAt +
-          ",and(published_at.eq." + cursor.publishedAt + ",id.lt." + cursor.id + ")",
-        );
-      }
+    totalCount = filtered.length;
+    totalPages = Math.ceil(totalCount / PAGE_SIZE);
+    page = totalPages > 0 ? Math.min(requestedPage, totalPages) : 1;
 
-      const { data, error } = await query;
-      if (error) throw error;
-      const resultRows = Array.isArray(data) ? data : [];
-      if (resultRows.length > 25) {
-        nextCursor = encodePublishedArticleCursor(resultRows[24]);
-        rows = resultRows.slice(0, 25);
-      } else {
-        rows = resultRows;
-      }
-    } catch {
-      loadError = "فهرست مقالات در حال حاضر در دسترس نیست. راهنماهای ثابت دانشنامه همچنان از صفحه مقالات قابل مطالعه‌اند.";
-    }
+    const from = (page - 1) * PAGE_SIZE;
+    rows = filtered.slice(from, from + PAGE_SIZE).map((article) => ({
+      id: article.id || article.slug,
+      slug: article.slug,
+      title: article.title,
+      excerpt: article.excerpt,
+      category: article.category,
+      author_name: article.author_name || article.authorName,
+      published_at: article.published_at || article.publishedAt,
+    }));
+  } catch {
+    loadError = "فهرست مقالات در حال حاضر در دسترس نیست. راهنماهای ثابت دانشنامه همچنان از صفحه مقالات قابل مطالعه‌اند.";
   }
 
-  const nextParams = new URLSearchParams();
-  if (search) nextParams.set("q", search);
-  if (category) nextParams.set("category", category);
-  if (nextCursor) nextParams.set("cursor", nextCursor);
-  const nextHref = "/articles/library?" + nextParams.toString();
+  const pageItems = buildPageItems(page, totalPages);
 
   return (
     <main className={styles.page} dir="rtl">
@@ -118,7 +143,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
 
         <div className={styles.tableHeading}>
           <div><span className={styles.kicker}>PUBLISHED RECORDS</span><h2>کاربرگ مقالات منتشرشده</h2></div>
-          <span className={styles.count}>{rows.length.toLocaleString("fa-IR")} مقاله در این صفحه</span>
+          <span className={styles.count}>{totalCount.toLocaleString("fa-IR")} مقاله · {rows.length.toLocaleString("fa-IR")} ردیف در این صفحه</span>
         </div>
 
         {loadError ? (
@@ -131,7 +156,7 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
                 <tbody>
                   {rows.map((article, index) => (
                     <tr key={article.id}>
-                      <td className={styles.rowNumber}>{(index + 1).toLocaleString("fa-IR")}</td>
+                      <td className={styles.rowNumber}>{((page - 1) * PAGE_SIZE + index + 1).toLocaleString("fa-IR")}</td>
                       <td><strong>{article.title}</strong><small>{article.excerpt || "برای مشاهده متن کامل مقاله وارد صفحه مطالعه شوید."}</small></td>
                       <td><span className={styles.category}>{article.category || "عمومی"}</span></td>
                       <td>{article.author_name || "سید احمد موسوی"}</td>
@@ -142,12 +167,35 @@ export default async function PublicArticleLibraryPage({ searchParams }) {
                 </tbody>
               </table>
             </div>
-            {nextCursor ? <nav className={styles.pagination} aria-label="صفحه‌بندی مقالات"><Link href={nextHref}>مقالات قدیمی‌تر ←</Link></nav> : null}
+
+            {totalPages > 1 ? (
+              <nav className={styles.pagination} aria-label="صفحه‌بندی مقالات">
+                <div className={styles.paginationMeta}>
+                  <span>صفحه {page.toLocaleString("fa-IR")} از {totalPages.toLocaleString("fa-IR")}</span>
+                  <span>نمایش {Math.min((page - 1) * PAGE_SIZE + 1, totalCount).toLocaleString("fa-IR")} تا {Math.min(page * PAGE_SIZE, totalCount).toLocaleString("fa-IR")} از {totalCount.toLocaleString("fa-IR")} مقاله</span>
+                </div>
+                <div className={styles.paginationControls}>
+                  {page > 1 ? <Link className={styles.pageDirection} href={buildPageHref(page - 1, search, category)}>صفحه قبل ←</Link> : <span className={styles.pageDisabled}>صفحه قبل ←</span>}
+                  <div className={styles.pageNumbers}>
+                    {pageItems.map((item) => typeof item === "number" ? (
+                      <Link
+                        key={item}
+                        className={item === page ? styles.activePage : styles.pageNumber}
+                        href={buildPageHref(item, search, category)}
+                        aria-current={item === page ? "page" : undefined}
+                        aria-label={"صفحه " + item}
+                      >{item.toLocaleString("fa-IR")}</Link>
+                    ) : <span className={styles.pageEllipsis} key={item}>…</span>)}
+                  </div>
+                  {page < totalPages ? <Link className={styles.pageDirection} href={buildPageHref(page + 1, search, category)}>صفحه بعد →</Link> : <span className={styles.pageDisabled}>صفحه بعد →</span>}
+                </div>
+              </nav>
+            ) : null}
           </>
         ) : (
           <div className={styles.empty}>در این جست‌وجو مقاله منتشرشده‌ای پیدا نشد.</div>
         )}
-        <p className={styles.disclaimer}>این فهرست فقط شامل مقاله‌هایی است که پس از تکمیل و بازبینی مدیر به‌صورت عمومی منتشر شده‌اند. نتایج جست‌وجو و پیش‌نویس‌ها در این صفحه نمایش داده نمی‌شوند.</p>
+        <p className={styles.disclaimer}>این فهرست فقط شامل مقاله‌هایی است که پس از تکمیل و بازبینی مدیر به‌صورت عمومی منتشر شده‌اند. پیش‌نویس‌ها و مقاله‌های تأییدنشده در این صفحه نمایش داده نمی‌شوند.</p>
         <Link href="/articles" className={styles.backLink}>← بازگشت به دانشنامه و راهنماهای حقوقی</Link>
       </section>
       <footer className={styles.footer}><div className={styles.container}><span>دانشنامه حقوقی · سید احمد موسوی</span><Link href="/">صفحه اصلی</Link></div></footer>

@@ -29,6 +29,8 @@ export default function MavisIranianSourceSearch({ onImport }) {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [extractingUrl, setExtractingUrl] = useState("");
+  const [extractReport, setExtractReport] = useState(null);
   const [metadata, setMetadata] = useState(null);
 
   async function search(event) {
@@ -68,6 +70,51 @@ export default function MavisIranianSourceSearch({ onImport }) {
     }
   }
 
+  async function extract(item) {
+    if (extractingUrl) return;
+    choose(item);
+    setExtractingUrl(item.url);
+    setExtractReport(null);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch("/api/admin/mavis/source-extract", {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: item.url }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok || payload?.ok !== true || !payload.metadata || typeof payload.metadata !== "object") {
+        throw new Error(payload?.error?.message || "استخراج مشخصات منبع انجام نشد.");
+      }
+      const extracted = payload.metadata;
+      const headings = Array.isArray(extracted.headings)
+        ? extracted.headings.filter((heading) => typeof heading === "string").slice(0, 8) : [];
+      const content = typeof payload.content === "string" ? payload.content : "";
+      const wordCount = content.split(/\s+/).filter(Boolean).length;
+      setMetadata((current) => ({
+        ...(current || {}),
+        title: current?.title || item.title || "",
+        author: extracted.author || current?.author || "",
+        publication: extracted.publication || current?.publication || item.sourceName || "",
+        publicationDate: extracted.publicationDate || current?.publicationDate || item.publishedDate || "",
+        documentNumber: extracted.documentNumber || current?.documentNumber || "",
+        issuingAuthority: extracted.issuingAuthority || current?.issuingAuthority || (item.sourceGroup === "official" ? item.sourceName : ""),
+        documentType: extracted.documentType || current?.documentType || "",
+        abstract: extracted.abstract || current?.abstract || item.snippet || "",
+        sourceUrl: item.url,
+      }));
+      setExtractReport({ wordCount, hasAbstract: Boolean(extracted.abstract), headings, sourceName: item.sourceName });
+      setNotice("فیلدهای قابل‌استخراج از منبع پیشنهاد شدند؛ موارد ناموجود خالی می‌مانند و باید پیش از ثبت بررسی شوند.");
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "استخراج منبع ناموفق بود.");
+    } finally {
+      setExtractingUrl("");
+    }
+  }
+
   function choose(item) {
     setSelected(item);
     setMetadata({
@@ -80,6 +127,8 @@ export default function MavisIranianSourceSearch({ onImport }) {
       documentType: "",
       abstract: item.snippet || "",
       sourceUrl: item.url || "",
+      sourceAuthority: item.sourceAuthority || "",
+      sourceGroup: item.sourceGroup || "",
     });
   }
 
@@ -146,6 +195,13 @@ export default function MavisIranianSourceSearch({ onImport }) {
 
       {error ? <p className={styles.error} role="alert">{error}</p> : null}
       {notice ? <p className={styles.notice} role="status">{notice}</p> : null}
+      {extractReport ? (
+        <section className={styles.extractReport} aria-live="polite">
+          <strong>گزارش استخراج موقت · {extractReport.sourceName}</strong>
+          <span>{extractReport.wordCount.toLocaleString("fa-IR")} واژه · {extractReport.hasAbstract ? "نشانه چکیده شناسایی شد" : "چکیده مشخصی شناسایی نشد"}</span>
+          {extractReport.headings.length ? <ul>{extractReport.headings.map((heading, index) => <li key={index}>{heading}</li>)}</ul> : <small>سرفصل مشخصی از متن استخراج نشد.</small>}
+        </section>
+      ) : null}
 
       {results.length ? (
         <div className={styles.resultsLayout}>
@@ -161,6 +217,9 @@ export default function MavisIranianSourceSearch({ onImport }) {
                 <p>{item.snippet || "برای مشاهده جزئیات، به صفحه منبع اصلی مراجعه کنید."}</p>
                 <div className={styles.resultActions}>
                   <button type="button" onClick={() => choose(item)}>انتخاب و تکمیل مشخصات</button>
+                  <button type="button" onClick={() => extract(item)} disabled={Boolean(extractingUrl)}>
+                    {extractingUrl === item.url ? "در حال استخراج..." : "استخراج اطلاعات و سرفصل‌ها"}
+                  </button>
                   <a href={item.url} target="_blank" rel="noopener noreferrer">مشاهده منبع اصلی ↗</a>
                 </div>
               </article>

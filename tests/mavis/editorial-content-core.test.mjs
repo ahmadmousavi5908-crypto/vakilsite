@@ -56,6 +56,31 @@ test("only published snapshots are exposed to public pages", () => {
   assert.equal(draft, null);
 });
 
+test("flattens versioned article content for public pages and MAVIS retrieval", () => {
+  const published = mapPublishedEditorialRecord({
+    status: "published",
+    slug: "civil-liability",
+    published_content: {
+      title: "مسئولیت مدنی",
+      excerpt: "خلاصه مقاله",
+      content: {
+        intro: "مقدمه مقاله",
+        sections: [{ heading: "شرایط مسئولیت", body: "شرح شرایط" }],
+        checklist: ["بررسی سند"],
+        sources: [{ label: "قانون", url: "https://qavanin.ir/law/1" }]
+      }
+    },
+    is_indexable: true,
+    published_at: "2026-11-16T10:00:00.000Z",
+    updated_at: "2026-11-16T10:00:00.000Z"
+  });
+
+  assert.equal(published.intro, "مقدمه مقاله");
+  assert.equal(published.sections[0].heading, "شرایط مسئولیت");
+  assert.deepEqual(published.checklist, ["بررسی سند"]);
+  assert.equal(published.sources[0].url, "https://qavanin.ir/law/1");
+});
+
 test("CSV export neutralizes spreadsheet formula prefixes", () => {
   const csv = serializeEditorialCsv([["title"], ["=HYPERLINK(\"https://bad.example\")"]]);
   assert.match(csv, /'=HYPERLINK/);

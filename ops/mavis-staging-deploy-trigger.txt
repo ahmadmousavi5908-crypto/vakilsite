@@ -1,8 +1,21 @@
 MAVIS staging-only deployment trigger.
+Deploys to the isolated vakilsite-staging Supabase project and the dedicated workers.dev Worker endpoint. No Production routes or database are targeted.
+Refreshed after Workers AI output validation and IndexNow publication notification fixes on 2026-11-17.
+Deploy the secure Search Console OAuth and read-only inspection tools to isolated Staging only.
 Deploys the reviewed main revision to the isolated vakilsite-staging Supabase project and the dedicated staging Worker only.
 No Production routes or database are targeted.
 Refreshed after Workers AI output validation and IndexNow publication notification fixes on 2026-11-17.
 
 Deploy the merged secure Search Console OAuth and read-only inspection tools to the isolated Staging Worker. Do not deploy Production.
 
-Deploy the dedicated staging.vakilahmadmousavi.ir custom domain and update the staging admin entrypoint. Production must remain untouched.
+Deploy the reviewed MAVIS source extraction and editorial intake changes from feature/mavis-web-extract-staging-20261117 to the isolated Staging Worker only. Keep Production unchanged.
+
+Deploy the collapsible offline MAVIS article editor, 750-record admin editorial queues, public published-article content mapping, and live published-CMS knowledge retrieval to the isolated Staging Worker only. Preserve the online source-search research in the branch but keep it optional and unconfigured. Do not deploy Production.
+
+Deploy the offline-first manual article editor polish and numbered 25-item public article library pagination from the reviewed feature/mavis-web-extract-staging-20261117 revision to the isolated Staging Worker only. Do not deploy Production.
+
+Deploy the admin dashboard article library entry point and manual article creation shortcuts from the reviewed Staging feature revision only. Keep Production untouched.
+
+Redeploy the isolated Staging Worker after fixing the public article library to include existing static articles alongside published CMS articles. Keep Production unchanged.
+
+Redeploy the isolated Staging Worker after exposing the MAVIS third arm as a compact collapsible entry in the admin dashboard. Keep Production unchanged.
