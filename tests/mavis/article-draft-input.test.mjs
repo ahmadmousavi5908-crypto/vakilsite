@@ -61,8 +61,7 @@ test("rejects short section bodies and malformed forms", () => {
 test("preserves warning and checklist fields when editing a draft", () => {
   const result = parseMavisArticleDraftInput(formWith({
     warning: "این متن صرفاً آموزشی است.",
-    checklist: "بررسی منبع رسمی
-کنترل تاریخ اصلاح",
+    checklist: "بررسی منبع رسمی\nکنترل تاریخ اصلاح",
   }));
   assert.equal(result.ok, true);
   assert.deepEqual(result.payload.content.checklist, ["بررسی منبع رسمی", "کنترل تاریخ اصلاح"]);
@@ -92,8 +91,7 @@ test("requires a valid article id and expected version together", () => {
 
 test("rejects oversized warning and checklist", () => {
   assert.equal(parseMavisArticleDraftInput(formWith({ warning: "x".repeat(2001) })).ok, false);
-  assert.equal(parseMavisArticleDraftInput(formWith({ checklist: Array.from({ length: 61 }, () => "item").join("
-") })).ok, false);
+  assert.equal(parseMavisArticleDraftInput(formWith({ checklist: Array.from({ length: 61 }, () => "item").join("\n") })).ok, false);
 });
 
 
