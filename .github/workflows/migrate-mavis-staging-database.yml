@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feature/mavis-third-arm-delivery-20261116
+      - feature/mavis-web-extract-staging-20261117
     paths:
       - ".github/workflows/migrate-mavis-staging-database.yml"
       - "supabase/migrations/**"
