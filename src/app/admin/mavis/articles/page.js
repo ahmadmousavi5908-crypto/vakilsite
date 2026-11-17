@@ -194,7 +194,7 @@ export default async function MavisArticlesPage({ searchParams }) {
           <Link href="/admin">داشبورد</Link>
           <Link href="/admin/mavis">مرکز دانش MAVIS</Link>
           <Link href="/admin/mavis/growth">هوشمندی رشد و محتوا</Link>
-          <Link className="active" href="/admin/mavis/articles">کتابخانه مقالات</Link>
+          <Link className="active" href="/admin/mavis/articles">مقالات</Link>
         </nav>
         <div className="admin-sidebar-foot">
           <span>دسترسی مدیر</span>
