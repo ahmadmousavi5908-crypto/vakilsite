@@ -69,8 +69,14 @@ export function validateEditorialSlug(value) {
 
 export function mapPublishedEditorialRecord(record) {
   if (!record || record.status !== "published" || !record.published_content) return null;
+  const publishedContent = record.published_content;
+  const articleContent = publishedContent.content && typeof publishedContent.content === "object"
+    && !Array.isArray(publishedContent.content)
+    ? publishedContent.content
+    : {};
   return {
-    ...record.published_content,
+    ...publishedContent,
+    ...articleContent,
     slug: record.slug,
     publishedAt: record.published_at,
     updatedAt: record.updated_at,
