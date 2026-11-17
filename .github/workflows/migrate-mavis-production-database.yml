@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       apply_migrations:
-        description: "Apply the single verified MAVIS migration 019 (otherwise dry-run only)"
+        description: "Apply the pending, verified MAVIS migrations 019 and 020 (otherwise dry-run only)"
         required: true
         type: boolean
         default: false
@@ -29,7 +29,7 @@ concurrency:
 
 jobs:
   migrate:
-    name: Verify and optionally apply MAVIS migration 019
+    name: Verify and optionally apply MAVIS migrations 019 and 020
     runs-on: ubuntu-latest
     timeout-minutes: 75
     environment: production
@@ -225,11 +225,15 @@ jobs:
             if (remoteSql !== localSql) throw new Error("Migration SQL differs from the applied production file: " + name);
           }
           const pending = localFiles.filter((name) => !remoteFiles.includes(name));
-          const expected = ["019_mavis_editorial_assistant_and_manual_sources.sql"];
-          if (JSON.stringify(pending) !== JSON.stringify(expected)) {
-            throw new Error("Expected only migration 019 to be pending; found: " + (pending.join(", ") || "none"));
+          const allowedPending = new Set([
+            "019_mavis_editorial_assistant_and_manual_sources.sql",
+            "020_mavis_legal_record_types.sql",
+          ]);
+          const unexpected = pending.filter((name) => !allowedPending.has(name));
+          if (unexpected.length) {
+            throw new Error("Production has unexpected pending migrations: " + unexpected.join(", "));
           }
-          console.log("Production history is consistent. The only permitted pending migration is 019.");
+          console.log("Production history is consistent. Only reviewed MAVIS migrations 019 and 020 may be pending.");
           NODE
 
       - name: Preview the production migration plan
