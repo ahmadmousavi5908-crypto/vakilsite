@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getPublishedEditorialArticles } from "../../../../lib/mavis/editorial-content";
+import { getPublishedEditorialArticlesStrict } from "../../../../lib/mavis/editorial-content";
 import { buildPublishedArticleRecords } from "../../../../lib/mavis/published-article-adapter.mjs";
 
 export const dynamic = "force-dynamic";
@@ -7,7 +7,7 @@ export const runtime = "nodejs";
 
 export async function GET() {
   try {
-    const articles = await getPublishedEditorialArticles();
+    const articles = await getPublishedEditorialArticlesStrict();
     const records = buildPublishedArticleRecords(articles).map((record) => ({
       ...record,
       access_class: "public",
