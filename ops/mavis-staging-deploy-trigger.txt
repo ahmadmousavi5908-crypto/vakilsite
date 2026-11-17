@@ -15,3 +15,5 @@ Deploy the collapsible offline MAVIS article editor, 750-record admin editorial 
 Deploy the offline-first manual article editor polish and numbered 25-item public article library pagination from the reviewed feature/mavis-web-extract-staging-20261117 revision to the isolated Staging Worker only. Do not deploy Production.
 
 Deploy the admin dashboard article library entry point and manual article creation shortcuts from the reviewed Staging feature revision only. Keep Production untouched.
+
+Redeploy the isolated Staging Worker after fixing the public article library to include existing static articles alongside published CMS articles. Keep Production unchanged.
