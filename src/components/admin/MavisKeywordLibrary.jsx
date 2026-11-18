@@ -34,7 +34,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
         <div>
           <span className={styles.eyebrow}>INTERNAL SEARCH TAXONOMY · V{snapshot.version}</span>
           <h2>کتابخانه مادر کلیدواژه‌های حقوقی</h2>
-          <p>جست‌وجو و مرور عبارت‌های پایه، وکیل‌محور و مسئله‌محور؛ فقط برای پژوهش و برنامه‌ریزی داخلی MAVIS. نسبت ۸۰/۲۰، قاعده برنامه‌ریزی موضوعات پایدار و نوظهور است، نه آمار واقعی جست‌وجو.</p>
+          <p>جست‌وجو و مرور عبارت‌های پایه، وکیل‌محور، محلی، عمومی و مسئله‌محور؛ فقط برای پژوهش و برنامه‌ریزی داخلی MAVIS. نسبت ۸۰/۲۰، قاعده برنامه‌ریزی موضوعات پایدار و نوظهور است، نه آمار واقعی جست‌وجو.</p>
         </div>
         <span className={styles.internalBadge}>داخلی · غیرقابل انتشار مستقیم</span>
       </div>
@@ -68,6 +68,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
           <span>حوزه حقوقی</span>
           <select value={clusterId} onChange={(event) => setClusterId(event.target.value)}>
             <option value="all">همه حوزه‌ها</option>
+            <option value="general-attorney-selection">جست‌وجوی عمومی و انتخاب وکیل</option>
             {clusters.map((cluster) => <option key={cluster.id} value={cluster.id}>{cluster.title}</option>)}
           </select>
         </label>
@@ -79,6 +80,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
             <option value="base">عبارت پایه حقوقی</option>
             <option value="problem">قالب مسئله و پرسش</option>
             <option value="local">عبارت محلی (موضوع + شهر)</option>
+            <option value="positioning">عبارت‌های عمومی، مترادف و توصیفی</option>
           </select>
         </label>
         <label>
@@ -105,12 +107,13 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
             <li key={entry.clusterId + ":" + entry.family + ":" + entry.term}>
               <div className={styles.termLine}>
                 <strong>{entry.term}</strong>
-                <span className={styles.family}>{entry.family === "lawyer" ? "وکیل‌محور" : entry.family === "base" ? "پایه" : entry.family === "problem" ? "پرسشی" : entry.family === "local" ? "محلی" : "English"}</span>
+                <span className={styles.family}>{entry.family === "lawyer" ? "وکیل‌محور" : entry.family === "base" ? "پایه" : entry.family === "problem" ? "پرسشی" : entry.family === "local" ? "محلی" : entry.family === "positioning" ? "عمومی/توصیفی" : "English"}</span>
               </div>
               <span className={styles.cluster}>{entry.clusterTitle}</span>
               {entry.location && <span className={styles.cluster}>شهر هدف: {entry.location}</span>}
               <span className={styles.target}>{entry.target === "محتوای آتی" ? "بدون صفحه مالک؛ فرصت پژوهش" : `صفحه مالک: ${entry.target}`}</span>
               {entry.legalReviewStatus && <span className={styles.review}>منبع اصطلاح: کتابخانه حقوقی · نیازمند بازبینی حقوقی</span>}
+              {entry.requiresComplianceReview && <span className={styles.review}>نیازمند بررسی ضوابط تبلیغات وکالت و مستندات ادعا؛ صرفاً پیشنهاد داخلی · سطح ریسک: {entry.claimRisk}</span>}
             </li>
           ))}
         </ul>
