@@ -130,3 +130,26 @@ test("generates a separate, bounded local phrase family for Khuzestan service-ar
   assert.ok(local.every((entry) => entry.family === "local" && entry.origin === "local-derived-candidate"));
   assert.ok(local.every((entry) => entry.location === "اهواز"));
 });
+
+
+test("keeps broad attorney-positioning and synonym candidates in a separate review-gated family", () => {
+  const snapshot = getKeywordLibrarySnapshot();
+  const entries = searchKeywordLibrary({ clusterId: "general-attorney-selection", family: "positioning" });
+  const expected = [
+    "وکیل خوزستان",
+    "بهترین وکیل پایه یک دادگستری",
+    "وکیل حقوقی اهواز",
+    "مشاوره فوری وکیل",
+    "وکیل نابغه",
+    "نابغه وکالت"
+  ];
+
+  assert.equal(snapshot.positioningPhraseCount, 18);
+  for (const term of expected) {
+    assert.ok(entries.some((entry) => entry.term === term), `Missing ${term}`);
+  }
+  assert.ok(entries.every((entry) => entry.family === "positioning"));
+  assert.ok(entries.every((entry) => entry.requiresComplianceReview === true));
+  assert.ok(entries.every((entry) => entry.origin === "curated-search-language-candidate"));
+  assert.ok(entries.some((entry) => entry.term === "بهترین وکیل اهواز" && entry.claimRisk === "high"));
+});
