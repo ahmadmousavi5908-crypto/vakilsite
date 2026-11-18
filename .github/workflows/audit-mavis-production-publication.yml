@@ -1,0 +1,102 @@
+name: Read-only MAVIS Production publication audit
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/audit-mavis-production-publication.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-production-publication-readonly-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: Probe Production publication schema and public routes
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Probe Supabase Production read and RPC surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          WORKDIR="$(mktemp -d)"
+          trap 'rm -rf "$WORKDIR"' EXIT
+          readarray -t SUPABASE_CONFIG < <(node -e '
+            const fs = require("node:fs");
+            const config = JSON.parse(fs.readFileSync("wrangler.jsonc", "utf8"));
+            console.log(config.vars.NEXT_PUBLIC_SUPABASE_URL);
+            console.log(config.vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
+          ')
+          SUPABASE_URL="${SUPABASE_CONFIG[0]}"
+          SUPABASE_PUBLISHABLE_KEY="${SUPABASE_CONFIG[1]}"
+
+          request() {
+            local label="$1"
+            local method="$2"
+            local endpoint="$3"
+            local output="$4"
+            local payload="${5:-}"
+            local status
+
+            if [ "$method" = "POST" ]; then
+              status="$(curl --silent --show-error --connect-timeout 10 --max-time 30 \
+                --request POST \
+                --header "apikey: $SUPABASE_PUBLISHABLE_KEY" \
+                --header "Authorization: Bearer $SUPABASE_PUBLISHABLE_KEY" \
+                --header "Content-Type: application/json" \
+                --data "$payload" \
+                --output "$output" --write-out '%{http_code}' \
+                "$SUPABASE_URL/rest/v1/rpc/$endpoint" || true)"
+            else
+              status="$(curl --silent --show-error --connect-timeout 10 --max-time 30 \
+                --header "apikey: $SUPABASE_PUBLISHABLE_KEY" \
+                --header "Authorization: Bearer $SUPABASE_PUBLISHABLE_KEY" \
+                --output "$output" --write-out '%{http_code}' \
+                "$SUPABASE_URL/rest/v1/$endpoint" || true)"
+            fi
+
+            node - "$label" "$status" "$output" <<'NODE'
+          const fs = require("node:fs");
+          const [label, status, file] = process.argv.slice(2);
+          let body = "";
+          try { body = fs.readFileSync(file, "utf8"); } catch {}
+          let parsed;
+          try { parsed = JSON.parse(body); } catch {}
+          const code = parsed && !Array.isArray(parsed) ? parsed.code : undefined;
+          const message = parsed && !Array.isArray(parsed) ? String(parsed.message || "").slice(0, 180) : "";
+          console.log(label + ": HTTP " + status + (code ? " | code=" + code : "") + (message ? " | " + message : ""));
+          if (label === "get_mavis_published_articles" && status === "200") {
+            if (!Array.isArray(parsed)) {
+              console.error("Published-article RPC returned a non-array payload.");
+              process.exitCode = 1;
+            } else {
+              console.log("published_article_count=" + parsed.length);
+              console.log("published_slugs=" + parsed.slice(0, 20).map((row) => row.slug).filter(Boolean).join(","));
+            }
+          }
+          NODE
+          }
+
+          request "get_mavis_published_articles" "GET" "rpc/get_mavis_published_articles" "$WORKDIR/published.json"
+          request "publish_mavis_article_guard_probe" "POST" "publish_mavis_article" "$WORKDIR/publish.json" '{"p_article_id":null,"p_expected_version":null}'
+          request "unpublish_mavis_article_guard_probe" "POST" "unpublish_mavis_article" "$WORKDIR/unpublish.json" '{"p_article_id":null,"p_expected_version":null}'
+          request "public_mavis_articles_view" "GET" "mavis_articles?select=slug&status=eq.published&limit=100" "$WORKDIR/view.json"
+
+      - name: Probe public production pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in / /articles /articles/library; do
+            status="$(curl --silent --show-error --location --connect-timeout 10 --max-time 30 \
+              --output /dev/null --write-out '%{http_code}' "https://vakilahmadmousavi.ir$path" || true)"
+            printf '%s HTTP %s\n' "$path" "$status"
+            if [ "$status" != "200" ]; then
+              echo "::warning::Public route did not return HTTP 200: $path"
+            fi
+          done
