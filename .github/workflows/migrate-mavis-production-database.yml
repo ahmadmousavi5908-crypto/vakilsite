@@ -97,8 +97,8 @@ jobs:
           fi
 
           BASELINE_COUNT="$(readonly_psql "SELECT count(DISTINCT version) FROM supabase_migrations.schema_migrations WHERE version IN ('001','002','003','005','006','007','008','009','010','011','012','013','014','015','016','017','018')")"
-          if [ "$BASELINE_COUNT" != "18" ]; then
-            echo "::error::Production does not have all 18 prerequisite migrations recorded. The 019/020-only workflow is blocked."
+          if [ "$BASELINE_COUNT" != "17" ]; then
+            echo "::error::Production does not have all 17 prerequisite migrations recorded. The 019/020-only workflow is blocked."
             exit 1
           fi
 
