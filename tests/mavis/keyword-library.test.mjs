@@ -189,7 +189,7 @@ test("expands labor, tax, administrative, insurance, municipal, commercial and e
   const snapshot = getKeywordLibrarySnapshot();
   assert.equal(snapshot.lawyerPhraseCount, 799);
   assert.equal(snapshot.basePhraseCount, 769);
-  assert.equal(snapshot.problemPhraseCount, 372);
+  assert.equal(snapshot.problemPhraseCount, 376);
 
   const lawyerCases = [
     ["labor-administrative-tax", "وکیل اعتراض به رأی هیأت حل اختلاف مالیاتی"],
