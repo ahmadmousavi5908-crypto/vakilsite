@@ -105,10 +105,10 @@ jobs:
           SELECT
             'relation' AS object_type,
             n.nspname || '.' || c.relname AS object_name,
-            'kind=' || c.relkind
-              || '; anon_select=' || has_table_privilege('anon', c.oid, 'SELECT')
-              || '; authenticated_select=' || has_table_privilege('authenticated', c.oid, 'SELECT')
-              || '; rls=' || c.relrowsecurity AS details
+            'kind=' || c.relkind::text
+              || '; anon_select=' || has_table_privilege('anon', c.oid, 'SELECT')::text
+              || '; authenticated_select=' || has_table_privilege('authenticated', c.oid, 'SELECT')::text
+              || '; rls=' || c.relrowsecurity::text AS details
           FROM pg_catalog.pg_class c
           JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
           WHERE n.nspname = 'public'
@@ -118,9 +118,9 @@ jobs:
             'function',
             p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')',
             'returns=' || pg_get_function_result(p.oid)
-              || '; anon_execute=' || has_function_privilege('anon', p.oid, 'EXECUTE')
-              || '; authenticated_execute=' || has_function_privilege('authenticated', p.oid, 'EXECUTE')
-              || '; security_definer=' || p.prosecdef
+              || '; anon_execute=' || has_function_privilege('anon', p.oid, 'EXECUTE')::text
+              || '; authenticated_execute=' || has_function_privilege('authenticated', p.oid, 'EXECUTE')::text
+              || '; security_definer=' || p.prosecdef::text
           FROM pg_catalog.pg_proc p
           JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
           WHERE n.nspname = 'public'
