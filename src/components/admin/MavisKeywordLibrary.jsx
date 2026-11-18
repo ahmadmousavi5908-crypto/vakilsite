@@ -22,7 +22,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
 
   const entries = useMemo(
     () => searchKeywordLibrary({ query, clusterId, family: language === "en" ? "all" : family, language, taxonomyEntries }),
-    [query, clusterId, family, language]
+    [query, clusterId, family, language, taxonomyEntries]
   );
 
   const effectiveFamily = language === "en" ? "english" : family;
@@ -85,6 +85,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
       </div>
 
       <p className={styles.provenance}>{provenance}</p>
+      {snapshot.legalTermsPendingReview > 0 && <p className={styles.provenance}>از {format(snapshot.legalTermCount)} اصطلاح متصل به کتابخانه حقوقی، {format(snapshot.legalTermsPendingReview)} مورد هنوز نیازمند بازبینی حقوقی است؛ این وضعیت فقط برای پژوهش کلیدواژه است و تأیید اعتبار قانونی محسوب نمی‌شود.</p>}
 
       <div className={styles.resultHeader}>
         <strong>نتایج کتابخانه</strong>
