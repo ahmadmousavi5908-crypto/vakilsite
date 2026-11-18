@@ -9,19 +9,19 @@ import {
 } from "../../lib/mavis/keyword-library.mjs";
 import styles from "./MavisKeywordLibrary.module.css";
 
-const snapshot = getKeywordLibrarySnapshot();
 const clusters = getKeywordLibraryClusters();
 
 const format = (value) => Number(value || 0).toLocaleString("fa-IR");
 
-export default function MavisKeywordLibrary() {
+export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
+  const snapshot = getKeywordLibrarySnapshot(taxonomyEntries);
   const [query, setQuery] = useState("");
   const [clusterId, setClusterId] = useState("all");
   const [family, setFamily] = useState("all");
   const [language, setLanguage] = useState("fa");
 
   const entries = useMemo(
-    () => searchKeywordLibrary({ query, clusterId, family: language === "en" ? "all" : family, language }),
+    () => searchKeywordLibrary({ query, clusterId, family: language === "en" ? "all" : family, language, taxonomyEntries }),
     [query, clusterId, family, language]
   );
 
@@ -46,6 +46,7 @@ export default function MavisKeywordLibrary() {
         <article><span>قالب مسئله‌محور</span><strong>{format(snapshot.problemPhraseCount)}</strong></article>
         <article><span>عبارت انگلیسی</span><strong>{format(snapshot.englishPhraseCount)}</strong></article>
         <article><span>شهرهای خوزستان</span><strong>{format(snapshot.locationCount)}</strong></article>
+        <article><span>اصطلاحات کتابخانه حقوقی</span><strong>{format(snapshot.legalTermCount)}</strong></article>
       </div>
 
       <div className={styles.controls}>
@@ -100,6 +101,7 @@ export default function MavisKeywordLibrary() {
               </div>
               <span className={styles.cluster}>{entry.clusterTitle}</span>
               <span className={styles.target}>{entry.target === "محتوای آتی" ? "بدون صفحه مالک؛ فرصت پژوهش" : `صفحه مالک: ${entry.target}`}</span>
+              {entry.legalReviewStatus && <span className={styles.review}>منبع اصطلاح: کتابخانه حقوقی · نیازمند بازبینی حقوقی</span>}
             </li>
           ))}
         </ul>
