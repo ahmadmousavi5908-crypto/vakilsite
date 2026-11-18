@@ -21,12 +21,26 @@ const keywordLibrary = {
         "period": "2026-08-15 to 2026-11-15",
         "queryRows": 0,
         "pageRows": 0
+      },
+      "indexInspection": {
+        "inspectedUrls": 10,
+        "indexedPass": 10,
+        "robotsAllowed": 10,
+        "successfulFetch": 10,
+        "lastCrawlWindow": "2026-11-16 to 2026-11-17"
       }
     },
     "paidKeywordResearch": {
       "provider": "OpenSEO",
       "creditsRemaining": 2,
       "status": "not-run-insufficient-credit-budget"
+    },
+    "legalLibrary": {
+      "canonicalTerms": 132,
+      "aliases": 268,
+      "searchPhrases": 353,
+      "reviewStatus": "all-needs-legal-review",
+      "status": "connected-to-admin-keyword-explorer-as-research-candidates"
     },
     "geographicResearch": {
       "provider": "OpenSEO location lookup",
