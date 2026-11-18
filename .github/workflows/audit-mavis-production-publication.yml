@@ -103,32 +103,48 @@ jobs:
 
           QUERY="$(cat <<'SQL'
           SELECT json_build_object(
-            'public_mavis_relations', (
+            'application_relations', (
               SELECT COALESCE(json_agg(json_build_object(
-                'name', n.nspname || '.' || c.relname,
+                'schema', n.nspname,
+                'name', c.relname,
                 'kind', c.relkind::text,
-                'rls', c.relrowsecurity::text
-              ) ORDER BY c.relname), '[]'::json)
+                'bytes', pg_total_relation_size(c.oid)
+              ) ORDER BY n.nspname, c.relname), '[]'::json)
               FROM pg_catalog.pg_class c
               JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-              WHERE n.nspname = 'public'
-                AND c.relname LIKE 'mavis_%'
+              WHERE n.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')
                 AND c.relkind IN ('r', 'v', 'm', 'p', 'f')
+                AND (
+                  n.nspname IN ('public', 'mavis_private', 'supabase_migrations')
+                  OR c.relname LIKE 'mavis_%'
+                )
             ),
-            'public_mavis_functions', (
+            'migration_history_relation', to_regclass('supabase_migrations.schema_migrations')::text,
+            'expected_core_relations', json_build_object(
+              'profiles', to_regclass('public.profiles')::text,
+              'social_links', to_regclass('public.social_links')::text,
+              'site_settings', to_regclass('public.site_settings')::text,
+              'mavis_articles', to_regclass('public.mavis_articles')::text,
+              'mavis_editorial_articles', to_regclass('public.mavis_editorial_articles')::text
+            ),
+            'publication_functions', (
               SELECT COALESCE(json_agg(json_build_object(
                 'signature', p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')',
                 'returns', pg_get_function_result(p.oid),
-                'security_definer', p.prosecdef::text,
-                'anon_execute', has_function_privilege('anon', p.oid, 'EXECUTE')::text,
-                'authenticated_execute', has_function_privilege('authenticated', p.oid, 'EXECUTE')::text
+                'security_definer', p.prosecdef::text
               ) ORDER BY p.proname), '[]'::json)
               FROM pg_catalog.pg_proc p
               JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
               WHERE n.nspname = 'public'
-                AND p.proname LIKE 'mavis_%'
-            ),
-            'migration_history_relation', to_regclass('supabase_migrations.schema_migrations')::text
+                AND p.proname IN (
+                  'get_mavis_published_articles',
+                  'publish_mavis_article',
+                  'unpublish_mavis_article',
+                  'save_mavis_article_draft',
+                  'submit_mavis_article_for_review',
+                  'decide_mavis_article_review'
+                )
+            )
           )::text AS audit_result;
           SQL
           )"
