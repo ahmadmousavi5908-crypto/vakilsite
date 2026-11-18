@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { getKeywordTaxonomyEntries } from "../../src/lib/mavis/keyword-taxonomy-adapter.mjs";
 import {
   getKeywordLibraryClusters,
   getKeywordLibrarySnapshot,
@@ -68,4 +69,12 @@ test("includes legal glossary records as separately marked research candidates",
   assert.ok(lawyer.some((entry) => entry.term === "وکیل دعاوی ثبتی"));
   assert.ok(base.some((entry) => entry.term === "دعاوی ثبتی"));
   assert.ok(problem.some((entry) => entry.term === "برای اعتراض به عملیات ثبتی چه مدارکی لازم است؟"));
+});
+
+test("adapts the full legal glossary without exposing definitions or source payloads", () => {
+  const entries = getKeywordTaxonomyEntries();
+  assert.equal(entries.length, 132);
+  assert.ok(entries.every((entry) => entry.clusterId && entry.canonical && entry.reviewStatus === "needs_legal_review"));
+  assert.ok(entries.some((entry) => entry.canonical === "حدنگار"));
+  assert.ok(entries.every((entry) => !("definition" in entry) && !("sources" in entry)));
 });
