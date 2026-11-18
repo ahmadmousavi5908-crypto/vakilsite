@@ -81,3 +81,15 @@ test("adapts the full legal glossary without exposing definitions or source payl
   assert.ok(entries.some((entry) => entry.canonical === "حدنگار"));
   assert.ok(entries.every((entry) => !("definition" in entry) && !("sources" in entry)));
 });
+
+test("covers focused lawyer-intent phrases for homicide, injuries, registration, inheritance and commercial leases", () => {
+  const criminal = searchKeywordLibrary({ clusterId: "criminal-life-and-body", family: "lawyer" });
+  const registration = searchKeywordLibrary({ clusterId: "registration-land", family: "lawyer" });
+  const inheritance = searchKeywordLibrary({ clusterId: "inheritance-estate", family: "lawyer" });
+  const lease = searchKeywordLibrary({ clusterId: "lease-shop-tenancy", family: "lawyer" });
+  assert.ok(criminal.some((entry) => entry.term === "وکیل قتل غیرعمد"));
+  assert.ok(criminal.some((entry) => entry.term === "وکیل اعتراض به نظریه پزشکی قانونی"));
+  assert.ok(registration.some((entry) => entry.term === "وکیل ابطال اجراییه ثبتی"));
+  assert.ok(inheritance.some((entry) => entry.term === "وکیل اعتراض به تقسیم ترکه"));
+  assert.ok(lease.some((entry) => entry.term === "وکیل تخلیه سرقفلی"));
+});
