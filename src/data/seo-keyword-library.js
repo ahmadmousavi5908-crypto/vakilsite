@@ -1468,7 +1468,7 @@ export const civilLawKeywordDomains=Object.freeze(keywordLibrary.civilLawDomains
 export function getKeywordCluster(id){return seoKeywordLibrary.clusters.find((cluster)=>cluster.id===id)||null;}
 export function getSearchTermsForPracticeArea(slug){
  const ids=practiceAreaClusterMap[slug]||[];const seen=new Set();const terms=[];
- for(const id of ids){const cluster=getKeywordCluster(id);if(!cluster)continue;for(const term of cluster.fa){const normalized=term.replace(/\\s+/g," ").trim();if(normalized&&!seen.has(normalized)){seen.add(normalized);terms.push(normalized);}}}
+ for(const id of ids){const cluster=getKeywordCluster(id);if(!cluster)continue;for(const term of cluster.fa){const normalized=term.replace(/\s+/g," ").trim();if(normalized&&!seen.has(normalized)){seen.add(normalized);terms.push(normalized);}}}
  return terms;
 }
 export function getKhuzestanLocalKeywordIdeas(){
