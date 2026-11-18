@@ -35,3 +35,5 @@
 
 - [وضعیت عملیاتی SEO/AEO/GEO و جذب موکل — ۱۴ نوامبر ۲۰۲۶](./09-current-operational-status-2026-11-14.md)
 - [کتابخانه توسعه‌یافته کلیدواژه‌های حقوقی فارسی و انگلیسی](./10-expanded-legal-keyword-library-fa-en.md)
+
+- [نقشه نیت جست‌وجو و مقصد صفحات حقوقی](./11-keyword-intent-page-map-fa-en.md)
