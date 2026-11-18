@@ -34,7 +34,7 @@ export default function MavisKeywordLibrary() {
         <div>
           <span className={styles.eyebrow}>INTERNAL SEARCH TAXONOMY · V{snapshot.version}</span>
           <h2>کتابخانه مادر کلیدواژه‌های حقوقی</h2>
-          <p>جست‌وجو و مرور عبارت‌های پایه، وکیل‌محور و مسئله‌محور؛ فقط برای پژوهش و برنامه‌ریزی داخلی MAVIS.</p>
+          <p>جست‌وجو و مرور عبارت‌های پایه، وکیل‌محور و مسئله‌محور؛ فقط برای پژوهش و برنامه‌ریزی داخلی MAVIS. نسبت ۸۰/۲۰، قاعده برنامه‌ریزی موضوعات پایدار و نوظهور است، نه آمار واقعی جست‌وجو.</p>
         </div>
         <span className={styles.internalBadge}>داخلی · غیرقابل انتشار مستقیم</span>
       </div>
