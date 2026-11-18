@@ -43,6 +43,7 @@ export function normalizeKeywordQuery(value) {
 
 function basePhrase(term) {
   const value = String(term ?? "").trim();
+  if (/^وکیل\s+پایه\s+یک\s+دادگستری$/u.test(value)) return null;
   let candidate = value.replace(/^وکیل\s+پایه\s+یک\s+دادگستری\s+/u, "");
   if (candidate === value) candidate = value.replace(/^وکیل\s+/u, "");
   if (!candidate || candidate === value || /^(برای|در|از|با)\s/u.test(candidate)) return null;
@@ -53,13 +54,13 @@ function uniqueEntries(entries) {
   const seen = new Set();
   return entries.filter((entry) => {
     const key = [entry.clusterId || "all", entry.family || "all", normalizeKeywordQuery(entry.term)].join(":");
-    if (!key || seen.has(key)) return false;
+    if (!entry.term || seen.has(key)) return false;
     seen.add(key);
     return true;
   });
 }
 
-export function getKeywordLibrarySnapshot() {
+export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
   const clusters = seoKeywordLibrary.clusters;
   const lawyerCount = clusters.reduce((total, cluster) => total + cluster.fa.length, 0);
   const englishCount = clusters.reduce((total, cluster) => total + cluster.en.length, 0);
@@ -68,6 +69,16 @@ export function getKeywordLibrarySnapshot() {
     .filter(Boolean)
     .map((term) => ({ term })))).length;
   const problemCount = Object.values(PROBLEM_SUBJECTS).reduce((total, subjects) => total + subjects.length * QUESTION_TEMPLATES.length, 0);
+  const legalRecords = Array.isArray(taxonomyEntries) ? taxonomyEntries : [];
+  const legalBaseTerms = legalRecords.flatMap((record) => [
+    record.canonical, record.searchTitle, ...(record.aliases || [])
+  ]).filter(Boolean);
+  const legalQuestionTerms = legalRecords.flatMap((record) => record.searchPhrases || []).filter(Boolean);
+  const legalLawyerTerms = legalRecords
+    .filter((record) => record.category !== "CRM")
+    .flatMap((record) => [record.canonical, ...(record.aliases || [])])
+    .filter((term) => term && !term.startsWith("وکیل "))
+    .map((term) => `وکیل ${term}`);
 
   return Object.freeze({
     version: seoKeywordLibrary.schemaVersion,
@@ -78,9 +89,13 @@ export function getKeywordLibrarySnapshot() {
     problemPhraseCount: problemCount,
     englishPhraseCount: englishCount,
     locationCount: seoKeywordLibrary.khuzestanLocations.length,
-    totalCandidateCount: lawyerCount + baseCount + problemCount + englishCount,
-    metricsStatus: seoKeywordLibrary.methodology.researchStatus,
-    gscStatus: seoKeywordLibrary.methodology.gscObserved.status
+    legalTermCount: legalRecords.length,
+    legalBasePhraseCount: uniqueEntries(legalBaseTerms.map((term) => ({ term }))).length,
+    legalLawyerPhraseCount: uniqueEntries(legalLawyerTerms.map((term) => ({ term }))).length,
+    legalQuestionPhraseCount: uniqueEntries(legalQuestionTerms.map((term) => ({ term }))).length,
+    legalTermsPendingReview: legalRecords.filter((record) => record.reviewStatus !== "verified_primary_source").length,
+    totalCandidateCount: lawyerCount + baseCount + problemCount + englishCount
+      + legalBaseTerms.length + legalLawyerTerms.length + legalQuestionTerms.length
   });
 }
 
@@ -90,8 +105,9 @@ export function getKeywordLibraryClusters() {
   }));
 }
 
-export function searchKeywordLibrary({ query = "", clusterId = "all", family = "all", language = "fa" } = {}) {
+export function searchKeywordLibrary({ query = "", clusterId = "all", family = "all", language = "fa", taxonomyEntries = [] } = {}) {
   const clusters = seoKeywordLibrary.clusters.filter((cluster) => clusterId === "all" || cluster.id === clusterId);
+  const clusterById = new Map(seoKeywordLibrary.clusters.map((cluster) => [cluster.id, cluster]));
   const entries = [];
 
   for (const cluster of clusters) {
@@ -131,6 +147,43 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
     }
   }
 
+  if (language !== "en") {
+    for (const record of Array.isArray(taxonomyEntries) ? taxonomyEntries : []) {
+      const cluster = clusterById.get(record.clusterId);
+      if (!cluster || (clusterId !== "all" && cluster.id !== clusterId)) continue;
+      const shared = {
+        clusterId: cluster.id,
+        clusterTitle: cluster.title,
+        target: cluster.target,
+        intent: cluster.intent,
+        coverage: cluster.coverage,
+        legalReviewStatus: record.reviewStatus,
+        legalTermId: record.id
+      };
+      const baseTerms = [record.canonical, record.searchTitle, ...(record.aliases || [])].filter(Boolean);
+
+      if (family === "all" || family === "base") {
+        for (const term of baseTerms) {
+          entries.push({ ...shared, term, family: "base", origin: "legal-taxonomy-candidate" });
+        }
+      }
+
+      if ((family === "all" || family === "lawyer") && record.category !== "CRM") {
+        for (const term of [record.canonical, ...(record.aliases || [])].filter(Boolean)) {
+          if (!term.startsWith("وکیل ")) {
+            entries.push({ ...shared, term: `وکیل ${term}`, family: "lawyer", origin: "generated-lawyer-candidate" });
+          }
+        }
+      }
+
+      if (family === "all" || family === "problem") {
+        for (const term of record.searchPhrases || []) {
+          entries.push({ ...shared, term, family: "problem", origin: "legal-taxonomy-question" });
+        }
+      }
+    }
+  }
+
   const unique = uniqueEntries(entries);
   const normalizedQuery = normalizeKeywordQuery(query);
   return unique
@@ -141,8 +194,9 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
 }
 
 export const keywordLibraryProvenance = Object.freeze({
-  lawyer: "عبارت‌های ثبت‌شده در بانک داخلی؛ به معنی حجم یا رتبه تأییدشده نیستند.",
-  base: "از حذف پیشوند وکیل از عبارت‌های وکیل‌محور به‌دست آمده‌اند؛ طبیعی‌بودن هر عبارت باید بازبینی شود.",
-  problem: "قالب‌های پیشنهادی تحریریه برای تبدیل موضوع به پرسش؛ عبارت واقعی ثبت‌شده در Google نیستند.",
-  english: "عبارت‌های انگلیسی برای نگهداری و پژوهش داخلی؛ بدون اثبات تقاضای بازار ایران."
+  lawyer: "عبارت‌های وکیل‌محورِ ثبت‌شده یا تولیدشده از اصطلاحات کتابخانه؛ به معنی حجم یا رتبه تأییدشده نیستند.",
+  base: "شامل عبارت‌های پایه و اصطلاحات کتابخانه حقوقی است؛ اصطلاحات دارای وضعیت نیازمند بازبینی نباید به‌عنوان محتوای حقوقی تأییدشده استفاده شوند.",
+  problem: "قالب‌های پیشنهادی تحریریه و پرسش‌های ذخیره‌شده در کتابخانه حقوقی؛ این‌ها عبارت واقعی ثبت‌شده در Google یا دارای حجم جست‌وجوی اثبات‌شده نیستند.",
+  english: "عبارت‌های انگلیسی برای نگهداری و پژوهش داخلی؛ بدون اثبات تقاضای بازار ایران.",
+  legal: "اصطلاحات و پرسش‌های واردشده از بانک حقوقی داخلی؛ وضعیت اعتبار حقوقی آن‌ها باید پیش از هر انتشار جداگانه بررسی شود."
 });
