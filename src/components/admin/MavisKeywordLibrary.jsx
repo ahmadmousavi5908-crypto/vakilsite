@@ -46,6 +46,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
         <article><span>قالب مسئله‌محور</span><strong>{format(snapshot.problemPhraseCount)}</strong></article>
         <article><span>عبارت انگلیسی</span><strong>{format(snapshot.englishPhraseCount)}</strong></article>
         <article><span>شهرهای خوزستان</span><strong>{format(snapshot.locationCount)}</strong></article>
+        <article><span>عبارت‌های پیشنهادی محلی</span><strong>{format(snapshot.localPhraseCount)}</strong></article>
         <article><span>اصطلاحات کتابخانه حقوقی</span><strong>{format(snapshot.legalTermCount)}</strong></article>
         <article><span>عبارت پایه از واژه‌نامه</span><strong>{format(snapshot.legalBasePhraseCount)}</strong></article>
         <article><span>عبارت وکیل‌محور مشتق‌شده</span><strong>{format(snapshot.legalLawyerPhraseCount)}</strong></article>
@@ -77,6 +78,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
             <option value="lawyer">عبارت وکیل‌محور</option>
             <option value="base">عبارت پایه حقوقی</option>
             <option value="problem">قالب مسئله و پرسش</option>
+            <option value="local">عبارت محلی (موضوع + شهر)</option>
           </select>
         </label>
         <label>
@@ -89,6 +91,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
       </div>
 
       <p className={styles.provenance}>{provenance}</p>
+      {family === "local" && language !== "en" && <p className={styles.provenance}>این عبارت‌ها فقط پیشنهاد پژوهش منطقه‌ای هستند؛ به معنی داشتن دفتر فیزیکی یا ارائه حضوری خدمت در همه شهرها نیستند و نباید به صفحه شهرمحور تکراری تبدیل شوند.</p>}
       {snapshot.legalTermsPendingReview > 0 && <p className={styles.provenance}>از {format(snapshot.legalTermCount)} اصطلاح متصل به کتابخانه حقوقی، {format(snapshot.legalTermsPendingReview)} مورد هنوز نیازمند بازبینی حقوقی است؛ این وضعیت فقط برای پژوهش کلیدواژه است و تأیید اعتبار قانونی محسوب نمی‌شود.</p>}
 
       <div className={styles.resultHeader}>
@@ -102,9 +105,10 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
             <li key={entry.clusterId + ":" + entry.family + ":" + entry.term}>
               <div className={styles.termLine}>
                 <strong>{entry.term}</strong>
-                <span className={styles.family}>{entry.family === "lawyer" ? "وکیل‌محور" : entry.family === "base" ? "پایه" : entry.family === "problem" ? "پرسشی" : "English"}</span>
+                <span className={styles.family}>{entry.family === "lawyer" ? "وکیل‌محور" : entry.family === "base" ? "پایه" : entry.family === "problem" ? "پرسشی" : entry.family === "local" ? "محلی" : "English"}</span>
               </div>
               <span className={styles.cluster}>{entry.clusterTitle}</span>
+              {entry.location && <span className={styles.cluster}>شهر هدف: {entry.location}</span>}
               <span className={styles.target}>{entry.target === "محتوای آتی" ? "بدون صفحه مالک؛ فرصت پژوهش" : `صفحه مالک: ${entry.target}`}</span>
               {entry.legalReviewStatus && <span className={styles.review}>منبع اصطلاح: کتابخانه حقوقی · نیازمند بازبینی حقوقی</span>}
             </li>
