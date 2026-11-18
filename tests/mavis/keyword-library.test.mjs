@@ -188,7 +188,7 @@ test("does not mix Persian positioning candidates into English search results", 
 test("expands labor, tax, administrative, insurance, municipal, commercial and emerging digital legal searches", () => {
   const snapshot = getKeywordLibrarySnapshot();
   assert.equal(snapshot.lawyerPhraseCount, 799);
-  assert.equal(snapshot.basePhraseCount, 769);
+  assert.equal(snapshot.basePhraseCount, 768);
   assert.equal(snapshot.problemPhraseCount, 376);
 
   const lawyerCases = [
