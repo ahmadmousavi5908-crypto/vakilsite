@@ -102,30 +102,34 @@ jobs:
           fi
 
           QUERY="$(cat <<'SQL'
-          SELECT
-            'relation' AS object_type,
-            n.nspname || '.' || c.relname AS object_name,
-            'kind=' || c.relkind::text
-              || '; anon_select=' || has_table_privilege('anon', c.oid, 'SELECT')::text
-              || '; authenticated_select=' || has_table_privilege('authenticated', c.oid, 'SELECT')::text
-              || '; rls=' || c.relrowsecurity::text AS details
-          FROM pg_catalog.pg_class c
-          JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-          WHERE n.nspname = 'public'
-            AND c.relname IN ('mavis_articles', 'mavis_editorial_articles')
-          UNION ALL
-          SELECT
-            'function',
-            p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')',
-            'returns=' || pg_get_function_result(p.oid)
-              || '; anon_execute=' || has_function_privilege('anon', p.oid, 'EXECUTE')::text
-              || '; authenticated_execute=' || has_function_privilege('authenticated', p.oid, 'EXECUTE')::text
-              || '; security_definer=' || p.prosecdef::text
-          FROM pg_catalog.pg_proc p
-          JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
-          WHERE n.nspname = 'public'
-            AND p.proname IN ('get_mavis_published_articles', 'publish_mavis_article', 'unpublish_mavis_article')
-          ORDER BY object_type, object_name;
+          SELECT json_build_object(
+            'public_mavis_relations', (
+              SELECT COALESCE(json_agg(json_build_object(
+                'name', n.nspname || '.' || c.relname,
+                'kind', c.relkind::text,
+                'rls', c.relrowsecurity::text
+              ) ORDER BY c.relname), '[]'::json)
+              FROM pg_catalog.pg_class c
+              JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+              WHERE n.nspname = 'public'
+                AND c.relname LIKE 'mavis_%'
+                AND c.relkind IN ('r', 'v', 'm', 'p', 'f')
+            ),
+            'public_mavis_functions', (
+              SELECT COALESCE(json_agg(json_build_object(
+                'signature', p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')',
+                'returns', pg_get_function_result(p.oid),
+                'security_definer', p.prosecdef::text,
+                'anon_execute', has_function_privilege('anon', p.oid, 'EXECUTE')::text,
+                'authenticated_execute', has_function_privilege('authenticated', p.oid, 'EXECUTE')::text
+              ) ORDER BY p.proname), '[]'::json)
+              FROM pg_catalog.pg_proc p
+              JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public'
+                AND p.proname LIKE 'mavis_%'
+            ),
+            'migration_history_relation', to_regclass('supabase_migrations.schema_migrations')::text
+          )::text AS audit_result;
           SQL
           )"
           export QUERY
