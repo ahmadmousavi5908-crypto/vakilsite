@@ -47,6 +47,9 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
         <article><span>عبارت انگلیسی</span><strong>{format(snapshot.englishPhraseCount)}</strong></article>
         <article><span>شهرهای خوزستان</span><strong>{format(snapshot.locationCount)}</strong></article>
         <article><span>اصطلاحات کتابخانه حقوقی</span><strong>{format(snapshot.legalTermCount)}</strong></article>
+        <article><span>عبارت پایه از واژه‌نامه</span><strong>{format(snapshot.legalBasePhraseCount)}</strong></article>
+        <article><span>عبارت وکیل‌محور مشتق‌شده</span><strong>{format(snapshot.legalLawyerPhraseCount)}</strong></article>
+        <article><span>پرسش‌های واژه‌نامه</span><strong>{format(snapshot.legalQuestionPhraseCount)}</strong></article>
       </div>
 
       <div className={styles.controls}>
