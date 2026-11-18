@@ -1,4 +1,4 @@
-import legalTerms from "../../data/legal-library/terms/terms.json";
+import legalTerms from "../../data/legal-library/terms/terms.json" with { type: "json" };
 
 const CATEGORY_CLUSTER = Object.freeze({
   REG: "registration-land",
