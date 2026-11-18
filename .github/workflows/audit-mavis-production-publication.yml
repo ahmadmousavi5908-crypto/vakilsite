@@ -20,6 +20,9 @@ jobs:
     name: Probe Production publication schema and public routes
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    environment: production
+    env:
+      SUPABASE_PRODUCTION_ACCESS_TOKEN: ${{ secrets.SUPABASE_PRODUCTION_ACCESS_TOKEN }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -87,6 +90,66 @@ jobs:
           request "publish_mavis_article_guard_probe" "POST" "publish_mavis_article" "$WORKDIR/publish.json" '{"p_article_id":null,"p_expected_version":null}'
           request "unpublish_mavis_article_guard_probe" "POST" "unpublish_mavis_article" "$WORKDIR/unpublish.json" '{"p_article_id":null,"p_expected_version":null}'
           request "public_mavis_articles_view" "GET" "mavis_articles?select=slug&status=eq.published&limit=100" "$WORKDIR/view.json"
+
+      - name: Read-only Supabase Management API database audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_PRODUCTION_ACCESS_TOKEN:-}" ]; then
+            echo "Management API audit skipped: no SUPABASE_PRODUCTION_ACCESS_TOKEN is configured in the production environment."
+            exit 0
+          fi
+
+          QUERY="$(cat <<'SQL'
+          SELECT
+            'relation' AS object_type,
+            n.nspname || '.' || c.relname AS object_name,
+            'kind=' || c.relkind
+              || '; anon_select=' || has_table_privilege('anon', c.oid, 'SELECT')
+              || '; authenticated_select=' || has_table_privilege('authenticated', c.oid, 'SELECT')
+              || '; rls=' || c.relrowsecurity AS details
+          FROM pg_catalog.pg_class c
+          JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+          WHERE n.nspname = 'public'
+            AND c.relname IN ('mavis_articles', 'mavis_editorial_articles')
+          UNION ALL
+          SELECT
+            'function',
+            p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')',
+            'returns=' || pg_get_function_result(p.oid)
+              || '; anon_execute=' || has_function_privilege('anon', p.oid, 'EXECUTE')
+              || '; authenticated_execute=' || has_function_privilege('authenticated', p.oid, 'EXECUTE')
+              || '; security_definer=' || p.prosecdef
+          FROM pg_catalog.pg_proc p
+          JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+          WHERE n.nspname = 'public'
+            AND p.proname IN ('get_mavis_published_articles', 'publish_mavis_article', 'unpublish_mavis_article')
+          ORDER BY object_type, object_name;
+          SQL
+          )"
+          export QUERY
+          PAYLOAD="$(node -e 'process.stdout.write(JSON.stringify({ query: process.env.QUERY }))')"
+          BODY_FILE="$(mktemp)"
+          trap 'rm -f "$BODY_FILE"' EXIT
+          STATUS="$(curl --silent --show-error --connect-timeout 10 --max-time 45 \
+            --request POST \
+            --header "Authorization: Bearer $SUPABASE_PRODUCTION_ACCESS_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            --output "$BODY_FILE" --write-out '%{http_code}' \
+            "https://api.supabase.com/v1/projects/jroflcmiczfwtmiaxmpd/database/query/read-only" || true)"
+          echo "Supabase Management API read-only schema query: HTTP $STATUS"
+          node - "$BODY_FILE" <<'NODE'
+          const fs = require("node:fs");
+          const file = process.argv[2];
+          const raw = fs.readFileSync(file, "utf8");
+          try {
+            const value = JSON.parse(raw);
+            console.log(JSON.stringify(value, null, 2).slice(0, 8000));
+          } catch {
+            console.log(raw.slice(0, 2000));
+          }
+          NODE
 
       - name: Probe public production pages
         shell: bash
