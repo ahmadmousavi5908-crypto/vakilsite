@@ -72,13 +72,16 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
   const legalRecords = Array.isArray(taxonomyEntries) ? taxonomyEntries : [];
   const legalBaseTerms = legalRecords.flatMap((record) => [
     record.canonical, record.searchTitle, ...(record.aliases || [])
-  ]).filter(Boolean);
+  ]).filter((term) => term && !term.startsWith("وکیل "));
   const legalQuestionTerms = legalRecords.flatMap((record) => record.searchPhrases || []).filter(Boolean);
   const legalLawyerTerms = legalRecords
     .filter((record) => record.category !== "CRM")
     .flatMap((record) => [record.canonical, ...(record.aliases || [])])
     .filter((term) => term && !term.startsWith("وکیل "))
     .map((term) => `وکیل ${term}`);
+  const legalBaseCount = uniqueEntries(legalBaseTerms.map((term) => ({ term }))).length;
+  const legalLawyerCount = uniqueEntries(legalLawyerTerms.map((term) => ({ term }))).length;
+  const legalQuestionCount = uniqueEntries(legalQuestionTerms.map((term) => ({ term }))).length;
 
   return Object.freeze({
     version: seoKeywordLibrary.schemaVersion,
@@ -90,12 +93,12 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
     englishPhraseCount: englishCount,
     locationCount: seoKeywordLibrary.khuzestanLocations.length,
     legalTermCount: legalRecords.length,
-    legalBasePhraseCount: uniqueEntries(legalBaseTerms.map((term) => ({ term }))).length,
-    legalLawyerPhraseCount: uniqueEntries(legalLawyerTerms.map((term) => ({ term }))).length,
-    legalQuestionPhraseCount: uniqueEntries(legalQuestionTerms.map((term) => ({ term }))).length,
+    legalBasePhraseCount: legalBaseCount,
+    legalLawyerPhraseCount: legalLawyerCount,
+    legalQuestionPhraseCount: legalQuestionCount,
     legalTermsPendingReview: legalRecords.filter((record) => record.reviewStatus !== "verified_primary_source").length,
     totalCandidateCount: lawyerCount + baseCount + problemCount + englishCount
-      + legalBaseTerms.length + legalLawyerTerms.length + legalQuestionTerms.length
+      + legalBaseCount + legalLawyerCount + legalQuestionCount
   });
 }
 
