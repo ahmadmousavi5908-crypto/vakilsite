@@ -66,6 +66,9 @@ test("includes legal glossary records as separately marked research candidates",
   const problem = searchKeywordLibrary({ clusterId: "registration-land", family: "problem", taxonomyEntries });
   assert.equal(snapshot.legalTermCount, 1);
   assert.equal(snapshot.legalTermsPendingReview, 1);
+  assert.ok(snapshot.legalBasePhraseCount > 0);
+  assert.ok(snapshot.legalLawyerPhraseCount > 0);
+  assert.equal(snapshot.legalQuestionPhraseCount, 1);
   assert.ok(lawyer.some((entry) => entry.term === "وکیل دعاوی ثبتی"));
   assert.ok(base.some((entry) => entry.term === "دعاوی ثبتی"));
   assert.ok(problem.some((entry) => entry.term === "برای اعتراض به عملیات ثبتی چه مدارکی لازم است؟"));
