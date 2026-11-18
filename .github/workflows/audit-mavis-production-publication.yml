@@ -48,7 +48,6 @@ jobs:
               status="$(curl --silent --show-error --connect-timeout 10 --max-time 30 \
                 --request POST \
                 --header "apikey: $SUPABASE_PUBLISHABLE_KEY" \
-                --header "Authorization: Bearer $SUPABASE_PUBLISHABLE_KEY" \
                 --header "Content-Type: application/json" \
                 --data "$payload" \
                 --output "$output" --write-out '%{http_code}' \
@@ -56,7 +55,6 @@ jobs:
             else
               status="$(curl --silent --show-error --connect-timeout 10 --max-time 30 \
                 --header "apikey: $SUPABASE_PUBLISHABLE_KEY" \
-                --header "Authorization: Bearer $SUPABASE_PUBLISHABLE_KEY" \
                 --output "$output" --write-out '%{http_code}' \
                 "$SUPABASE_URL/rest/v1/$endpoint" || true)"
             fi
