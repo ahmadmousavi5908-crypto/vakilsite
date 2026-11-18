@@ -427,6 +427,7 @@ const ARTICLE_UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0
 function revalidatePublicMavisArticlePaths() {
   revalidatePath("/");
   revalidatePath("/articles");
+  revalidatePath("/articles/library");
   revalidatePath("/articles/[slug]", "page");
   revalidatePath("/sitemap.xml");
 }
@@ -469,10 +470,11 @@ async function runMavisPublicationAction(action, articleId, expectedVersion) {
       p_expected_version: expectedVersion,
     });
 
+    if (error?.code === "42501") return { ok: false, error: "دسترسی انتشار برای حساب مدیر در پایگاه داده تأیید نشد. ورود مدیر و مجوز تابع انتشار باید بررسی شود." };
     if (error?.code === "40001") return { ok: false, error: "نسخه مقاله تغییر کرده است. فهرست را تازه‌سازی و دوباره بررسی کنید." };
-    if (error?.code === "55000") return { ok: false, error: "وضعیت مقاله برای این عملیات مجاز نیست یا تأیید نسخه معتبر پیدا نشد." };
+    if (error?.code === "55000") return { ok: false, error: "مقاله در وضعیت قابل انتشار نیست یا تأیید همان نسخه در پایگاه داده ثبت نشده است." };
     if (error?.code === "P0002") return { ok: false, error: "مقاله پیدا نشد." };
-    if (error?.code === "42883" || error?.code === "PGRST202") return { ok: false, error: "گردش‌کار انتشار هنوز روی پایگاه داده فعال نشده است." };
+    if (error?.code === "42883" || error?.code === "PGRST202") return { ok: false, error: "تابع انتشار مقاله روی پایگاه داده متصل به سایت نصب یا در دسترس نیست. مهاجرت انتشار باید روی همان پایگاه داده اجرا شود." };
     if (error) return { ok: false, error: "تغییر وضعیت انتشار انجام نشد." };
 
     const expectedStatus = action === "publish_mavis_article" ? "published" : "approved";
