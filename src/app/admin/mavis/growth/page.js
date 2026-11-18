@@ -5,6 +5,7 @@ import { articles } from "../../../../data/articles";
 import { auditGrowthLibrary } from "../../../../lib/mavis/growth-audit.mjs";
 import MavisGrowthAudit from "../../../../components/admin/MavisGrowthAudit";
 import MavisKeywordLibrary from "../../../../components/admin/MavisKeywordLibrary";
+import { getKeywordTaxonomyEntries } from "../../../../lib/mavis/keyword-taxonomy-adapter.mjs";
 import { signOut } from "../../../admin/actions";
 
 export const metadata = {
@@ -21,6 +22,7 @@ export default async function MavisGrowthPage() {
   if (!isAdmin) redirect("/admin/login?error=unauthorized");
 
   const audit = auditGrowthLibrary(articles);
+  const taxonomyEntries = getKeywordTaxonomyEntries();
   return (
     <div className="admin-shell" dir="rtl">
       <aside className="admin-sidebar">
@@ -37,7 +39,7 @@ export default async function MavisGrowthPage() {
         <header className="admin-topbar"><div><span>فضای مدیریت / MAVIS</span><strong>هوشمندی رشد و محتوا</strong></div><form action={signOut}><button type="submit">خروج امن</button></form></header>
         <main className="admin-content">
           <section className="admin-welcome"><div><span className="admin-eyebrow">GROWTH INTELLIGENCE · INTERNAL RESEARCH</span><h1>کتابخانه کلیدواژه و ممیزی محتوا</h1><p>بانک داخلی عبارت‌های حقوقی و بررسی ساختاری مقالات؛ بدون انتشار فهرست کلیدواژه یا ادعای داده زنده جست‌وجو.</p></div><div className="admin-status"><i /> دسترسی مدیر تأیید شده</div></section>
-          <MavisKeywordLibrary />
+          <MavisKeywordLibrary taxonomyEntries={taxonomyEntries} />
           <MavisGrowthAudit audit={audit} />
           <section className="admin-help"><strong>مرز داده و انتشار</strong><p>عبارت‌های بانک، پیشنهاد پژوهشی‌اند و به معنی حجم جست‌وجو، رتبه یا مجوز ارائه خدمت نیستند. انتشار هر محتوای حقوقی نیازمند بررسی منبع اولیه و تأیید انسانی است. هیچ صفحه عمومی، CTA یا کمپین جذب موکل از این بانک به‌صورت خودکار ساخته نمی‌شود.</p></section>
           <span className="admin-user-note">حساب مدیر: {user.email || "حساب تأییدشده"}</span>
