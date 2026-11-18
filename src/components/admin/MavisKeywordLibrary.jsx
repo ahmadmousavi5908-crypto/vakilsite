@@ -117,7 +117,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
 
       <div className={styles.footer}>
         <span>نسخه داده: {snapshot.version} · آخرین ساخت بانک: {snapshot.generatedAt}</span>
-        <span>وضعیت متریک: {snapshot.metricsStatus} · Search Console: {snapshot.gscStatus}</span>
+        <span>وضعیت متریک: {snapshot.metricsStatus} · OpenSEO Search Console: {snapshot.gscStatus}</span>
       </div>
     </div>
   );
