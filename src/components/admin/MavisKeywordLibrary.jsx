@@ -21,7 +21,7 @@ export default function MavisKeywordLibrary() {
   const [language, setLanguage] = useState("fa");
 
   const entries = useMemo(
-    () => searchKeywordLibrary({ query, clusterId, family, language }),
+    () => searchKeywordLibrary({ query, clusterId, family: language === "en" ? "all" : family, language }),
     [query, clusterId, family, language]
   );
 
