@@ -1,8 +1,9 @@
+import { cache } from "react";
 import { articles as siteArticles } from "../../data/articles";
 import { createClient } from "../supabase/server";
 import { mapPublishedEditorialRecord } from "./editorial-content-core.mjs";
 
-export async function getMavisPublishedArticles() {
+export const getMavisPublishedArticles = cache(async function getMavisPublishedArticles() {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.rpc("get_mavis_published_articles");
@@ -13,7 +14,7 @@ export async function getMavisPublishedArticles() {
   } catch {
     return [];
   }
-}
+});
 
 export async function getPublicArticleBySlug(slug) {
   const published = await getMavisPublishedArticles();
