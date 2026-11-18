@@ -69,9 +69,43 @@ export function validateEditorialSlug(value) {
 
 export function mapPublishedEditorialRecord(record) {
   if (!record || record.status !== "published" || !record.published_content) return null;
+
+  const snapshot = record.published_content;
+  const content = snapshot.content && typeof snapshot.content === "object" && !Array.isArray(snapshot.content)
+    ? snapshot.content
+    : {};
+  const sections = Array.isArray(content.sections)
+    ? content.sections
+    : Array.isArray(snapshot.sections) ? snapshot.sections : [];
+  const intro = typeof content.intro === "string"
+    ? content.intro
+    : typeof snapshot.intro === "string" ? snapshot.intro : "";
+  const checklist = Array.isArray(content.checklist)
+    ? content.checklist
+    : Array.isArray(snapshot.checklist) ? snapshot.checklist : [];
+  const sources = Array.isArray(content.sources)
+    ? content.sources
+    : Array.isArray(snapshot.sources) ? snapshot.sources : [];
+  const warning = typeof content.warning === "string"
+    ? content.warning
+    : typeof snapshot.warning === "string" ? snapshot.warning : "";
+  const articleText = [intro, ...sections.map((section) => [section?.heading, section?.body].filter(Boolean).join(" "))]
+    .filter(Boolean)
+    .join(" ");
+  const wordCount = articleText.split(/\\s+/).filter(Boolean).length;
+  const readTime = snapshot.readTime ||
+    (new Intl.NumberFormat("fa-IR").format(Math.max(1, Math.ceil(wordCount / 220))) + " دقیقه");
+
   return {
-    ...record.published_content,
+    ...snapshot,
+    ...content,
     slug: record.slug,
+    intro,
+    sections,
+    checklist,
+    sources,
+    warning,
+    readTime,
     publishedAt: record.published_at,
     updatedAt: record.updated_at,
     isIndexable: record.is_indexable === true,
