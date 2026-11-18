@@ -24,6 +24,7 @@ jobs:
     environment: production
     env:
       SUPABASE_PRODUCTION_ACCESS_TOKEN: ${{ secrets.SUPABASE_PRODUCTION_ACCESS_TOKEN }}
+      SUPABASE_PRODUCTION_DB_URL: ${{ secrets.SUPABASE_PRODUCTION_DB_URL }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -91,6 +92,72 @@ jobs:
           request "publish_mavis_article_guard_probe" "POST" "publish_mavis_article" "$WORKDIR/publish.json" '{"p_article_id":null,"p_expected_version":null}'
           request "unpublish_mavis_article_guard_probe" "POST" "unpublish_mavis_article" "$WORKDIR/unpublish.json" '{"p_article_id":null,"p_expected_version":null}'
           request "public_mavis_articles_view" "GET" "mavis_articles?select=slug&status=eq.published&limit=100" "$WORKDIR/view.json"
+
+      - name: Read-only direct database connection and schema preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_PRODUCTION_DB_URL:-}" ]; then
+            echo "DB_URL_CONFIGURED=false"
+            echo "Direct database preflight skipped; no database URL secret is configured."
+            exit 0
+          fi
+
+          echo "DB_URL_CONFIGURED=true"
+          echo "::add-mask::${SUPABASE_PRODUCTION_DB_URL}"
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client
+
+          QUERY="$(cat <<'SQL'
+          SELECT json_build_object(
+            'database', current_database(),
+            'connected_role', current_user,
+            'server_version', current_setting('server_version'),
+            'migration_history_exists', to_regclass('supabase_migrations.schema_migrations') IS NOT NULL,
+            'core_relations', (
+              SELECT COALESCE(json_agg(json_build_object(
+                'schema', n.nspname,
+                'name', c.relname,
+                'kind', c.relkind::text,
+                'rls_enabled', COALESCE(c.relrowsecurity, false),
+                'rls_forced', COALESCE(c.relforcerowsecurity, false)
+              ) ORDER BY n.nspname, c.relname), '[]'::json)
+              FROM pg_catalog.pg_class c
+              JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+              WHERE n.nspname IN ('public', 'mavis_private', 'supabase_migrations')
+                AND c.relkind IN ('r', 'v', 'm', 'p')
+                AND (n.nspname <> 'public' OR c.relname IN (
+                  'profiles', 'social_links', 'site_settings',
+                  'mavis_articles', 'mavis_editorial_articles',
+                  'mavis_sources', 'mavis_article_sources',
+                  'mavis_article_versions', 'mavis_article_approvals',
+                  'mavis_article_audit_events'
+                ))
+            ),
+            'site_admin_function_exists', to_regprocedure('public.is_site_admin()') IS NOT NULL,
+            'publication_functions', (
+              SELECT COALESCE(json_agg(
+                p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')'
+                ORDER BY p.proname
+              ), '[]'::json)
+              FROM pg_catalog.pg_proc p
+              JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public'
+                AND p.proname IN (
+                  'get_mavis_published_articles', 'publish_mavis_article',
+                  'unpublish_mavis_article', 'save_mavis_article_draft',
+                  'submit_mavis_article_for_review', 'decide_mavis_article_review'
+                )
+            ),
+            'mavis_private_schema_exists', EXISTS (
+              SELECT 1 FROM pg_catalog.pg_namespace WHERE nspname = 'mavis_private'
+            )
+          )::text;
+          SQL
+          )"
+
+          PGOPTIONS='-c default_transaction_read_only=on' PGSSLMODE=require \
+            psql "${SUPABASE_PRODUCTION_DB_URL}" -X -v ON_ERROR_STOP=1 -Atc "$QUERY"
 
       - name: Read-only Supabase Management API database audit
         shell: bash
