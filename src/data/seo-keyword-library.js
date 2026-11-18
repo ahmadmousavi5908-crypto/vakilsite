@@ -1,6 +1,6 @@
 // Internal editorial/search-planning taxonomy. Never render it as a public keyword block.
 const keywordLibrary = {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "locale": "fa-IR",
   "market": "Iran",
   "brand": "وکیل سید احمد موسوی",
@@ -14,7 +14,14 @@ const keywordLibrary = {
       "period": "2025-07-18 to 2026-11-15",
       "queryRows": 0,
       "pageRows": 0,
-      "status": "connected-but-no-rows-returned"
+      "status": "connected-but-no-rows-returned",
+      "connectionVerified": true,
+      "permissionLevel": "siteOwner",
+      "lastThreeMonths": {
+        "period": "2026-08-15 to 2026-11-15",
+        "queryRows": 0,
+        "pageRows": 0
+      }
     },
     "paidKeywordResearch": {
       "provider": "OpenSEO",
