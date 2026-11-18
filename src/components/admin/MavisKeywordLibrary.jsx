@@ -34,7 +34,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
         <div>
           <span className={styles.eyebrow}>INTERNAL SEARCH TAXONOMY · V{snapshot.version}</span>
           <h2>کتابخانه مادر کلیدواژه‌های حقوقی</h2>
-          <p>جست‌وجو و مرور عبارت‌های پایه، وکیل‌محور، محلی، عمومی و مسئله‌محور؛ فقط برای پژوهش و برنامه‌ریزی داخلی MAVIS. نسبت ۸۰/۲۰، قاعده برنامه‌ریزی موضوعات پایدار و نوظهور است، نه آمار واقعی جست‌وجو.</p>
+          <p>جست‌وجو و مرور عبارت‌های پایه، وکیل‌محور، محلی، عمومی، محاوره‌ای و مسئله‌محور؛ فقط برای پژوهش و برنامه‌ریزی داخلی MAVIS. نسبت ۸۰/۲۰، قاعده برنامه‌ریزی موضوعات پایدار و نوظهور است، نه آمار واقعی جست‌وجو.</p>
         </div>
         <span className={styles.internalBadge}>داخلی · غیرقابل انتشار مستقیم</span>
       </div>
@@ -47,6 +47,8 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
         <article><span>عبارت انگلیسی</span><strong>{format(snapshot.englishPhraseCount)}</strong></article>
         <article><span>شهرهای خوزستان</span><strong>{format(snapshot.locationCount)}</strong></article>
         <article><span>عبارت‌های پیشنهادی محلی</span><strong>{format(snapshot.localPhraseCount)}</strong></article>
+        <article><span>عبارت‌های عمومی و توصیفی</span><strong>{format(snapshot.positioningPhraseCount)}</strong></article>
+        <article><span>عبارت‌های محاوره‌ای مردم</span><strong>{format(snapshot.colloquialPhraseCount)}</strong></article>
         <article><span>اصطلاحات کتابخانه حقوقی</span><strong>{format(snapshot.legalTermCount)}</strong></article>
         <article><span>عبارت پایه از واژه‌نامه</span><strong>{format(snapshot.legalBasePhraseCount)}</strong></article>
         <article><span>عبارت وکیل‌محور مشتق‌شده</span><strong>{format(snapshot.legalLawyerPhraseCount)}</strong></article>
@@ -81,6 +83,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
             <option value="problem">قالب مسئله و پرسش</option>
             <option value="local">عبارت محلی (موضوع + شهر)</option>
             <option value="positioning">عبارت‌های عمومی، مترادف و توصیفی</option>
+            <option value="colloquial">زبان محاوره‌ای مردم</option>
           </select>
         </label>
         <label>
@@ -107,7 +110,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
             <li key={entry.clusterId + ":" + entry.family + ":" + entry.term}>
               <div className={styles.termLine}>
                 <strong>{entry.term}</strong>
-                <span className={styles.family}>{entry.family === "lawyer" ? "وکیل‌محور" : entry.family === "base" ? "پایه" : entry.family === "problem" ? "پرسشی" : entry.family === "local" ? "محلی" : entry.family === "positioning" ? "عمومی/توصیفی" : "English"}</span>
+                <span className={styles.family}>{entry.family === "lawyer" ? "وکیل‌محور" : entry.family === "base" ? "پایه" : entry.family === "problem" ? "پرسشی" : entry.family === "local" ? "محلی" : entry.family === "positioning" ? "عمومی/توصیفی" : entry.family === "colloquial" ? "محاوره‌ای" : "English"}</span>
               </div>
               <span className={styles.cluster}>{entry.clusterTitle}</span>
               {entry.location && <span className={styles.cluster}>شهر هدف: {entry.location}</span>}

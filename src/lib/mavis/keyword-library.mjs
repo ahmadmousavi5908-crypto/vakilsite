@@ -41,6 +41,19 @@ const LOCAL_SUBJECTS = Object.freeze({
   "construction-urban": ["اعتراض به رأی کمیسیون ماده ۱۰۰", "اختلاف مالک و سازنده"]
 });
 
+const COLLOQUIAL_SUBJECTS = Object.freeze({
+  "lease-shop-tenancy": ["مستأجرم خونه رو تخلیه نمی‌کنه، چیکار کنم؟", "صاحبخونه پول پیشمو پس نمی‌ده، چطور بگیرمش؟", "مغازه‌مو پس نمی‌ده، از کجا شروع کنم؟", "اجاره‌مو نداده، چطور برای تخلیه اقدام کنم؟"],
+  "family-law": ["چطور مهریه‌ام رو بگیرم؟", "همسرم نفقه نمی‌ده، چیکار کنم؟", "اجازه نمی‌ده بچه‌مو ببینم، چه راهی دارم؟", "برای طلاق از کجا باید شروع کنم؟"],
+  "cheques-commercial-papers": ["چکم برگشت خورده، حالا چیکار کنم؟", "طرف پولمو پس نمی‌ده، چطور شکایت کنم؟", "سفته‌مو گذاشتن اجرا، چیکار کنم؟", "چک دستمه، چطور پولمو بگیرم؟"],
+  "criminal-procedure": ["ازم شکایت شده، باید چیکار کنم؟", "احضاریه دادگاه اومده، حالا چی می‌شه؟", "ابلاغیه ثنا اومده، از کجا بفهمم یعنی چی؟", "برام حکم جلب صادر شده، چه اقدامی می‌تونم بکنم؟"],
+  "registration-land": ["سند خونه رو به نامم نمی‌زنن، چیکار کنم؟", "یکی زمینمو گرفته، چطور پسش بگیرم؟", "ملکمو بدون اجازه فروختن، چه راهی دارم؟", "همسایه راه عبورمو بسته، چطور پیگیری کنم؟"],
+  "inheritance-estate": ["ارثمو نمی‌دن، چطور سهممو بگیرم؟", "یکی از ورثه ملک رو نمی‌فروشه، چیکار کنیم؟", "وصیت‌نامه رو قبول نداریم، چطور اعتراض کنیم؟", "برای تقسیم ارث باید از کجا شروع کنم؟"],
+  "labor-administrative-tax": ["اخراجم کردن، حق و حقوقم چیه؟", "کارفرما حقوقمو نمی‌ده، چطور شکایت کنم؟", "بیمه‌ام نکردن، از کجا پیگیری کنم؟", "سنواتمو ندادن، چطور بگیرمش؟"],
+  "insurance-accident-torts": ["بیمه خسارتمو نمی‌ده، چیکار کنم؟", "بعد تصادف دیه‌مو چطور بگیرم؟", "مقصر تصادف خسارت ماشینمو نمی‌ده، چه راهی دارم؟", "برای گرفتن خسارت از بیمه از کجا شروع کنم؟"],
+  "civil-contracts-obligations": ["قرارداد بستم ولی طرف به قولش عمل نمی‌کنه، چیکار کنم؟", "پول پیش پرداخت رو پس نمی‌دن، چطور پیگیری کنم؟", "طرف معامله زیر قولش زده، چه راه قانونی دارم؟", "از قرارداد پشیمون شدم، می‌تونم فسخش کنم؟"],
+  "criminal-property": ["ازم کلاهبرداری کردن، چطور پولمو پس بگیرم؟", "مالمو امانت دادم پس نمی‌ده، چیکار کنم؟", "یکی ازم پول گرفته و جواب نمی‌ده، می‌تونم شکایت کنم؟", "گوشیمو دزدیدن، برای شکایت چیکار کنم؟"]
+});
+
 const POSITIONING_TERMS = Object.freeze([
   { term: "وکیل خوزستان", intent: "regional-attorney-discovery", claimRisk: "low" },
   { term: "وکیل اهواز", intent: "local-attorney-discovery", claimRisk: "low" },
@@ -135,6 +148,7 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
   const problemCount = Object.values(PROBLEM_SUBJECTS).reduce((total, subjects) => total + subjects.length * QUESTION_TEMPLATES.length, 0);
   const localPhraseCount = buildLocalEntries().length;
   const positioningPhraseCount = POSITIONING_TERMS.length;
+  const colloquialPhraseCount = Object.values(COLLOQUIAL_SUBJECTS).reduce((total, terms) => total + terms.length, 0);
   const legalRecords = Array.isArray(taxonomyEntries) ? taxonomyEntries : [];
   const legalBaseTerms = legalRecords.flatMap((record) => [
     record.canonical, record.searchTitle, ...(record.aliases || [])
@@ -158,6 +172,7 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
     problemPhraseCount: problemCount,
     localPhraseCount,
     positioningPhraseCount,
+    colloquialPhraseCount,
     englishPhraseCount: englishCount,
     locationCount: seoKeywordLibrary.khuzestanLocations.length,
     legalTermCount: legalRecords.length,
@@ -166,7 +181,7 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
     legalQuestionPhraseCount: legalQuestionCount,
     legalTermsPendingReview: legalRecords.filter((record) => record.reviewStatus !== "verified_primary_source").length,
     totalCandidateCount: lawyerCount + baseCount + problemCount + englishCount
-      + legalBaseCount + legalLawyerCount + legalQuestionCount + localPhraseCount + positioningPhraseCount
+      + legalBaseCount + legalLawyerCount + legalQuestionCount + localPhraseCount + positioningPhraseCount + colloquialPhraseCount
   });
 }
 
@@ -181,7 +196,7 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
   const clusterById = new Map(seoKeywordLibrary.clusters.map((cluster) => [cluster.id, cluster]));
   const entries = [];
 
-  if ((clusterId === "all" || clusterId === "general-attorney-selection")
+  if (language !== "en" && (clusterId === "all" || clusterId === "general-attorney-selection")
     && (family === "all" || family === "positioning")) {
     for (const item of POSITIONING_TERMS) {
       entries.push({
@@ -223,6 +238,12 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
       for (const term of cluster.fa) {
         const candidate = basePhrase(term);
         if (candidate) entries.push({ ...shared, term: candidate, family: "base", origin: "derived-candidate" });
+      }
+    }
+
+    if (family === "all" || family === "colloquial") {
+      for (const term of COLLOQUIAL_SUBJECTS[cluster.id] || []) {
+        entries.push({ ...shared, term, family: "colloquial", origin: "curated-colloquial-problem-language", requiresEditorialReview: true });
       }
     }
 
@@ -293,5 +314,7 @@ export const keywordLibraryProvenance = Object.freeze({
   problem: "قالب‌های پیشنهادی تحریریه و پرسش‌های ذخیره‌شده در کتابخانه حقوقی؛ این‌ها عبارت واقعی ثبت‌شده در Google یا دارای حجم جست‌وجوی اثبات‌شده نیستند.",
   local: "ترکیب محدود موضوعات خدماتی با ۳۰ موقعیت خوزستان؛ ایده پژوهشی برای جست‌وجوی منطقه‌ای است و وجود دفتر فیزیکی یا تقاضای واقعی در آن شهر را اثبات نمی‌کند.",
   english: "عبارت‌های انگلیسی برای نگهداری و پژوهش داخلی؛ بدون اثبات تقاضای بازار ایران.",
+  colloquial: "پرسش‌ها و صورت‌بندی‌های محاوره‌ای مردم برای بیان مسئله؛ بر پایه الگوهای پرسش عمومی و نمونه‌های منتشرشده، نه داده مستقیم حجم جست‌وجو. پیش از استفاده محتوایی باید با زبان واقعی مخاطب و صحت حقوقی بازبینی شوند.",
+  positioning: "عبارت‌های عمومی و توصیفی برای پژوهش داخلی؛ ادعاهای برتری، تخصص و فوریت نیازمند بررسی جداگانه‌اند و نباید خودکار منتشر شوند.",
   legal: "اصطلاحات و پرسش‌های واردشده از بانک حقوقی داخلی؛ وضعیت اعتبار حقوقی آن‌ها باید پیش از هر انتشار جداگانه بررسی شود."
 });
