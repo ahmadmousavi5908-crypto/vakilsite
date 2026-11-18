@@ -50,6 +50,7 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
         <article><span>عبارت پایه از واژه‌نامه</span><strong>{format(snapshot.legalBasePhraseCount)}</strong></article>
         <article><span>عبارت وکیل‌محور مشتق‌شده</span><strong>{format(snapshot.legalLawyerPhraseCount)}</strong></article>
         <article><span>پرسش‌های واژه‌نامه</span><strong>{format(snapshot.legalQuestionPhraseCount)}</strong></article>
+        <article><span>مجموع رکوردهای پیشنهادی</span><strong>{format(snapshot.totalCandidateCount)}</strong></article>
       </div>
 
       <div className={styles.controls}>
