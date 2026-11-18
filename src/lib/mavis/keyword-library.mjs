@@ -160,7 +160,8 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
         legalReviewStatus: record.reviewStatus,
         legalTermId: record.id
       };
-      const baseTerms = [record.canonical, record.searchTitle, ...(record.aliases || [])].filter(Boolean);
+      const baseTerms = [record.canonical, record.searchTitle, ...(record.aliases || [])]
+        .filter((term) => term && !term.startsWith("وکیل "));
 
       if (family === "all" || family === "base") {
         for (const term of baseTerms) {
