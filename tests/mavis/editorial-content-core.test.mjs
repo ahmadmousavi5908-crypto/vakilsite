@@ -60,3 +60,31 @@ test("CSV export neutralizes spreadsheet formula prefixes", () => {
   const csv = serializeEditorialCsv([["title"], ["=HYPERLINK(\"https://bad.example\")"]]);
   assert.match(csv, /'=HYPERLINK/);
 });
+
+test("maps unified CMS snapshots into the public article page shape", () => {
+  const article = mapPublishedEditorialRecord({
+    status: "published",
+    slug: "production-article",
+    published_content: {
+      title: "مقاله آزمایشی",
+      excerpt: "خلاصه مقاله",
+      content: {
+        intro: "مقدمه مقاله",
+        sections: [{ heading: "بخش نخست", body: "متن بخش نخست" }],
+        checklist: ["مدرک نخست"],
+        warning: "توضیح احتیاطی",
+        sources: [{ label: "روزنامه رسمی", url: "https://rrk.ir/law/1" }],
+      },
+    },
+    is_indexable: true,
+    published_at: "2026-11-18T10:00:00.000Z",
+    updated_at: "2026-11-18T10:00:00.000Z",
+  });
+
+  assert.equal(article.intro, "مقدمه مقاله");
+  assert.equal(article.sections[0].heading, "بخش نخست");
+  assert.deepEqual(article.checklist, ["مدرک نخست"]);
+  assert.equal(article.sources[0].label, "روزنامه رسمی");
+  assert.equal(article.warning, "توضیح احتیاطی");
+  assert.match(article.readTime, /دقیقه$/);
+});
