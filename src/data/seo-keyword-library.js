@@ -1,6 +1,6 @@
 // Internal editorial/search-planning taxonomy. Never render it as a public keyword block.
 const keywordLibrary = {
-  "schemaVersion": "1.0.0",
+  "schemaVersion": "1.1.0",
   "locale": "fa-IR",
   "market": "Iran",
   "brand": "وکیل سید احمد موسوی",
@@ -14,12 +14,33 @@ const keywordLibrary = {
       "period": "2025-07-18 to 2026-11-15",
       "queryRows": 0,
       "pageRows": 0,
-      "status": "connected-but-no-rows-returned"
+      "status": "connected-but-no-rows-returned",
+      "connectionVerified": true,
+      "permissionLevel": "siteOwner",
+      "lastThreeMonths": {
+        "period": "2026-08-15 to 2026-11-15",
+        "queryRows": 0,
+        "pageRows": 0
+      },
+      "indexInspection": {
+        "inspectedUrls": 10,
+        "indexedPass": 10,
+        "robotsAllowed": 10,
+        "successfulFetch": 10,
+        "lastCrawlWindow": "2026-11-16 to 2026-11-17"
+      }
     },
     "paidKeywordResearch": {
       "provider": "OpenSEO",
       "creditsRemaining": 2,
       "status": "not-run-insufficient-credit-budget"
+    },
+    "legalLibrary": {
+      "canonicalTerms": 132,
+      "aliases": 268,
+      "searchPhrases": 353,
+      "reviewStatus": "all-needs-legal-review",
+      "status": "connected-to-admin-keyword-explorer-as-research-candidates"
     },
     "geographicResearch": {
       "provider": "OpenSEO location lookup",
@@ -580,7 +601,14 @@ const keywordLibrary = {
         "وکیل حکم تخلیه",
         "وکیل تعمیرات ملک اجاره‌ای",
         "وکیل خسارت به ملک اجاره‌ای",
-        "وکیل اختلاف قرارداد رهن و اجاره"
+        "وکیل اختلاف قرارداد رهن و اجاره",
+        "وکیل تخلیه سرقفلی",
+        "وکیل تخلیه با حفظ سرقفلی",
+        "وکیل مطالبه حق کسب و پیشه",
+        "وکیل مطالبه ودیعه اجاره مغازه",
+        "وکیل اختلاف اجاره‌نامه تجاری",
+        "وکیل فسخ اجاره مغازه",
+        "وکیل تمدید اجاره مغازه"
       ],
       "en": [
         "Iran lease lawyer",
@@ -703,7 +731,11 @@ const keywordLibrary = {
         "وکیل استرداد هدایای دوران نامزدی",
         "وکیل مطالبه هزینه‌های فرزند",
         "وکیل اختلافات مالی زوجین",
-        "وکیل دعاوی خانواده در دادگاه خانواده"
+        "وکیل دعاوی خانواده در دادگاه خانواده",
+        "وکیل تغییر حضانت",
+        "وکیل حضانت در طلاق",
+        "وکیل ملاقات فرزند بعد از طلاق",
+        "وکیل اعتراض به حکم حضانت"
       ],
       "en": [
         "Iran family law attorney",
@@ -810,7 +842,19 @@ const keywordLibrary = {
         "وکیل مزاحمت و تهدید",
         "وکیل جرایم علیه تمامیت جسمانی",
         "وکیل مسئولیت کیفری پزشک",
-        "وکیل قصور پزشکی کیفری"
+        "وکیل قصور پزشکی کیفری",
+        "وکیل قتل غیرعمد",
+        "وکیل دفاع در پرونده قتل غیرعمد",
+        "وکیل پرونده ضرب و جرح",
+        "وکیل دفاع از اتهام ضرب و جرح",
+        "وکیل مطالبه دیه جراحات",
+        "وکیل دیه شکستگی استخوان",
+        "وکیل ارش صدمات بدنی",
+        "وکیل اعتراض به نظریه پزشکی قانونی",
+        "وکیل اعتراض به میزان دیه",
+        "وکیل قصور پزشکی منجر به صدمه",
+        "وکیل صدمات ناشی از تصادف",
+        "وکیل صدمات بدنی ناشی از نزاع"
       ],
       "en": [
         "Iran murder defense lawyer",
@@ -954,7 +998,11 @@ const keywordLibrary = {
         "وکیل جرایم پیامکی",
         "وکیل شکایت از هک شبکه اجتماعی",
         "وکیل شکایت از صفحه جعلی",
-        "وکیل دفاع در پرونده جرایم رایانه‌ای"
+        "وکیل دفاع در پرونده جرایم رایانه‌ای",
+        "وکیل جعل عمیق",
+        "وکیل انتشار محتوای جعلی با هوش مصنوعی",
+        "وکیل جعل هویت در فضای مجازی",
+        "وکیل کلاهبرداری با دارایی دیجیتال"
       ],
       "en": [
         "Iran cybercrime lawyer",
@@ -1173,7 +1221,13 @@ const keywordLibrary = {
         "وکیل سند مشاع",
         "وکیل مالکیت مشاعی",
         "وکیل سند ورثه‌ای",
-        "وکیل ثبت ارث و انتقال سند"
+        "وکیل ثبت ارث و انتقال سند",
+        "وکیل ابطال عملیات ثبتی",
+        "وکیل ابطال اجراییه ثبتی",
+        "وکیل اعتراض به اجراییه ثبت",
+        "وکیل ابطال سند مالکیت",
+        "وکیل اثبات مالکیت زمین",
+        "وکیل خلع ید زمین"
       ],
       "en": [
         "Iran property registration lawyer",
@@ -1217,7 +1271,12 @@ const keywordLibrary = {
         "وکیل رفع حجر",
         "وکیل امور غایب مفقودالاثر",
         "وکیل تقسیم اموال متوفی",
-        "وکیل مطالبه دیون متوفی"
+        "وکیل مطالبه دیون متوفی",
+        "وکیل وصیت تملیکی",
+        "وکیل وصیت عهدی",
+        "وکیل اعتراض به تقسیم ترکه",
+        "وکیل افراز ملک ورثه‌ای",
+        "وکیل فروش مال مشاع ورثه‌ای"
       ],
       "en": [
         "Iran inheritance lawyer",
