@@ -1,3 +1,4 @@
+# Re-run the read-only audit after the Production-scoped token is configured.
 name: Read-only MAVIS Production publication audit
 
 on:
@@ -50,17 +51,17 @@ jobs:
             local status
 
             if [ "$method" = "POST" ]; then
-              status="$(curl --silent --show-error --connect-timeout 10 --max-time 30 \
-                --request POST \
-                --header "apikey: $SUPABASE_PUBLISHABLE_KEY" \
-                --header "Content-Type: application/json" \
-                --data "$payload" \
-                --output "$output" --write-out '%{http_code}' \
+              status="$(curl --silent --show-error --connect-timeout 10 --max-time 30 \\
+                --request POST \\
+                --header "apikey: $SUPABASE_PUBLISHABLE_KEY" \\
+                --header "Content-Type: application/json" \\
+                --data "$payload" \\
+                --output "$output" --write-out '%{http_code}' \\
                 "$SUPABASE_URL/rest/v1/rpc/$endpoint" || true)"
             else
-              status="$(curl --silent --show-error --connect-timeout 10 --max-time 30 \
-                --header "apikey: $SUPABASE_PUBLISHABLE_KEY" \
-                --output "$output" --write-out '%{http_code}' \
+              status="$(curl --silent --show-error --connect-timeout 10 --max-time 30 \\
+                --header "apikey: $SUPABASE_PUBLISHABLE_KEY" \\
+                --output "$output" --write-out '%{http_code}' \\
                 "$SUPABASE_URL/rest/v1/$endpoint" || true)"
             fi
 
@@ -131,12 +132,12 @@ jobs:
           PAYLOAD="$(node -e 'process.stdout.write(JSON.stringify({ query: process.env.QUERY }))')"
           BODY_FILE="$(mktemp)"
           trap 'rm -f "$BODY_FILE"' EXIT
-          STATUS="$(curl --silent --show-error --connect-timeout 10 --max-time 45 \
-            --request POST \
-            --header "Authorization: Bearer $SUPABASE_PRODUCTION_ACCESS_TOKEN" \
-            --header "Content-Type: application/json" \
-            --data "$PAYLOAD" \
-            --output "$BODY_FILE" --write-out '%{http_code}' \
+          STATUS="$(curl --silent --show-error --connect-timeout 10 --max-time 45 \\
+            --request POST \\
+            --header "Authorization: Bearer $SUPABASE_PRODUCTION_ACCESS_TOKEN" \\
+            --header "Content-Type: application/json" \\
+            --data "$PAYLOAD" \\
+            --output "$BODY_FILE" --write-out '%{http_code}' \\
             "https://api.supabase.com/v1/projects/jroflcmiczfwtmiaxmpd/database/query/read-only" || true)"
           echo "Supabase Management API read-only schema query: HTTP $STATUS"
           node - "$BODY_FILE" <<'NODE'
@@ -156,9 +157,9 @@ jobs:
         run: |
           set -euo pipefail
           for path in / /articles /articles/library; do
-            status="$(curl --silent --show-error --location --connect-timeout 10 --max-time 30 \
+            status="$(curl --silent --show-error --location --connect-timeout 10 --max-time 30 \\
               --output /dev/null --write-out '%{http_code}' "https://vakilahmadmousavi.ir$path" || true)"
-            printf '%s HTTP %s\n' "$path" "$status"
+            printf '%s HTTP %s\\n' "$path" "$status"
             if [ "$status" != "200" ]; then
               echo "::warning::Public route did not return HTTP 200: $path"
             fi
