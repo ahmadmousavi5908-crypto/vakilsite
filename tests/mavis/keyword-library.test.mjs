@@ -93,3 +93,26 @@ test("covers focused lawyer-intent phrases for homicide, injuries, registration,
   assert.ok(inheritance.some((entry) => entry.term === "وکیل اعتراض به تقسیم ترکه"));
   assert.ok(lease.some((entry) => entry.term === "وکیل تخلیه سرقفلی"));
 });
+
+test("covers expanded lawyer-intent phrases across criminal, registration, family, inheritance and lease disputes", () => {
+  const cases = [
+    ["criminal-life-and-body", "وکیل مطالبه دیه از عاقله"],
+    ["criminal-life-and-body", "وکیل قسامه و لوث"],
+    ["criminal-life-and-body", "وکیل شروع به قتل"],
+    ["registration-land", "وکیل رفع تصرف عدوانی ملکی"],
+    ["registration-land", "وکیل الزام به اخذ پایان کار"],
+    ["registration-land", "وکیل اعتراض به رأی هیئت نظارت ثبت"],
+    ["family-law", "وکیل طلاق به درخواست زوجه"],
+    ["family-law", "وکیل ممانعت از خروج فرزند از کشور"],
+    ["family-law", "وکیل مطالبه اجرت‌المثل ایام زوجیت"],
+    ["inheritance-estate", "وکیل گواهی انحصار وراثت"],
+    ["inheritance-estate", "وکیل تنفیذ وصیت‌نامه"],
+    ["lease-shop-tenancy", "وکیل تجویز انتقال منافع به غیر"],
+    ["lease-shop-tenancy", "وکیل مطالبه اجور معوقه"]
+  ];
+
+  for (const [clusterId, term] of cases) {
+    const results = searchKeywordLibrary({ clusterId, family: "lawyer" });
+    assert.ok(results.some((entry) => entry.term === term), `Missing ${term}`);
+  }
+});
