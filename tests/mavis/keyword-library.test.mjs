@@ -153,3 +153,33 @@ test("keeps broad attorney-positioning and synonym candidates in a separate revi
   assert.ok(entries.every((entry) => entry.origin === "curated-search-language-candidate"));
   assert.ok(entries.some((entry) => entry.term === "بهترین وکیل اهواز" && entry.claimRisk === "high"));
 });
+
+
+test("keeps colloquial people-first legal problem language searchable by legal cluster", () => {
+  const family = searchKeywordLibrary({ family: "colloquial" });
+  const lease = searchKeywordLibrary({ clusterId: "lease-shop-tenancy", family: "colloquial" });
+  const familyLaw = searchKeywordLibrary({ clusterId: "family-law", family: "colloquial" });
+  const criminal = searchKeywordLibrary({ clusterId: "criminal-procedure", family: "colloquial" });
+  const expected = [
+    "مستأجرم خونه رو تخلیه نمی‌کنه، چیکار کنم؟",
+    "چطور مهریه‌ام رو بگیرم؟",
+    "چکم برگشت خورده، حالا چیکار کنم؟",
+    "ازم شکایت شده، باید چیکار کنم؟",
+    "ارثمو نمی‌دن، چطور سهممو بگیرم؟",
+    "اخراجم کردن، حق و حقوقم چیه؟"
+  ];
+
+  assert.equal(getKeywordLibrarySnapshot().colloquialPhraseCount, 40);
+  assert.equal(family.length, 40);
+  for (const term of expected) assert.ok(family.some((entry) => entry.term === term));
+  assert.ok(lease.every((entry) => entry.clusterId === "lease-shop-tenancy"));
+  assert.ok(familyLaw.every((entry) => entry.clusterId === "family-law"));
+  assert.ok(criminal.every((entry) => entry.clusterId === "criminal-procedure"));
+  assert.ok(family.every((entry) => entry.origin === "curated-colloquial-problem-language"));
+  assert.ok(family.every((entry) => entry.requiresEditorialReview === true));
+});
+
+test("does not mix Persian positioning candidates into English search results", () => {
+  const results = searchKeywordLibrary({ language: "en", family: "all" });
+  assert.ok(results.every((entry) => entry.family === "english"));
+});
