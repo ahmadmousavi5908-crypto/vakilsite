@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       apply_migrations:
-        description: "Apply the pending, verified MAVIS migrations 019 and 020 (otherwise dry-run only)"
+        description: "Apply migrations 019 and 020 only after the complete production baseline is verified (otherwise dry-run only)"
         required: true
         type: boolean
         default: false
@@ -29,7 +29,7 @@ concurrency:
 
 jobs:
   migrate:
-    name: Verify and optionally apply MAVIS migrations 019 and 020
+    name: Verify the complete baseline before optionally applying MAVIS migrations 019 and 020
     runs-on: ubuntu-latest
     timeout-minutes: 75
     environment: production
@@ -73,6 +73,44 @@ jobs:
 
       - name: Pin Supabase CLI
         run: npx --yes supabase@3.0.0 --version
+
+      - name: Block migration unless the complete production baseline is present
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_PRODUCTION_DB_URL:-}" ]; then
+            echo "::error::Production database URL is not configured."
+            exit 1
+          fi
+          echo "::add-mask::${SUPABASE_PRODUCTION_DB_URL}"
+          sudo apt-get update -qq
+          sudo apt-get install -y postgresql-client
+          readonly_psql() {
+            PGOPTIONS='-c default_transaction_read_only=on' PGSSLMODE=require \
+              psql "$SUPABASE_PRODUCTION_DB_URL" -X -v ON_ERROR_STOP=1 -Atc "$1"
+          }
+
+          HISTORY_EXISTS="$(readonly_psql "SELECT to_regclass('supabase_migrations.schema_migrations') IS NOT NULL")"
+          if [ "$HISTORY_EXISTS" != "t" ]; then
+            echo "::error::Production migration history is missing. Do not run db push; reconcile and verify the existing schema baseline first."
+            exit 1
+          fi
+
+          BASELINE_COUNT="$(readonly_psql "SELECT count(DISTINCT version) FROM supabase_migrations.schema_migrations WHERE version IN ('001','002','003','005','006','007','008','009','010','011','012','013','014','015','016','017','018')")"
+          if [ "$BASELINE_COUNT" != "18" ]; then
+            echo "::error::Production does not have all 18 prerequisite migrations recorded. The 019/020-only workflow is blocked."
+            exit 1
+          fi
+
+          CANONICAL_TABLE="$(readonly_psql "SELECT to_regclass('public.mavis_editorial_articles') IS NOT NULL")"
+          COMPATIBILITY_VIEW="$(readonly_psql "SELECT COALESCE((SELECT relkind = 'v' FROM pg_class WHERE oid = to_regclass('public.mavis_articles')), false)")"
+          PUBLISH_FUNCTIONS="$(readonly_psql "SELECT to_regprocedure('public.publish_mavis_article(uuid,integer)') IS NOT NULL AND to_regprocedure('public.unpublish_mavis_article(uuid,integer)') IS NOT NULL AND to_regprocedure('public.get_mavis_published_articles()') IS NOT NULL")"
+          if [ "$CANONICAL_TABLE" != "t" ] || [ "$COMPATIBILITY_VIEW" != "t" ] || [ "$PUBLISH_FUNCTIONS" != "t" ]; then
+            echo "::error::Production MAVIS canonical table, compatibility view, or publication RPCs are incomplete. Migration apply is blocked."
+            exit 1
+          fi
+
+          echo "Production baseline verified. Only migrations 019 and 020 may proceed."
 
       - name: Verify remote migration history and SQL parity
         shell: bash
