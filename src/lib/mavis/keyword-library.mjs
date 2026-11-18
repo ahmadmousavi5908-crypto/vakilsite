@@ -22,6 +22,25 @@ const PROBLEM_SUBJECTS = Object.freeze({
   "international-foreign-nationals": ["اجرای حکم خارجی در ایران", "اختلاف قرارداد بین‌المللی", "داوری تجاری بین‌المللی", "حقوق اتباع خارجی"]
 });
 
+const LOCAL_SUBJECTS = Object.freeze({
+  "lease-shop-tenancy": ["تخلیه مغازه", "سرقفلی", "اختلاف موجر و مستأجر"],
+  "civil-contracts-obligations": ["فسخ قرارداد", "مطالبه وجه قرارداد"],
+  "civil-procedure": ["تجدیدنظرخواهی", "تأمین خواسته"],
+  "family-law": ["مهریه", "حضانت فرزند", "طلاق"],
+  "criminal-procedure": ["دفاع در پرونده کیفری", "اعتراض به قرار منع تعقیب"],
+  "criminal-life-and-body": ["قتل عمد", "ضرب و جرح", "دیه صدمات بدنی"],
+  "criminal-property": ["کلاهبرداری", "خیانت در امانت"],
+  "criminal-cyber": ["کلاهبرداری اینترنتی", "دسترسی غیرمجاز"],
+  "registration-land": ["ابطال سند رسمی", "الزام به تنظیم سند رسمی", "اثبات مالکیت"],
+  "inheritance-estate": ["انحصار وراثت", "تقسیم ترکه"],
+  "commercial-law": ["ورشکستگی شرکت", "اختلاف شرکای تجاری"],
+  "cheques-commercial-papers": ["مطالبه وجه چک", "مطالبه وجه سفته"],
+  "enforcement-debt": ["اجرای حکم قطعی", "اعسار از پرداخت محکوم‌به"],
+  "labor-administrative-tax": ["مطالبه حقوق و مزایا", "اعتراض به رأی اداره کار"],
+  "insurance-accident-torts": ["مطالبه خسارت تصادف", "مطالبه خسارت بیمه"],
+  "construction-urban": ["اعتراض به رأی کمیسیون ماده ۱۰۰", "اختلاف مالک و سازنده"]
+});
+
 const QUESTION_TEMPLATES = Object.freeze([
   (subject) => `${subject} چیست؟`,
   (subject) => `شرایط قانونی ${subject} چیست؟`,
@@ -60,6 +79,30 @@ function uniqueEntries(entries) {
   });
 }
 
+function buildLocalEntries(clusters = seoKeywordLibrary.clusters) {
+  const locations = Array.isArray(seoKeywordLibrary.khuzestanLocations)
+    ? seoKeywordLibrary.khuzestanLocations
+    : [];
+
+  return clusters.flatMap((cluster) => (LOCAL_SUBJECTS[cluster.id] || []).flatMap((subject) => (
+    locations.flatMap(({ fa: city }) => {
+      if (!city) return [];
+      const shared = {
+        clusterId: cluster.id,
+        clusterTitle: cluster.title,
+        target: cluster.target,
+        intent: cluster.intent,
+        coverage: cluster.coverage,
+        location: city
+      };
+      return [
+        { ...shared, term: `وکیل ${subject} در ${city}`, family: "local", origin: "local-derived-candidate" },
+        { ...shared, term: `${subject} در ${city}`, family: "local", origin: "local-derived-candidate" }
+      ];
+    })
+  )));
+}
+
 export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
   const clusters = seoKeywordLibrary.clusters;
   const lawyerCount = clusters.reduce((total, cluster) => total + cluster.fa.length, 0);
@@ -69,6 +112,7 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
     .filter(Boolean)
     .map((term) => ({ term })))).length;
   const problemCount = Object.values(PROBLEM_SUBJECTS).reduce((total, subjects) => total + subjects.length * QUESTION_TEMPLATES.length, 0);
+  const localPhraseCount = buildLocalEntries().length;
   const legalRecords = Array.isArray(taxonomyEntries) ? taxonomyEntries : [];
   const legalBaseTerms = legalRecords.flatMap((record) => [
     record.canonical, record.searchTitle, ...(record.aliases || [])
@@ -90,6 +134,7 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
     lawyerPhraseCount: lawyerCount,
     basePhraseCount: baseCount,
     problemPhraseCount: problemCount,
+    localPhraseCount,
     englishPhraseCount: englishCount,
     locationCount: seoKeywordLibrary.khuzestanLocations.length,
     legalTermCount: legalRecords.length,
@@ -98,7 +143,7 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
     legalQuestionPhraseCount: legalQuestionCount,
     legalTermsPendingReview: legalRecords.filter((record) => record.reviewStatus !== "verified_primary_source").length,
     totalCandidateCount: lawyerCount + baseCount + problemCount + englishCount
-      + legalBaseCount + legalLawyerCount + legalQuestionCount
+      + legalBaseCount + legalLawyerCount + legalQuestionCount + localPhraseCount
   });
 }
 
@@ -148,6 +193,10 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
         }
       }
     }
+  }
+
+  if (language !== "en" && (family === "all" || family === "local")) {
+    entries.push(...buildLocalEntries(clusters));
   }
 
   if (language !== "en") {
@@ -201,6 +250,7 @@ export const keywordLibraryProvenance = Object.freeze({
   lawyer: "عبارت‌های وکیل‌محورِ ثبت‌شده یا تولیدشده از اصطلاحات کتابخانه؛ به معنی حجم یا رتبه تأییدشده نیستند.",
   base: "شامل عبارت‌های پایه و اصطلاحات کتابخانه حقوقی است؛ اصطلاحات دارای وضعیت نیازمند بازبینی نباید به‌عنوان محتوای حقوقی تأییدشده استفاده شوند.",
   problem: "قالب‌های پیشنهادی تحریریه و پرسش‌های ذخیره‌شده در کتابخانه حقوقی؛ این‌ها عبارت واقعی ثبت‌شده در Google یا دارای حجم جست‌وجوی اثبات‌شده نیستند.",
+  local: "ترکیب محدود موضوعات خدماتی با ۳۰ موقعیت خوزستان؛ ایده پژوهشی برای جست‌وجوی منطقه‌ای است و وجود دفتر فیزیکی یا تقاضای واقعی در آن شهر را اثبات نمی‌کند.",
   english: "عبارت‌های انگلیسی برای نگهداری و پژوهش داخلی؛ بدون اثبات تقاضای بازار ایران.",
   legal: "اصطلاحات و پرسش‌های واردشده از بانک حقوقی داخلی؛ وضعیت اعتبار حقوقی آن‌ها باید پیش از هر انتشار جداگانه بررسی شود."
 });
