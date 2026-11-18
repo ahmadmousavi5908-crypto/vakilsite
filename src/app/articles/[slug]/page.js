@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getPublicArticleBySlug } from "../../../lib/mavis/published-editorial";
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
+import { getArticleSearchMetadata } from "../../../lib/mavis/article-search-metadata.mjs";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
@@ -13,15 +14,16 @@ export async function generateMetadata({ params }) {
   const article = await getPublicArticleBySlug(slug);
   if (!article) return { title: "مطلب پیدا نشد" };
   const canonicalPath = "/articles/" + article.slug;
+  const searchMetadata = getArticleSearchMetadata(article);
   return {
-    title: article.seoTitle || article.metaTitle || article.title,
-    description: article.seoDescription || article.excerpt,
+    title: searchMetadata.title,
+    description: searchMetadata.description,
     ...(article.isIndexable === false ? { robots: { index: false, follow: false } } : {}),
     alternates: { canonical: canonicalPath },
     openGraph: {
       type: "article",
-      title: article.title,
-      description: article.seoDescription || article.excerpt,
+      title: searchMetadata.title,
+      description: searchMetadata.description,
       ...(article.coverImageUrl ? { images: [article.coverImageUrl] } : {}),
       locale: "fa_IR",
       url: canonicalPath,
