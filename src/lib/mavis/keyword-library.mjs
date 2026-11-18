@@ -52,7 +52,7 @@ function basePhrase(term) {
 function uniqueEntries(entries) {
   const seen = new Set();
   return entries.filter((entry) => {
-    const key = normalizeKeywordQuery(entry.term);
+    const key = [entry.clusterId || "all", entry.family || "all", normalizeKeywordQuery(entry.term)].join(":");
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
