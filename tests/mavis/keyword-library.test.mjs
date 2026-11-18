@@ -116,3 +116,17 @@ test("covers expanded lawyer-intent phrases across criminal, registration, famil
     assert.ok(results.some((entry) => entry.term === term), `Missing ${term}`);
   }
 });
+
+
+test("generates a separate, bounded local phrase family for Khuzestan service-area research", () => {
+  const snapshot = getKeywordLibrarySnapshot();
+  const local = searchKeywordLibrary({ clusterId: "registration-land", family: "local", query: "اهواز" });
+  const abadan = searchKeywordLibrary({ clusterId: "registration-land", family: "local", query: "آبادان" });
+
+  assert.ok(snapshot.localPhraseCount >= 2000);
+  assert.ok(local.some((entry) => entry.term === "وکیل ابطال سند رسمی در اهواز"));
+  assert.ok(local.some((entry) => entry.term === "ابطال سند رسمی در اهواز"));
+  assert.ok(abadan.some((entry) => entry.term === "وکیل ابطال سند رسمی در آبادان"));
+  assert.ok(local.every((entry) => entry.family === "local" && entry.origin === "local-derived-candidate"));
+  assert.ok(local.every((entry) => entry.location === "اهواز"));
+});
