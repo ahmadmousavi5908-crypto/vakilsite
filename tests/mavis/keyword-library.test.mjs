@@ -183,3 +183,47 @@ test("does not mix Persian positioning candidates into English search results", 
   const results = searchKeywordLibrary({ language: "en", family: "all" });
   assert.ok(results.every((entry) => entry.family === "english"));
 });
+
+
+test("expands labor, tax, administrative, insurance, municipal, commercial and emerging digital legal searches", () => {
+  const snapshot = getKeywordLibrarySnapshot();
+  assert.equal(snapshot.lawyerPhraseCount, 799);
+  assert.equal(snapshot.basePhraseCount, 769);
+  assert.equal(snapshot.problemPhraseCount, 372);
+
+  const lawyerCases = [
+    ["labor-administrative-tax", "وکیل اعتراض به رأی هیأت حل اختلاف مالیاتی"],
+    ["labor-administrative-tax", "وکیل اعتراض به بدهی حق بیمه تأمین اجتماعی"],
+    ["insurance-accident-torts", "وکیل مطالبه خسارت از صندوق تأمین خسارت‌های بدنی"],
+    ["insurance-accident-torts", "وکیل مطالبه خسارت بدنی از بیمه شخص ثالث"],
+    ["construction-urban", "وکیل اعتراض به رأی کمیسیون ماده ۷۷ شهرداری"],
+    ["construction-urban", "وکیل الزام شهرداری به صدور پروانه ساختمانی"],
+    ["commercial-law", "وکیل ابطال مصوبه مجمع عمومی شرکت"],
+    ["commercial-law", "وکیل دعاوی مدیر تصفیه شرکت"],
+    ["criminal-cyber", "وکیل اختلاف معاملات رمزارز"],
+    ["intellectual-digital-commerce", "وکیل مسئولیت حقوقی سامانه هوش مصنوعی"]
+  ];
+
+  for (const [clusterId, term] of lawyerCases) {
+    assert.ok(
+      searchKeywordLibrary({ clusterId, family: "lawyer" }).some((entry) => entry.term === term),
+      `Missing lawyer-intent candidate: ${term}`
+    );
+  }
+
+  const problemCases = [
+    ["labor-administrative-tax", "اعتراض به بدهی حق بیمه تأمین اجتماعی"],
+    ["labor-administrative-tax", "اعتراض به رأی هیأت حل اختلاف مالیاتی"],
+    ["insurance-accident-torts", "مطالبه خسارت بدنی از بیمه شخص ثالث"],
+    ["insurance-accident-torts", "مطالبه خسارت از صندوق تأمین خسارت‌های بدنی"],
+    ["construction-urban", "اعتراض به رأی کمیسیون ماده ۷۷ شهرداری"],
+    ["commercial-law", "اعتراض به عملیات تصفیه شرکت"]
+  ];
+
+  for (const [clusterId, subject] of problemCases) {
+    assert.ok(
+      searchKeywordLibrary({ clusterId, family: "problem" }).some((entry) => entry.term === `شرایط قانونی ${subject} چیست؟`),
+      `Missing problem template: ${subject}`
+    );
+  }
+});
