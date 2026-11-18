@@ -41,6 +41,27 @@ const LOCAL_SUBJECTS = Object.freeze({
   "construction-urban": ["اعتراض به رأی کمیسیون ماده ۱۰۰", "اختلاف مالک و سازنده"]
 });
 
+const POSITIONING_TERMS = Object.freeze([
+  { term: "وکیل خوزستان", intent: "regional-attorney-discovery", claimRisk: "low" },
+  { term: "وکیل اهواز", intent: "local-attorney-discovery", claimRisk: "low" },
+  { term: "وکیل حقوقی اهواز", intent: "local-attorney-discovery", claimRisk: "low" },
+  { term: "وکیل پایه یک دادگستری اهواز", intent: "credential-search", claimRisk: "credential-verification" },
+  { term: "وکیل دادگستری خوزستان", intent: "regional-attorney-discovery", claimRisk: "credential-verification" },
+  { term: "وکیل پایه یک خوزستان", intent: "regional-attorney-discovery", claimRisk: "credential-verification" },
+  { term: "بهترین وکیل اهواز", intent: "superlative-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل خوزستان", intent: "superlative-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل پایه یک دادگستری", intent: "superlative-comparison", claimRisk: "high" },
+  { term: "مشاوره فوری وکیل", intent: "urgent-consultation", claimRisk: "service-availability" },
+  { term: "مشاوره حقوقی فوری اهواز", intent: "urgent-consultation", claimRisk: "service-availability" },
+  { term: "وکیل نابغه", intent: "hyperbolic-brand-language", claimRisk: "high" },
+  { term: "نابغه وکالت", intent: "hyperbolic-brand-language", claimRisk: "high" },
+  { term: "وکیل باتجربه اهواز", intent: "experience-comparison", claimRisk: "evidence-required" },
+  { term: "وکیل مجرب خوزستان", intent: "experience-comparison", claimRisk: "evidence-required" },
+  { term: "وکیل خوب اهواز", intent: "quality-comparison", claimRisk: "subjective" },
+  { term: "وکیل معتبر اهواز", intent: "trust-comparison", claimRisk: "evidence-required" },
+  { term: "وکیل متخصص اهواز", intent: "specialization-claim", claimRisk: "high" }
+]);
+
 const QUESTION_TEMPLATES = Object.freeze([
   (subject) => `${subject} چیست؟`,
   (subject) => `شرایط قانونی ${subject} چیست؟`,
@@ -113,6 +134,7 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
     .map((term) => ({ term })))).length;
   const problemCount = Object.values(PROBLEM_SUBJECTS).reduce((total, subjects) => total + subjects.length * QUESTION_TEMPLATES.length, 0);
   const localPhraseCount = buildLocalEntries().length;
+  const positioningPhraseCount = POSITIONING_TERMS.length;
   const legalRecords = Array.isArray(taxonomyEntries) ? taxonomyEntries : [];
   const legalBaseTerms = legalRecords.flatMap((record) => [
     record.canonical, record.searchTitle, ...(record.aliases || [])
@@ -135,6 +157,7 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
     basePhraseCount: baseCount,
     problemPhraseCount: problemCount,
     localPhraseCount,
+    positioningPhraseCount,
     englishPhraseCount: englishCount,
     locationCount: seoKeywordLibrary.khuzestanLocations.length,
     legalTermCount: legalRecords.length,
@@ -143,7 +166,7 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
     legalQuestionPhraseCount: legalQuestionCount,
     legalTermsPendingReview: legalRecords.filter((record) => record.reviewStatus !== "verified_primary_source").length,
     totalCandidateCount: lawyerCount + baseCount + problemCount + englishCount
-      + legalBaseCount + legalLawyerCount + legalQuestionCount + localPhraseCount
+      + legalBaseCount + legalLawyerCount + legalQuestionCount + localPhraseCount + positioningPhraseCount
   });
 }
 
@@ -157,6 +180,24 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
   const clusters = seoKeywordLibrary.clusters.filter((cluster) => clusterId === "all" || cluster.id === clusterId);
   const clusterById = new Map(seoKeywordLibrary.clusters.map((cluster) => [cluster.id, cluster]));
   const entries = [];
+
+  if ((clusterId === "all" || clusterId === "general-attorney-selection")
+    && (family === "all" || family === "positioning")) {
+    for (const item of POSITIONING_TERMS) {
+      entries.push({
+        clusterId: "general-attorney-selection",
+        clusterTitle: "جست‌وجوی عمومی و انتخاب وکیل",
+        target: "محتوای آتی",
+        intent: item.intent,
+        coverage: "عبارت‌های عمومی، منطقه‌ای، مقایسه‌ای و زبان بازاریابی جست‌وجو",
+        term: item.term,
+        family: "positioning",
+        origin: "curated-search-language-candidate",
+        claimRisk: item.claimRisk,
+        requiresComplianceReview: true
+      });
+    }
+  }
 
   for (const cluster of clusters) {
     const shared = {
