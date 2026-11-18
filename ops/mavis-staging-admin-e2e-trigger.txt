@@ -13,3 +13,4 @@ Retry after database connection preflight and password fallback fix; confirm lif
 2026-11-16: validate manual HTTPS source attachment and version increment for a static-article draft; cleanup source and article fixtures.
 
 2026-11-16: final acceptance rerun requested from latest branch head; full authenticated draft/review/approve/publish/unpublish/archive/restore lifecycle and cleanup.
+2026-11-18: rerun authenticated Staging E2E after main deployment; verify draft/review/approve/publish/public-read/unpublish/archive/restore and cleanup.
