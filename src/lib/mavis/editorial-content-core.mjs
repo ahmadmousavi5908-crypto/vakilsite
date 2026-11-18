@@ -92,7 +92,7 @@ export function mapPublishedEditorialRecord(record) {
   const articleText = [intro, ...sections.map((section) => [section?.heading, section?.body].filter(Boolean).join(" "))]
     .filter(Boolean)
     .join(" ");
-  const wordCount = articleText.split(/\\s+/).filter(Boolean).length;
+  const wordCount = articleText.split(/\s+/).filter(Boolean).length;
   const readTime = snapshot.readTime ||
     (new Intl.NumberFormat("fa-IR").format(Math.max(1, Math.ceil(wordCount / 220))) + " دقیقه");
 
