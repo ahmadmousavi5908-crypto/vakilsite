@@ -76,6 +76,8 @@ jobs:
           tests/mavis/knowledge-search-route.test.mjs
           tests/mavis/legal-evidence.test.mjs
           tests/mavis/legal-research-dossier.test.mjs
+      - name: Test isolate-local cache behavior
+        run: node --test tests/cache/in-memory-cache.test.mjs
       - name: Run ESLint
         run: npm run lint
       - name: Build production site
@@ -99,5 +101,15 @@ jobs:
             cat /tmp/vakilsite-next.log
             exit 1
           fi
+
+          for route in / /articles; do
+            headers="$(curl --silent --show-error --head --dump-header - --output /dev/null "http://127.0.0.1:3000$route")"
+            echo "$route response cache headers:"
+            printf '%s\n' "$headers" | grep -i '^cache-control:' || true
+            if printf '%s\n' "$headers" | grep -Eiq '^cache-control:.*no-store'; then
+              echo "$route unexpectedly disables browser history caching."
+              exit 1
+            fi
+          done
 
           npm run test:legal-library-http
