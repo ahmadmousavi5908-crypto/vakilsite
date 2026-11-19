@@ -18,7 +18,6 @@ const nextConfig = {
     return [
       { source: "/", headers: [publicPageCache] },
       { source: "/articles", headers: [publicPageCache] },
-      { source: "/articles/:path*", headers: [publicPageCache] },
       {
         source: "/:path*",
         headers: [
