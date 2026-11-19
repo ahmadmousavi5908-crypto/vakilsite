@@ -2,6 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { practiceAreas } from "../../../data/practice-areas";
 
+const searchTitles = {
+  "family-law": "وکیل خانواده در اهواز و خوزستان",
+  "criminal-law": "وکیل کیفری در اهواز و خوزستان",
+  "property-law": "وکیل ملکی در اهواز و خوزستان",
+  "contracts-and-obligations": "وکیل قرارداد در اهواز و خوزستان",
+  "claims-and-enforcement": "وکیل چک و مطالبه وجه در اهواز",
+  "legal-consultation": "مشاوره حقوقی در اهواز و خوزستان",
+};
+
 export function generateStaticParams() {
   return practiceAreas.map((area) => ({ slug: area.slug }));
 }
@@ -11,9 +20,7 @@ export async function generateMetadata({ params }) {
   const area = practiceAreas.find((item) => item.slug === slug);
   if (!area) return { title: "حوزه خدمات پیدا نشد" };
   return {
-    title: slug === "legal-consultation"
-      ? "مشاوره حقوقی و بررسی پرونده"
-      : area.title + " | خدمات حقوقی سید احمد موسوی",
+    title: searchTitles[slug] || area.title,
     description: area.description,
     alternates: { canonical: "/services/" + area.slug },
     openGraph: { type: "website", locale: "fa_IR", title: area.title, description: area.description },

@@ -45,7 +45,7 @@ export default function SocialLinksPublic({ compact = false }) {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/social-links", { cache: "no-store" })
+    fetch("/api/social-links")
       .then((response) => response.json())
       .then((result) => {
         if (active) setLinks(Array.isArray(result.links) ? result.links : []);
