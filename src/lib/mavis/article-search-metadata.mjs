@@ -1,6 +1,6 @@
 const articleSearchMetadataOverrides = Object.freeze({
   "criminal-court-authority-restitution-real-estate-third-party-deed-annulment": {
-    title: "رد مال غیرمنقول به ثالث؛ حدود اختیار دادگاه کیفری | موسوی",
+    title: "رد مال غیرمنقول به ثالث؛ اختیار دادگاه کیفری",
     description:
       "بررسی اختلاف رویه درباره رد مال غیرمنقول منتقل‌شده به ثالث با سند رسمی و حدود اختیار دادگاه کیفری در رسیدگی به ابطال سند.",
   },
