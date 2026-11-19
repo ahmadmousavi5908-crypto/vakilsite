@@ -8,7 +8,7 @@ export default function OfficeLocationPublic() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/office-location", { cache: "no-store" })
+    fetch("/api/office-location")
       .then((response) => response.json())
       .then((result) => {
         if (active && result.location) setLocation(result.location);
