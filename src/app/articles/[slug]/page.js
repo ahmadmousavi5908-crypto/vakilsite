@@ -12,7 +12,12 @@ export const dynamicParams = true;
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const article = await getPublicArticleBySlug(slug);
-  if (!article) return { title: "مطلب پیدا نشد" };
+  if (!article) {
+    return {
+      title: "مطلب پیدا نشد",
+      robots: { index: false, follow: false },
+    };
+  }
   const canonicalPath = "/articles/" + article.slug;
   const searchMetadata = getArticleSearchMetadata(article);
   return {

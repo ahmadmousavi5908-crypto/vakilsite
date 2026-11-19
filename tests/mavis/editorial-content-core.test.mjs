@@ -66,6 +66,7 @@ test("maps unified CMS snapshots into the public article page shape", () => {
     status: "published",
     slug: "production-article",
     published_content: {
+      status: "draft",
       title: "مقاله آزمایشی",
       excerpt: "خلاصه مقاله",
       content: {
@@ -81,6 +82,7 @@ test("maps unified CMS snapshots into the public article page shape", () => {
     updated_at: "2026-11-18T10:00:00.000Z",
   });
 
+  assert.equal(article.status, "published");
   assert.equal(article.intro, "مقدمه مقاله");
   assert.equal(article.sections[0].heading, "بخش نخست");
   assert.deepEqual(article.checklist, ["مدرک نخست"]);
