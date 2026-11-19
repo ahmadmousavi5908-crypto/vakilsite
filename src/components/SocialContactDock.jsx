@@ -115,7 +115,7 @@ export default function SocialContactDock() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/social-links", { cache: "no-store" })
+    fetch("/api/social-links")
       .then((response) => response.ok ? response.json() : Promise.reject())
       .then((data) => {
         if (active && Array.isArray(data.links)) setLinks(data.links);
