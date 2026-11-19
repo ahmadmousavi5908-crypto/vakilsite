@@ -99,6 +99,7 @@ export function mapPublishedEditorialRecord(record) {
   return {
     ...snapshot,
     ...content,
+    status: record.status,
     slug: record.slug,
     intro,
     sections,
