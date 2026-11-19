@@ -13,7 +13,7 @@ test("uses the reviewed short metadata for the long criminal-property article", 
 
   assert.equal(
     result.title,
-    "رد مال غیرمنقول به ثالث؛ حدود اختیار دادگاه کیفری | موسوی",
+    "رد مال غیرمنقول به ثالث؛ اختیار دادگاه کیفری",
   );
   assert.equal(
     result.description,
