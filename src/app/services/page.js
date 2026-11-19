@@ -2,7 +2,7 @@ import Link from "next/link";
 import { practiceAreas } from "../../data/practice-areas";
 
 export const metadata = {
-  title: "حوزه‌های خدمات حقوقی",
+  title: "حوزه‌های خدمات وکیل در اهواز و خوزستان",
   description: "معرفی حوزه‌های بررسی و خدمات حقوقی سید احمد موسوی؛ دعاوی خانواده، کیفری، ملکی، قراردادها، مطالبات و مشاوره اولیه در اهواز و سراسر ایران.",
   alternates: { canonical: "/services" },
 };
@@ -18,7 +18,7 @@ export default function ServicesPage() {
         <div className="article-breadcrumb"><Link href="/">صفحه اصلی</Link><span>←</span><span>حوزه‌های خدمات حقوقی</span></div>
         <span className="section-kicker">LEGAL PRACTICE AREAS · IRAN</span>
         <h1>حوزه‌های فعالیت و<br/><em>بررسی مسائل حقوقی</em></h1>
-        <p>موضوعات زیر برای آشنایی اولیه دسته‌بندی شده‌اند. انتخاب مسیر حقوقی و امکان ارائه خدمت به جزئیات پرونده، اسناد، مرحله رسیدگی و مقررات جاری بستگی دارد.</p>
+        <p>موضوعات زیر برای آشنایی اولیه با حوزه‌های بررسی و خدمات حقوقی دفتر سید احمد موسوی در اهواز دسته‌بندی شده‌اند. درخواست اولیه از شهرهای خوزستان و سراسر ایران قابل ثبت است؛ انتخاب مسیر و امکان ارائه خدمت به جزئیات پرونده، اسناد، مرحله رسیدگی و مقررات جاری بستگی دارد.</p>
       </div></section>
       <section className="container practice-list-section">
         <div className="practice-card-grid">
