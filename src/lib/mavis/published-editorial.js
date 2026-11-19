@@ -1,36 +1,33 @@
 import { cache } from "react";
 import { articles as siteArticles } from "../../data/articles";
 import { createClient } from "../supabase/server";
-import { getInMemoryCachedValue } from "../cache/in-memory-cache.mjs";
 import { mapPublishedEditorialRecord } from "./editorial-content-core.mjs";
 
 async function loadPublishedArticles() {
-  return getInMemoryCachedValue(
-    "mavis:public-published-articles:v1",
-    async () => {
-      const supabase = await createClient();
-      const { data, error } = await supabase.rpc("get_mavis_published_articles");
-      if (error) throw error;
-      if (!Array.isArray(data)) {
-        throw new TypeError("Published article RPC returned an invalid payload.");
-      }
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("get_mavis_published_articles");
+  if (error) throw error;
+  if (!Array.isArray(data)) {
+    throw new TypeError("Published article RPC returned an invalid payload.");
+  }
 
-      return data
-        .map((record) => mapPublishedEditorialRecord({
-          ...record,
-          updated_at: record.published_at,
-          status: "published",
-        }))
-        .filter(Boolean);
-    },
-    { ttlMs: 60_000, staleIfErrorMs: 300_000 },
-  );
+  return data
+    .map((record) => mapPublishedEditorialRecord({
+      ...record,
+      updated_at: record.published_at,
+      status: "published",
+    }))
+    .filter(Boolean);
 }
 
 export const getMavisPublishedArticles = cache(async function getMavisPublishedArticles() {
   try {
     return await loadPublishedArticles();
-  } catch {
+  } catch (error) {
+    console.error(
+      "[mavis] Unable to load public published articles:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
     return [];
   }
 });
