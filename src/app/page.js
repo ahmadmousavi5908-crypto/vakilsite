@@ -122,7 +122,7 @@ export default async function Home() {
         <div className="container hero-grid">
           <div className="hero-content">
             <div className="eyebrow"><span /> همراه حقوقی شما، از نخستین قدم</div>
-            <h1>وقتی با یک مسئله حقوقی روبه‌رو می‌شوید،<em> مسیر درست</em> اهمیت دارد.</h1>
+            <h1>برای بررسی مسائل حقوقی در اهواز،<em> مسیر درست</em> اهمیت دارد.</h1>
             <p className="hero-lead">موضوع حقوقی خود را ساده و روشن مطرح کنید. درخواست شما بررسی می‌شود تا با شناخت بهتر شرایط، مسیرهای قانونی و قدم بعدی را آگاهانه انتخاب کنید.</p>
             <div className="hero-actions">
               <a className="btn btn-gold" href="#contact">ثبت درخواست بررسی <span>←</span></a>
