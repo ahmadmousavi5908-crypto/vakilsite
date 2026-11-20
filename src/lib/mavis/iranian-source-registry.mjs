@@ -20,7 +20,7 @@ export function normalizeIranianSourceUrl(value) {
   try {
     const url = new URL(value);
     if (url.protocol !== "https:" || url.username || url.password || url.port) return null;
-    const hostname = url.hostname.toLowerCase().replace(/\\.$/, "");
+    const hostname = url.hostname.toLowerCase().replace(/\.$/, "");
     const source = [...SOURCE_BY_DOMAIN.entries()]
       .find(([domain]) => hostname === domain || hostname.endsWith("." + domain))?.[1];
     if (!source) return null;
