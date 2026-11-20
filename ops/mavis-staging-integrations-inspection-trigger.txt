@@ -5,3 +5,5 @@ Post-merge verification after Workers AI output validation and IndexNow client f
 Post-deploy verification after secure Search Console OAuth and read-only inspection integration. No Production actions.
 
 2026-11-20: read-only verification of Staging secrets presence, integration state, E2E cleanup, and scholarly discovery providers after migrations 020/021. Never print secret values.
+
+2026-11-20: confirm post-E2E cleanup counts are zero after typed legal record validation and full publication lifecycle.
