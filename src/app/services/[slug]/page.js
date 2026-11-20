@@ -1,15 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { practiceAreas } from "../../../data/practice-areas";
-
-const searchTitles = {
-  "family-law": "وکیل خانواده در اهواز و خوزستان",
-  "criminal-law": "وکیل کیفری در اهواز و خوزستان",
-  "property-law": "وکیل ملکی در اهواز و خوزستان",
-  "contracts-and-obligations": "وکیل قرارداد در اهواز و خوزستان",
-  "claims-and-enforcement": "وکیل چک و مطالبه وجه در اهواز",
-  "legal-consultation": "مشاوره حقوقی در اهواز و خوزستان",
-};
+import { getPracticeAreaSearchTitle } from "../../../lib/seo/practice-area-search-titles.mjs";
 
 export function generateStaticParams() {
   return practiceAreas.map((area) => ({ slug: area.slug }));
@@ -19,11 +11,12 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const area = practiceAreas.find((item) => item.slug === slug);
   if (!area) return { title: "حوزه خدمات پیدا نشد" };
+  const searchTitle = getPracticeAreaSearchTitle(slug, area.title);
   return {
-    title: searchTitles[slug] || area.title,
+    title: searchTitle,
     description: area.description,
     alternates: { canonical: "/services/" + area.slug },
-    openGraph: { type: "website", locale: "fa_IR", title: area.title, description: area.description },
+    openGraph: { type: "website", locale: "fa_IR", title: searchTitle, description: area.description },
   };
 }
 
@@ -41,7 +34,7 @@ export default async function PracticeAreaPage({ params }) {
       <section className="practice-hero"><div className="container">
         <div className="article-breadcrumb"><Link href="/">صفحه اصلی</Link><span>←</span><Link href="/services">حوزه‌های خدمات</Link><span>←</span><span>{area.title}</span></div>
         <span className="section-kicker">LEGAL SERVICES · IRANIAN LAW</span>
-        <h1>{area.title}<br/><em>بررسی موردی و مستند</em></h1>
+        <h1>{getPracticeAreaSearchTitle(slug, area.title)}<br/><em>بررسی موردی و مستند</em></h1>
         <p>{area.description}</p>
       </div></section>
       <section className="container practice-detail-layout">
