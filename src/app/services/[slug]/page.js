@@ -2,6 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { practiceAreas } from "../../../data/practice-areas";
 import { getPracticeAreaSearchTitle } from "../../../lib/seo/practice-area-search-titles.mjs";
+import JsonLd from "../../../components/JsonLd";
+import { getSiteUrl } from "../../../lib/site-url.mjs";
+import { buildBreadcrumbSchema } from "../../../lib/seo/breadcrumb-schema.mjs";
 
 export function generateStaticParams() {
   return practiceAreas.map((area) => ({ slug: area.slug }));
@@ -25,8 +28,18 @@ export default async function PracticeAreaPage({ params }) {
   const area = practiceAreas.find((item) => item.slug === slug);
   if (!area) notFound();
 
+  const siteUrl = getSiteUrl();
+  const structuredBreadcrumb = siteUrl
+    ? buildBreadcrumbSchema(siteUrl, [
+        { name: "صفحه اصلی", path: "/" },
+        { name: "حوزه‌های خدمات حقوقی", path: "/services" },
+        { name: area.title },
+      ])
+    : null;
+
   return (
     <main className="practice-page" dir="rtl">
+      {structuredBreadcrumb && <JsonLd data={structuredBreadcrumb} />}
       <header className="article-header"><div className="container article-header-inner">
         <Link href="/" className="article-brand">خدمات حقوقی <span>سید احمد موسوی · اهواز و سراسر ایران</span></Link>
         <Link href="/#contact" className="article-header-cta">ثبت درخواست اولیه ←</Link>
