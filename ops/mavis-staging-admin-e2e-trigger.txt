@@ -3,3 +3,5 @@ Run the authenticated Staging end-to-end suite after the isolated Worker deploym
 Post-merge verification after Workers AI output validation and IndexNow client fixes. Run on current main. No Production actions.
 
 Post-deploy verification after secure Search Console OAuth and read-only inspection integration. No Production actions.
+
+2026-11-20: verify current-main authenticated editorial lifecycle and live Workers AI/source-search bindings after Staging migrations 020 and 021. No Production actions.
