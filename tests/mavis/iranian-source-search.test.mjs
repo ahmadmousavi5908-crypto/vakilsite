@@ -5,6 +5,7 @@ import { createIranianSourceSearch } from "../../src/lib/mavis/iranian-source-se
 
 test("the source allowlist contains ten curated Iranian legal sources only", () => {
   const domains = getIranianSourceDomains("all");
+  assert.equal(domains.length, 10);
   assert.ok(domains.includes("qavanin.ir"));
   assert.ok(domains.includes("magiran.com"));
   assert.ok(domains.includes("mizanonline.ir"));
