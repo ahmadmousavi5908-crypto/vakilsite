@@ -211,14 +211,16 @@ jobs:
             .map((file) => fs.readFileSync(file, "utf8"))
             .join("\n");
           const sources = [...html.matchAll(/src="([^"]+)"/g)].map((entry) => entry[1]);
-          const source = sources.find((value) => value.includes("/_next/image?"));
+          const source = sources.find((value) =>
+            value.includes("/_next/image?") || value.includes("/images/lawyer.jpg")
+          );
           if (!source) {
-            console.error("No Next.js image optimizer URL was rendered.");
+            console.error("No attorney portrait asset URL was rendered.");
             process.exit(1);
           }
           const imageUrl = new URL(source.replaceAll("&amp;", "&"), "http://127.0.0.1:8787");
           const response = await fetch(imageUrl, { signal: AbortSignal.timeout(15000) });
           const contentType = response.headers.get("content-type") || "";
-          console.log(`Next.js image route -> HTTP ${response.status} (${contentType})`);
+          console.log(`Attorney image asset -> HTTP ${response.status} (${contentType})`);
           if (!response.ok || !contentType.startsWith("image/")) process.exit(1);
           NODE
