@@ -41,7 +41,7 @@ export default function AboutPage() {
   return (
     <main className="practice-page about-page" dir="rtl">
       {profileSchema && <JsonLd data={profileSchema} />}
-      {structuredBreadcrumb && <JsonLd data={structuredBreadcrumb} />
+      {structuredBreadcrumb && <JsonLd data={structuredBreadcrumb} />}
       <header className="article-header">
         <div className="container article-header-inner">
           <Link href="/" className="article-brand">
