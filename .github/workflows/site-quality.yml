@@ -46,6 +46,8 @@ jobs:
         run: npm run validate:legal-library-seo
       - name: Test attorney profile structured data
         run: node --test tests/seo/attorney-profile-schema.test.mjs
+      - name: Test breadcrumb structured data
+        run: node --test tests/seo/breadcrumb-schema.test.mjs
       - name: Generate offline published-article bundle
         run: node scripts/mavis/generate-offline-published-articles.mjs
       - name: Validate MAVIS offline knowledge bundle

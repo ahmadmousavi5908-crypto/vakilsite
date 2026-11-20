@@ -5,6 +5,7 @@ import { getPublicArticleBySlug } from "../../../lib/mavis/published-editorial";
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
 import { getArticleSearchMetadata } from "../../../lib/mavis/article-search-metadata.mjs";
+import { buildBreadcrumbSchema } from "../../../lib/seo/breadcrumb-schema.mjs";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
@@ -43,6 +44,13 @@ export default async function ArticleDetailPage({ params }) {
 
   const siteUrl = getSiteUrl();
   const articleUrl = siteUrl ? new URL("/articles/" + article.slug, siteUrl).href : null;
+  const structuredBreadcrumb = articleUrl
+    ? buildBreadcrumbSchema(siteUrl, [
+        { name: "صفحه اصلی", path: "/" },
+        { name: "مقالات حقوقی", path: "/articles" },
+        { name: article.title },
+      ])
+    : null;
   const structuredArticle = articleUrl
     ? {
         "@context": "https://schema.org",
@@ -66,6 +74,7 @@ export default async function ArticleDetailPage({ params }) {
   return (
     <main className="article-page" dir="rtl">
       {structuredArticle && <JsonLd data={structuredArticle} />}
+      {structuredBreadcrumb && <JsonLd data={structuredBreadcrumb} />}
       <header className="article-header">
         <div className="container article-header-inner">
           <Link href="/" className="article-brand">خدمات حقوقی <span>دفتر اهواز · خدمات سراسر ایران</span></Link>
