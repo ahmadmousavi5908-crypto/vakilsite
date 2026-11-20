@@ -63,8 +63,8 @@ export default function AboutPage() {
               alt="تصویر سید احمد موسوی، وکیل پایه یک دادگستری"
               width={800}
               height={1000}
-              sizes="(max-width: 760px) 100vw, 380px"
               priority
+              unoptimized
             />
             <figcaption className="about-photo-caption">
               <strong>سید احمد موسوی</strong>
