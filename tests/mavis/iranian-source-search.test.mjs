@@ -3,10 +3,9 @@ import assert from "node:assert/strict";
 import { getIranianSourceDomains, normalizeIranianSourceUrl } from "../../src/lib/mavis/iranian-source-registry.mjs";
 import { createIranianSourceSearch } from "../../src/lib/mavis/iranian-source-search.mjs";
 
-test("the source allowlist contains Iranian official and academic domains only", () => {
+test("the source allowlist contains ten curated Iranian legal sources only", () => {
   const domains = getIranianSourceDomains("all");
   assert.ok(domains.includes("qavanin.ir"));
-  assert.ok(domains.includes("sid.ir"));
   assert.ok(domains.includes("magiran.com"));
   assert.ok(domains.includes("mizanonline.ir"));
   assert.ok(domains.includes("ekhtebar.ir"));
@@ -126,7 +125,6 @@ test("all-source fallback includes academic domains instead of only legal portal
     group: "all",
     limit: 10
   });
-  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Asid.ir")));
   assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amagiran.com")));
   assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amizanonline.ir")));
   assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Aekhtebar.ir")));
