@@ -131,6 +131,17 @@ async function main() {
     content_schema_version: 1,
     content: {
       intro: "This temporary article verifies authenticated editorial workflows in isolated Staging.",
+      record_type: "law",
+      legal_metadata: {
+        document_number: "E2E-TEST-020",
+        issuing_authority: "MAVIS Staging E2E fixture; not a legal authority",
+        document_date: "2026-11-20",
+        publication_date: "",
+        effective_from: "",
+        effective_until: "",
+        validity_status: "unknown",
+        related_law: ""
+      },
       sections: [
         {
           heading: "Lifecycle verification",
@@ -306,11 +317,24 @@ async function main() {
 
     const { data: adminRead, error: adminReadError } = await client
       .from("mavis_editorial_articles")
-      .select("id, slug, status, current_version")
+      .select("id, slug, status, current_version, content")
       .eq("id", articleId)
       .single();
     if (adminReadError) throw new Error(`Canonical admin read failed: ${adminReadError.message}`);
     assert(adminRead.slug === slug && adminRead.status === "draft", "Admin read did not return the created draft.");
+    assert(adminRead.content?.record_type === "law" && adminRead.content?.legal_metadata?.document_number === "E2E-TEST-020", "Typed legal record metadata was not persisted by migration 020.");
+    console.log("PASS: typed legal record and structured metadata persist in the versioned draft.");
+
+    const invalidTypedPayload = structuredClone(payload);
+    invalidTypedPayload.content.record_type = "unsupported_record_type";
+    const { data: invalidTypedDraft, error: invalidTypedError } = await client.rpc("save_mavis_article_draft", {
+      p_payload: invalidTypedPayload,
+      p_article_id: null,
+      p_expected_version: null,
+      p_change_note: "E2E: reject unsupported legal record type"
+    });
+    assert(!invalidTypedDraft && invalidTypedError?.code === "22023", "Unsupported legal record type was not rejected.");
+    console.log("PASS: unsupported legal record types are rejected before draft creation.");
 
     const anonymous = createClient(projectUrl, publishableKey, {
       auth: {
