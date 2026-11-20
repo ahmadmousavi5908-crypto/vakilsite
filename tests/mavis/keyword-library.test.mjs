@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { getKeywordTaxonomyEntries } from "../../src/lib/mavis/keyword-taxonomy-adapter.mjs";
+import { getKeywordEntryAction } from "../../src/lib/mavis/keyword-entry-action.mjs";
 import {
   getKeywordLibraryClusters,
   getKeywordLibrarySnapshot,
@@ -226,4 +227,45 @@ test("expands labor, tax, administrative, insurance, municipal, commercial and e
       `Missing problem template: ${subject}`
     );
   }
+});
+
+
+test("links a keyword entry to its mapped canonical page", () => {
+  const action = getKeywordEntryAction({
+    target: "/services/property-law",
+    family: "lawyer",
+    term: "وکیل ملکی"
+  });
+  assert.deepEqual(action, { kind: "owner", href: "/services/property-law" });
+});
+
+test("opens a versioned editorial draft for an uncovered eligible topic", () => {
+  const action = getKeywordEntryAction({
+    target: "محتوای آتی",
+    family: "problem",
+    term: "مستأجرم مغازه را تخلیه نمی‌کند، چه کنم؟",
+    clusterTitle: "اجاره و روابط موجر و مستأجر"
+  });
+  assert.equal(action.kind, "draft");
+  const url = new URL(action.href, "https://example.test");
+  assert.equal(url.pathname, "/admin/mavis/articles/new");
+  assert.equal(url.searchParams.get("topic"), "مستأجرم مغازه را تخلیه نمی‌کند، چه کنم؟");
+  assert.equal(url.searchParams.get("category"), "اجاره و روابط موجر و مستأجر");
+});
+
+test("does not turn local, English, legal-review or compliance-risk phrases into drafts", () => {
+  const blocked = [
+    { target: "محتوای آتی", family: "local", term: "وکیل ملکی در آبادان" },
+    { target: "محتوای آتی", family: "english", term: "Iran property lawyer" },
+    { target: "محتوای آتی", family: "positioning", term: "بهترین وکیل اهواز" },
+    { target: "محتوای آتی", family: "lawyer", term: "وکیل حقوقی", requiresComplianceReview: true },
+    { target: "محتوای آتی", family: "problem", term: "حدنگار چیست", legalReviewStatus: "needs_legal_review" }
+  ];
+  for (const entry of blocked) assert.equal(getKeywordEntryAction(entry), null);
+});
+
+test("rejects non-local and malformed keyword target destinations", () => {
+  assert.equal(getKeywordEntryAction({ target: "https://attacker.example", family: "lawyer", term: "وکیل" }), null);
+  assert.equal(getKeywordEntryAction({ target: "//attacker.example", family: "lawyer", term: "وکیل" }), null);
+  assert.equal(getKeywordEntryAction({ target: "محتوای آتی", family: "problem", term: "   " }), null);
 });
