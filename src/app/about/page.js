@@ -3,6 +3,7 @@ import Link from "next/link";
 import PublishedWorks from "../../components/PublishedWorks";
 import JsonLd from "../../components/JsonLd";
 import { getSiteUrl } from "../../lib/site-url.mjs";
+import { buildAttorneyProfileSchema } from "../../lib/seo/attorney-profile-schema.mjs";
 
 export const metadata = {
   title: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری",
@@ -11,26 +12,6 @@ export const metadata = {
 };
 
 const siteUrl = getSiteUrl();
-
-function buildAttorneyProfileSchema() {
-  if (!siteUrl) return null;
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    "@id": siteUrl + "/about#profilepage",
-    url: siteUrl + "/about",
-    name: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری",
-    inLanguage: "fa-IR",
-    mainEntity: {
-      "@type": "Person",
-      "@id": siteUrl + "/#attorney",
-      name: "سید احمد موسوی",
-      jobTitle: "وکیل پایه یک دادگستری",
-      image: siteUrl + "/images/lawyer.jpg",
-    },
-  };
-}
 
 const credentials = [
   ["عنوان حرفه‌ای", "وکیل پایه یک دادگستری"],
@@ -48,7 +29,7 @@ const approach = [
 ];
 
 export default function AboutPage() {
-  const profileSchema = buildAttorneyProfileSchema();
+  const profileSchema = buildAttorneyProfileSchema(siteUrl);
 
   return (
     <main className="practice-page about-page" dir="rtl">
