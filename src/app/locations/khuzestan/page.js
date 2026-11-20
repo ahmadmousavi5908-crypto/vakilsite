@@ -26,7 +26,7 @@ export default function KhuzestanLocationPage() {
     : null;
 
   return <main className="practice-page" dir="rtl">
-    {structuredBreadcrumb && <JsonLd data={structuredBreadcrumb} />
+    {structuredBreadcrumb && <JsonLd data={structuredBreadcrumb} />}
     <header className="article-header"><div className="container article-header-inner">
       <Link href="/" className="article-brand">خدمات حقوقی <span>سید احمد موسوی · دفتر اهواز</span></Link>
       <Link href="/#contact" className="article-header-cta">ثبت درخواست اولیه ←</Link>
