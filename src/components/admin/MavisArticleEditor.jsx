@@ -9,7 +9,7 @@ import styles from "./MavisArticleEditor.module.css";
 
 const emptySection = () => ({ heading: "", body: "" });
 
-export default function MavisArticleEditor({ initialArticle = null, initialSources = [], sourceLoadError = "", aiEnabled = false, initialTopic = "" }) {
+export default function MavisArticleEditor({ initialArticle = null, initialSources = [], sourceLoadError = "", aiEnabled = false, initialTopic = "", initialCategory = "" }) {
   const [sections, setSections] = useState(() =>
     Array.isArray(initialArticle?.content?.sections) && initialArticle.content.sections.length
       ? initialArticle.content.sections.map((section) => ({ heading: section.heading || "", body: section.body || "" }))
@@ -320,7 +320,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           <label className={styles.field}><span>عنوان مقاله <b>*</b></span><input name="title" defaultValue={initialArticle?.title || initialTopic || ""} required minLength={3} maxLength={300} /></label>
           <label className={styles.field}><span>نامک انگلیسی <b>*</b></span><input name="slug" defaultValue={initialArticle?.slug || ""} required minLength={3} maxLength={180} dir="ltr" pattern="[a-z0-9]+([a-z0-9-]*[a-z0-9])?" placeholder="contract-legal-guide" /><small>حروف کوچک انگلیسی، عدد و خط تیره</small></label>
           <label className={styles.field}><span>نام نویسنده</span><input name="author_name" defaultValue={initialArticle?.author_name || ""} maxLength={180} /></label>
-          <label className={styles.field}><span>دسته‌بندی <b>*</b></span><input name="category" defaultValue={initialArticle?.category || ""} required minLength={2} maxLength={100} placeholder="حقوق کیفری، مدنی، خانواده..." /></label>
+          <label className={styles.field}><span>دسته‌بندی <b>*</b></span><input name="category" defaultValue={initialArticle?.category || initialCategory || ""} required minLength={2} maxLength={100} placeholder="حقوق کیفری، مدنی، خانواده..." /></label>
           <label className={styles.fieldWide}><span>خلاصه مقاله <b>*</b></span><textarea name="excerpt" defaultValue={initialArticle?.excerpt || ""} required minLength={10} maxLength={1200} rows={3} /></label>
           <label className={styles.fieldWide}><span>برچسب‌ها</span><input name="tags" defaultValue={Array.isArray(initialArticle?.tags) ? initialArticle.tags.join("، ") : ""} placeholder="قرارداد، حقوق مدنی، دعاوی" /><small>برچسب‌ها را با ویرگول فارسی یا انگلیسی جدا کنید.</small></label>
           <label className={styles.fieldWide}><span>مقدمه مقاله <b>*</b></span><textarea name="intro" defaultValue={content.intro || ""} required minLength={10} maxLength={8000} rows={5} /></label>
