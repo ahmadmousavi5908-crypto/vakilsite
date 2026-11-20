@@ -3,3 +3,5 @@ Run the read-only Staging integration inventory after the isolated Worker deploy
 Post-merge verification after Workers AI output validation and IndexNow client fixes. Run on current main. No Production actions.
 
 Post-deploy verification after secure Search Console OAuth and read-only inspection integration. No Production actions.
+
+2026-11-20: read-only verification of Staging secrets presence, integration state, E2E cleanup, and scholarly discovery providers after migrations 020/021. Never print secret values.
