@@ -193,7 +193,7 @@ function buildOfficialSearchLinks(query, group) {
     : group === "official"
       ? getIranianSourceDomains("official").slice(3)
       : getIranianSourceDomains(group);
-  for (const domain of domains.slice(0, 7)) {
+  for (const domain of domains) {
     links.push({
       id: "search-" + domain,
       title: "جست‌وجو در " + domain,
