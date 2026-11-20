@@ -1,12 +1,36 @@
 import Image from "next/image";
 import Link from "next/link";
 import PublishedWorks from "../../components/PublishedWorks";
+import JsonLd from "../../components/JsonLd";
+import { getSiteUrl } from "../../lib/site-url.mjs";
 
 export const metadata = {
   title: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری",
   description: "معرفی سید احمد موسوی، وکیل پایه یک دادگستری و عضو مرکز وکلای قوه قضائیه؛ دارای کارشناسی ارشد حقوق و نویسنده مقاله و کتاب. دفتر فعالیت در اهواز.",
   alternates: { canonical: "/about" },
 };
+
+const siteUrl = getSiteUrl();
+
+function buildAttorneyProfileSchema() {
+  if (!siteUrl) return null;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "@id": siteUrl + "/about#profilepage",
+    url: siteUrl + "/about",
+    name: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری",
+    inLanguage: "fa-IR",
+    mainEntity: {
+      "@type": "Person",
+      "@id": siteUrl + "/#attorney",
+      name: "سید احمد موسوی",
+      jobTitle: "وکیل پایه یک دادگستری",
+      image: siteUrl + "/images/lawyer.jpg",
+    },
+  };
+}
 
 const credentials = [
   ["عنوان حرفه‌ای", "وکیل پایه یک دادگستری"],
@@ -26,6 +50,7 @@ const approach = [
 export default function AboutPage() {
   return (
     <main className="practice-page about-page" dir="rtl">
+      {buildAttorneyProfileSchema() && <JsonLd data={buildAttorneyProfileSchema()} />}
       <header className="article-header">
         <div className="container article-header-inner">
           <Link href="/" className="article-brand">
