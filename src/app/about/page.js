@@ -4,6 +4,7 @@ import PublishedWorks from "../../components/PublishedWorks";
 import JsonLd from "../../components/JsonLd";
 import { getSiteUrl } from "../../lib/site-url.mjs";
 import { buildAttorneyProfileSchema } from "../../lib/seo/attorney-profile-schema.mjs";
+import { buildBreadcrumbSchema } from "../../lib/seo/breadcrumb-schema.mjs";
 
 export const metadata = {
   title: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری اهواز",
@@ -30,10 +31,17 @@ const approach = [
 
 export default function AboutPage() {
   const profileSchema = buildAttorneyProfileSchema(siteUrl);
+  const structuredBreadcrumb = siteUrl
+    ? buildBreadcrumbSchema(siteUrl, [
+        { name: "صفحه اصلی", path: "/" },
+        { name: "معرفی وکیل" },
+      ])
+    : null;
 
   return (
     <main className="practice-page about-page" dir="rtl">
       {profileSchema && <JsonLd data={profileSchema} />}
+      {structuredBreadcrumb && <JsonLd data={structuredBreadcrumb} />}
       <header className="article-header">
         <div className="container article-header-inner">
           <Link href="/" className="article-brand">

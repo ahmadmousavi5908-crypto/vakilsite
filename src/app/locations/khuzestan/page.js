@@ -1,4 +1,7 @@
 import Link from "next/link";
+import JsonLd from "../../../components/JsonLd";
+import { getSiteUrl } from "../../../lib/site-url.mjs";
+import { buildBreadcrumbSchema } from "../../../lib/seo/breadcrumb-schema.mjs";
 
 export const metadata = {
   title: "خدمات حقوقی و وکیل در اهواز و خوزستان",
@@ -14,7 +17,16 @@ const cities = [
 ];
 
 export default function KhuzestanLocationPage() {
+  const siteUrl = getSiteUrl();
+  const structuredBreadcrumb = siteUrl
+    ? buildBreadcrumbSchema(siteUrl, [
+        { name: "صفحه اصلی", path: "/" },
+        { name: "مناطق تحت پوشش" },
+      ])
+    : null;
+
   return <main className="practice-page" dir="rtl">
+    {structuredBreadcrumb && <JsonLd data={structuredBreadcrumb} />}
     <header className="article-header"><div className="container article-header-inner">
       <Link href="/" className="article-brand">خدمات حقوقی <span>سید احمد موسوی · دفتر اهواز</span></Link>
       <Link href="/#contact" className="article-header-cta">ثبت درخواست اولیه ←</Link>
