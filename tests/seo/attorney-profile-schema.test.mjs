@@ -1,0 +1,22 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import { buildAttorneyProfileSchema } from "../../src/lib/seo/attorney-profile-schema.mjs";
+
+test("builds a ProfilePage linked to the canonical attorney entity", () => {
+  const schema = buildAttorneyProfileSchema("https://vakilahmadmousavi.ir/");
+
+  assert.equal(schema["@context"], "https://schema.org");
+  assert.equal(schema["@type"], "ProfilePage");
+  assert.equal(schema.url, "https://vakilahmadmousavi.ir/about");
+  assert.equal(schema.mainEntity["@type"], "Person");
+  assert.equal(schema.mainEntity["@id"], "https://vakilahmadmousavi.ir/#attorney");
+  assert.equal(schema.mainEntity.name, "سید احمد موسوی");
+  assert.equal(schema.mainEntity.image, "https://vakilahmadmousavi.ir/images/lawyer.jpg");
+});
+
+test("returns null when the site URL is missing or invalid", () => {
+  assert.equal(buildAttorneyProfileSchema(""), null);
+  assert.equal(buildAttorneyProfileSchema(null), null);
+  assert.equal(buildAttorneyProfileSchema("not-a-url"), null);
+});

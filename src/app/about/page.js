@@ -1,12 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import PublishedWorks from "../../components/PublishedWorks";
+import JsonLd from "../../components/JsonLd";
+import { getSiteUrl } from "../../lib/site-url.mjs";
+import { buildAttorneyProfileSchema } from "../../lib/seo/attorney-profile-schema.mjs";
 
 export const metadata = {
   title: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری",
   description: "معرفی سید احمد موسوی، وکیل پایه یک دادگستری و عضو مرکز وکلای قوه قضائیه؛ دارای کارشناسی ارشد حقوق و نویسنده مقاله و کتاب. دفتر فعالیت در اهواز.",
   alternates: { canonical: "/about" },
 };
+
+const siteUrl = getSiteUrl();
 
 const credentials = [
   ["عنوان حرفه‌ای", "وکیل پایه یک دادگستری"],
@@ -24,8 +29,11 @@ const approach = [
 ];
 
 export default function AboutPage() {
+  const profileSchema = buildAttorneyProfileSchema(siteUrl);
+
   return (
     <main className="practice-page about-page" dir="rtl">
+      {profileSchema && <JsonLd data={profileSchema} />}
       <header className="article-header">
         <div className="container article-header-inner">
           <Link href="/" className="article-brand">
