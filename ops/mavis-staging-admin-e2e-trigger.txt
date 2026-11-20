@@ -5,3 +5,5 @@ Post-merge verification after Workers AI output validation and IndexNow client f
 Post-deploy verification after secure Search Console OAuth and read-only inspection integration. No Production actions.
 
 2026-11-20: verify current-main authenticated editorial lifecycle and live Workers AI/source-search bindings after Staging migrations 020 and 021. No Production actions.
+
+2026-11-20: verify migration 020 typed legal-record metadata persistence and invalid-type rejection, then rerun complete Staging lifecycle and cleanup.
