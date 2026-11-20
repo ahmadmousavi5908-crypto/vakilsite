@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
+import { getKeywordEntryAction } from "../../lib/mavis/keyword-entry-action.mjs";
 import {
   getKeywordLibraryClusters,
   getKeywordLibrarySnapshot,
@@ -106,7 +108,9 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
 
       {entries.length ? (
         <ul className={styles.results}>
-          {entries.slice(0, 240).map((entry) => (
+          {entries.slice(0, 240).map((entry) => {
+            const action = getKeywordEntryAction(entry);
+            return (
             <li key={entry.clusterId + ":" + entry.family + ":" + entry.term}>
               <div className={styles.termLine}>
                 <strong>{entry.term}</strong>
@@ -114,11 +118,19 @@ export default function MavisKeywordLibrary({ taxonomyEntries = [] }) {
               </div>
               <span className={styles.cluster}>{entry.clusterTitle}</span>
               {entry.location && <span className={styles.cluster}>شهر هدف: {entry.location}</span>}
-              <span className={styles.target}>{entry.target === "محتوای آتی" ? "بدون صفحه مالک؛ فرصت پژوهش" : `صفحه مالک: ${entry.target}`}</span>
+              {action?.kind === "owner" ? (
+                <span className={styles.target}>صفحه مالک: <Link className={styles.targetLink} href={action.href}>{entry.target}</Link></span>
+              ) : (
+                <span className={styles.target}>{entry.target === "محتوای آتی" ? "بدون صفحه مالک؛ فرصت پژوهش" : `صفحه مالک: ${entry.target}`}</span>
+              )}
+              {action?.kind === "draft" ? (
+                <Link className={styles.draftAction} href={action.href}>ساخت پیش‌نویس از این عبارت ←</Link>
+              ) : null}
               {entry.legalReviewStatus && <span className={styles.review}>منبع اصطلاح: کتابخانه حقوقی · نیازمند بازبینی حقوقی</span>}
               {entry.requiresComplianceReview && <span className={styles.review}>نیازمند بررسی ضوابط تبلیغات وکالت و مستندات ادعا؛ صرفاً پیشنهاد داخلی · سطح ریسک: {entry.claimRisk}</span>}
             </li>
-          ))}
+            );
+          })}
         </ul>
       ) : (
         <p className={styles.empty}>عبارتی با این فیلتر پیدا نشد.</p>
