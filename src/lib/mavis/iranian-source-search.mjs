@@ -186,9 +186,9 @@ function buildOfficialSearchLinks(query, group) {
   }
   const domains = group === "all"
     ? [
-        ...getIranianSourceDomains("official").slice(3, 6),
-        ...getIranianSourceDomains("academic").slice(0, 3),
-        ...getIranianSourceDomains("secondary").slice(0, 7)
+        ...getIranianSourceDomains("official").slice(3),
+        ...getIranianSourceDomains("academic"),
+        ...getIranianSourceDomains("secondary")
       ]
     : group === "official"
       ? getIranianSourceDomains("official").slice(3)
