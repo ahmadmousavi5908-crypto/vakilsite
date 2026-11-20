@@ -19,8 +19,8 @@ const works = [
     authors: "مهدی چگنی و سیداحمد موسوی",
     publication: "مجلس و راهبرد",
     details: "سال ۱۳۹۸، دوره ۲۶، شماره ۱۰۰، صفحات ۳۳۱ تا ۳۵۸",
-    link: "https://elmnet.ir/keyword/قمار-بازی",
-    linkLabel: "مشاهده در نمایه علمی علم‌نت",
+    link: "https://www.magiran.com/paper/2096638/قمار-بازی-در-فضای-مجازی-از-نظر-حقوق-کیفری",
+    linkLabel: "مشاهده مقاله در مگیران",
     kind: "article",
   },
   {
