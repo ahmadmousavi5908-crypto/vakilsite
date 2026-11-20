@@ -48,9 +48,11 @@ const approach = [
 ];
 
 export default function AboutPage() {
+  const profileSchema = buildAttorneyProfileSchema();
+
   return (
     <main className="practice-page about-page" dir="rtl">
-      {buildAttorneyProfileSchema() && <JsonLd data={buildAttorneyProfileSchema()} />}
+      {profileSchema && <JsonLd data={profileSchema} />}
       <header className="article-header">
         <div className="container article-header-inner">
           <Link href="/" className="article-brand">
