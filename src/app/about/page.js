@@ -6,7 +6,7 @@ import { getSiteUrl } from "../../lib/site-url.mjs";
 import { buildAttorneyProfileSchema } from "../../lib/seo/attorney-profile-schema.mjs";
 
 export const metadata = {
-  title: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری",
+  title: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری اهواز",
   description: "معرفی سید احمد موسوی، وکیل پایه یک دادگستری و عضو مرکز وکلای قوه قضائیه؛ دارای کارشناسی ارشد حقوق و نویسنده مقاله و کتاب. دفتر فعالیت در اهواز.",
   alternates: { canonical: "/about" },
 };
