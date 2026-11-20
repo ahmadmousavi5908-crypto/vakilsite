@@ -1,5 +1,8 @@
 import Link from "next/link";
+import JsonLd from "../../components/JsonLd";
 import { practiceAreas } from "../../data/practice-areas";
+import { getSiteUrl } from "../../lib/site-url.mjs";
+import { buildBreadcrumbSchema } from "../../lib/seo/breadcrumb-schema.mjs";
 
 export const metadata = {
   title: "حوزه‌های خدمات وکیل در اهواز و خوزستان",
@@ -8,8 +11,17 @@ export const metadata = {
 };
 
 export default function ServicesPage() {
+  const siteUrl = getSiteUrl();
+  const structuredBreadcrumb = siteUrl
+    ? buildBreadcrumbSchema(siteUrl, [
+        { name: "صفحه اصلی", path: "/" },
+        { name: "حوزه‌های خدمات حقوقی" },
+      ])
+    : null;
+
   return (
     <main className="practice-page" dir="rtl">
+      {structuredBreadcrumb && <JsonLd data={structuredBreadcrumb} />}
       <header className="article-header"><div className="container article-header-inner">
         <Link href="/" className="article-brand">خدمات حقوقی <span>سید احمد موسوی · اهواز و سراسر ایران</span></Link>
         <Link href="/#contact" className="article-header-cta">ثبت درخواست اولیه ←</Link>
