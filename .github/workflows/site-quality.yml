@@ -48,6 +48,8 @@ jobs:
         run: node --test tests/seo/attorney-profile-schema.test.mjs
       - name: Test breadcrumb structured data
         run: node --test tests/seo/breadcrumb-schema.test.mjs
+      - name: Test article author entity mapping
+        run: node --test tests/seo/article-author-schema.test.mjs
       - name: Generate offline published-article bundle
         run: node scripts/mavis/generate-offline-published-articles.mjs
       - name: Validate MAVIS offline knowledge bundle

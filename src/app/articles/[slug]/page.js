@@ -6,6 +6,7 @@ import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
 import { getArticleSearchMetadata } from "../../../lib/mavis/article-search-metadata.mjs";
 import { buildBreadcrumbSchema } from "../../../lib/seo/breadcrumb-schema.mjs";
+import { buildArticleAuthorSchema } from "../../../lib/seo/article-author-schema.mjs";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
@@ -51,6 +52,7 @@ export default async function ArticleDetailPage({ params }) {
         { name: article.title },
       ])
     : null;
+  const structuredAuthor = articleUrl ? buildArticleAuthorSchema(siteUrl, article.authorName) : null;
   const structuredArticle = articleUrl
     ? {
         "@context": "https://schema.org",
@@ -66,7 +68,7 @@ export default async function ArticleDetailPage({ params }) {
         url: articleUrl,
         ...(article.publishedAt ? { datePublished: article.publishedAt } : {}),
         ...(article.updatedAt ? { dateModified: article.updatedAt } : {}),
-        ...(article.authorName ? { author: { "@type": "Person", name: article.authorName } } : {}),
+        ...(structuredAuthor ? { author: structuredAuthor } : {}),
         ...(article.coverImageUrl ? { image: article.coverImageUrl } : {}),
       }
     : null;
