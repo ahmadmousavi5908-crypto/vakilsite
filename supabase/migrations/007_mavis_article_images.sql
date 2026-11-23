@@ -23,6 +23,7 @@ create policy "MAVIS admins upload article images"
   with check (
     bucket_id = 'mavis-article-images'
     and public.is_site_admin()
+    and (storage.foldername(name))[1] = auth.uid()::text
   );
 
 drop policy if exists "MAVIS admins update article images" on storage.objects;
@@ -33,10 +34,12 @@ create policy "MAVIS admins update article images"
   using (
     bucket_id = 'mavis-article-images'
     and public.is_site_admin()
+    and (storage.foldername(name))[1] = auth.uid()::text
   )
   with check (
     bucket_id = 'mavis-article-images'
     and public.is_site_admin()
+    and (storage.foldername(name))[1] = auth.uid()::text
   );
 
 drop policy if exists "MAVIS admins delete article images" on storage.objects;
@@ -47,4 +50,5 @@ create policy "MAVIS admins delete article images"
   using (
     bucket_id = 'mavis-article-images'
     and public.is_site_admin()
+    and (storage.foldername(name))[1] = auth.uid()::text
   );
