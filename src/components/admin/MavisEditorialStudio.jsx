@@ -312,8 +312,8 @@ export default function MavisEditorialStudio({ articles }) {
               <label><input type="checkbox" name="is_indexable" checked={form.isIndexable} onChange={(event) => setForm((current) => ({ ...current, isIndexable: event.target.checked }))} /> پس از انتشار، صفحه قابل ایندکس باشد</label>
             </div>
             <div className={styles.actions}>
-              <button type="submit">ذخیره پیش‌نویس</button>
-              <button type="submit" formAction={publishEditorialArticle} className={styles.publishButton}>تأیید و انتشار توسط من</button>
+              <button type="submit" disabled={imageUploading}>ذخیره پیش‌نویس</button>
+              <button type="submit" formAction={publishEditorialArticle} className={styles.publishButton} disabled={imageUploading}>تأیید و انتشار توسط من</button>
             </div>
             <p className={styles.securityNote}>ذخیره پیش‌نویس نسخه زنده را تغییر نمی‌دهد. انتشار نیازمند نام نویسنده، نام بازبین، تأیید حقوقی و حداقل یک منبع HTTPS است.</p>
           </form>
