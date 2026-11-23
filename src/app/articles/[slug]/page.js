@@ -83,6 +83,7 @@ export default async function ArticleDetailPage({ params }) {
               <img
                 src={article.image.url}
                 alt={article.image.alt || article.title}
+                title={article.image.title || article.title}
                 width={1600}
                 height={900}
                 loading="eager"
