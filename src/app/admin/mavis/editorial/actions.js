@@ -80,7 +80,7 @@ function readArticleImage(formData) {
     height: 900,
     mimeType: "image/webp",
     showInArticle: formData.get("show_image_in_article") === "on",
-    useForSeo: formData.get("use_image_for_seo") === "on",
+    useForSeo: formData.get("use_image_for_seo") === "on" && formData.get("show_image_in_article") === "on",
   };
 }
 
