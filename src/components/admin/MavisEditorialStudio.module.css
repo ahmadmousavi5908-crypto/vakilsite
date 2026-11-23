@@ -45,3 +45,20 @@
 .preview aside{background:#f7f4ed;padding:14px;border-radius:10px}
 .preview li{margin:6px 0}
 @media(max-width:760px){.headingActions{width:100%}.headingActions a,.headingActions button{flex:1;text-align:center;justify-content:center}.library,.editor{padding:15px;border-radius:14px}.sectionHeading{flex-direction:column}.fieldGrid{grid-template-columns:1fr}.fieldGrid .wide{grid-column:auto}.toolbar input{min-width:100%}.toolbar select{flex:1}.actions button{flex:1}.preview{padding:16px}.preview h1{font-size:21px}}
+
+
+.imagePanel{display:grid;gap:12px;padding:17px;border:1px solid #e3e8e1;border-radius:12px;background:#fafbf8}
+.imagePanel>div:first-child strong{display:block;color:#203b35;font-size:13px}
+.imagePanel>div:first-child p,.imagePanel>small,.imageHint{margin:4px 0 0;color:#758179;font-size:11px;line-height:1.9}
+.imageUpload{display:inline-flex;align-items:center;gap:10px;width:max-content;max-width:100%;padding:10px 14px;border:1px solid #d7e0d7;border-radius:9px;background:#fff;color:#24483d;font-size:12px;font-weight:700;cursor:pointer}
+.imageUpload input{max-width:100%;font:inherit;font-size:11px}
+.imagePreview,.previewImage{display:block;width:100%;max-width:760px;aspect-ratio:16/9;object-fit:cover;border-radius:10px;background:#edf0ec}
+.imageFields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.imageFields label{display:grid;gap:6px;color:#43554e;font-size:12px;font-weight:700}
+.imageFields .wide{grid-column:1/-1}
+.imageFields input{width:100%;min-width:0;border:1px solid #dce3dc;border-radius:9px;background:#fff;color:#1c302a;padding:10px 11px;font:inherit;font-size:12px}
+.imageOptions{display:flex;flex-wrap:wrap;gap:14px;padding:11px;background:#f1f5f0;border-radius:9px}
+.imageOptions label{display:flex;align-items:center;gap:7px;color:#43554e;font-size:11px}
+.imageOptions input{accent-color:#24483d}
+.imageError{margin:0;color:#a33c32;font-size:12px}
+@media(max-width:760px){.imageFields{grid-template-columns:1fr}.imageFields .wide{grid-column:auto}.imageOptions{display:grid}}
