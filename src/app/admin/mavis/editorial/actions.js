@@ -102,58 +102,6 @@ async function adminContext() {
   return access;
 }
 
-export async function uploadEditorialImage(formData) {
-  const { supabase, user } = await adminContext();
-  const slug = field(formData, "slug", 120);
-  const safeSlug = validateEditorialSlug(slug) ? slug : "article";
-  const definitions = [
-    { key: "small", field: "image_small" },
-    { key: "medium", field: "image_medium" },
-    { key: "wide", field: "image_wide" },
-    { key: "landscape", field: "image_landscape" },
-    { key: "square", field: "image_square" },
-    { key: "og", field: "image_og" },
-  ];
-  const files = [];
-
-  for (const definition of definitions) {
-    const file = formData.get(definition.field);
-    if (!file || typeof file.arrayBuffer !== "function" || file.size < 1 || file.size > 3 * 1024 * 1024 || file.type !== "image/webp") {
-      return { ok: false, message: "ساخت نسخه بهینه تصویر ناموفق بود؛ تصویر دیگری انتخاب کنید." };
-    }
-    const header = new Uint8Array(await file.slice(0, 12).arrayBuffer());
-    const signature = String.fromCharCode(...header);
-    if (!signature.startsWith("RIFF") || signature.slice(8, 12) !== "WEBP") {
-      return { ok: false, message: "فرمت واقعی تصویر معتبر نیست." };
-    }
-    files.push({ ...definition, file });
-  }
-
-  const uploadedPaths = [];
-  const images = {};
-  const folder = user.sub + "/" + safeSlug + "/" + Date.now() + "-" + globalThis.crypto.randomUUID();
-
-  try {
-    for (const item of files) {
-      const path = folder + "/" + safeSlug + "-" + item.key + ".webp";
-      const { error } = await supabase.storage.from("mavis-article-images").upload(path, item.file, {
-        contentType: "image/webp",
-        cacheControl: "31536000",
-        upsert: false,
-      });
-      if (error) throw error;
-      uploadedPaths.push(path);
-      images[item.key] = supabase.storage.from("mavis-article-images").getPublicUrl(path).data.publicUrl;
-    }
-    return { ok: true, images };
-  } catch {
-    if (uploadedPaths.length) {
-      await supabase.storage.from("mavis-article-images").remove(uploadedPaths);
-    }
-    return { ok: false, message: "بارگذاری تصویر انجام نشد؛ دسترسی Storage و مهاجرت محیط آزمایشی را بررسی کنید." };
-  }
-}
-
 export async function saveEditorialDraft(formData) {
   const { supabase, user } = await adminContext();
   const slug = field(formData, "slug", 120);
