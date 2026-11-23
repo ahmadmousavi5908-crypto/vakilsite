@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { saveEditorialDraft, publishEditorialArticle } from "../../app/admin/mavis/editorial/actions";
+import { saveEditorialDraft, publishEditorialArticle, uploadEditorialImage } from "../../app/admin/mavis/editorial/actions";
 import { formatEditorialBody, formatEditorialSources, serializeEditorialCsv } from "../../lib/mavis/editorial-content-core.mjs";
 import styles from "./MavisEditorialStudio.module.css";
 
@@ -31,6 +31,16 @@ function toForm(article) {
     reviewerName: article.reviewerName || "",
     legalApproved: article.legalReviewStatus === "approved",
     isIndexable: article.isIndexable !== false,
+    imageUrl: article.image?.url || "",
+    imageOgUrl: article.image?.ogUrl || "",
+    imageVariants: article.image?.variants || {},
+    imageAlt: article.image?.alt || "",
+    imageTitle: article.image?.title || "",
+    imageCaption: article.image?.caption || "",
+    imageWidth: article.image?.width || 1600,
+    imageHeight: article.image?.height || 900,
+    showImageInArticle: article.image?.showInArticle !== false,
+    useImageForSeo: article.image?.useForSeo !== false,
   };
 }
 
@@ -49,6 +59,8 @@ export default function MavisEditorialStudio({ articles }) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("updated");
   const [preview, setPreview] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageError, setImageError] = useState("");
 
   const filtered = useMemo(() => {
     const rows = articles.filter((article) => {
@@ -75,10 +87,85 @@ export default function MavisEditorialStudio({ articles }) {
   const selected = articles.find((article) => article.slug === selectedSlug) || null;
   const update = (key) => (event) => setForm((current) => ({ ...current, [key]: event.target.value }));
 
+  async function handleImageUpload(event) {
+    const sourceFile = event.target.files?.[0];
+    if (!sourceFile) return;
+
+    setImageUploading(true);
+    setImageError("");
+    try {
+      const bitmap = await createImageBitmap(sourceFile);
+      if (bitmap.width < 1200 || bitmap.height < 675) {
+        bitmap.close?.();
+        throw new Error("حداقل ابعاد تصویر اصلی باید ۱۲۰۰×۶۷۵ پیکسل باشد.");
+      }
+
+      async function makeVariant(width, height, suffix) {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const context = canvas.getContext("2d");
+        if (!context) throw new Error("پردازش تصویر در این مرورگر پشتیبانی نمی‌شود.");
+
+        const scale = Math.max(width / bitmap.width, height / bitmap.height);
+        const cropWidth = width / scale;
+        const cropHeight = height / scale;
+        const sourceX = (bitmap.width - cropWidth) / 2;
+        const sourceY = (bitmap.height - cropHeight) / 2;
+        context.drawImage(bitmap, sourceX, sourceY, cropWidth, cropHeight, 0, 0, width, height);
+
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/webp", 0.84));
+        if (!blob) throw new Error("تبدیل تصویر به WebP انجام نشد.");
+        return new File([blob], `article-${suffix}.webp`, { type: "image/webp" });
+      }
+
+      const [wide, landscape, square, og] = await Promise.all([
+        makeVariant(1600, 900, "16x9"),
+        makeVariant(1200, 900, "4x3"),
+        makeVariant(1200, 1200, "1x1"),
+        makeVariant(1200, 630, "og"),
+      ]);
+      bitmap.close?.();
+
+      const payload = new FormData();
+      payload.set("slug", form.slug);
+      payload.set("image_wide", wide);
+      payload.set("image_landscape", landscape);
+      payload.set("image_square", square);
+      payload.set("image_og", og);
+
+      const result = await uploadEditorialImage(payload);
+      if (!result?.ok) throw new Error(result?.message || "بارگذاری تصویر انجام نشد.");
+
+      setForm((current) => ({
+        ...current,
+        imageUrl: result.images.wide,
+        imageOgUrl: result.images.og,
+        imageVariants: {
+          wide: result.images.wide,
+          landscape: result.images.landscape,
+          square: result.images.square,
+        },
+        imageAlt: current.imageAlt || current.title,
+        imageTitle: current.imageTitle || current.title,
+        imageWidth: 1600,
+        imageHeight: 900,
+        showImageInArticle: true,
+        useImageForSeo: true,
+      }));
+    } catch (error) {
+      setImageError(error instanceof Error ? error.message : "پردازش یا بارگذاری تصویر ناموفق بود.");
+    } finally {
+      setImageUploading(false);
+      event.target.value = "";
+    }
+  }
+
   function selectArticle(article) {
     setSelectedSlug(article.slug);
     setForm(toForm(article));
     setPreview(false);
+    setImageError("");
   }
 
   function exportCsv() {
@@ -161,6 +248,7 @@ export default function MavisEditorialStudio({ articles }) {
 
         {preview ? (
           <article className={styles.preview}>
+            {form.imageUrl && form.showImageInArticle ? <img src={form.imageUrl} alt={form.imageAlt || form.title} className={styles.previewImage} /> : null}
             <span>{form.category || "راهنمای حقوقی"}</span><h1>{form.title || "عنوان مقاله"}</h1><p className={styles.previewExcerpt}>{form.excerpt}</p><p>{form.intro}</p>
             {previewBlocks(form.bodyMarkdown)}
             {form.checklist ? <><h3>چک‌لیست</h3><ul>{form.checklist.split("\n").filter(Boolean).map((item, index) => <li key={index}>{item}</li>)}</ul></> : null}
@@ -170,6 +258,14 @@ export default function MavisEditorialStudio({ articles }) {
         ) : (
           <form className={styles.form} action={saveEditorialDraft}>
             <input type="hidden" name="selected_slug" value={selectedSlug} />
+            <input type="hidden" name="image_url" value={form.imageUrl} />
+            <input type="hidden" name="image_og_url" value={form.imageOgUrl} />
+            <input type="hidden" name="image_variants" value={JSON.stringify(form.imageVariants)} />
+            <input type="hidden" name="image_alt" value={form.imageAlt} />
+            <input type="hidden" name="image_title" value={form.imageTitle} />
+            <input type="hidden" name="image_caption" value={form.imageCaption} />
+            <input type="hidden" name="show_image_in_article" value={form.showImageInArticle ? "on" : ""} />
+            <input type="hidden" name="use_image_for_seo" value={form.useImageForSeo ? "on" : ""} />
             <div className={styles.fieldGrid}>
               <label className={styles.wide}>عنوان مقاله<input name="title" value={form.title} onChange={update("title")} required maxLength={300} /></label>
               <label>نشانی انگلیسی (slug)<input name="slug" value={form.slug} onChange={update("slug")} required maxLength={120} dir="ltr" pattern="[a-z0-9]+(-[a-z0-9]+)*" readOnly={Boolean(selected)} /></label>
@@ -181,6 +277,30 @@ export default function MavisEditorialStudio({ articles }) {
               <label className={styles.wide}>چک‌لیست (هر مورد در یک خط)<textarea name="checklist" value={form.checklist} onChange={update("checklist")} rows="4" maxLength={5000} /></label>
               <label className={styles.wide}>هشدار و توضیح حقوقی<textarea name="warning" value={form.warning} onChange={update("warning")} rows="3" maxLength={3000} /></label>
               <label className={styles.wide}>منابع (هر خط: عنوان | نشانی HTTPS)<textarea name="sources" value={form.sources} onChange={update("sources")} rows="4" maxLength={12000} placeholder={"روزنامه رسمی | https://...\nپایگاه قوانین | https://..."} /></label>
+              <section className={styles.imagePanel} aria-labelledby="article-image-heading">
+                <div>
+                  <strong id="article-image-heading">تصویر شاخص مقاله (اختیاری)</strong>
+                  <p>یک تصویر مرتبط انتخاب کنید؛ MAVIS چهار نسخه WebP استاندارد برای مقاله، گوگل و اشتراک‌گذاری می‌سازد.</p>
+                </div>
+                <label className={styles.imageUpload}>بارگذاری تصویر
+                  <input key={selectedSlug || "new-article"} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageUpload} disabled={imageUploading} />
+                </label>
+                <small>حداقل ۱۲۰۰×۶۷۵ پیکسل؛ خروجی خودکار ۱۶:۹، ۴:۳، مربع و ۱۲۰۰×۶۳۰؛ حداکثر حجم هر نسخه ۳ مگابایت.</small>
+                {imageUploading ? <p role="status">در حال بهینه‌سازی و بارگذاری نسخه‌های تصویر…</p> : null}
+                {imageError ? <p className={styles.imageError} role="alert">{imageError}</p> : null}
+                {form.imageUrl ? <img className={styles.imagePreview} src={form.imageUrl} alt={form.imageAlt || form.title || "پیش‌نمایش تصویر مقاله"} /> : null}
+                {form.imageUrl ? <>
+                  <div className={styles.imageFields}>
+                    <label>متن جایگزین تصویر (Alt)<input value={form.imageAlt} onChange={update("imageAlt")} maxLength={300} placeholder="توصیف دقیق و طبیعی تصویر" /></label>
+                    <label>عنوان تصویر<input value={form.imageTitle} onChange={update("imageTitle")} maxLength={300} /></label>
+                    <label className={styles.wide}>زیرنویس تصویر (اختیاری)<input value={form.imageCaption} onChange={update("imageCaption")} maxLength={500} /></label>
+                  </div>
+                  <div className={styles.imageOptions}>
+                    <label><input type="checkbox" checked={form.showImageInArticle} onChange={(event) => setForm((current) => ({ ...current, showImageInArticle: event.target.checked }))} /> نمایش تصویر در بالای مقاله</label>
+                    <label><input type="checkbox" checked={form.useImageForSeo} onChange={(event) => setForm((current) => ({ ...current, useImageForSeo: event.target.checked }))} /> استفاده در Google Images، Schema و تصویر اشتراک‌گذاری</label>
+                  </div>
+                </> : <p className={styles.imageHint}>پس از بارگذاری، فیلدهای سئو و محل استفاده از تصویر در همین بخش نمایش داده می‌شوند.</p>}
+              </section>
               <label className={styles.wide}>عنوان سئو<input name="seo_title" value={form.seoTitle} onChange={update("seoTitle")} maxLength={300} /></label>
               <label className={styles.wide}>توضیحات متا<textarea name="seo_description" value={form.seoDescription} onChange={update("seoDescription")} rows="2" maxLength={500} /></label>
               <label className={styles.wide}>کلیدواژه‌ها (با ویرگول جدا کن)<input name="keywords" value={form.keywords} onChange={update("keywords")} maxLength={1000} /></label>
