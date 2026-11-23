@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { saveEditorialDraft, publishEditorialArticle, uploadEditorialImage } from "../../app/admin/mavis/editorial/actions";
+import { saveEditorialDraft, publishEditorialArticle } from "../../app/admin/mavis/editorial/actions";
+import { createClient as createSupabaseBrowserClient } from "../../lib/supabase/client";
 import { formatEditorialBody, formatEditorialSources, serializeEditorialCsv } from "../../lib/mavis/editorial-content-core.mjs";
 import styles from "./MavisEditorialStudio.module.css";
 
@@ -116,8 +117,15 @@ export default function MavisEditorialStudio({ articles }) {
         const sourceY = (bitmap.height - cropHeight) / 2;
         context.drawImage(bitmap, sourceX, sourceY, cropWidth, cropHeight, 0, 0, width, height);
 
-        const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/webp", 0.84));
-        if (!blob) throw new Error("تبدیل تصویر به WebP انجام نشد.");
+        let blob = null;
+        for (const quality of [0.84, 0.76, 0.68, 0.6]) {
+          blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/webp", quality));
+          if (!blob) throw new Error("تبدیل تصویر به WebP انجام نشد.");
+          if (blob.size <= 2.8 * 1024 * 1024) break;
+        }
+        if (blob.size > 3 * 1024 * 1024) {
+          throw new Error("حجم نسخه بهینه تصویر همچنان زیاد است؛ تصویر ساده‌تری انتخاب کنید.");
+        }
         return new File([blob], `article-${suffix}.webp`, { type: "image/webp" });
       }
 
@@ -136,28 +144,53 @@ export default function MavisEditorialStudio({ articles }) {
       }
       const [small, medium, wide, landscape, square, og] = variants;
 
-      const payload = new FormData();
-      payload.set("slug", form.slug);
-      payload.set("image_small", small);
-      payload.set("image_medium", medium);
-      payload.set("image_wide", wide);
-      payload.set("image_landscape", landscape);
-      payload.set("image_square", square);
-      payload.set("image_og", og);
+      const supabase = createSupabaseBrowserClient();
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      if (authError || !authData?.user?.id) {
+        throw new Error("نشست مدیر معتبر نیست؛ دوباره وارد پنل مدیریت شوید.");
+      }
 
-      const result = await uploadEditorialImage(payload);
-      if (!result?.ok) throw new Error(result?.message || "بارگذاری تصویر انجام نشد.");
+      const folder = `${authData.user.id}/${form.slug}/${Date.now()}-${crypto.randomUUID()}`;
+      const uploads = [
+        { key: "small", file: small },
+        { key: "medium", file: medium },
+        { key: "wide", file: wide },
+        { key: "landscape", file: landscape },
+        { key: "square", file: square },
+        { key: "og", file: og },
+      ];
+      const uploadedPaths = [];
+      const images = {};
+
+      try {
+        for (const item of uploads) {
+          const path = `${folder}/${form.slug}-${item.key}.webp`;
+          const { error } = await supabase.storage.from("mavis-article-images").upload(path, item.file, {
+            contentType: "image/webp",
+            cacheControl: "31536000",
+            upsert: false,
+          });
+          if (error) throw error;
+          uploadedPaths.push(path);
+          images[item.key] = supabase.storage.from("mavis-article-images").getPublicUrl(path).data.publicUrl;
+        }
+      } catch (uploadError) {
+        if (uploadedPaths.length) {
+          await supabase.storage.from("mavis-article-images").remove(uploadedPaths);
+        }
+        throw new Error("بارگذاری امن تصویر انجام نشد؛ نشست مدیر و دسترسی Storage را بررسی کنید.");
+      }
 
       setForm((current) => ({
         ...current,
-        imageUrl: result.images.wide,
-        imageOgUrl: result.images.og,
+        imageUrl: images.wide,
+        imageOgUrl: images.og,
         imageVariants: {
-          small: result.images.small,
-          medium: result.images.medium,
-          wide: result.images.wide,
-          landscape: result.images.landscape,
-          square: result.images.square,
+          small: images.small,
+          medium: images.medium,
+          wide: images.wide,
+          landscape: images.landscape,
+          square: images.square,
         },
         imageAlt: current.imageAlt || "",
         imageTitle: current.imageTitle || current.title,
