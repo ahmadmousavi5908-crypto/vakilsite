@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { saveEditorialDraft, publishEditorialArticle } from "../../app/admin/mavis/editorial/actions";
 import { createClient as createSupabaseBrowserClient } from "../../lib/supabase/client";
-import { formatEditorialBody, formatEditorialSources, serializeEditorialCsv } from "../../lib/mavis/editorial-content-core.mjs";
+import { formatEditorialBody, formatEditorialSources, serializeEditorialCsv, validateEditorialSlug } from "../../lib/mavis/editorial-content-core.mjs";
 import styles from "./MavisEditorialStudio.module.css";
 
 const statusLabels = {
@@ -95,7 +95,7 @@ export default function MavisEditorialStudio({ articles }) {
     setImageUploading(true);
     setImageError("");
     try {
-      if (!form.slug) throw new Error("ابتدا نشانی انگلیسی مقاله را وارد کنید، سپس تصویر را بارگذاری کنید.");
+      if (!validateEditorialSlug(form.slug)) throw new Error("ابتدا یک نشانی انگلیسی معتبر برای مقاله وارد کنید.");
       if (sourceFile.size > 12 * 1024 * 1024) throw new Error("حجم فایل اصلی نباید بیشتر از ۱۲ مگابایت باشد.");
       const bitmap = await createImageBitmap(sourceFile);
       if (bitmap.width < 1200 || bitmap.height < 675 || bitmap.width * bitmap.height > 40000000) {
