@@ -202,6 +202,9 @@ export async function publishEditorialArticle(formData) {
     redirect("/admin/mavis/editorial?error=review");
   }
 
+  content.authorName = authorName;
+  content.reviewerName = reviewerName;
+
   const now = new Date().toISOString();
   const { data: existing, error: lookupError } = await supabase
     .from("mavis_editorial_articles")
