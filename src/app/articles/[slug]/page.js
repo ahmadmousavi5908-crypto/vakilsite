@@ -20,7 +20,18 @@ export async function generateMetadata({ params }) {
       description: article.excerpt,
       locale: "fa_IR",
       url: canonicalPath,
+      ...(article.image?.useForSeo && article.image?.ogUrl ? {
+        images: [{ url: article.image.ogUrl, width: 1200, height: 630, alt: article.image.alt || article.title }],
+      } : {}),
     },
+    ...(article.image?.useForSeo && article.image?.ogUrl ? {
+      twitter: {
+        card: "summary_large_image",
+        title: article.title,
+        description: article.excerpt,
+        images: [article.image.ogUrl],
+      },
+    } : {}),
   };
 }
 
@@ -39,6 +50,14 @@ export default async function ArticleDetailPage({ params }) {
         description: article.excerpt,
         inLanguage: "fa-IR",
         articleSection: article.category,
+        ...(article.image?.useForSeo && article.image?.url ? {
+          image: [
+            article.image.variants?.wide || article.image.url,
+            article.image.variants?.landscape,
+            article.image.variants?.square,
+          ].filter(Boolean),
+          primaryImageOfPage: article.image.variants?.wide || article.image.url,
+        } : {}),
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": articleUrl,
@@ -59,6 +78,21 @@ export default async function ArticleDetailPage({ params }) {
       <section className="article-detail-hero">
         <div className="container">
           <div className="article-breadcrumb"><Link href="/">صفحه اصلی</Link><span>←</span><Link href="/articles">مقالات حقوقی</Link></div>
+          {article.image?.showInArticle && article.image?.url ? (
+            <figure style={{ margin: "0 0 30px", position: "relative", zIndex: 1 }}>
+              <img
+                src={article.image.url}
+                alt={article.image.alt || article.title}
+                width={1600}
+                height={900}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                style={{ display: "block", width: "100%", height: "auto", aspectRatio: "16 / 9", objectFit: "cover", borderRadius: "12px", background: "#203e5a" }}
+              />
+              {article.image.caption ? <figcaption style={{ marginTop: "8px", color: "#d1d9df", fontSize: "11px" }}>{article.image.caption}</figcaption> : null}
+            </figure>
+          ) : null}
           <span className="section-kicker">راهنمای حقوقی · قوانین ایران</span>
           <h1>{article.title}</h1>
           <p>{article.excerpt}</p>
