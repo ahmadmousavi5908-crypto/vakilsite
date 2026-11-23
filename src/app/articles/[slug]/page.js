@@ -81,9 +81,16 @@ export default async function ArticleDetailPage({ params }) {
         <div className="container">
           <div className="article-breadcrumb"><Link href="/">صفحه اصلی</Link><span>←</span><Link href="/articles">مقالات حقوقی</Link></div>
           {article.image?.showInArticle && article.image?.url ? (
-            <figure style={{ margin: "0 0 30px", position: "relative", zIndex: 1 }}>
+            <figure className="article-featured-image">
               <img
+                className="article-featured-image__img"
                 src={article.image.url}
+                srcSet={[
+                  article.image.variants?.small ? `${article.image.variants.small} 640w` : null,
+                  article.image.variants?.medium ? `${article.image.variants.medium} 960w` : null,
+                  article.image.variants?.wide ? `${article.image.variants.wide} 1600w` : null,
+                ].filter(Boolean).join(", ") || undefined}
+                sizes="(max-width: 760px) calc(100vw - 36px), (max-width: 1120px) calc(100vw - 64px), 1056px"
                 alt={article.image.alt || article.title}
                 title={article.image.title || article.title}
                 width={1600}
@@ -91,9 +98,8 @@ export default async function ArticleDetailPage({ params }) {
                 loading="eager"
                 fetchPriority="high"
                 decoding="async"
-                style={{ display: "block", width: "100%", height: "auto", aspectRatio: "16 / 9", objectFit: "cover", borderRadius: "12px", background: "#203e5a" }}
               />
-              {article.image.caption ? <figcaption style={{ marginTop: "8px", color: "#d1d9df", fontSize: "11px" }}>{article.image.caption}</figcaption> : null}
+              {article.image.caption ? <figcaption className="article-featured-image__caption">{article.image.caption}</figcaption> : null}
             </figure>
           ) : null}
           <span className="section-kicker">راهنمای حقوقی · قوانین ایران</span>
