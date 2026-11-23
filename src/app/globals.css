@@ -4639,3 +4639,8 @@ textarea:focus-visible,
 @media(prefers-reduced-motion:no-preference){
   .article-toc a{transition:color .18s ease}
 }
+
+
+.article-detail-meta{display:flex;flex-wrap:wrap;align-items:center;gap:9px 18px;font-size:12px;line-height:1.9}
+.article-detail-meta span{display:inline-flex;align-items:center;min-height:24px}
+@media(max-width:760px){.article-detail-meta{gap:6px 12px;font-size:11px}}
