@@ -121,8 +121,10 @@ export default function MavisEditorialStudio({ articles }) {
         return new File([blob], `article-${suffix}.webp`, { type: "image/webp" });
       }
 
-      const [wide, landscape, square, og] = await Promise.all([
-        makeVariant(1600, 900, "16x9"),
+      const [small, medium, wide, landscape, square, og] = await Promise.all([
+        makeVariant(640, 360, "640x360"),
+        makeVariant(960, 540, "960x540"),
+        makeVariant(1600, 900, "1600x900"),
         makeVariant(1200, 900, "4x3"),
         makeVariant(1200, 1200, "1x1"),
         makeVariant(1200, 630, "og"),
@@ -131,6 +133,8 @@ export default function MavisEditorialStudio({ articles }) {
 
       const payload = new FormData();
       payload.set("slug", form.slug);
+      payload.set("image_small", small);
+      payload.set("image_medium", medium);
       payload.set("image_wide", wide);
       payload.set("image_landscape", landscape);
       payload.set("image_square", square);
@@ -144,6 +148,8 @@ export default function MavisEditorialStudio({ articles }) {
         imageUrl: result.images.wide,
         imageOgUrl: result.images.og,
         imageVariants: {
+          small: result.images.small,
+          medium: result.images.medium,
           wide: result.images.wide,
           landscape: result.images.landscape,
           square: result.images.square,
@@ -287,7 +293,7 @@ export default function MavisEditorialStudio({ articles }) {
                 <label className={styles.imageUpload}>بارگذاری تصویر
                   <input key={selectedSlug || "new-article"} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageUpload} disabled={imageUploading} />
                 </label>
-                <small>حداقل ۱۲۰۰×۶۷۵ پیکسل؛ خروجی خودکار ۱۶:۹، ۴:۳، مربع و ۱۲۰۰×۶۳۰؛ حداکثر حجم هر نسخه ۳ مگابایت.</small>
+                <small>حداقل ۱۲۰۰×۶۷۵ پیکسل؛ خروجی واکنش‌گرا ۶۴۰، ۹۶۰ و ۱۶۰۰ پیکسل به‌علاوه ۴:۳، مربع و ۱۲۰۰×۶۳۰؛ حداکثر حجم هر نسخه ۳ مگابایت.</small>
                 {imageUploading ? <p role="status">در حال بهینه‌سازی و بارگذاری نسخه‌های تصویر…</p> : null}
                 {imageError ? <p className={styles.imageError} role="alert">{imageError}</p> : null}
                 {form.imageUrl ? <img className={styles.imagePreview} src={form.imageUrl} alt={form.imageAlt || form.title || "پیش‌نمایش تصویر مقاله"} /> : null}
