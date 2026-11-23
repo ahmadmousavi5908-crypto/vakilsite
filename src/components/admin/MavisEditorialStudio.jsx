@@ -159,7 +159,7 @@ export default function MavisEditorialStudio({ articles }) {
           landscape: result.images.landscape,
           square: result.images.square,
         },
-        imageAlt: current.imageAlt || current.title,
+        imageAlt: current.imageAlt || "",
         imageTitle: current.imageTitle || current.title,
         imageWidth: 1600,
         imageHeight: 900,
