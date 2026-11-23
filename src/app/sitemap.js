@@ -84,12 +84,18 @@ export default async function sitemap() {
       url: base + "/articles/" + article.slug,
       changeFrequency: "monthly",
       priority: 0.7,
+      images: cmsArticle?.image?.useForSeo
+        ? Object.values(cmsArticle.image.variants || {}).filter(Boolean)
+        : undefined,
     })),
     ...editorialArticles.filter((article) => article.isIndexable && !articles.some((item) => item.slug === article.slug)).map((article) => ({
       url: base + "/articles/" + article.slug,
       lastModified: article.updatedAt || article.publishedAt || undefined,
       changeFrequency: "monthly",
       priority: 0.7,
+      images: article.image?.useForSeo
+        ? Object.values(article.image.variants || {}).filter(Boolean)
+        : undefined,
     })),
   ];
 }
