@@ -95,10 +95,11 @@ export default function MavisEditorialStudio({ articles }) {
     setImageError("");
     try {
       if (!form.slug) throw new Error("ابتدا نشانی انگلیسی مقاله را وارد کنید، سپس تصویر را بارگذاری کنید.");
+      if (sourceFile.size > 12 * 1024 * 1024) throw new Error("حجم فایل اصلی نباید بیشتر از ۱۲ مگابایت باشد.");
       const bitmap = await createImageBitmap(sourceFile);
-      if (bitmap.width < 1200 || bitmap.height < 675) {
+      if (bitmap.width < 1200 || bitmap.height < 675 || bitmap.width * bitmap.height > 40000000) {
         bitmap.close?.();
-        throw new Error("حداقل ابعاد تصویر اصلی باید ۱۲۰۰×۶۷۵ پیکسل باشد.");
+        throw new Error("ابعاد تصویر باید حداقل ۱۲۰۰×۶۷۵ و حداکثر ۴۰ مگاپیکسل باشد.");
       }
 
       async function makeVariant(width, height, suffix) {
