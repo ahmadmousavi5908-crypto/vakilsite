@@ -61,7 +61,7 @@ function readArticleImage(formData) {
   let variants = {};
   try {
     const parsed = JSON.parse(field(formData, "image_variants", 6000) || "{}");
-    for (const key of ["wide", "landscape", "square"]) {
+    for (const key of ["small", "medium", "wide", "landscape", "square"]) {
       const safeUrl = publicArticleImageUrl(parsed?.[key]);
       if (safeUrl) variants[key] = safeUrl;
     }
@@ -107,6 +107,8 @@ export async function uploadEditorialImage(formData) {
   const slug = field(formData, "slug", 120);
   const safeSlug = validateEditorialSlug(slug) ? slug : "article";
   const definitions = [
+    { key: "small", field: "image_small" },
+    { key: "medium", field: "image_medium" },
     { key: "wide", field: "image_wide" },
     { key: "landscape", field: "image_landscape" },
     { key: "square", field: "image_square" },
