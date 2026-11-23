@@ -121,15 +121,20 @@ export default function MavisEditorialStudio({ articles }) {
         return new File([blob], `article-${suffix}.webp`, { type: "image/webp" });
       }
 
-      const [small, medium, wide, landscape, square, og] = await Promise.all([
-        makeVariant(640, 360, "640x360"),
-        makeVariant(960, 540, "960x540"),
-        makeVariant(1600, 900, "1600x900"),
-        makeVariant(1200, 900, "4x3"),
-        makeVariant(1200, 1200, "1x1"),
-        makeVariant(1200, 630, "og"),
-      ]);
-      bitmap.close?.();
+      let variants;
+      try {
+        variants = await Promise.all([
+          makeVariant(640, 360, "640x360"),
+          makeVariant(960, 540, "960x540"),
+          makeVariant(1600, 900, "1600x900"),
+          makeVariant(1200, 900, "4x3"),
+          makeVariant(1200, 1200, "1x1"),
+          makeVariant(1200, 630, "og"),
+        ]);
+      } finally {
+        bitmap.close?.();
+      }
+      const [small, medium, wide, landscape, square, og] = variants;
 
       const payload = new FormData();
       payload.set("slug", form.slug);
