@@ -174,7 +174,7 @@ export default function MavisEditorialStudio({ articles }) {
           uploadedPaths.push(path);
           images[item.key] = supabase.storage.from("mavis-article-images").getPublicUrl(path).data.publicUrl;
         }
-      } catch (uploadError) {
+      } catch {
         if (uploadedPaths.length) {
           await supabase.storage.from("mavis-article-images").remove(uploadedPaths);
         }
