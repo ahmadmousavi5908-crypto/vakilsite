@@ -111,8 +111,20 @@ export default async function ArticleDetailPage({ params }) {
       <div className="container article-detail-layout">
         <article className="article-body">
           <p className="article-intro">{article.intro}</p>
+          {article.sections?.length >= 3 ? (
+            <nav className="article-toc" aria-label="فهرست مطالب مقاله">
+              <strong>در این مقاله می‌خوانید</strong>
+              <ol>
+                {article.sections.map((section, index) => (
+                  <li key={section.heading + "-toc-" + index}>
+                    <a href={`#article-section-${index + 1}`}>{section.heading}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          ) : null}
           {(article.sections || []).map((section, index) => (
-            <section className="article-body-section" key={section.heading + "-" + index}>
+            <section className="article-body-section" id={`article-section-${index + 1}`} key={section.heading + "-" + index}>
               <h2>{section.heading}</h2>
               {String(section.body || "").split(String.fromCharCode(10, 10)).filter(Boolean).map((paragraph, paragraphIndex) => (
                 <p key={paragraphIndex}>{paragraph}</p>
