@@ -279,7 +279,7 @@ export default function MavisEditorialStudio({ articles }) {
               <label className={styles.wide}>چک‌لیست (هر مورد در یک خط)<textarea name="checklist" value={form.checklist} onChange={update("checklist")} rows="4" maxLength={5000} /></label>
               <label className={styles.wide}>هشدار و توضیح حقوقی<textarea name="warning" value={form.warning} onChange={update("warning")} rows="3" maxLength={3000} /></label>
               <label className={styles.wide}>منابع (هر خط: عنوان | نشانی HTTPS)<textarea name="sources" value={form.sources} onChange={update("sources")} rows="4" maxLength={12000} placeholder={"روزنامه رسمی | https://...\nپایگاه قوانین | https://..."} /></label>
-              <section className={styles.imagePanel} aria-labelledby="article-image-heading">
+              <section className={`${styles.imagePanel} ${styles.wide}`} aria-labelledby="article-image-heading">
                 <div>
                   <strong id="article-image-heading">تصویر شاخص مقاله (اختیاری)</strong>
                   <p>یک تصویر مرتبط انتخاب کنید؛ MAVIS چهار نسخه WebP استاندارد برای مقاله، گوگل و اشتراک‌گذاری می‌سازد.</p>
