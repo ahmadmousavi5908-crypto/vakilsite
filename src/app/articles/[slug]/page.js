@@ -56,11 +56,13 @@ export default async function ArticleDetailPage({ params }) {
             article.image.variants?.landscape,
             article.image.variants?.square,
           ].filter(Boolean),
-          primaryImageOfPage: article.image.variants?.wide || article.image.url,
         } : {}),
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": articleUrl,
+          ...(article.image?.useForSeo && article.image?.url ? {
+            primaryImageOfPage: article.image.variants?.wide || article.image.url,
+          } : {}),
         },
         url: articleUrl,
       }
