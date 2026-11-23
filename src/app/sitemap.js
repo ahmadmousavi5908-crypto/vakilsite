@@ -77,24 +77,25 @@ export default async function sitemap() {
       changeFrequency: "monthly",
       priority: 0.55,
     })),
-    ...articles.filter((article) => {
+    ...articles.map((article) => {
       const cmsArticle = cmsBySlug.get(article.slug);
-      return !cmsArticle || cmsArticle.isIndexable;
-    }).map((article) => ({
-      url: base + "/articles/" + article.slug,
-      changeFrequency: "monthly",
-      priority: 0.7,
-      images: cmsArticle?.image?.useForSeo
-        ? Object.values(cmsArticle.image.variants || {}).filter(Boolean)
-        : undefined,
-    })),
+      if (cmsArticle && !cmsArticle.isIndexable) return null;
+      return {
+        url: base + "/articles/" + article.slug,
+        changeFrequency: "monthly",
+        priority: 0.7,
+        images: cmsArticle?.image?.useForSeo && cmsArticle.image.url
+          ? [cmsArticle.image.url]
+          : undefined,
+      };
+    }).filter(Boolean),
     ...editorialArticles.filter((article) => article.isIndexable && !articles.some((item) => item.slug === article.slug)).map((article) => ({
       url: base + "/articles/" + article.slug,
       lastModified: article.updatedAt || article.publishedAt || undefined,
       changeFrequency: "monthly",
       priority: 0.7,
-      images: article.image?.useForSeo
-        ? Object.values(article.image.variants || {}).filter(Boolean)
+      images: article.image?.useForSeo && article.image.url
+        ? [article.image.url]
         : undefined,
     })),
   ];
