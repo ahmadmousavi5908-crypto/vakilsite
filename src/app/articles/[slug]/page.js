@@ -50,6 +50,20 @@ export default async function ArticleDetailPage({ params }) {
         description: article.excerpt,
         inLanguage: "fa-IR",
         articleSection: article.category,
+        ...(article.publishedAt ? { datePublished: article.publishedAt } : {}),
+        ...(article.updatedAt ? { dateModified: article.updatedAt } : {}),
+        author: {
+          "@type": "Person",
+          name: article.authorName || "سید احمد موسوی",
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "وکیل‌سایت | سید احمد موسوی",
+          url: siteUrl,
+        },
+        ...(article.reviewerName ? {
+          reviewedBy: { "@type": "Person", name: article.reviewerName },
+        } : {}),
         ...(article.image?.useForSeo && article.image?.url ? {
           image: [
             article.image.variants?.wide || article.image.url,
