@@ -94,6 +94,7 @@ export default function MavisEditorialStudio({ articles }) {
     setImageUploading(true);
     setImageError("");
     try {
+      if (!form.slug) throw new Error("ابتدا نشانی انگلیسی مقاله را وارد کنید، سپس تصویر را بارگذاری کنید.");
       const bitmap = await createImageBitmap(sourceFile);
       if (bitmap.width < 1200 || bitmap.height < 675) {
         bitmap.close?.();
@@ -296,8 +297,8 @@ export default function MavisEditorialStudio({ articles }) {
                     <label className={styles.wide}>زیرنویس تصویر (اختیاری)<input value={form.imageCaption} onChange={update("imageCaption")} maxLength={500} /></label>
                   </div>
                   <div className={styles.imageOptions}>
-                    <label><input type="checkbox" checked={form.showImageInArticle} onChange={(event) => setForm((current) => ({ ...current, showImageInArticle: event.target.checked }))} /> نمایش تصویر در بالای مقاله</label>
-                    <label><input type="checkbox" checked={form.useImageForSeo} onChange={(event) => setForm((current) => ({ ...current, useImageForSeo: event.target.checked }))} /> استفاده در Google Images، Schema و تصویر اشتراک‌گذاری</label>
+                    <label><input type="checkbox" checked={form.showImageInArticle} onChange={(event) => setForm((current) => ({ ...current, showImageInArticle: event.target.checked, useImageForSeo: event.target.checked ? current.useImageForSeo : false }))} /> نمایش تصویر در بالای مقاله</label>
+                    <label><input type="checkbox" checked={form.useImageForSeo} disabled={!form.showImageInArticle} onChange={(event) => setForm((current) => ({ ...current, useImageForSeo: event.target.checked }))} /> استفاده در Google Images، Schema و تصویر اشتراک‌گذاری</label>
                   </div>
                 </> : <p className={styles.imageHint}>پس از بارگذاری، فیلدهای سئو و محل استفاده از تصویر در همین بخش نمایش داده می‌شوند.</p>}
               </section>
