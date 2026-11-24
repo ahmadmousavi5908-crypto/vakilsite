@@ -1,7 +1,7 @@
 import { MAVIS_ARTICLE_IMAGE_VARIANTS } from "./article-image-metadata.mjs";
 
 const MAX_SOURCE_BYTES = 15 * 1024 * 1024;
-const MAX_SOURCE_PIXELS = 40_000_000;
+const MAX_SOURCE_PIXELS = 24_000_000;
 const MAX_OUTPUT_BYTES = Math.floor(2.8 * 1024 * 1024);
 const WEBP_QUALITIES = [0.84, 0.76, 0.68, 0.6];
 const ACCEPTED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
