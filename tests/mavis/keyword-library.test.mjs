@@ -377,6 +377,12 @@ test("excludes unreviewed legal glossary candidates from automatic article brief
   assert.ok(!brief.relatedKeywords.includes("وکیل حدنگار"));
 });
 
+test("keeps local variants and unsubstantiated superiority claims out of article briefs", () => {
+  const brief = getKeywordClusterSeoBrief({ clusterId: "lawyer-core" });
+  assert.ok(brief);
+  assert.ok(!brief.relatedKeywords.some((term) => /اهواز|خوزستان|آبادان|خرمشهر|بهترین|برترین|نابغه|تضمینی|تضمین|صددرصد/.test(term)));
+});
+
 test("does not turn local, English, legal-review or compliance-risk phrases into drafts", () => {
   const blocked = [
     { target: "محتوای آتی", family: "local", term: "وکیل ملکی در آبادان" },
