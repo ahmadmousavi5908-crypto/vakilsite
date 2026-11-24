@@ -1,0 +1,124 @@
+name: Apply MAVIS article image migration to Staging
+
+on:
+  push:
+    branches:
+      - feature/mavis-article-images-active-editor
+    paths:
+      - "ops/mavis-staging-migration.trigger"
+  workflow_dispatch:
+    inputs:
+      apply_migrations:
+        description: "Apply the reviewed article-image migration after its dry-run"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mavis-article-image-staging-migration
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
+      SUPABASE_STAGING_DB_URL: ${{ secrets.SUPABASE_STAGING_DB_URL }}
+    steps:
+      - name: Check out reviewed Staging migration source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+
+      - name: Validate the isolated Staging database target
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${SUPABASE_ACCESS_TOKEN:-}" || { echo "::error::Missing staging Supabase access token."; exit 1; }
+          test -n "${SUPABASE_STAGING_DB_URL:-}" || { echo "::error::Missing dedicated staging database URL."; exit 1; }
+          node --input-type=module <<'NODE'
+          const db = new URL(process.env.SUPABASE_STAGING_DB_URL);
+          const user = decodeURIComponent(db.username);
+          const valid =
+            (db.protocol === "postgres:" || db.protocol === "postgresql:") &&
+            db.hostname === "aws-1-eu-central-1.pooler.supabase.com" &&
+            db.port === "5432" &&
+            db.pathname === "/postgres" &&
+            user.endsWith(".srbwniqhaxwaoepjfizf") &&
+            !user.includes("jroflcmiczfwtmiaxmpd");
+          if (!valid) throw new Error("Refusing a database URI outside vakilsite-staging.");
+          console.log("Database connection is scoped to vakilsite-staging.");
+          NODE
+
+      - name: Verify pinned stable Supabase CLI and command contracts
+        run: |
+          npx --yes supabase@3.0.0 --version
+          npx --yes supabase@3.0.0 migration fetch --help
+          npx --yes supabase@3.0.0 db push --help
+
+      - name: Fetch the exact remote history into an isolated CLI workspace
+        id: workspace
+        shell: bash
+        run: |
+          set -euo pipefail
+          TEMP_WORKDIR="$(mktemp -d)"
+          echo "workdir=$TEMP_WORKDIR" >> "$GITHUB_OUTPUT"
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" init --force
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" migration fetch --remote="$SUPABASE_STAGING_DB_URL"
+
+          REMOTE_DIR="$TEMP_WORKDIR/supabase/migrations"
+          mapfile -t REMOTE_FILES < <(find "$REMOTE_DIR" -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sort)
+          mapfile -t IMAGE_MIGRATIONS < <(find supabase/migrations -maxdepth 1 -type f -name '*_mavis_article_images.sql' -printf '%f\n' | sort)
+
+          if [ "${#IMAGE_MIGRATIONS[@]}" -ne 1 ]; then
+            echo "::error::Expected exactly one CLI-generated article-image migration."
+            exit 1
+          fi
+
+          IMAGE_MIGRATION="${IMAGE_MIGRATIONS[0]}"
+          if printf '%s\n' "${REMOTE_FILES[@]}" | grep -Fxq "$IMAGE_MIGRATION"; then
+            echo "::error::The article-image migration already appears in remote history; refusing to reapply."
+            exit 1
+          fi
+
+          cp "supabase/migrations/$IMAGE_MIGRATION" "$REMOTE_DIR/$IMAGE_MIGRATION"
+          echo "new_migration=$IMAGE_MIGRATION" >> "$GITHUB_OUTPUT"
+          echo "Fetched ${#REMOTE_FILES[@]} exact remote migration files."
+          echo "Added exactly one new migration: $IMAGE_MIGRATION"
+          find "$REMOTE_DIR" -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sort
+
+      - name: Preview pending Staging migration without applying
+        shell: bash
+        env:
+          TEMP_WORKDIR: ${{ steps.workspace.outputs.workdir }}
+          NEW_MIGRATION: ${{ steps.workspace.outputs.new_migration }}
+        run: |
+          set -euo pipefail
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" db push --dry-run --remote="$SUPABASE_STAGING_DB_URL"
+          echo "Dry-run completed. The isolated workspace contains the fetched Staging history plus one new image migration."
+
+      - name: Apply only after explicit reviewed marker
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true) || (github.event_name == 'push' && github.event.head_commit.message == 'apply reviewed MAVIS article images migration to staging') }}
+        shell: bash
+        env:
+          TEMP_WORKDIR: ${{ steps.workspace.outputs.workdir }}
+          NEW_MIGRATION: ${{ steps.workspace.outputs.new_migration }}
+        run: |
+          set -euo pipefail
+          test -n "$NEW_MIGRATION"
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" db push --yes --remote="$SUPABASE_STAGING_DB_URL"
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" migration list --remote="$SUPABASE_STAGING_DB_URL"
+          echo "Applied the reviewed image migration to the isolated Staging database only."
+
+      - name: Verify Staging database after migration
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true) || (github.event_name == 'push' && github.event.head_commit.message == 'apply reviewed MAVIS article images migration to staging') }}
+        env:
+          TEMP_WORKDIR: ${{ steps.workspace.outputs.workdir }}
+        run: |
+          set -euo pipefail
+          npx --yes supabase@3.0.0 --workdir "$TEMP_WORKDIR" migration list --remote="$SUPABASE_STAGING_DB_URL"
