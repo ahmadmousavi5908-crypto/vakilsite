@@ -1,5 +1,12 @@
 import { normalizePersianSearchText } from "./persian-text-normalization.mjs";
 
+function normalizeArticleText(value) {
+  return normalizePersianSearchText(value)
+    .replace(/[^\\p{L}\\p{N}\\s]/gu, " ")
+    .replace(/\\s+/g, " ")
+    .trim();
+}
+
 function articleBodyText(article) {
   const content = article?.content && typeof article.content === "object" && !Array.isArray(article.content)
     ? article.content
@@ -15,20 +22,20 @@ export function analyzeMavisArticleKeywordCoverage(article) {
   const focusKeyword = typeof article?.focus_keyword === "string"
     ? article.focus_keyword.trim()
     : "";
-  const normalizedFocus = normalizePersianSearchText(focusKeyword);
-  const normalizedBody = normalizePersianSearchText(articleBodyText(article));
+  const normalizedFocus = normalizeArticleText(focusKeyword);
+  const normalizedBody = normalizeArticleText(articleBodyText(article));
   const relatedKeywords = Array.isArray(article?.related_keywords)
     ? article.related_keywords.filter((value) => typeof value === "string" && value.trim())
     : [];
   const seen = new Set();
   const uniqueRelated = relatedKeywords.filter((keyword) => {
-    const normalized = normalizePersianSearchText(keyword);
+    const normalized = normalizeArticleText(keyword);
     if (!normalized || seen.has(normalized)) return false;
     seen.add(normalized);
     return true;
   });
   const matchedRelatedKeywords = uniqueRelated.filter((keyword) =>
-    normalizedBody.includes(normalizePersianSearchText(keyword))
+    normalizedBody.includes(normalizeArticleText(keyword))
   );
 
   return Object.freeze({
