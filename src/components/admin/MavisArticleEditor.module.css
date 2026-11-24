@@ -40,3 +40,23 @@
 .sourceCard{padding:15px;gap:11px;border-radius:12px}
 .sourceCard dd{font-size:11px;line-height:1.85}
 @media(max-width:700px){.form{padding:14px}.field input,.field select,.field textarea,.fieldWide input,.fieldWide textarea{min-height:46px;padding:12px}.field textarea,.fieldWide textarea{min-height:120px}.sectionCard{padding:14px}.sourcePanel{padding:14px}.sourceCard{padding:13px}}
+
+.imagePanel{display:grid;gap:14px;padding:18px;border:1px solid #e0e7e8;border-radius:13px;background:#f8faf9}
+.imageHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.imageHeader h3{margin:5px 0;color:#193b54;font-size:15px}
+.imageHeader p{max-width:760px;margin:0;color:#71808a;font-size:11px;line-height:1.9}
+.imagePicker{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;border:1px solid #b99b67;border-radius:9px;padding:11px 15px;background:#173b57;color:#fff;font-size:11px;font-weight:800;cursor:pointer}
+.imagePicker input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.imagePicker:has(input:disabled){opacity:.55;cursor:wait}
+.imageEditor{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,1fr);gap:15px;align-items:start}
+.imagePreview{grid-row:span 2;min-width:0;margin:0;overflow:hidden;border:1px solid #e1e6e9;border-radius:11px;background:#fff}
+.imagePreview img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.imagePreview figcaption{padding:9px 12px;color:#76838b;font-size:10px;line-height:1.8}
+.imageFields{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.imageToggles{grid-column:1/-1;display:grid;gap:10px;padding:11px;border-radius:9px;background:#fff;border:1px solid #e7ece9}
+.imageToggles label{display:flex;align-items:flex-start;gap:9px;color:#425968;font-size:11px;line-height:1.8}
+.imageToggles input{margin-top:3px;accent-color:#315c70}
+.imageRemove{justify-self:start;border:1px solid #e5d4d0;border-radius:8px;padding:8px 11px;background:#fff8f6;color:#965044;font:inherit;font-size:10px;font-weight:800;cursor:pointer}
+.imageRetention,.imageEmpty,.imageFeedback{margin:0;color:#74828a;font-size:10px;line-height:1.9}
+.imageFeedback{padding:10px 12px;border-radius:8px;border:1px solid #dce5df;background:#fff;color:#365b4a}
+@media(max-width:760px){.imageHeader{flex-direction:column;align-items:stretch}.imagePicker{width:100%}.imageEditor{grid-template-columns:1fr}.imagePreview{grid-row:auto}.imageFields{grid-template-columns:1fr}.imageToggles{grid-column:auto}.imageRemove{width:100%}}
