@@ -29,7 +29,7 @@ test("rejects external and protocol-relative paths", () => {
 });
 
 test("rejects query strings, fragments, and control characters", () => {
-  for (const path of ["/about?x=1", "/about#section", "/about\\nadmin"]) {
+  for (const path of ["/about?x=1", "/about#section", "/about\nadmin"]) {
     assert.throws(() => buildSitemapEntries([entry(path)], origin));
   }
 });
@@ -48,7 +48,7 @@ test("rejects invalid priority and change frequency", () => {
 test("rejects empty and oversized sitemaps", () => {
   assert.throws(() => buildSitemapEntries([], origin), /no public URLs/);
   assert.throws(
-    () => buildSitemapEntries(Array.from({ length: 50001 }, (_, i) => entry(`/p-${i}`)), origin),
+    () => buildSitemapEntries(Array.from({ length: 50001 }, (_, i) => entry(\`/p-\${i}\`)), origin),
     /50,000 URL limit/,
   );
 });
