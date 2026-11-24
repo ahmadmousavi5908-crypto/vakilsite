@@ -66,7 +66,7 @@ test("preserves user-selected SEO keywords instead of accepting model substituti
   });
   assert.equal(result.ok, true);
   assert.equal(result.suggestions.focusKeyword, "دعوی خلع ید");
-  assert.deepEqual(result.suggestions.relatedKeywords, selected.relatedKeywords);
+  assert.deepEqual(result.suggestions.relatedKeywords, ["ارکان دعوی خلع ید", "تصرف غیرمجاز"]);
 });
 
 test("does not call the provider without an API key", async () => {
