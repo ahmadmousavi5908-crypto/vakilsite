@@ -36,6 +36,39 @@ test("filters insecure source URLs", () => {
   assert.equal(normalized.sources.length, 0);
 });
 
+test("passes the selected focus and related keywords into the AI request", () => {
+  const request = buildMavisEditorialAiRequest({
+    topic: "خلع ید",
+    focusKeyword: "دعوی خلع ید",
+    relatedKeywords: ["ارکان دعوی خلع ید", "تصرف غیرمجاز"]
+  });
+  const payload = JSON.parse(request.input);
+  assert.equal(payload.article.focusKeyword, "دعوی خلع ید");
+  assert.deepEqual(payload.article.relatedKeywords, ["ارکان دعوی خلع ید", "تصرف غیرمجاز"]);
+  assert.equal(payload.constraints.preserveSuppliedFocusKeywordExactly, true);
+  assert.equal(payload.constraints.useRelatedKeywordsNaturally, true);
+});
+
+test("preserves user-selected SEO keywords instead of accepting model substitutions", async () => {
+  const selected = {
+    topic: "خلع ید",
+    focusKeyword: "دعوی خلع ید",
+    relatedKeywords: ["ارکان دعوی خلع ید", "تصرف غیرمجاز"]
+  };
+  const substitutedOutput = {
+    ...output,
+    focusKeyword: "حقوق ملکی",
+    relatedKeywords: ["دعوای ملکی"]
+  };
+  const result = await generateMavisEditorialSuggestions(selected, {
+    ai: { run: async () => ({ response: substitutedOutput }) },
+    model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.suggestions.focusKeyword, "دعوی خلع ید");
+  assert.deepEqual(result.suggestions.relatedKeywords, selected.relatedKeywords);
+});
+
 test("does not call the provider without an API key", async () => {
   let called = false;
   const result = await generateMavisEditorialSuggestions({ topic: "مسئولیت مدنی" }, {
