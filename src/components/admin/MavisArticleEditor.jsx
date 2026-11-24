@@ -1,11 +1,15 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { addMavisManualArticleSource, generateMavisEditorialDraft, saveMavisArticleDraft, submitMavisArticleForReview } from "../../app/admin/mavis/articles/actions";
 import MavisIranianSourceSearch from "./MavisIranianSourceSearch";
 import styles from "./MavisArticleEditor.module.css";
+import { createClient as createSupabaseBrowserClient } from "../../lib/supabase/client";
+import { prepareMavisArticleImage } from "../../lib/mavis/article-image-browser.mjs";
 
 const emptySection = () => ({ heading: "", body: "" });
 
@@ -21,6 +25,9 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
   const [feedback, setFeedback] = useState(null);
   const [articleId, setArticleId] = useState(initialArticle?.id || "");
   const [expectedVersion, setExpectedVersion] = useState(initialArticle?.current_version || 0);
+  const [image, setImage] = useState(initialArticle?.content?.image || null);
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageFeedback, setImageFeedback] = useState("");
   const formRef = useRef(null);
   const [sources, setSources] = useState(initialSources);
   const [sourceFeedback, setSourceFeedback] = useState("");
@@ -56,9 +63,85 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
     setSections((current) => current.length <= 1 ? current : current.filter((_, itemIndex) => itemIndex !== index));
   }
 
+  function updateImageField(key, value) {
+    setImage((current) => current ? { ...current, [key]: value } : current);
+  }
+
+  async function handleImageUpload(event) {
+    const file = event.currentTarget.files?.[0];
+    event.currentTarget.value = "";
+    if (!file || imageUploading || saving || submittingReview) return;
+
+    setImageUploading(true);
+    setImageFeedback("در حال آماده‌سازی نسخه‌های WebP و بارگذاری امن تصویر...");
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const { data: authData, error: authError } = await supabase.auth.getUser();
+      const userId = authData?.user?.id;
+      if (authError || !userId) {
+        throw new Error("نشست مدیر معتبر نیست. دوباره وارد پنل شوید.");
+      }
+
+      const blobs = await prepareMavisArticleImage(file);
+      const uploadId = crypto.randomUUID();
+      const bucket = supabase.storage.from("mavis-article-images");
+      const uploadedPaths = [];
+      const publicUrls = {};
+
+      try {
+        for (const [name, blob] of Object.entries(blobs)) {
+          const objectPath = `${userId}/${uploadId}/${name}.webp`;
+          const { error } = await bucket.upload(objectPath, blob, {
+            cacheControl: "31536000",
+            contentType: "image/webp",
+            upsert: false,
+          });
+          if (error) throw new Error(error.message || "بارگذاری تصویر انجام نشد.");
+          uploadedPaths.push(objectPath);
+          const { data } = bucket.getPublicUrl(objectPath);
+          if (!data?.publicUrl) throw new Error("نشانی عمومی تصویر ساخته نشد.");
+          publicUrls[name] = data.publicUrl;
+        }
+      } catch (uploadError) {
+        if (uploadedPaths.length) {
+          const { error: cleanupError } = await bucket.remove(uploadedPaths);
+          if (cleanupError) {
+            throw new Error("بارگذاری کامل نشد و پاک‌سازی فایل‌های نیمه‌کاره نیز تأیید نشد. مسیر فایل‌ها: " + uploadedPaths.join(", "));
+          }
+        }
+        throw uploadError;
+      }
+
+      setImage({
+        url: publicUrls.wide,
+        ogUrl: publicUrls.og,
+        variants: {
+          small: publicUrls.small,
+          medium: publicUrls.medium,
+          wide: publicUrls.wide,
+          landscape: publicUrls.landscape,
+          square: publicUrls.square,
+        },
+        alt: "",
+        title: file.name.replace(/\.[^.]+$/, "").slice(0, 300),
+        caption: "",
+        width: 1600,
+        height: 900,
+        mimeType: "image/webp",
+        showInArticle: true,
+        useForSeo: true,
+      });
+      setImageFeedback("تصویر به‌صورت شش نسخه WebP بارگذاری شد. متن جایگزین را تکمیل و سپس پیش‌نویس را ذخیره کنید.");
+    } catch (error) {
+      setImageFeedback(error instanceof Error ? error.message : "بارگذاری تصویر انجام نشد.");
+    } finally {
+      setImageUploading(false);
+    }
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
-    if (saving) return;
+    if (saving || imageUploading) return;
     setSaving(true);
     setFeedback(null);
     try {
@@ -316,6 +399,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
       <form ref={formRef} className={styles.form} onSubmit={handleSubmit}>
         <input type="hidden" name="article_id" value={articleId} />
         <input type="hidden" name="expected_version" value={articleId ? expectedVersion : ""} />
+        <input type="hidden" name="image_metadata" value={image ? JSON.stringify(image) : ""} />
         <div className={styles.grid}>
           <label className={styles.field}><span>عنوان مقاله <b>*</b></span><input name="title" defaultValue={initialArticle?.title || initialTopic || ""} required minLength={3} maxLength={300} /></label>
           <label className={styles.field}><span>نامک انگلیسی <b>*</b></span><input name="slug" defaultValue={initialArticle?.slug || ""} required minLength={3} maxLength={180} dir="ltr" pattern="[a-z0-9]+([a-z0-9-]*[a-z0-9])?" placeholder="contract-legal-guide" /><small>حروف کوچک انگلیسی، عدد و خط تیره</small></label>
@@ -327,6 +411,60 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           <label className={styles.fieldWide}><span>هشدار یا توضیح حقوقی</span><textarea name="warning" defaultValue={content.warning || ""} maxLength={2000} rows={2} /></label>
           <label className={styles.fieldWide}><span>چک‌لیست نکات (هر مورد در یک خط)</span><textarea name="checklist" defaultValue={Array.isArray(content.checklist) ? content.checklist.join("\n") : ""} rows={3} /><small>تا ۶۰ مورد، هر مورد حداکثر ۵۰۰ نویسه</small></label>
         </div>
+
+        <section className={styles.imagePanel} aria-labelledby="mavis-editor-image">
+          <header className={styles.imageHeader}>
+            <div>
+              <span className={styles.eyebrow}>EDITORIAL IMAGE · WEBP</span>
+              <h3 id="mavis-editor-image">تصویر شاخص مقاله</h3>
+              <p>اختیاری است. فایل اصلی حداقل ۱۶۰۰×۱۲۰۰ پیکسل باشد؛ نسخه‌های واکنش‌گرا، ۱۶:۹، ۴:۳، مربعی و شبکه‌های اجتماعی به‌صورت WebP ساخته می‌شوند.</p>
+            </div>
+            <label className={styles.imagePicker}>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageUpload}
+                disabled={imageUploading || saving || submittingReview}
+              />
+              {imageUploading ? "در حال آماده‌سازی..." : image ? "جایگزینی تصویر" : "انتخاب و بارگذاری تصویر"}
+            </label>
+          </header>
+
+          {image ? (
+            <div className={styles.imageEditor}>
+              <figure className={styles.imagePreview}>
+                <img src={image.url} alt={image.alt || "پیش‌نمایش تصویر شاخص مقاله"} width="1600" height="900" />
+                <figcaption>{image.caption || "پیش‌نمایش تصویر اصلی ۱۶:۹"}</figcaption>
+              </figure>
+              <div className={styles.imageFields}>
+                <label className={styles.fieldWide}>
+                  <span>متن جایگزین تصویر (Alt) <b>*</b></span>
+                  <input value={image.alt} onChange={(event) => updateImageField("alt", event.target.value)} minLength={5} maxLength={300} required />
+                  <small>توصیف دقیق تصویر برای دسترس‌پذیری و درک موتورهای جست‌وجو؛ از انباشتن کلمات کلیدی خودداری کنید.</small>
+                </label>
+                <label className={styles.field}>
+                  <span>عنوان تصویر</span>
+                  <input value={image.title} onChange={(event) => updateImageField("title", event.target.value)} maxLength={300} />
+                </label>
+                <label className={styles.field}>
+                  <span>زیرنویس تصویر</span>
+                  <input value={image.caption} onChange={(event) => updateImageField("caption", event.target.value)} maxLength={500} />
+                </label>
+                <div className={styles.imageToggles}>
+                  <label><input type="checkbox" checked={image.showInArticle} onChange={(event) => setImage((current) => current ? { ...current, showInArticle: event.target.checked, useForSeo: event.target.checked && current.useForSeo } : current)} /> نمایش در ابتدای مقاله</label>
+                  <label><input type="checkbox" checked={image.useForSeo} onChange={(event) => updateImageField("useForSeo", event.target.checked)} disabled={!image.showInArticle} /> استفاده برای Google Images، Open Graph و داده ساختاریافته</label>
+                </div>
+              </div>
+              <button type="button" className={styles.imageRemove} onClick={() => { setImage(null); setImageFeedback("تصویر از پیش‌نویس جاری برداشته شد؛ فایل‌های نسخه‌های قبلی برای جلوگیری از شکستن پیوندها حذف نمی‌شوند."); }}>
+                حذف تصویر از این پیش‌نویس
+              </button>
+              <p className={styles.imageRetention}>فایل‌های قبلی عمداً حذف خودکار نمی‌شوند تا نسخه‌های منتشرشده و پیوندهای اشتراک‌گذاری خراب نشوند.</p>
+            </div>
+          ) : (
+            <p className={styles.imageEmpty}>هنوز تصویری انتخاب نشده است. مقاله بدون تصویر نیز مانند قبل قابل ذخیره و انتشار است.</p>
+          )}
+          {imageFeedback ? <p className={styles.imageFeedback} role="status" aria-live="polite">{imageFeedback}</p> : null}
+        </section>
 
         <section className={styles.sections} aria-labelledby="mavis-editor-sections">
           <div className={styles.sectionHeading}>
@@ -371,8 +509,8 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
         <div className={styles.footer}>
           <p>وضعیت: <strong>{isEditing ? "پیش‌نویس نسخه‌بندی‌شده" : "پیش‌نویس"}</strong>. بازبینی حقوقی و انتشار فقط در مراحل مستقل بعدی انجام می‌شود.</p>
           <div className={styles.footerActions}>
-            <button type="submit" className={styles.saveButton} disabled={saving || submittingReview}>{saving ? "در حال ذخیره..." : isEditing ? "ذخیره نسخه جدید" : "ذخیره پیش‌نویس"}</button>
-            <button type="button" className={styles.reviewButton} onClick={handleSubmitForReview} disabled={!isEditing || saving || submittingReview}>{submittingReview ? "در حال ارسال..." : "ارسال نسخه ذخیره‌شده برای بازبینی"}</button>
+            <button type="submit" className={styles.saveButton} disabled={saving || imageUploading || submittingReview}>{saving ? "در حال ذخیره..." : isEditing ? "ذخیره نسخه جدید" : "ذخیره پیش‌نویس"}</button>
+            <button type="button" className={styles.reviewButton} onClick={handleSubmitForReview} disabled={!isEditing || saving || imageUploading || submittingReview}>{submittingReview ? "در حال ارسال..." : "ارسال نسخه ذخیره‌شده برای بازبینی"}</button>
           </div>
         </div>
         {feedback ? <div className={styles.feedback} data-state={feedback.type} role="status" aria-live="polite"><strong>{feedback.message}</strong>{feedback.articleId ? <small dir="ltr">شناسه مقاله: {feedback.articleId}</small> : null}</div> : null}

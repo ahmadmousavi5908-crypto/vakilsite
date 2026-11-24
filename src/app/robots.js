@@ -4,6 +4,16 @@ const privatePaths = ["/admin", "/api"];
 
 export default function robots() {
   const siteUrl = getSiteUrl();
+  const hostname = siteUrl ? new URL(siteUrl).hostname : "";
+  const isStagingSite = hostname === "staging.vakilahmadmousavi.ir"
+    || (hostname.startsWith("vakilahmadmousavi-ir-staging.") && hostname.endsWith(".workers.dev"));
+  if (isStagingSite) {
+    // Let crawlers read the page-level noindex directives in the Staging layout.
+    return {
+      rules: [{ userAgent: "*", allow: "/" }],
+    };
+  }
+
   return {
     rules: [
       {

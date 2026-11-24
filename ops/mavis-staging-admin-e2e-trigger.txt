@@ -3,3 +3,13 @@ Run the authenticated Staging end-to-end suite after the isolated Worker deploym
 Post-merge verification after Workers AI output validation and IndexNow client fixes. Run on current main. No Production actions.
 
 Post-deploy verification after secure Search Console OAuth and read-only inspection integration. No Production actions.
+
+Run the complete post-deploy article-image validation against the deployed Workers.dev staging Worker and the isolated staging Supabase database. Confirm upload, admin-only write, anonymous denial, immutable version mapping, publication, public article HTML, Open Graph, BlogPosting, image sitemap and cleanup. No Production actions.
+
+Rerun the full authenticated staging E2E after collecting safe HTML response diagnostics for the published article rendering failure. Confirm complete temporary record and storage cleanup. No Production actions.
+
+Repeat the authenticated Staging E2E with richer streamed HTML markers to isolate why the published dynamic article returns the loading shell instead of the server-rendered article and JSON-LD. Clean up all temporary data.
+
+Run the final authenticated Staging E2E against the latest deployed Worker after the imageAlt scope fix. Verify editor API, WebP upload, anonymous denial, immutable version metadata, publication, public article HTML, Open Graph, BlogPosting, image sitemap, and clean all temporary records and objects. Do not touch Production.
+
+Execute the final authenticated staging article-image E2E on the latest feature branch revision after confirming staging Worker health. Validate admin authentication, draft creation, direct WebP upload, RLS enforcement, immutable version metadata, publication, public SSR article HTML, OG/BlogPosting, image sitemap, and cleanup. Never touch Production.

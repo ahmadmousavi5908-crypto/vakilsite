@@ -1,3 +1,5 @@
+import { parseMavisArticleImageMetadata } from "./article-image-metadata.mjs";
+
 const LIMITS = { title: 300, slug: 180, excerpt: 1200, category: 100, author: 180, seoTitle: 300, seoDescription: 500, intro: 8000, heading: 240, body: 12000, tag: 60, tags: 40, sections: 80, warning: 2000, checklist: 60, checklistItem: 500, totalContent: 200000 };
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -31,6 +33,8 @@ export function parseMavisArticleDraftInput(form) {
   const articleId = text(form, "article_id");
   const expectedVersionText = text(form, "expected_version");
   const expectedVersion = expectedVersionText ? Number(expectedVersionText) : null;
+  const imageResult = parseMavisArticleImageMetadata(text(form, "image_metadata"));
+  if (!imageResult.ok) return imageResult;
 
   if (!between(title, 3, LIMITS.title)) return { ok: false, error: "عنوان باید بین ۳ تا ۳۰۰ نویسه باشد." };
   if (!between(slug, 3, LIMITS.slug) || !/^[a-z0-9]+([a-z0-9-]*[a-z0-9])?$/.test(slug)) {
@@ -80,5 +84,5 @@ export function parseMavisArticleDraftInput(form) {
   if (author) payload.author_name = author;
   if (seoTitle) payload.seo_title = seoTitle;
   if (seoDescription) payload.seo_description = seoDescription;
-  return { ok: true, payload, articleId: articleId || null, expectedVersion };
+  return { ok: true, payload, image: imageResult.image, articleId: articleId || null, expectedVersion };
 }

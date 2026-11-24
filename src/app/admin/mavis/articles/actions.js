@@ -8,6 +8,7 @@ import { normalizeMavisManualSourceInput } from "../../../../lib/mavis/manual-so
 import { generateMavisEditorialSuggestions } from "../../../../lib/mavis/editorial-ai.mjs";
 import { queryMavisEditorialArticles } from "../../../../lib/mavis/editorial-table.mjs";
 import { buildMavisStaticArticleImport } from "../../../../lib/mavis/static-article-import.mjs";
+import { isMavisArticleImageOwnedByUser } from "../../../../lib/mavis/article-image-metadata.mjs";
 
 async function attachStaticArticleSources(articleId, initialVersion, sources, skippedSources = 0) {
   let currentVersion = initialVersion;
@@ -43,6 +44,14 @@ export async function saveMavisArticleDraft(formData) {
     return { ok: false, error: "برای ذخیره پیش‌نویس، ورود با حساب مدیر الزامی است." };
   }
 
+  if (parsed.image && !isMavisArticleImageOwnedByUser(
+    parsed.image,
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    access.user.sub,
+  )) {
+    return { ok: false, error: "تصویر باید از باکت رسمی همین سایت و پوشه حساب مدیر بارگذاری شده باشد." };
+  }
+
   if (isStaticArticleSlug) {
     if (!parsed.articleId) {
       return { ok: false, error: "این مقاله از محتوای فعلی سایت آمده است. ابتدا آن را به‌صورت پیش‌نویس نسخه‌دار وارد کنید." };
@@ -57,19 +66,30 @@ export async function saveMavisArticleDraft(formData) {
   }
 
   try {
-    const { data, error } = await access.supabase.rpc("save_mavis_article_draft", {
+    const rpcName = parsed.image
+      ? "save_mavis_article_draft_with_image"
+      : "save_mavis_article_draft";
+    const rpcArguments = {
       p_payload: parsed.payload,
       p_article_id: parsed.articleId,
       p_expected_version: parsed.expectedVersion,
       p_change_note: parsed.articleId ? "Administrator draft edit" : "Initial editorial draft",
-    });
+    };
+    if (parsed.image) rpcArguments.p_image = parsed.image;
+
+    const { data, error } = await access.supabase.rpc(rpcName, rpcArguments);
 
     if (error?.code === "23505") return { ok: false, error: "این نامک قبلاً استفاده شده است. نامک دیگری انتخاب کنید." };
     if (error?.code === "40001") return { ok: false, error: "نسخه مقاله تغییر کرده است. صفحه را تازه‌سازی کنید و تغییرات جدید را دوباره اعمال کنید." };
     if (error?.code === "P0002") return { ok: false, error: "پیش‌نویس پیدا نشد یا دیگر در دسترس نیست." };
     if (error?.code === "55000") return { ok: false, error: "این مقاله دیگر در وضعیت قابل ویرایش نیست." };
     if (error?.code === "42883" || error?.code === "PGRST202") {
-      return { ok: false, error: "زیرساخت ذخیره پیش‌نویس هنوز روی این پایگاه داده فعال نشده است." };
+      return {
+        ok: false,
+        error: parsed.image
+          ? "زیرساخت ذخیره تصویر مقاله هنوز روی این پایگاه داده فعال نشده است؛ تصویر بارگذاری شده اما پیش‌نویس ذخیره نشد."
+          : "زیرساخت ذخیره پیش‌نویس هنوز روی این پایگاه داده فعال نشده است.",
+      };
     }
     if (error) return { ok: false, error: "ذخیره پیش‌نویس انجام نشد. ورودی‌ها و اتصال پایگاه داده را بررسی کنید." };
     if (typeof data !== "string" || !data) return { ok: false, error: "پاسخ پایگاه داده معتبر نبود." };

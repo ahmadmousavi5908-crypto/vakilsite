@@ -18,15 +18,18 @@ assert.equal(staging.vars?.MAVIS_STAGING_DIAGNOSTICS_ENABLED, "true",
   "Staging-only diagnostics must be explicitly enabled in Staging.");
 assert.equal(staging.workers_dev, true, "Staging must use its isolated workers.dev endpoint.");
 assert.notEqual(staging.name, production.name, "Staging and Production Worker names must differ.");
-assert.deepEqual(
+assert.equal(
   staging.routes,
-  [{ pattern: "staging.vakilahmadmousavi.ir", custom_domain: true }],
-  "Staging may attach only its dedicated custom domain."
+  undefined,
+  "Staging must use its isolated workers.dev origin until a dedicated Cloudflare Zone exists."
 );
 assert.equal(
-  staging.routes.some((route) => route.pattern === "vakilahmadmousavi.ir" || route.pattern.endsWith(".vakilahmadmousavi.ir") && route.pattern !== "staging.vakilahmadmousavi.ir"),
+  (staging.routes || []).some((route) =>
+    route.pattern === "vakilahmadmousavi.ir" ||
+    route.pattern.endsWith(".vakilahmadmousavi.ir")
+  ),
   false,
-  "Staging must never attach the Production hostname or any other Production subdomain."
+  "Staging must never attach the Production hostname or any Production subdomain."
 );
 
 assert.equal(preview.ai, undefined, "CI preview must not open a remote Workers AI binding.");
@@ -34,5 +37,5 @@ assert.equal(preview.browser, undefined, "CI preview must not open a remote Brow
 assert.equal(preview.routes, undefined, "CI preview must not attach public routes.");
 
 console.log("PASS: Production AI and Browser Run bindings are declared.");
-console.log("PASS: Staging uses isolated Worker configuration and Staging-only diagnostics.");
+console.log("PASS: Staging uses its isolated workers.dev origin and Staging-only diagnostics.");
 console.log("PASS: CI preview has no remote AI/Browser bindings or public routes.");

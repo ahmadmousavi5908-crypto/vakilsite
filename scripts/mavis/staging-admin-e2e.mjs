@@ -6,6 +6,8 @@ import { articles as staticArticles } from "../../src/data/articles.js";
 import { buildMavisStaticArticleImport } from "../../src/lib/mavis/static-article-import.mjs";
 import { normalizeMavisManualSourceInput } from "../../src/lib/mavis/manual-source-input.mjs";
 
+const STAGING_TEST_WEBP = Buffer.from("UklGRmgKAABXRUJQVlA4IFwKAADwNQGdASpABoQDPpFIoU0lpCMiIAgAsBIJaW7hd2EbQArN2vFych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snCgAP7/0QAMOcpJUp7LwIAA+1SctowIAAwsvAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", "base64");
+const IMAGE_BUCKET = "mavis-article-images";
 const siteUrl = process.env.STAGING_SITE_URL;
 const projectUrl = process.env.STAGING_SUPABASE_URL;
 const publishableKey = process.env.STAGING_SUPABASE_PUBLISHABLE_KEY;
@@ -120,6 +122,8 @@ async function main() {
   let executionError;
   let staticImportArticleId = null;
   let staticImportSourceId = null;
+  const imageObjectPaths = [];
+  let imageMetadata = null;
 
   const payload = {
     slug,
@@ -292,26 +296,6 @@ async function main() {
       aiSmokePayload.model + ")."
     );
 
-    const { data: articleId, error: draftError } = await client.rpc(
-      "save_mavis_article_draft",
-      {
-        p_payload: payload,
-        p_article_id: null,
-        p_expected_version: null,
-        p_change_note: "Automated Staging E2E draft creation",
-      }
-    );
-    requireRpc(articleId, draftError, "Create draft");
-    assert(typeof articleId === "string", "Draft RPC did not return an article UUID.");
-
-    const { data: adminRead, error: adminReadError } = await client
-      .from("mavis_editorial_articles")
-      .select("id, slug, status, current_version")
-      .eq("id", articleId)
-      .single();
-    if (adminReadError) throw new Error(`Canonical admin read failed: ${adminReadError.message}`);
-    assert(adminRead.slug === slug && adminRead.status === "draft", "Admin read did not return the created draft.");
-
     const anonymous = createClient(projectUrl, publishableKey, {
       auth: {
         autoRefreshToken: false,
@@ -319,6 +303,86 @@ async function main() {
         detectSessionInUrl: false,
       },
     });
+
+    const uploadId = randomUUID();
+    const objectNames = ["small", "medium", "wide", "landscape", "square", "og"];
+    const baseObjectPath = `${userId}/${uploadId}/`;
+    const storage = client.storage.from(IMAGE_BUCKET);
+    const publicUrl = (name) => storage.getPublicUrl(baseObjectPath + name + ".webp").data.publicUrl;
+
+    for (const name of objectNames) {
+      const objectPath = baseObjectPath + name + ".webp";
+      const { error } = await storage.upload(objectPath, STAGING_TEST_WEBP, {
+        cacheControl: "31536000",
+        contentType: "image/webp",
+        upsert: false,
+      });
+      if (error) throw new Error(`Staging image upload (${name}) failed: ${error.message}`);
+      imageObjectPaths.push(objectPath);
+    }
+
+    imageMetadata = {
+      url: publicUrl("wide"),
+      ogUrl: publicUrl("og"),
+      variants: {
+        small: publicUrl("small"),
+        medium: publicUrl("medium"),
+        wide: publicUrl("wide"),
+        landscape: publicUrl("landscape"),
+        square: publicUrl("square"),
+      },
+      alt: "تصویر نمونه برای آزمون محیط جداگانه مدیریت مقالات",
+      title: "تصویر آزمون بارگذاری مقاله",
+      caption: "این تصویر فقط برای آزمون موقت Staging است و پس از پایان پاک می‌شود.",
+      width: 1600,
+      height: 900,
+      mimeType: "image/webp",
+      showInArticle: true,
+      useForSeo: true,
+    };
+
+    const { error: anonymousUploadError } = await anonymous.storage
+      .from(IMAGE_BUCKET)
+      .upload(`${userId}/${uploadId}/anonymous-forbidden.webp`, STAGING_TEST_WEBP, {
+        contentType: "image/webp",
+        upsert: false,
+      });
+    assert(Boolean(anonymousUploadError), "Anonymous users unexpectedly uploaded an article image.");
+
+    const { data: articleId, error: draftError } = await client.rpc(
+      "save_mavis_article_draft_with_image",
+      {
+        p_payload: payload,
+        p_image: imageMetadata,
+        p_article_id: null,
+        p_expected_version: null,
+        p_change_note: "Automated Staging E2E draft creation with image",
+      }
+    );
+    requireRpc(articleId, draftError, "Create draft");
+    assert(typeof articleId === "string", "Draft RPC did not return an article UUID.");
+
+    const { data: adminRead, error: adminReadError } = await client
+      .from("mavis_editorial_articles")
+      .select("id, slug, status, current_version, content")
+      .eq("id", articleId)
+      .single();
+    if (adminReadError) throw new Error(`Canonical admin read failed: ${adminReadError.message}`);
+    assert(adminRead.slug === slug && adminRead.status === "draft", "Admin read did not return the created draft.");
+    const { data: versionImage, error: versionImageError } = await client
+      .from("mavis_article_version_images")
+      .select("image")
+      .eq("article_id", articleId)
+      .eq("article_version", adminRead.current_version)
+      .single();
+    if (versionImageError) throw new Error(`Versioned image metadata read failed: ${versionImageError.message}`);
+    assert(versionImage?.image?.url === imageMetadata.url, "Image metadata was not stored for the exact draft version.");
+    const publicImageResponse = await fetch(imageMetadata.url, { signal: AbortSignal.timeout(15000) });
+    assert(
+      publicImageResponse.ok && (publicImageResponse.headers.get("content-type") || "").startsWith("image/webp"),
+      "Uploaded WebP image is not publicly readable from the Staging bucket."
+    );
+    console.log("PASS: administrator uploaded six WebP variants, anonymous upload was denied, draft image metadata was persisted, and public image fetch succeeded.");
 
     const staticArticle = staticArticles.find((item) => item.slug === "civil-claim-checklist") || staticArticles[0];
     const { data: existingStaticArticle, error: existingStaticArticleError } = await client
@@ -432,6 +496,60 @@ async function main() {
       Array.isArray(publicFeed) && publicFeed.some((item) => item.slug === slug),
       "Published article is missing from the public feed."
     );
+    const publishedImageArticle = publicFeed.find((item) => item.slug === slug);
+    assert(
+      publishedImageArticle.published_content?.content?.image?.url === imageMetadata.url,
+      "The exact published version did not expose its matching article image metadata."
+    );
+    const publicArticleResponse = await fetch(new URL(`/articles/${slug}`, stagingOrigin), {
+      headers: { accept: "text/html" },
+      redirect: "error",
+      signal: AbortSignal.timeout(20000),
+    });
+    const publicArticleHtml = await publicArticleResponse.text();
+    const articleMarkers = [
+      "article-page", "article-detail-hero", "article-featured-image",
+      "article-body", "article-intro", "BlogPosting", "article-not-found",
+      "not-found", "Not Found", "route-loading", "NEXT_HTTP_ERROR_FALLBACK",
+    ];
+    const articleSnippets = Object.fromEntries(articleMarkers.map((marker) => {
+      const index = publicArticleHtml.indexOf(marker);
+      return [marker, index < 0 ? null : publicArticleHtml.slice(Math.max(0, index - 350), Math.min(publicArticleHtml.length, index + 900))];
+    }));
+    const articleHtmlDiagnostics = {
+      status: publicArticleResponse.status,
+      contentType: publicArticleResponse.headers.get("content-type"),
+      finalUrl: publicArticleResponse.url,
+      htmlLength: publicArticleHtml.length,
+      hasHeroImageUrl: publicArticleHtml.includes(imageMetadata.url),
+      hasImageAlt: publicArticleHtml.includes(imageMetadata.alt),
+      hasOpenGraphImage: publicArticleHtml.includes("og:image"),
+      hasBlogPosting: publicArticleHtml.includes("BlogPosting"),
+      hasRouteLoading: publicArticleHtml.includes("route-loading"),
+      hasNextError: publicArticleHtml.includes("NEXT_HTTP_ERROR_FALLBACK"),
+      snippets: articleSnippets,
+      htmlTail: publicArticleHtml.slice(-2200),
+    };
+    console.log("STAGING ARTICLE HTML DIAGNOSTICS " + JSON.stringify(articleHtmlDiagnostics));
+    assert(
+      publicArticleResponse.status === 200 &&
+        articleHtmlDiagnostics.hasHeroImageUrl &&
+        articleHtmlDiagnostics.hasImageAlt &&
+        articleHtmlDiagnostics.hasOpenGraphImage &&
+        articleHtmlDiagnostics.hasBlogPosting,
+      "Published Staging article page did not render its hero image and SEO metadata."
+    );
+    const sitemapResponse = await fetch(new URL("/sitemap.xml", stagingOrigin), {
+      signal: AbortSignal.timeout(15000),
+    });
+    const sitemapText = await sitemapResponse.text();
+    assert(
+      sitemapResponse.ok &&
+        sitemapText.includes(imageMetadata.url) &&
+        sitemapText.includes("<image:image>"),
+      "The published article image is missing from the XML image sitemap."
+    );
+    console.log("PASS: publication exposed the image metadata for the exact published version; public article HTML, Open Graph, BlogPosting and image sitemap all include it.");
 
     const { data: publicCanonicalRead, error: publicCanonicalReadError } = await anonymous
       .from("mavis_editorial_articles")
@@ -522,6 +640,16 @@ async function main() {
   } catch (error) {
     executionError = error;
   } finally {
+    if (client && imageObjectPaths.length) {
+      try {
+        const { error: imageCleanupError } = await client.storage.from(IMAGE_BUCKET).remove(imageObjectPaths);
+        if (imageCleanupError) throw imageCleanupError;
+        console.log("PASS: all temporary Staging article image objects were removed.");
+      } catch (imageCleanupError) {
+        if (executionError) console.error("Temporary image cleanup also failed:", imageCleanupError?.stack || imageCleanupError);
+        else executionError = new Error("Temporary Staging image objects were not cleaned up: " + imageCleanupError.message);
+      }
+    }
     if (client) {
       await client.auth.signOut().catch(() => {});
     }

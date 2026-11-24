@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feature/mavis-third-arm-delivery-20261116
+      - feature/mavis-article-images-active-editor
     paths:
       - "ops/mavis-staging-admin-e2e-trigger.txt"
   workflow_dispatch:
@@ -23,7 +24,7 @@ jobs:
     timeout-minutes: 20
     environment: staging
     env:
-      STAGING_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      STAGING_SITE_URL: https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev
       STAGING_SUPABASE_URL: ${{ vars.STAGING_SUPABASE_URL }}
       STAGING_SUPABASE_PUBLISHABLE_KEY: ${{ vars.STAGING_SUPABASE_PUBLISHABLE_KEY }}
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
