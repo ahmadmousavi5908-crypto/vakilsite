@@ -80,6 +80,22 @@ export function buildSitemapEntries(entries, siteOrigin) {
       throw new Error(`Invalid sitemap priority for path: ${path}`);
     }
 
+    const images = Array.isArray(entry.images) ? [...new Set(entry.images)] : [];
+    if (images.length > 1000) {
+      throw new Error(`Sitemap entry exceeds the 1,000 image limit: ${path}`);
+    }
+    for (const imageValue of images) {
+      let imageUrl;
+      try {
+        imageUrl = new URL(imageValue);
+      } catch {
+        throw new Error(`Invalid sitemap image URL for path: ${path}`);
+      }
+      if (imageUrl.protocol !== "https:" || !imageUrl.hostname || imageUrl.username || imageUrl.password) {
+        throw new Error(`Sitemap image URL must be a safe HTTPS URL: ${path}`);
+      }
+    }
+
     if (seen.has(url.href)) continue;
     seen.add(url.href);
 
@@ -87,6 +103,7 @@ export function buildSitemapEntries(entries, siteOrigin) {
       url: url.href,
       changeFrequency: entry.changeFrequency,
       priority: entry.priority,
+      ...(images.length ? { images } : {}),
     });
   }
 
