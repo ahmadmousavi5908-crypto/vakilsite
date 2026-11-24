@@ -458,7 +458,11 @@ async function notifyMavisArticleIndexNow(access, articleId) {
       return { state: "skipped", reason: "article_slug_unavailable" };
     }
     const { submitIndexNowUrls } = await import("../../../../lib/indexnow-client.mjs");
-    return await submitIndexNowUrls(["/articles/" + data.slug]);
+    return await submitIndexNowUrls([
+      "/articles/" + data.slug,
+      "/articles",
+      "/articles/library",
+    ]);
   } catch {
     return { state: "unavailable" };
   }
