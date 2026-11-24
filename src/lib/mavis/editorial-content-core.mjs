@@ -89,6 +89,16 @@ export function mapPublishedEditorialRecord(record) {
   const warning = typeof content.warning === "string"
     ? content.warning
     : typeof snapshot.warning === "string" ? snapshot.warning : "";
+  const image = content.image && typeof content.image === "object" && !Array.isArray(content.image)
+    ? content.image
+    : snapshot.image && typeof snapshot.image === "object" && !Array.isArray(snapshot.image)
+      ? snapshot.image
+      : null;
+  const hasVisibleCoverImage = image?.showInArticle !== false
+    && typeof image?.url === "string"
+    && /^https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/mavis-article-images\//i.test(image.url);
+  const coverImageUrl = hasVisibleCoverImage ? image.url : "";
+  const coverImageUseForSeo = hasVisibleCoverImage && image.useForSeo === true;
   const articleText = [intro, ...sections.map((section) => [section?.heading, section?.body].filter(Boolean).join(" "))]
     .filter(Boolean)
     .join(" ");
@@ -110,6 +120,13 @@ export function mapPublishedEditorialRecord(record) {
     publishedAt: record.published_at,
     updatedAt: record.updated_at,
     isIndexable: record.is_indexable === true,
+    coverImageUrl,
+    coverImageAlt: hasVisibleCoverImage ? image.alt || snapshot.title || "" : "",
+    coverImageTitle: hasVisibleCoverImage ? image.title || "" : "",
+    coverImageCaption: hasVisibleCoverImage ? image.caption || "" : "",
+    coverImageOgUrl: coverImageUseForSeo ? image.ogUrl || coverImageUrl : "",
+    coverImageVariants: hasVisibleCoverImage && image.variants ? image.variants : null,
+    coverImageUseForSeo,
   };
 }
 
