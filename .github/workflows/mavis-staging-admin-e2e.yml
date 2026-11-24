@@ -24,7 +24,7 @@ jobs:
     timeout-minutes: 20
     environment: staging
     env:
-      STAGING_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL }}
+      STAGING_SITE_URL: https://staging.vakilahmadmousavi.ir
       STAGING_SUPABASE_URL: ${{ vars.STAGING_SUPABASE_URL }}
       STAGING_SUPABASE_PUBLISHABLE_KEY: ${{ vars.STAGING_SUPABASE_PUBLISHABLE_KEY }}
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_STAGING_ACCESS_TOKEN }}
