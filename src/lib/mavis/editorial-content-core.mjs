@@ -40,14 +40,31 @@ export function formatEditorialBody(sections) {
 export function parseEditorialSources(value) {
   if (typeof value !== "string") return [];
   return value.split("\n").map((line) => line.trim()).filter(Boolean).flatMap((line) => {
-    const separator = line.indexOf("|");
-    if (separator < 1) return [];
-    const label = line.slice(0, separator).trim().slice(0, 240);
-    const rawUrl = line.slice(separator + 1).trim();
+    const fields = line.split("|").map((item) => item.trim());
+    let source;
+
+    if (fields.length === 2) {
+      const [label, rawUrl] = fields;
+      source = { label: label.slice(0, 240), url: rawUrl };
+    } else if (fields.length >= 6) {
+      const [type, title, publisher, reference, date, rawUrl] = fields;
+      source = {
+        type: type.slice(0, 80),
+        title: title.slice(0, 240),
+        label: title.slice(0, 240),
+        publisher: publisher.slice(0, 240),
+        reference: reference.slice(0, 160),
+        date: date.slice(0, 80),
+        url: rawUrl,
+      };
+    } else {
+      return [];
+    }
+
     try {
-      const url = new URL(rawUrl);
-      if (!label || url.protocol !== "https:" || !url.hostname || url.username || url.password) return [];
-      return [{ label, url: url.toString() }];
+      const url = new URL(source.url);
+      if (!source.label || url.protocol !== "https:" || !url.hostname || url.username || url.password) return [];
+      return [{ ...source, url: url.toString() }];
     } catch {
       return [];
     }
@@ -57,10 +74,37 @@ export function parseEditorialSources(value) {
 export function formatEditorialSources(sources) {
   if (!Array.isArray(sources)) return "";
   return sources.map((source) => {
-    const label = String(source?.label || source?.title || "").trim();
+    const label = String(source?.title || source?.label || "").trim();
     const url = String(source?.url || "").trim();
-    return label && url ? label + " | " + url : "";
+    if (!label || !url) return "";
+    const hasStructuredMetadata = Boolean(source?.type || source?.publisher || source?.reference || source?.date);
+    if (!hasStructuredMetadata) return label + " | " + url;
+    return [
+      String(source?.type || "").trim(),
+      label,
+      String(source?.publisher || "").trim(),
+      String(source?.reference || "").trim(),
+      String(source?.date || "").trim(),
+      url,
+    ].join(" | ");
   }).filter(Boolean).join("\n");
+}
+
+export function parseEditorialList(value, maxItems = 20, maxLength = 120) {
+  if (typeof value !== "string") return [];
+  const seen = new Set();
+  return value.split(",").map((item) => item.normalize("NFC").trim().slice(0, maxLength))
+    .filter((item) => {
+      const key = item.toLocaleLowerCase("fa");
+      if (!item || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, maxItems);
+}
+
+export function validateArticleImageDimensions(width, height, maxPixels = 40000000) {
+  return Number.isFinite(width) && Number.isFinite(height) &&
+    width > 0 && height > 0 && width * height <= maxPixels;
 }
 
 export function validateEditorialSlug(value) {
