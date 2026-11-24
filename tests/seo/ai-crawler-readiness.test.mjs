@@ -2,10 +2,44 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { HTML_LIMITED_BOT_USER_AGENT } from "../../src/lib/seo/html-limited-bots.mjs";
+import { articles } from "../../src/data/articles.js";
+import { getArticleSearchMetadata } from "../../src/lib/mavis/article-search-metadata.mjs";
+import { mapPublishedEditorialRecord } from "../../src/lib/mavis/editorial-content-core.mjs";
 
 const llms = readFileSync(new URL("../../public/llms.txt", import.meta.url), "utf8");
 const robots = readFileSync(new URL("../../src/app/robots.js", import.meta.url), "utf8");
 const home = readFileSync(new URL("../../src/app/page.js", import.meta.url), "utf8");
+
+test("provides non-empty title and description for every legacy article", () => {
+  assert.ok(articles.length >= 10);
+  for (const article of articles) {
+    const metadata = getArticleSearchMetadata(article);
+    assert.ok(metadata.title.trim(), `Missing title for ${article.slug}`);
+    assert.ok(metadata.description.trim(), `Missing description for ${article.slug}`);
+  }
+});
+
+test("preserves CMS SEO metadata when mapping a published immutable snapshot", () => {
+  const article = mapPublishedEditorialRecord({
+    status: "published",
+    slug: "cms-article",
+    published_at: "2026-11-25T00:00:00.000Z",
+    is_indexable: true,
+    published_content: {
+      title: "عنوان مقاله",
+      seo_title: "عنوان جست‌وجوی مقاله",
+      seo_description: "توضیحات مستقل و دقیق مقاله برای نتایج جست‌وجو.",
+      excerpt: "خلاصه مقاله",
+      intro: "مقدمه مقاله",
+      sections: [],
+      checklist: [],
+      sources: [],
+    },
+  });
+  const metadata = getArticleSearchMetadata(article);
+  assert.equal(metadata.title, "عنوان جست‌وجوی مقاله");
+  assert.equal(metadata.description, "توضیحات مستقل و دقیق مقاله برای نتایج جست‌وجو.");
+});
 
 test("keeps Next.js 16.4.6 built-in HTML-limited bot coverage", () => {
   for (const agent of [
