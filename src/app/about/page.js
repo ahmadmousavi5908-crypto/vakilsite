@@ -6,10 +6,27 @@ import { getSiteUrl } from "../../lib/site-url.mjs";
 import { buildAttorneyProfileSchema } from "../../lib/seo/attorney-profile-schema.mjs";
 import { buildBreadcrumbSchema } from "../../lib/seo/breadcrumb-schema.mjs";
 
+const profileImage = "/images/lawyer.jpg";
+const profileImageAlt = "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز";
+
 export const metadata = {
   title: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری اهواز",
   description: "معرفی سید احمد موسوی، وکیل پایه یک دادگستری و عضو مرکز وکلای قوه قضائیه؛ دارای کارشناسی ارشد حقوق و نویسنده مقاله و کتاب. دفتر فعالیت در اهواز.",
   alternates: { canonical: "/about" },
+  openGraph: {
+    type: "profile",
+    locale: "fa_IR",
+    title: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری اهواز",
+    description: "اطلاعات حرفه‌ای، تحصیلات و رویکرد کاری وکیل سید احمد موسوی در اهواز و خوزستان.",
+    url: "/about",
+    images: [{ url: profileImage, alt: profileImageAlt }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری اهواز",
+    description: "اطلاعات حرفه‌ای وکیل سید احمد موسوی در اهواز و خوزستان.",
+    images: [{ url: profileImage, alt: profileImageAlt }],
+  },
 };
 
 const siteUrl = getSiteUrl();
@@ -67,8 +84,8 @@ export default function AboutPage() {
         <div className="about-profile-card">
           <figure className="about-attorney-photo">
             <Image
-              src="/images/lawyer.jpg"
-              alt="تصویر سید احمد موسوی، وکیل پایه یک دادگستری"
+              src={profileImage}
+              alt={profileImageAlt}
               width={800}
               height={1000}
               priority
