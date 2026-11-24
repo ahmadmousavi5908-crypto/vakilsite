@@ -209,6 +209,8 @@ export function getKeywordClusterSeoBrief({
 
   const normalizedFocus = normalizeKeywordQuery(focusKeyword);
   const familyPriority = { base: 0, problem: 1, colloquial: 2, lawyer: 3 };
+  const localNames = seoKeywordLibrary.khuzestanLocations.map(({ fa }) => normalizeKeywordQuery(fa));
+  const complianceRiskPattern = /بهترین|برترین|نابغه|تضمینی|تضمین|صددرصد|قطعی|فوری|معجزه|موفقیت تضمینی/;
   const candidates = searchKeywordLibrary({
     clusterId,
     family: "all",
@@ -217,6 +219,8 @@ export function getKeywordClusterSeoBrief({
   })
     .filter((entry) => ["base", "problem", "colloquial", "lawyer"].includes(entry.family))
     .filter((entry) => !entry.legalReviewStatus || entry.legalReviewStatus === "verified_primary_source")
+    .filter((entry) => !complianceRiskPattern.test(entry.term))
+    .filter((entry) => !localNames.some((location) => normalizeKeywordQuery(entry.term).includes(location)))
     .filter((entry) => normalizeKeywordQuery(entry.term) !== normalizedFocus)
     .sort((left, right) => (
       (familyPriority[left.family] ?? 99) - (familyPriority[right.family] ?? 99)
