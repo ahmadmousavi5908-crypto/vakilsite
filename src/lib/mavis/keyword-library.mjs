@@ -1,4 +1,5 @@
 import { seoKeywordLibrary } from "../../data/seo-keyword-library.js";
+import { normalizePersianSearchText } from "./persian-text-normalization.mjs";
 
 const PROBLEM_SUBJECTS = Object.freeze({
   "lease-shop-tenancy": ["تخلیه مغازه", "سرقفلی", "اختلاف موجر و مستأجر", "مطالبه ودیعه"],
@@ -83,15 +84,7 @@ const QUESTION_TEMPLATES = Object.freeze([
 ]);
 
 export function normalizeKeywordQuery(value) {
-  return String(value ?? "")
-    .normalize("NFKC")
-    .replace(/[يى]/g, "ی")
-    .replace(/ك/g, "ک")
-    .replace(/[\u200c\u200d]/g, " ")
-    .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .toLocaleLowerCase("fa-IR");
+  return normalizePersianSearchText(value);
 }
 
 function basePhrase(term) {
@@ -199,6 +192,62 @@ export function getKeywordLibraryClusters() {
   return seoKeywordLibrary.clusters.map(({ id, title, target, intent, coverage }) => ({
     id, title, target, intent, coverage
   }));
+}
+
+/**
+ * Builds an editorial SEO brief from one selected taxonomy cluster.
+ * Candidate phrases are planning inputs, not measured search demand.
+ */
+export function getKeywordClusterSeoBrief({
+  clusterId,
+  focusKeyword = "",
+  taxonomyEntries = [],
+  limit = 12
+} = {}) {
+  const cluster = seoKeywordLibrary.clusters.find((item) => item.id === clusterId);
+  if (!cluster) return null;
+
+  const normalizedFocus = normalizeKeywordQuery(focusKeyword);
+  const familyPriority = { problem: 0, colloquial: 1, base: 2, lawyer: 3 };
+  const localNames = ["خوزستان", ...seoKeywordLibrary.khuzestanLocations.map(({ fa }) => fa)]
+    .map(normalizeKeywordQuery);
+  const complianceRiskPattern = /بهترین|برترین|نابغه|متخصص|تخصص|تضمینی|تضمین نتیجه|نتیجه تضمینی|صددرصد|نتیجه قطعی|فوری|معجزه/;
+  const candidates = searchKeywordLibrary({
+    clusterId,
+    family: "all",
+    language: "fa",
+    taxonomyEntries
+  })
+    .filter((entry) => ["base", "problem", "colloquial", "lawyer"].includes(entry.family))
+    .filter((entry) => !entry.legalReviewStatus || entry.legalReviewStatus === "verified_primary_source")
+    .filter((entry) => !complianceRiskPattern.test(entry.term))
+    .filter((entry) => !localNames.some((location) => normalizeKeywordQuery(entry.term).includes(location)))
+    .filter((entry) => normalizeKeywordQuery(entry.term) !== normalizedFocus)
+    .sort((left, right) => (
+      (familyPriority[left.family] ?? 99) - (familyPriority[right.family] ?? 99)
+      || left.term.localeCompare(right.term, "fa")
+    ));
+
+  const seen = new Set(normalizedFocus ? [normalizedFocus] : []);
+  const relatedKeywords = [];
+  for (const entry of candidates) {
+    const key = normalizeKeywordQuery(entry.term);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    relatedKeywords.push(entry.term);
+    if (relatedKeywords.length >= Math.max(0, Math.min(20, Number(limit) || 0))) break;
+  }
+
+  return Object.freeze({
+    clusterId: cluster.id,
+    clusterTitle: cluster.title,
+    target: cluster.target,
+    intent: cluster.intent,
+    focusKeyword: String(focusKeyword || "").trim(),
+    relatedKeywords,
+    evidenceStatus: "candidate-only",
+    note: "عبارت‌های پیشنهادی کتابخانه‌اند؛ حجم جست‌وجو، رتبه و تقاضای واقعی ایران را اثبات نمی‌کنند."
+  });
 }
 
 export function searchKeywordLibrary({ query = "", clusterId = "all", family = "all", language = "fa", taxonomyEntries = [] } = {}) {

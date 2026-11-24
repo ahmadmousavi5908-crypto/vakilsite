@@ -9,6 +9,7 @@ import { generateMavisEditorialSuggestions } from "../../../../lib/mavis/editori
 import { queryMavisEditorialArticles } from "../../../../lib/mavis/editorial-table.mjs";
 import { buildMavisStaticArticleImport } from "../../../../lib/mavis/static-article-import.mjs";
 import { isMavisArticleImageOwnedByUser } from "../../../../lib/mavis/article-image-metadata.mjs";
+import { analyzeMavisArticleKeywordCoverage } from "../../../../lib/mavis/article-keyword-coverage.mjs";
 
 async function attachStaticArticleSources(articleId, initialVersion, sources, skippedSources = 0) {
   let currentVersion = initialVersion;
@@ -380,6 +381,32 @@ export async function submitMavisArticleForReview(articleId, expectedVersion) {
   }
 
   try {
+    const { data: article, error: articleLookupError } = await queryMavisEditorialArticles(access.supabase, (table) =>
+      table
+        .select("id, current_version, content, focus_keyword, related_keywords")
+        .eq("id", articleId)
+        .maybeSingle()
+    );
+    if (articleLookupError) return { ok: false, error: "نسخه و محتوای مقاله برای کنترل کلیدواژه بررسی نشد." };
+    if (!article) return { ok: false, error: "مقاله پیدا نشد." };
+    if (article.current_version !== expectedVersion) {
+      return { ok: false, error: "نسخه مقاله تغییر کرده است. صفحه را تازه‌سازی کنید و تغییرات جدید را دوباره بررسی کنید." };
+    }
+
+    const keywordCoverage = analyzeMavisArticleKeywordCoverage(article);
+    if (keywordCoverage.hasFocusKeyword && !keywordCoverage.focusKeywordPresent) {
+      return {
+        ok: false,
+        error: "عبارت کلیدی اصلی در مقدمه یا متن مقاله دیده نمی‌شود. آن را طبیعی و مرتبط با موضوع در متن به‌کار ببرید؛ صرف ثبت در فیلد سئو کافی نیست."
+      };
+    }
+    if (keywordCoverage.relatedKeywordCount > 0 && keywordCoverage.matchedRelatedKeywords.length === 0) {
+      return {
+        ok: false,
+        error: "هیچ‌یک از عبارت‌های مرتبط در متن مقاله پوشش داده نشده است. عبارت‌های نامرتبط را حذف کنید یا فقط مواردی را نگه دارید که واقعاً در متن پاسخ داده شده‌اند."
+      };
+    }
+
     const { data, error } = await access.supabase.rpc("submit_mavis_article_for_review", {
       p_article_id: articleId,
       p_expected_version: expectedVersion,
@@ -841,6 +868,12 @@ export async function generateMavisEditorialDraft(formData) {
     checklist: String(formData.get("checklist") || "").split(/\r?\n/).map((item) => item.trim()).filter(Boolean),
     sections,
     tags,
+    focusKeyword: String(formData.get("focus_keyword") || "").trim(),
+    relatedKeywords: String(formData.get("related_keywords") || "")
+      .split(/[,\u060C]/)
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .slice(0, 20),
     sources
   };
 

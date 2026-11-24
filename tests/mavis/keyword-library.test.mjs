@@ -5,6 +5,7 @@ import { getSearchTermsForPracticeArea } from "../../src/data/seo-keyword-librar
 import { practiceAreas } from "../../src/data/practice-areas.js";
 import { getKeywordEntryAction } from "../../src/lib/mavis/keyword-entry-action.mjs";
 import {
+  getKeywordClusterSeoBrief,
   getKeywordLibraryClusters,
   getKeywordLibrarySnapshot,
   normalizeKeywordQuery,
@@ -327,10 +328,11 @@ test("links a keyword entry to its mapped canonical page", () => {
   assert.deepEqual(action, { kind: "owner", href: "/services/property-law" });
 });
 
-test("opens a versioned editorial draft for an uncovered eligible topic", () => {
+test("opens a versioned editorial draft with its exact cluster and focus keyword", () => {
   const action = getKeywordEntryAction({
     target: "محتوای آتی",
     family: "problem",
+    clusterId: "lease-shop-tenancy",
     term: "مستأجرم مغازه را تخلیه نمی‌کند، چه کنم؟",
     clusterTitle: "اجاره و روابط موجر و مستأجر"
   });
@@ -338,7 +340,47 @@ test("opens a versioned editorial draft for an uncovered eligible topic", () => 
   const url = new URL(action.href, "https://example.test");
   assert.equal(url.pathname, "/admin/mavis/articles/new");
   assert.equal(url.searchParams.get("topic"), "مستأجرم مغازه را تخلیه نمی‌کند، چه کنم؟");
+  assert.equal(url.searchParams.get("focus_keyword"), "مستأجرم مغازه را تخلیه نمی‌کند، چه کنم؟");
+  assert.equal(url.searchParams.get("cluster_id"), "lease-shop-tenancy");
   assert.equal(url.searchParams.get("category"), "اجاره و روابط موجر و مستأجر");
+});
+
+test("builds bounded, cluster-specific article SEO briefs without presenting candidates as measured demand", () => {
+  const brief = getKeywordClusterSeoBrief({
+    clusterId: "criminal-procedure",
+    focusKeyword: "اعتراض به قرار منع تعقیب",
+    limit: 8
+  });
+  assert.equal(brief.clusterId, "criminal-procedure");
+  assert.equal(brief.evidenceStatus, "candidate-only");
+  assert.ok(brief.relatedKeywords.length <= 8);
+  assert.ok(brief.relatedKeywords.length > 0);
+  assert.ok(!brief.relatedKeywords.some((term) => normalizeKeywordQuery(term) === normalizeKeywordQuery(brief.focusKeyword)));
+  assert.match(brief.note, /حجم جست‌وجو/);
+  assert.equal(getKeywordClusterSeoBrief({ clusterId: "unknown-cluster" }), null);
+});
+
+test("excludes unreviewed legal glossary candidates from automatic article briefs", () => {
+  const brief = getKeywordClusterSeoBrief({
+    clusterId: "registration-land",
+    taxonomyEntries: [{
+      id: "term_land_record",
+      canonical: "حدنگار",
+      aliases: ["سامانه حدنگار"],
+      category: "REG",
+      reviewStatus: "needs_legal_review",
+      clusterId: "registration-land"
+    }]
+  });
+  assert.ok(brief);
+  assert.ok(!brief.relatedKeywords.includes("حدنگار"));
+  assert.ok(!brief.relatedKeywords.includes("وکیل حدنگار"));
+});
+
+test("keeps local variants and unsubstantiated superiority claims out of article briefs", () => {
+  const brief = getKeywordClusterSeoBrief({ clusterId: "lawyer-core" });
+  assert.ok(brief);
+  assert.ok(!brief.relatedKeywords.some((term) => /اهواز|خوزستان|آبادان|خرمشهر|بهترین|برترین|نابغه|متخصص|تخصص|تضمینی|تضمین نتیجه|نتیجه تضمینی|صددرصد/.test(term)));
 });
 
 test("does not turn local, English, legal-review or compliance-risk phrases into drafts", () => {

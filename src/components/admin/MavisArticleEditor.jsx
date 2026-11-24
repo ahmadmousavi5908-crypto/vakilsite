@@ -13,7 +13,17 @@ import { prepareMavisArticleImage } from "../../lib/mavis/article-image-browser.
 
 const emptySection = () => ({ heading: "", body: "" });
 
-export default function MavisArticleEditor({ initialArticle = null, initialSources = [], sourceLoadError = "", aiEnabled = false, initialTopic = "", initialCategory = "" }) {
+export default function MavisArticleEditor({
+  initialArticle = null,
+  initialSources = [],
+  sourceLoadError = "",
+  aiEnabled = false,
+  initialTopic = "",
+  initialCategory = "",
+  initialClusterTitle = "",
+  initialFocusKeyword = "",
+  initialRelatedKeywords = []
+}) {
   const [sections, setSections] = useState(() =>
     Array.isArray(initialArticle?.content?.sections) && initialArticle.content.sections.length
       ? initialArticle.content.sections.map((section) => ({ heading: section.heading || "", body: section.body || "" }))
@@ -487,8 +497,9 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           <div className={styles.grid}>
             <label className={styles.field}><span>عنوان سئو</span><input name="seo_title" defaultValue={initialArticle?.seo_title || ""} maxLength={300} /></label>
             <label className={styles.field}><span>توضیحات سئو</span><textarea name="seo_description" defaultValue={initialArticle?.seo_description || ""} maxLength={500} rows={3} /></label>
-            <label className={styles.fieldWide}><span>کلیدواژه اصلی سئو</span><input name="focus_keyword" defaultValue={initialArticle?.focus_keyword || ""} maxLength={240} placeholder="عبارت جست‌وجوی اصلی مقاله" /><small>یک عبارت هدف مشخص؛ مستقل از برچسب‌های موضوعی.</small></label>
-            <label className={styles.fieldWide}><span>کلیدواژه‌های مرتبط سئو</span><textarea name="related_keywords" defaultValue={Array.isArray(initialArticle?.related_keywords) ? initialArticle.related_keywords.join("، ") : ""} maxLength={2600} rows={3} placeholder="عبارت مرتبط اول، عبارت مرتبط دوم، عبارت مرتبط سوم" /><small>حداکثر ۲۰ عبارت، با ویرگول فارسی یا انگلیسی جدا شوند.</small></label>
+            {initialClusterTitle ? <p className={styles.fieldWide}>خوشه مالک این پیش‌نویس: <strong>{initialClusterTitle}</strong>. پیشنهادها از کتابخانه داخلی آمده‌اند و به‌معنای حجم یا رتبه تأییدشده نیستند.</p> : null}
+            <label className={styles.fieldWide}><span>کلیدواژه اصلی سئو</span><input name="focus_keyword" defaultValue={initialArticle?.focus_keyword || initialFocusKeyword || initialTopic || ""} maxLength={240} placeholder="عبارت جست‌وجوی اصلی مقاله" /><small>یک عبارت هدف مشخص؛ مستقل از برچسب‌های موضوعی.</small></label>
+            <label className={styles.fieldWide}><span>کلیدواژه‌های مرتبط سئو</span><textarea name="related_keywords" defaultValue={Array.isArray(initialArticle?.related_keywords) ? initialArticle.related_keywords.join("، ") : initialRelatedKeywords.join("، ")} maxLength={2600} rows={3} placeholder="عبارت مرتبط اول، عبارت مرتبط دوم، عبارت مرتبط سوم" /><small>حداکثر ۲۰ عبارت، با ویرگول فارسی یا انگلیسی جدا شوند؛ موارد پیشنهادی را با متن واقعی مقاله تطبیق دهید.</small></label>
           </div>
         </section>
 
