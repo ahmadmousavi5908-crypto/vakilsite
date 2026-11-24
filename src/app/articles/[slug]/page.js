@@ -53,32 +53,6 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ArticleDetailPage({ params }) {
-  try {
-    return await renderArticleDetail(params);
-  } catch (error) {
-    const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
-    let hostname = "";
-    try {
-      hostname = new URL(configuredSiteUrl).hostname;
-    } catch {
-      hostname = "";
-    }
-    const isStaging = hostname === "staging.vakilahmadmousavi.ir"
-      || (hostname.startsWith("vakilahmadmousavi-ir-staging.") && hostname.endsWith(".workers.dev"));
-    if (!isStaging) throw error;
-
-    console.error("[mavis] Staging article-detail render failed:", error);
-    return (
-      <main data-staging-article-render-error="true" dir="rtl">
-        <h1>STAGING_ARTICLE_RENDER_ERROR</h1>
-        <p>{error instanceof Error ? error.message.slice(0, 1200) : "Unknown Server Component error"}</p>
-        <code>{String(error?.digest || "")}</code>
-      </main>
-    );
-  }
-}
-
-async function renderArticleDetail(params) {
   const { slug } = await params;
   const article = await getPublicArticleBySlug(slug);
   if (!article) notFound();
