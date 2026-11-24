@@ -54,6 +54,7 @@ jobs:
           else
             STAGING_DATABASE_URL="$SUPABASE_STAGING_DB_URL"
           fi
+          export STAGING_DATABASE_URL
           node --input-type=module <<'NODE'
           const db = new URL(process.env.STAGING_DATABASE_URL);
           const user = decodeURIComponent(db.username);
