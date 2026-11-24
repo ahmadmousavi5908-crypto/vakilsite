@@ -56,3 +56,19 @@ test("rejects empty and oversized sitemaps", () => {
 test("requires a valid canonical HTTPS origin", () => {
   assert.throws(() => buildSitemapEntries([entry("/")], "http://example.ir"));
 });
+
+test("preserves validated HTTPS article images in sitemap entries", () => {
+  const imageUrl = "https://srbwniqhaxwaoepjfizf.supabase.co/storage/v1/object/public/mavis-article-images/u/i/wide.webp";
+  const result = buildSitemapEntries([{
+    ...entry("/articles/image-aware-guide"),
+    images: [imageUrl, imageUrl],
+  }], origin);
+  assert.deepEqual(result[0].images, [imageUrl]);
+});
+
+test("rejects insecure sitemap image URLs", () => {
+  assert.throws(() => buildSitemapEntries([{
+    ...entry("/articles/image-aware-guide"),
+    images: ["http://example.com/article.webp"],
+  }], origin), /HTTPS/);
+});
