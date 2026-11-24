@@ -12,51 +12,51 @@ DECLARE
   v_related_override text := current_setting('mavis.article_related_keywords', true);
   v_focus_keyword text;
   v_related_keywords text[];
+  v_existing_focus_keyword text;
+  v_existing_related_keywords text[];
   v_related_json jsonb;
 BEGIN
-  IF v_focus_override IS NOT NULL OR v_related_override IS NOT NULL THEN
-    IF v_focus_override IS NOT NULL THEN
-      v_focus_keyword := nullif(v_focus_override, '');
+  IF v_related_override IS NOT NULL THEN
+    BEGIN
+      v_related_json := v_related_override::jsonb;
+    EXCEPTION WHEN OTHERS THEN
+      RAISE EXCEPTION USING errcode = '22023', message = 'Invalid related keyword metadata';
+    END;
+
+    IF jsonb_typeof(v_related_json) IS DISTINCT FROM 'array'
+      OR EXISTS (
+        SELECT 1
+        FROM jsonb_array_elements(v_related_json) AS item(value)
+        WHERE jsonb_typeof(value) IS DISTINCT FROM 'string'
+      ) THEN
+      RAISE EXCEPTION USING errcode = '22023', message = 'Invalid related keyword metadata';
     END IF;
 
-    IF v_related_override IS NOT NULL THEN
-      BEGIN
-        v_related_json := v_related_override::jsonb;
-      EXCEPTION WHEN OTHERS THEN
-        RAISE EXCEPTION USING errcode = '22023', message = 'Invalid related keyword metadata';
-      END;
-
-      IF jsonb_typeof(v_related_json) IS DISTINCT FROM 'array'
-        OR EXISTS (
-          SELECT 1
-          FROM jsonb_array_elements(v_related_json) AS item(value)
-          WHERE jsonb_typeof(value) IS DISTINCT FROM 'string'
-        ) THEN
-        RAISE EXCEPTION USING errcode = '22023', message = 'Invalid related keyword metadata';
-      END IF;
-
-      SELECT coalesce(array_agg(value), '{}'::text[])
-        INTO v_related_keywords
-        FROM jsonb_array_elements_text(v_related_json) AS item(value);
-    END IF;
-
-    IF v_focus_override IS NULL OR v_related_override IS NULL THEN
-      SELECT
-        coalesce(v_focus_keyword, article.focus_keyword),
-        coalesce(v_related_keywords, article.related_keywords)
-        INTO v_focus_keyword, v_related_keywords
-        FROM public.mavis_editorial_articles AS article
-        WHERE article.id = NEW.article_id;
-    END IF;
-  ELSE
-    SELECT article.focus_keyword, article.related_keywords
-      INTO v_focus_keyword, v_related_keywords
-      FROM public.mavis_editorial_articles AS article
-      WHERE article.id = NEW.article_id;
+    SELECT coalesce(array_agg(value), '{}'::text[])
+      INTO v_related_keywords
+      FROM jsonb_array_elements_text(v_related_json) AS item(value);
   END IF;
 
-  IF NOT FOUND AND v_focus_override IS NULL AND v_related_override IS NULL THEN
-    RAISE EXCEPTION USING errcode = 'P0002', message = 'Article not found for version snapshot';
+  IF v_focus_override IS NOT NULL AND v_related_override IS NOT NULL THEN
+    v_focus_keyword := nullif(v_focus_override, '');
+  ELSE
+    SELECT article.focus_keyword, article.related_keywords
+      INTO v_existing_focus_keyword, v_existing_related_keywords
+      FROM public.mavis_editorial_articles AS article
+      WHERE article.id = NEW.article_id;
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION USING errcode = 'P0002', message = 'Article not found for version snapshot';
+    END IF;
+
+    v_focus_keyword := CASE
+      WHEN v_focus_override IS NOT NULL THEN nullif(v_focus_override, '')
+      ELSE v_existing_focus_keyword
+    END;
+    v_related_keywords := CASE
+      WHEN v_related_override IS NOT NULL THEN v_related_keywords
+      ELSE v_existing_related_keywords
+    END;
   END IF;
 
   NEW.snapshot := NEW.snapshot || jsonb_build_object(
