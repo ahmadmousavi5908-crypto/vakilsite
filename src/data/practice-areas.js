@@ -1,4 +1,4 @@
-import { getSearchTermsForPracticeArea } from "./seo-keyword-library";
+import { getSearchTermsForPracticeArea } from "./seo-keyword-library.js";
 
 export const practiceAreas = [
   {
