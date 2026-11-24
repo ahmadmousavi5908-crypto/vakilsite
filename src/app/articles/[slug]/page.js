@@ -84,6 +84,7 @@ async function renderArticleDetail(params) {
   if (!article) notFound();
 
   const siteUrl = getSiteUrl();
+  const imageAlt = article.coverImageAlt || article.title;
   const articleUrl = siteUrl ? new URL("/articles/" + article.slug, siteUrl).href : null;
   const structuredBreadcrumb = articleUrl
     ? buildBreadcrumbSchema(siteUrl, [
