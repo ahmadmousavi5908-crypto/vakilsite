@@ -868,6 +868,12 @@ export async function generateMavisEditorialDraft(formData) {
     checklist: String(formData.get("checklist") || "").split(/\r?\n/).map((item) => item.trim()).filter(Boolean),
     sections,
     tags,
+    focusKeyword: String(formData.get("focus_keyword") || "").trim(),
+    relatedKeywords: String(formData.get("related_keywords") || "")
+      .split(/[,\u060C]/)
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .slice(0, 20),
     sources
   };
 
