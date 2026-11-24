@@ -507,12 +507,23 @@ async function main() {
       signal: AbortSignal.timeout(20000),
     });
     const publicArticleHtml = await publicArticleResponse.text();
+    const articleHtmlDiagnostics = {
+      status: publicArticleResponse.status,
+      contentType: publicArticleResponse.headers.get("content-type"),
+      finalUrl: publicArticleResponse.url,
+      hasHeroImageUrl: publicArticleHtml.includes(imageMetadata.url),
+      hasImageAlt: publicArticleHtml.includes(imageMetadata.alt),
+      hasOpenGraphImage: publicArticleHtml.includes("og:image"),
+      hasBlogPosting: publicArticleHtml.includes("BlogPosting"),
+      htmlPrefix: publicArticleHtml.slice(0, 2500),
+    };
+    console.log("STAGING ARTICLE HTML DIAGNOSTICS " + JSON.stringify(articleHtmlDiagnostics));
     assert(
       publicArticleResponse.status === 200 &&
-        publicArticleHtml.includes(imageMetadata.url) &&
-        publicArticleHtml.includes(imageMetadata.alt) &&
-        publicArticleHtml.includes("og:image") &&
-        publicArticleHtml.includes("BlogPosting"),
+        articleHtmlDiagnostics.hasHeroImageUrl &&
+        articleHtmlDiagnostics.hasImageAlt &&
+        articleHtmlDiagnostics.hasOpenGraphImage &&
+        articleHtmlDiagnostics.hasBlogPosting,
       "Published Staging article page did not render its hero image and SEO metadata."
     );
     const sitemapResponse = await fetch(new URL("/sitemap.xml", stagingOrigin), {
