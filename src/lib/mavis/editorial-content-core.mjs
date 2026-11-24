@@ -109,6 +109,12 @@ export function mapPublishedEditorialRecord(record) {
   return {
     ...snapshot,
     ...content,
+    seoTitle: snapshot.seo_title || snapshot.seoTitle || "",
+    seoDescription: snapshot.seo_description || snapshot.seoDescription || "",
+    focusKeyword: snapshot.focus_keyword || snapshot.focusKeyword || "",
+    relatedKeywords: Array.isArray(snapshot.related_keywords)
+      ? snapshot.related_keywords
+      : Array.isArray(snapshot.relatedKeywords) ? snapshot.relatedKeywords : [],
     status: record.status,
     slug: record.slug,
     intro,
