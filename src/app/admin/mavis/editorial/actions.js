@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { requireAdmin } from "../../../../lib/supabase/admin";
 import {
   parseEditorialBody,
+  parseEditorialList,
   parseEditorialSources,
   validateEditorialSlug,
 } from "../../../../lib/mavis/editorial-content-core.mjs";
@@ -34,7 +35,9 @@ function readContent(formData) {
     sources,
     seoTitle: field(formData, "seo_title", 300),
     seoDescription: field(formData, "seo_description", 500),
-    keywords: field(formData, "keywords", 1000).split(",").map((item) => item.trim()).filter(Boolean).slice(0, 20),
+    focusKeyword: field(formData, "focus_keyword", 240),
+    relatedKeywords: parseEditorialList(field(formData, "related_seo_keywords", 1600), 20, 120),
+    tags: parseEditorialList(field(formData, "tags", 1600), 30, 80),
     image: readArticleImage(formData),
   };
   return { content, bodyMarkdown };
