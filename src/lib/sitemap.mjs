@@ -38,8 +38,8 @@ export function buildSitemapEntries(entries, siteOrigin) {
     if (
       !path.startsWith("/") ||
       path.startsWith("//") ||
-      path.includes("\\") ||
-      /[\u0000-\u001f\u007f]/.test(path) ||
+      path.includes("\\\\") ||
+      /[\\u0000-\\u001f\\u007f]/.test(path) ||
       /%(?:00|0[1-9a-f]|1[0-9a-f]|7f|5c)/i.test(path) ||
       path.includes("?") ||
       path.includes("#")
@@ -80,6 +80,20 @@ export function buildSitemapEntries(entries, siteOrigin) {
       throw new Error(`Invalid sitemap priority for path: ${path}`);
     }
 
+    let lastModified;
+    if (entry.lastModified !== undefined && entry.lastModified !== null) {
+      if (!(entry.lastModified instanceof Date) && typeof entry.lastModified !== "string") {
+        throw new Error(`Invalid sitemap lastModified for path: ${path}`);
+      }
+      const lastModifiedDate = entry.lastModified instanceof Date
+        ? entry.lastModified
+        : new Date(entry.lastModified);
+      if (!Number.isFinite(lastModifiedDate.getTime())) {
+        throw new Error(`Invalid sitemap lastModified for path: ${path}`);
+      }
+      lastModified = lastModifiedDate.toISOString();
+    }
+
     const images = Array.isArray(entry.images) ? [...new Set(entry.images)] : [];
     if (images.length > 1000) {
       throw new Error(`Sitemap entry exceeds the 1,000 image limit: ${path}`);
@@ -103,6 +117,7 @@ export function buildSitemapEntries(entries, siteOrigin) {
       url: url.href,
       changeFrequency: entry.changeFrequency,
       priority: entry.priority,
+      ...(lastModified ? { lastModified } : {}),
       ...(images.length ? { images } : {}),
     });
   }
