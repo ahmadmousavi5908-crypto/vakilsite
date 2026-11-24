@@ -12,3 +12,5 @@ Deploy the active MAVIS article image editor with the version-keyed image metada
 Redeploy the reviewed image editor on the deployed workers.dev staging origin. Confirm noindex metadata and robots rules. Do not configure the unprovisioned custom domain or touch Production.
 
 Deploy the latest reviewed image-enabled editor to the isolated Staging Worker, including the noindex/robots correction and temporary server-render diagnostics restricted to the Staging hostname. Keep Production unchanged.
+
+Deploy the final fixed article image feature without temporary diagnostics to the dedicated Staging Worker. Production must remain unchanged.
