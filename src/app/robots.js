@@ -8,8 +8,9 @@ export default function robots() {
   const isStagingSite = hostname === "staging.vakilahmadmousavi.ir"
     || (hostname.startsWith("vakilahmadmousavi-ir-staging.") && hostname.endsWith(".workers.dev"));
   if (isStagingSite) {
+    // Let crawlers read the page-level noindex directives in the Staging layout.
     return {
-      rules: [{ userAgent: "*", disallow: "/" }],
+      rules: [{ userAgent: "*", allow: "/" }],
     };
   }
 
