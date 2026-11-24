@@ -4,6 +4,7 @@ import { practiceAreas } from "../data/practice-areas";
 import { getIndexableLegalRecords } from "../lib/legal-library";
 import { getSiteUrl } from "../lib/site-url.mjs";
 import { buildSitemapEntries } from "../lib/sitemap.mjs";
+import { getStaticPageSearchSignals } from "../lib/seo/static-page-search-signals.mjs";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ export default async function sitemap() {
     return !latest || timestamp > Date.parse(latest) ? value : latest;
   }, null);
   const entries = [
-    { path: "/", changeFrequency: "weekly", priority: 1 },
+    { path: "/", ...getStaticPageSearchSignals("/", siteUrl), changeFrequency: "weekly", priority: 1 },
     { path: "/ai-assistant", changeFrequency: "monthly", priority: 0.6 },
     { path: "/lawyer-cooperation", changeFrequency: "monthly", priority: 0.6 },
     { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
@@ -34,11 +35,12 @@ export default async function sitemap() {
       priority: 0.75,
       ...(latestPublishedAt ? { lastModified: latestPublishedAt } : {}),
     },
-    { path: "/services", changeFrequency: "monthly", priority: 0.9 },
-    { path: "/about", changeFrequency: "monthly", priority: 0.8 },
+    { path: "/services", ...getStaticPageSearchSignals("/services", siteUrl), changeFrequency: "monthly", priority: 0.9 },
+    { path: "/about", ...getStaticPageSearchSignals("/about", siteUrl), changeFrequency: "monthly", priority: 0.8 },
     { path: "/locations/khuzestan", changeFrequency: "monthly", priority: 0.8 },
     ...practiceAreas.map((area) => ({
       path: "/services/" + area.slug,
+      ...getStaticPageSearchSignals("/services/" + area.slug, siteUrl),
       changeFrequency: "monthly",
       priority: 0.8,
     })),
