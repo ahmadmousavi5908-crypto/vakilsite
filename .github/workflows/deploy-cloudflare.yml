@@ -69,13 +69,17 @@ jobs:
         run: |
           set -euo pipefail
           npm run indexnow:prepare
-          if [ -n "${INDEXNOW_KEY:-}" ]; then
-            test -s public/indexnow-key.txt
-            test "$(cat public/indexnow-key.txt)" = "$INDEXNOW_KEY"
-            echo "IndexNow verification file prepared."
-          else
-            echo "IndexNow key is not configured; URL notifications remain disabled."
-          fi
+          node --input-type=module <<'NODE'
+          import { resolveIndexNowKey } from "./scripts/indexnow-key-config.mjs";
+          const key = await resolveIndexNowKey({
+            key: process.env.INDEXNOW_KEY,
+            publicDirectory: "public",
+          });
+          if (!key) {
+            throw new Error("Production deploy requires one valid public IndexNow key file.");
+          }
+          console.log("IndexNow verification file and key configuration validated.");
+          NODE
 
           npx opennextjs-cloudflare build
 
@@ -100,6 +104,15 @@ jobs:
               .filter((name) => typeof process.env[name] === "string" && process.env[name].trim())
               .map((name) => [name, process.env[name]])
           );
+          const { resolveIndexNowKey } = await import("./scripts/indexnow-key-config.mjs");
+          const indexNowKey = await resolveIndexNowKey({
+            key: process.env.INDEXNOW_KEY,
+            publicDirectory: "public",
+          });
+          if (!indexNowKey) {
+            throw new Error("IndexNow key is required for automatic publication notifications.");
+          }
+          secrets.INDEXNOW_KEY = indexNowKey;
           fs.writeFileSync(".wrangler-runtime-secrets.json", JSON.stringify(secrets), { mode: 0o600 });
           console.log(`Prepared ${Object.keys(secrets).length} optional MAVIS runtime secrets without exposing their values.`);
           NODE

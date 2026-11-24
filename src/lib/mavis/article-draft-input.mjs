@@ -12,6 +12,17 @@ function between(value, min, max) {
   return value.length >= min && value.length <= max;
 }
 
+function truncateSearchText(value, maxLength) {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  if (normalized.length <= maxLength) return normalized;
+  const shortened = normalized.slice(0, maxLength - 1);
+  const boundary = shortened.lastIndexOf(" ");
+  const readable = boundary >= Math.floor(maxLength * 0.65)
+    ? shortened.slice(0, boundary)
+    : shortened;
+  return readable.trimEnd() + "…";
+}
+
 export function parseMavisArticleDraftInput(form) {
   if (!form || typeof form.get !== "function" || typeof form.getAll !== "function") {
     return { ok: false, error: "اطلاعات فرم معتبر نیست." };
@@ -23,15 +34,22 @@ export function parseMavisArticleDraftInput(form) {
   const category = text(form, "category");
   const intro = text(form, "intro");
   const author = text(form, "author_name");
-  const seoTitle = text(form, "seo_title");
-  const seoDescription = text(form, "seo_description");
-  const focusKeyword = text(form, "focus_keyword");
+  const rawSeoTitle = text(form, "seo_title");
+  const rawSeoDescription = text(form, "seo_description");
+  const rawFocusKeyword = text(form, "focus_keyword");
+  const tags = [...new Set(text(form, "tags").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
+  const rawRelatedKeywords = [...new Set(text(form, "related_keywords").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
+  const seoTitle = rawSeoTitle || truncateSearchText(title, 70);
+  const seoDescription = rawSeoDescription || truncateSearchText(excerpt, 160);
+  const focusKeyword = rawFocusKeyword || title.slice(0, LIMITS.focusKeyword);
   const focusKeywordKey = focusKeyword.normalize("NFC").toLocaleLowerCase("fa");
-  const relatedKeywords = [...new Set(text(form, "related_keywords").split(/[,،]/).map((item) => item.trim()).filter(Boolean))]
+  const relatedKeywordCandidates = (rawRelatedKeywords.length ? rawRelatedKeywords : tags)
     .filter((item) => item.normalize("NFC").toLocaleLowerCase("fa") !== focusKeywordKey);
+  const relatedKeywords = rawRelatedKeywords.length
+    ? relatedKeywordCandidates
+    : relatedKeywordCandidates.slice(0, LIMITS.relatedKeywords);
   const warning = text(form, "warning");
   const checklist = text(form, "checklist").split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
-  const tags = [...new Set(text(form, "tags").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
   const headings = form.getAll("section_heading");
   const bodies = form.getAll("section_body");
   const articleId = text(form, "article_id");

@@ -61,7 +61,7 @@ export async function submitIndexNowUrls(paths, {
       body: JSON.stringify({
         host: site.host,
         key: key.trim(),
-        keyLocation: new URL("/indexnow-key.txt", site.origin).href,
+        keyLocation: new URL("/" + encodeURIComponent(key.trim()) + ".txt", site.origin).href,
         urlList: urls
       })
     });

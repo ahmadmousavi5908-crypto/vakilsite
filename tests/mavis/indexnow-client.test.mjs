@@ -22,6 +22,7 @@ test("submits deduplicated public URLs to IndexNow", async () => {
   const payload = JSON.parse(request.options.body);
   assert.equal(payload.host, "vakilahmadmousavi.ir");
   assert.deepEqual(payload.urlList, ["https://vakilahmadmousavi.ir/articles/example"]);
+  assert.equal(payload.keyLocation, "https://vakilahmadmousavi.ir/valid-indexnow-key-123.txt");
 });
 
 test("never submits admin or API paths", async () => {
