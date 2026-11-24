@@ -20,6 +20,8 @@ async function loadPublishedArticles() {
     .filter(Boolean);
 }
 
+export const getMavisPublishedArticlesForSitemap = cache(loadPublishedArticles);
+
 export const getMavisPublishedArticles = cache(async function getMavisPublishedArticles() {
   try {
     return await loadPublishedArticles();
