@@ -200,7 +200,7 @@ test("covers focused lawyer-intent phrases for homicide, injuries, registration,
   assert.ok(criminal.some((entry) => entry.term === "وکیل پرونده قتل عمد در اهواز"));
   assert.ok(criminal.some((entry) => entry.term === "وکیل دفاع در اتهام ضرب و جرح"));
   assert.ok(registration.some((entry) => entry.term === "وکیل خلع ید در اهواز"));
-  assert.ok(registration.some((entry) => entry.term === "وکیل تخلیه ید ملک"));
+  assert.ok(lease.some((entry) => entry.term === "وکیل تخلیه ید ملک"));
   assert.ok(criminal.some((entry) => entry.term === "وکیل اعتراض به نظریه پزشکی قانونی"));
   assert.ok(registration.some((entry) => entry.term === "وکیل ابطال اجراییه ثبتی"));
   assert.ok(inheritance.some((entry) => entry.term === "وکیل اعتراض به تقسیم ترکه"));
