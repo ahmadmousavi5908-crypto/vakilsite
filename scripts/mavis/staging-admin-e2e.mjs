@@ -6,6 +6,8 @@ import { articles as staticArticles } from "../../src/data/articles.js";
 import { buildMavisStaticArticleImport } from "../../src/lib/mavis/static-article-import.mjs";
 import { normalizeMavisManualSourceInput } from "../../src/lib/mavis/manual-source-input.mjs";
 
+const STAGING_TEST_WEBP = Buffer.from("UklGRmgKAABXRUJQVlA4IFwKAADwNQGdASpABoQDPpFIoU0lpCMiIAgAsBIJaW7hd2EbQArN2vFych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snCgAP7/0QAMOcpJUp7LwIAA+1SctowIAAwsvAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=", "base64");
+const IMAGE_BUCKET = "mavis-article-images";
 const siteUrl = process.env.STAGING_SITE_URL;
 const projectUrl = process.env.STAGING_SUPABASE_URL;
 const publishableKey = process.env.STAGING_SUPABASE_PUBLISHABLE_KEY;
@@ -120,6 +122,8 @@ async function main() {
   let executionError;
   let staticImportArticleId = null;
   let staticImportSourceId = null;
+  const imageObjectPaths = [];
+  let imageMetadata = null;
 
   const payload = {
     slug,
@@ -292,13 +296,59 @@ async function main() {
       aiSmokePayload.model + ")."
     );
 
+    const uploadId = randomUUID();
+    const objectNames = ["small", "medium", "wide", "landscape", "square", "og"];
+    const baseObjectPath = `${userId}/${uploadId}/`;
+    const storage = client.storage.from(IMAGE_BUCKET);
+    const publicUrl = (name) => storage.getPublicUrl(baseObjectPath + name + ".webp").data.publicUrl;
+
+    for (const name of objectNames) {
+      const objectPath = baseObjectPath + name + ".webp";
+      const { error } = await storage.upload(objectPath, STAGING_TEST_WEBP, {
+        cacheControl: "31536000",
+        contentType: "image/webp",
+        upsert: false,
+      });
+      if (error) throw new Error(`Staging image upload (${name}) failed: ${error.message}`);
+      imageObjectPaths.push(objectPath);
+    }
+
+    imageMetadata = {
+      url: publicUrl("wide"),
+      ogUrl: publicUrl("og"),
+      variants: {
+        small: publicUrl("small"),
+        medium: publicUrl("medium"),
+        wide: publicUrl("wide"),
+        landscape: publicUrl("landscape"),
+        square: publicUrl("square"),
+      },
+      alt: "تصویر نمونه برای آزمون محیط جداگانه مدیریت مقالات",
+      title: "تصویر آزمون بارگذاری مقاله",
+      caption: "این تصویر فقط برای آزمون موقت Staging است و پس از پایان پاک می‌شود.",
+      width: 1600,
+      height: 900,
+      mimeType: "image/webp",
+      showInArticle: true,
+      useForSeo: true,
+    };
+
+    const { error: anonymousUploadError } = await anonymous.storage
+      .from(IMAGE_BUCKET)
+      .upload(`${userId}/${uploadId}/anonymous-forbidden.webp`, STAGING_TEST_WEBP, {
+        contentType: "image/webp",
+        upsert: false,
+      });
+    assert(Boolean(anonymousUploadError), "Anonymous users unexpectedly uploaded an article image.");
+
     const { data: articleId, error: draftError } = await client.rpc(
-      "save_mavis_article_draft",
+      "save_mavis_article_draft_with_image",
       {
         p_payload: payload,
+        p_image: imageMetadata,
         p_article_id: null,
         p_expected_version: null,
-        p_change_note: "Automated Staging E2E draft creation",
+        p_change_note: "Automated Staging E2E draft creation with image",
       }
     );
     requireRpc(articleId, draftError, "Create draft");
@@ -306,11 +356,18 @@ async function main() {
 
     const { data: adminRead, error: adminReadError } = await client
       .from("mavis_editorial_articles")
-      .select("id, slug, status, current_version")
+      .select("id, slug, status, current_version, content")
       .eq("id", articleId)
       .single();
     if (adminReadError) throw new Error(`Canonical admin read failed: ${adminReadError.message}`);
     assert(adminRead.slug === slug && adminRead.status === "draft", "Admin read did not return the created draft.");
+    assert(adminRead.content?.image?.url === imageMetadata.url, "Image metadata was not stored with the draft content.");
+    const publicImageResponse = await fetch(imageMetadata.url, { signal: AbortSignal.timeout(15000) });
+    assert(
+      publicImageResponse.ok && (publicImageResponse.headers.get("content-type") || "").startsWith("image/webp"),
+      "Uploaded WebP image is not publicly readable from the Staging bucket."
+    );
+    console.log("PASS: administrator uploaded six WebP variants, anonymous upload was denied, draft image metadata was persisted, and public image fetch succeeded.");
 
     const anonymous = createClient(projectUrl, publishableKey, {
       auth: {
@@ -432,6 +489,12 @@ async function main() {
       Array.isArray(publicFeed) && publicFeed.some((item) => item.slug === slug),
       "Published article is missing from the public feed."
     );
+    const publishedImageArticle = publicFeed.find((item) => item.slug === slug);
+    assert(
+      publishedImageArticle.published_content?.content?.image?.url === imageMetadata.url,
+      "The exact published version did not expose its matching article image metadata."
+    );
+    console.log("PASS: publication exposed the image metadata from the same version snapshot.");
 
     const { data: publicCanonicalRead, error: publicCanonicalReadError } = await anonymous
       .from("mavis_editorial_articles")
@@ -522,6 +585,16 @@ async function main() {
   } catch (error) {
     executionError = error;
   } finally {
+    if (client && imageObjectPaths.length) {
+      try {
+        const { error: imageCleanupError } = await client.storage.from(IMAGE_BUCKET).remove(imageObjectPaths);
+        if (imageCleanupError) throw imageCleanupError;
+        console.log("PASS: all temporary Staging article image objects were removed.");
+      } catch (imageCleanupError) {
+        if (executionError) console.error("Temporary image cleanup also failed:", imageCleanupError?.stack || imageCleanupError);
+        else executionError = new Error("Temporary Staging image objects were not cleaned up: " + imageCleanupError.message);
+      }
+    }
     if (client) {
       await client.auth.signOut().catch(() => {});
     }
