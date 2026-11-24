@@ -40,7 +40,7 @@ test("passes the selected focus and related keywords into the AI request", () =>
   const request = buildMavisEditorialAiRequest({
     topic: "خلع ید",
     focusKeyword: "دعوی خلع ید",
-    relatedKeywords: ["ارکان دعوی خلع ید", "تصرف غیرمجاز"]
+    relatedKeywords: ["ارکان دعوی خلع ید", "ارکان دعوی خلع ید", "تصرف غیرمجاز"]
   });
   const payload = JSON.parse(request.input);
   assert.equal(payload.article.focusKeyword, "دعوی خلع ید");
