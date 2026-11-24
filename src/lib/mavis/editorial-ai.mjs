@@ -35,6 +35,8 @@ const INSTRUCTIONS = [
   "Only cite source IDs supplied in the input. If evidence is insufficient, use cautious wording and list the missing evidence in evidenceGaps.",
   "Do not claim that a law or judgment is currently in force unless the supplied evidence establishes its current status.",
   "Do not include personal data, client names, case facts, phone numbers, addresses, or confidential information.",
+  "When a focusKeyword is supplied, preserve it exactly in the output and include it naturally in the introduction or body. Do not replace it with a broader phrase.",
+  "Use only relevant supplied relatedKeywords. Include at least one naturally in the article body when it fits; never force every phrase or repeat phrases unnaturally.",
   "Produce an editable draft for lawyer review only. Never publish, approve, or claim legal verification.",
   "Do not add fake placeholders or invented legal citations. Return only the JSON object required by the schema."
 ].join("\n");
@@ -92,6 +94,8 @@ export function buildMavisEditorialAiRequest(input, { model = "gpt-6-astra" } = 
       constraints: {
         language: "Persian (Iran)",
         allowedSourceIds: article.sources.map((source) => source.id),
+        preserveSuppliedFocusKeywordExactly: Boolean(article.focusKeyword),
+        useRelatedKeywordsNaturally: article.relatedKeywords.length > 0,
         listUnsupportedLegalClaimsAsEvidenceGaps: true,
         noAutomaticSaveOrPublication: true
       }
@@ -167,8 +171,11 @@ function normalizeOutput(value, allowedIds, input = {}) {
     warning: text(value.warning, 1200),
     checklist: (Array.isArray(value.checklist) ? value.checklist : []).slice(0, 15).map((x) => text(x, 400)).filter(Boolean),
     sections, seoTitle: text(value.seoTitle, 70), seoDescription: text(value.seoDescription, 180),
-    focusKeyword: text(value.focusKeyword, 100),
-    relatedKeywords: (Array.isArray(value.relatedKeywords) ? value.relatedKeywords : []).slice(0, 15).map((x) => text(x, 80)).filter(Boolean),
+    focusKeyword: text(input.focusKeyword, 240) || text(value.focusKeyword, 240),
+    relatedKeywords: (Array.isArray(input.relatedKeywords) && input.relatedKeywords.length
+      ? input.relatedKeywords
+      : Array.isArray(value.relatedKeywords) ? value.relatedKeywords : [])
+      .slice(0, 20).map((x) => text(x, 120)).filter(Boolean),
     evidenceGaps: (Array.isArray(value.evidenceGaps) ? value.evidenceGaps : []).slice(0, 15).map((x) => text(x, 500)).filter(Boolean),
     sourceCitations
   };
