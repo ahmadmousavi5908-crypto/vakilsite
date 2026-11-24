@@ -201,6 +201,57 @@ export function getKeywordLibraryClusters() {
   }));
 }
 
+/**
+ * Builds an editorial SEO brief from one approved taxonomy cluster.
+ * Candidate phrases are planning inputs, not measured search demand.
+ */
+export function getKeywordClusterSeoBrief({
+  clusterId,
+  focusKeyword = "",
+  taxonomyEntries = [],
+  limit = 12
+} = {}) {
+  const cluster = seoKeywordLibrary.clusters.find((item) => item.id === clusterId);
+  if (!cluster) return null;
+
+  const normalizedFocus = normalizeKeywordQuery(focusKeyword);
+  const familyPriority = { base: 0, problem: 1, colloquial: 2, lawyer: 3 };
+  const candidates = searchKeywordLibrary({
+    clusterId,
+    family: "all",
+    language: "fa",
+    taxonomyEntries
+  })
+    .filter((entry) => ["base", "problem", "colloquial", "lawyer"].includes(entry.family))
+    .filter((entry) => !entry.legalReviewStatus || entry.legalReviewStatus === "verified_primary_source")
+    .filter((entry) => normalizeKeywordQuery(entry.term) !== normalizedFocus)
+    .sort((left, right) => (
+      (familyPriority[left.family] ?? 99) - (familyPriority[right.family] ?? 99)
+      || left.term.localeCompare(right.term, "fa")
+    ));
+
+  const seen = new Set(normalizedFocus ? [normalizedFocus] : []);
+  const relatedKeywords = [];
+  for (const entry of candidates) {
+    const key = normalizeKeywordQuery(entry.term);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    relatedKeywords.push(entry.term);
+    if (relatedKeywords.length >= Math.max(0, Math.min(20, Number(limit) || 0))) break;
+  }
+
+  return Object.freeze({
+    clusterId: cluster.id,
+    clusterTitle: cluster.title,
+    target: cluster.target,
+    intent: cluster.intent,
+    focusKeyword: String(focusKeyword || "").trim(),
+    relatedKeywords,
+    evidenceStatus: "candidate-only",
+    note: "عبارت‌های پیشنهادی کتابخانه‌اند؛ حجم جست‌وجو، رتبه و تقاضای واقعی ایران را اثبات نمی‌کنند."
+  });
+}
+
 export function searchKeywordLibrary({ query = "", clusterId = "all", family = "all", language = "fa", taxonomyEntries = [] } = {}) {
   const clusters = seoKeywordLibrary.clusters.filter((cluster) => clusterId === "all" || cluster.id === clusterId);
   const clusterById = new Map(seoKeywordLibrary.clusters.map((cluster) => [cluster.id, cluster]));
