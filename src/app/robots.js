@@ -4,7 +4,10 @@ const privatePaths = ["/admin", "/api"];
 
 export default function robots() {
   const siteUrl = getSiteUrl();
-  if (siteUrl === "https://staging.vakilahmadmousavi.ir") {
+  const hostname = siteUrl ? new URL(siteUrl).hostname : "";
+  const isStagingSite = hostname === "staging.vakilahmadmousavi.ir"
+    || (hostname.startsWith("vakilahmadmousavi-ir-staging.") && hostname.endsWith(".workers.dev"));
+  if (isStagingSite) {
     return {
       rules: [{ userAgent: "*", disallow: "/" }],
     };
