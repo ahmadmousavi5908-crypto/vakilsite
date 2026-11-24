@@ -123,7 +123,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           square: publicUrls.square,
         },
         alt: "",
-        title: file.name.replace(/\\.[^.]+$/, "").slice(0, 300),
+        title: file.name.replace(/\.[^.]+$/, "").slice(0, 300),
         caption: "",
         width: 1600,
         height: 900,
