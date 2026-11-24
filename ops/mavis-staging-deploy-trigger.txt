@@ -8,3 +8,5 @@ Deploy the merged secure Search Console OAuth and read-only inspection tools to 
 Deploy the dedicated staging.vakilahmadmousavi.ir custom domain and update the staging admin entrypoint. Production must remain untouched.
 
 Deploy the active MAVIS article image editor with the version-keyed image metadata migration to the dedicated staging Worker only. Production remains untouched.
+
+Redeploy the reviewed image editor on the deployed workers.dev staging origin. Confirm noindex metadata and robots rules. Do not configure the unprovisioned custom domain or touch Production.
