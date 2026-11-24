@@ -66,6 +66,13 @@ test("preserves validated HTTPS article images in sitemap entries", () => {
   assert.deepEqual(result[0].images, [imageUrl]);
 });
 
+test("rejects insecure sitemap image URLs", () => {
+  assert.throws(() => buildSitemapEntries([{
+    ...entry("/articles/image-aware-guide"),
+    images: ["http://example.com/article.webp"],
+  }], origin), /HTTPS/);
+});
+
 test("includes accurate last-modified timestamps", () => {
   const result = buildSitemapEntries([{
     ...entry("/articles/new-article"),
