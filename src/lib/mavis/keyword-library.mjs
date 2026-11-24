@@ -209,7 +209,8 @@ export function getKeywordClusterSeoBrief({
 
   const normalizedFocus = normalizeKeywordQuery(focusKeyword);
   const familyPriority = { base: 0, problem: 1, colloquial: 2, lawyer: 3 };
-  const localNames = seoKeywordLibrary.khuzestanLocations.map(({ fa }) => normalizeKeywordQuery(fa));
+  const localNames = ["خوزستان", ...seoKeywordLibrary.khuzestanLocations.map(({ fa }) => fa)]
+    .map(normalizeKeywordQuery);
   const complianceRiskPattern = /بهترین|برترین|نابغه|تضمینی|تضمین|صددرصد|قطعی|فوری|معجزه|موفقیت تضمینی/;
   const candidates = searchKeywordLibrary({
     clusterId,
