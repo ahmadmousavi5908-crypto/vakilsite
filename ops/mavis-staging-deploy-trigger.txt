@@ -14,3 +14,5 @@ Redeploy the reviewed image editor on the deployed workers.dev staging origin. C
 Deploy the latest reviewed image-enabled editor to the isolated Staging Worker, including the noindex/robots correction and temporary server-render diagnostics restricted to the Staging hostname. Keep Production unchanged.
 
 Deploy the final fixed article image feature without temporary diagnostics to the dedicated Staging Worker. Production must remain unchanged.
+
+Deploy the isolated MAVIS SEO metadata and low-resolution image acceptance revision from its reviewed feature branch to Staging only. Production remains untouched.
