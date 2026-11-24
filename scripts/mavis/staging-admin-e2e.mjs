@@ -507,15 +507,28 @@ async function main() {
       signal: AbortSignal.timeout(20000),
     });
     const publicArticleHtml = await publicArticleResponse.text();
+    const articleMarkers = [
+      "article-page", "article-detail-hero", "article-featured-image",
+      "article-body", "article-intro", "BlogPosting", "article-not-found",
+      "not-found", "Not Found", "route-loading", "NEXT_HTTP_ERROR_FALLBACK",
+    ];
+    const articleSnippets = Object.fromEntries(articleMarkers.map((marker) => {
+      const index = publicArticleHtml.indexOf(marker);
+      return [marker, index < 0 ? null : publicArticleHtml.slice(Math.max(0, index - 350), Math.min(publicArticleHtml.length, index + 900))];
+    }));
     const articleHtmlDiagnostics = {
       status: publicArticleResponse.status,
       contentType: publicArticleResponse.headers.get("content-type"),
       finalUrl: publicArticleResponse.url,
+      htmlLength: publicArticleHtml.length,
       hasHeroImageUrl: publicArticleHtml.includes(imageMetadata.url),
       hasImageAlt: publicArticleHtml.includes(imageMetadata.alt),
       hasOpenGraphImage: publicArticleHtml.includes("og:image"),
       hasBlogPosting: publicArticleHtml.includes("BlogPosting"),
-      htmlPrefix: publicArticleHtml.slice(0, 2500),
+      hasRouteLoading: publicArticleHtml.includes("route-loading"),
+      hasNextError: publicArticleHtml.includes("NEXT_HTTP_ERROR_FALLBACK"),
+      snippets: articleSnippets,
+      htmlTail: publicArticleHtml.slice(-2200),
     };
     console.log("STAGING ARTICLE HTML DIAGNOSTICS " + JSON.stringify(articleHtmlDiagnostics));
     assert(
