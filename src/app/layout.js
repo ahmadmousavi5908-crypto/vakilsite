@@ -5,7 +5,9 @@ import GlobalMobileMenu from "../components/GlobalMobileMenu";
 import { getSiteUrl } from "../lib/site-url.mjs";
 
 const siteUrl = getSiteUrl();
-const isStagingSite = siteUrl === "https://staging.vakilahmadmousavi.ir";
+const siteHostname = siteUrl ? new URL(siteUrl).hostname : "";
+const isStagingSite = siteHostname === "staging.vakilahmadmousavi.ir"
+  || (siteHostname.startsWith("vakilahmadmousavi-ir-staging.") && siteHostname.endsWith(".workers.dev"));
 
 export const viewport = {
   width: "device-width",
