@@ -29,7 +29,7 @@ test("rejects external and protocol-relative paths", () => {
 });
 
 test("rejects query strings, fragments, and control characters", () => {
-  for (const path of ["/about?x=1", "/about#section", "/about\nadmin"]) {
+  for (const path of ["/about?x=1", "/about#section", "/about\\nadmin"]) {
     assert.throws(() => buildSitemapEntries([entry(path)], origin));
   }
 });
@@ -66,9 +66,17 @@ test("preserves validated HTTPS article images in sitemap entries", () => {
   assert.deepEqual(result[0].images, [imageUrl]);
 });
 
-test("rejects insecure sitemap image URLs", () => {
+test("includes accurate last-modified timestamps", () => {
+  const result = buildSitemapEntries([{
+    ...entry("/articles/new-article"),
+    lastModified: "2026-11-24T11:15:46.150Z",
+  }], origin);
+  assert.equal(result[0].lastModified, "2026-11-24T11:15:46.150Z");
+});
+
+test("rejects invalid last-modified timestamps", () => {
   assert.throws(() => buildSitemapEntries([{
-    ...entry("/articles/image-aware-guide"),
-    images: ["http://example.com/article.webp"],
-  }], origin), /HTTPS/);
+    ...entry("/articles/new-article"),
+    lastModified: "not-a-date",
+  }], origin), /lastModified/);
 });
