@@ -3,7 +3,14 @@
 import { useMemo, useState } from "react";
 import { saveEditorialDraft, publishEditorialArticle } from "../../app/admin/mavis/editorial/actions";
 import { createClient as createSupabaseBrowserClient } from "../../lib/supabase/client";
-import { formatEditorialBody, formatEditorialSources, serializeEditorialCsv, validateEditorialSlug } from "../../lib/mavis/editorial-content-core.mjs";
+import {
+  formatEditorialBody,
+  formatEditorialSources,
+  parseEditorialSources,
+  serializeEditorialCsv,
+  validateArticleImageDimensions,
+  validateEditorialSlug,
+} from "../../lib/mavis/editorial-content-core.mjs";
 import styles from "./MavisEditorialStudio.module.css";
 
 const statusLabels = {
@@ -27,7 +34,11 @@ function toForm(article) {
     sources: formatEditorialSources(article.sources),
     seoTitle: article.seoTitle || "",
     seoDescription: article.seoDescription || article.excerpt || "",
-    keywords: Array.isArray(article.keywords) ? article.keywords.join(", ") : "",
+    focusKeyword: article.focusKeyword || "",
+    relatedKeywords: Array.isArray(article.relatedKeywords)
+      ? article.relatedKeywords.join(", ")
+      : Array.isArray(article.keywords) ? article.keywords.join(", ") : "",
+    tags: Array.isArray(article.tags) ? article.tags.join(", ") : "",
     authorName: article.authorName || "سید احمد موسوی",
     reviewerName: article.reviewerName || "",
     legalApproved: article.legalReviewStatus === "approved",
@@ -71,7 +82,11 @@ export default function MavisEditorialStudio({ articles }) {
       const sourceText = Array.isArray(article.sources)
         ? article.sources.map((source) => source.label || source.title || "").join(" ")
         : "";
-      const keywordText = Array.isArray(article.keywords) ? article.keywords.join(" ") : "";
+      const keywordText = [
+        article.focusKeyword,
+        ...(Array.isArray(article.relatedKeywords) ? article.relatedKeywords : article.keywords || []),
+        ...(Array.isArray(article.tags) ? article.tags : []),
+      ].join(" ");
       const haystack = [
         article.title, article.slug, article.category, article.excerpt, article.intro,
         sectionText, sourceText, keywordText,
@@ -98,9 +113,9 @@ export default function MavisEditorialStudio({ articles }) {
       if (!validateEditorialSlug(form.slug)) throw new Error("ابتدا یک نشانی انگلیسی معتبر برای مقاله وارد کنید.");
       if (sourceFile.size > 12 * 1024 * 1024) throw new Error("حجم فایل اصلی نباید بیشتر از ۱۲ مگابایت باشد.");
       const bitmap = await createImageBitmap(sourceFile);
-      if (bitmap.width < 1200 || bitmap.height < 675 || bitmap.width * bitmap.height > 40000000) {
+      if (!validateArticleImageDimensions(bitmap.width, bitmap.height)) {
         bitmap.close?.();
-        throw new Error("ابعاد تصویر باید حداقل ۱۲۰۰×۶۷۵ و حداکثر ۴۰ مگاپیکسل باشد.");
+        throw new Error("ابعاد فایل تصویر قابل پردازش نیست یا از سقف ۴۰ مگاپیکسل بیشتر است.");
       }
 
       async function makeVariant(width, height, suffix) {
@@ -299,7 +314,7 @@ export default function MavisEditorialStudio({ articles }) {
             {previewBlocks(form.bodyMarkdown)}
             {form.checklist ? <><h3>چک‌لیست</h3><ul>{form.checklist.split("\n").filter(Boolean).map((item, index) => <li key={index}>{item}</li>)}</ul></> : null}
             {form.warning ? <aside>{form.warning}</aside> : null}
-            {form.sources ? <><h3>منابع</h3><ul>{form.sources.split("\n").filter(Boolean).map((item, index) => <li key={index}>{item}</li>)}</ul></> : null}
+            {parseEditorialSources(form.sources).length ? <><h3>منابع</h3><ul>{parseEditorialSources(form.sources).map((source) => <li key={source.url}><strong>{source.title || source.label}</strong><small>{[source.type, source.publisher, source.reference ? "شناسه: " + source.reference : "", source.date ? "تاریخ: " + source.date : ""].filter(Boolean).join(" · ")}</small></li>)}</ul></> : null}
           </article>
         ) : (
           <form className={styles.form} action={saveEditorialDraft}>
@@ -322,7 +337,7 @@ export default function MavisEditorialStudio({ articles }) {
               <label className={styles.wide}>متن مقاله (برای تیتر اصلی هر بخش از ## استفاده کن)<textarea name="body_markdown" value={form.bodyMarkdown} onChange={update("bodyMarkdown")} required rows="14" maxLength={50000} dir="rtl" placeholder={"## عنوان بخش اول\nمتن بخش اول...\n\n## عنوان بخش دوم\nمتن بخش دوم..."} /></label>
               <label className={styles.wide}>چک‌لیست (هر مورد در یک خط)<textarea name="checklist" value={form.checklist} onChange={update("checklist")} rows="4" maxLength={5000} /></label>
               <label className={styles.wide}>هشدار و توضیح حقوقی<textarea name="warning" value={form.warning} onChange={update("warning")} rows="3" maxLength={3000} /></label>
-              <label className={styles.wide}>منابع (هر خط: عنوان | نشانی HTTPS)<textarea name="sources" value={form.sources} onChange={update("sources")} rows="4" maxLength={12000} placeholder={"روزنامه رسمی | https://...\nپایگاه قوانین | https://..."} /></label>
+              <label className={styles.wide}>منابع حقوقی (هر خط: نوع | عنوان | مرجع/ناشر | شماره/شناسه | تاریخ | نشانی HTTPS)<textarea name="sources" value={form.sources} onChange={update("sources")} rows="6" maxLength={20000} placeholder={"رأی وحدت رویه | رأی وحدت رویه شماره ۸۷۴ | هیأت عمومی دیوان عالی کشور | ۸۷۴ | ۱۴۰۴/۱۰/۲۳ | https://...\nقانون | قانون مجازات اسلامی | مجلس شورای اسلامی | مصوب ۱۳۹۲ | ۱۳۹۲/۰۲/۰۱ | https://..."} /></label>
               <section className={`${styles.imagePanel} ${styles.wide}`} aria-labelledby="article-image-heading">
                 <div>
                   <strong id="article-image-heading">تصویر شاخص مقاله (اختیاری)</strong>
@@ -331,7 +346,7 @@ export default function MavisEditorialStudio({ articles }) {
                 <label className={styles.imageUpload}>بارگذاری تصویر
                   <input key={selectedSlug || "new-article"} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleImageUpload} disabled={imageUploading} />
                 </label>
-                <small>حداقل ۱۲۰۰×۶۷۵ پیکسل؛ خروجی واکنش‌گرا ۶۴۰، ۹۶۰ و ۱۶۰۰ پیکسل به‌علاوه ۴:۳، مربع و ۱۲۰۰×۶۳۰؛ حداکثر حجم هر نسخه ۳ مگابایت.</small>
+                <small>محدودیت حداقل وضوح وجود ندارد؛ هر تصویر سالم و قابل‌خواندن تا سقف فنی ۴۰ مگاپیکسل پذیرفته می‌شود. خروجی‌های واکنش‌گرا ساخته می‌شوند و تصویر کم‌وضوح ممکن است در ابعاد بزرگ نرم‌تر دیده شود؛ حداکثر حجم هر نسخه ۳ مگابایت است.</small>
                 {imageUploading ? <p role="status">در حال بهینه‌سازی و بارگذاری نسخه‌های تصویر…</p> : null}
                 {imageError ? <p className={styles.imageError} role="alert">{imageError}</p> : null}
                 {form.imageUrl ? <img className={styles.imagePreview} src={form.imageUrl} alt={form.imageAlt || form.title || "پیش‌نمایش تصویر مقاله"} /> : null}
@@ -349,7 +364,9 @@ export default function MavisEditorialStudio({ articles }) {
               </section>
               <label className={styles.wide}>عنوان سئو<input name="seo_title" value={form.seoTitle} onChange={update("seoTitle")} maxLength={300} /></label>
               <label className={styles.wide}>توضیحات متا<textarea name="seo_description" value={form.seoDescription} onChange={update("seoDescription")} rows="2" maxLength={500} /></label>
-              <label className={styles.wide}>کلیدواژه‌ها (با ویرگول جدا کن)<input name="keywords" value={form.keywords} onChange={update("keywords")} maxLength={1000} /></label>
+              <label className={styles.wide}>کلیدواژه اصلی سئو<input name="focus_keyword" value={form.focusKeyword} onChange={update("focusKeyword")} maxLength={240} /></label>
+              <label className={styles.wide}>کلیدواژه‌های مرتبط سئو (با ویرگول جدا کن)<input name="related_seo_keywords" value={form.relatedKeywords} onChange={update("relatedKeywords")} maxLength={1600} /></label>
+              <label className={styles.wide}>برچسب‌های موضوعی مقاله (مستقل از سئو)<input name="tags" value={form.tags} onChange={update("tags")} maxLength={1600} /></label>
               <label>نام نویسنده<input name="author_name" value={form.authorName} onChange={update("authorName")} maxLength={160} /></label>
               <label>نام بازبین حقوقی<input name="reviewer_name" value={form.reviewerName} onChange={update("reviewerName")} maxLength={160} /></label>
             </div>
