@@ -428,7 +428,7 @@ export default function MavisArticleEditor({
             <div>
               <span className={styles.eyebrow}>EDITORIAL IMAGE · WEBP</span>
               <h3 id="mavis-editor-image">تصویر شاخص مقاله</h3>
-              <p>اختیاری است. محدودیت حداقل وضوح وجود ندارد؛ تصویر کم‌وضوح نیز پذیرفته و برای اندازه‌های استاندارد آماده می‌شود. نسخه‌های واکنش‌گرا و شبکه‌های اجتماعی به‌صورت WebP ساخته می‌شوند.</p>
+              <p>برای ارسال مقاله به بازبینی، تصویر شاخص مرتبط با موضوع لازم است. فایل اصلی باید حداقل ۱۲۰۰×۶۷۵ پیکسل باشد؛ تصویر در ابتدای مقاله نمایش داده می‌شود و استفاده سئویی آن برای Google Images و اشتراک‌گذاری باید فعال بماند. نسخه‌های واکنش‌گرا و شبکه‌های اجتماعی به‌صورت WebP ساخته می‌شوند.</p>
             </div>
             <label className={styles.imagePicker}>
               <input
@@ -472,7 +472,7 @@ export default function MavisArticleEditor({
               <p className={styles.imageRetention}>فایل‌های قبلی عمداً حذف خودکار نمی‌شوند تا نسخه‌های منتشرشده و پیوندهای اشتراک‌گذاری خراب نشوند.</p>
             </div>
           ) : (
-            <p className={styles.imageEmpty}>هنوز تصویری انتخاب نشده است. مقاله بدون تصویر نیز مانند قبل قابل ذخیره و انتشار است.</p>
+            <p className={styles.imageEmpty}>هنوز تصویری انتخاب نشده است. می‌توانید پیش‌نویس را ذخیره کنید، اما ارسال آن برای بازبینی تا بارگذاری تصویر شاخص و فعال‌کردن استفاده سئویی ممکن نیست.</p>
           )}
           {imageFeedback ? <p className={styles.imageFeedback} role="status" aria-live="polite">{imageFeedback}</p> : null}
         </section>
