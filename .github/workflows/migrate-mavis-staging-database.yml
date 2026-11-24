@@ -132,6 +132,7 @@ jobs:
             let index = 0;
             let state = "normal";
             let returnState = "normal";
+            let dollarReturnState = "normal";
             let blockDepth = 0;
             let dollarTag = "";
 
@@ -177,7 +178,7 @@ jobs:
                   if (match) {
                     dollarTag = match[0];
                     output += dollarTag;
-                    returnState = "normal";
+                    dollarReturnState = "normal";
                     state = "dollar";
                     index += dollarTag.length;
                     continue;
@@ -230,7 +231,7 @@ jobs:
                 if (source.startsWith(dollarTag, index)) {
                   output += dollarTag;
                   index += dollarTag.length;
-                  state = returnState;
+                  state = dollarReturnState;
                 } else if (current === "-" && next === "-") {
                   index += 2;
                   while (index < source.length && source[index] !== "\n" && source[index] !== "\r") index++;
