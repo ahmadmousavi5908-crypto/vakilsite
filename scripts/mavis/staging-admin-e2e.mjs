@@ -526,6 +526,14 @@ async function main() {
       publishedImageArticle.published_content?.content?.image?.url === imageMetadata.url,
       "The exact published version did not expose its matching article image metadata."
     );
+    assert(
+      publishedImageArticle.published_content?.focus_keyword === "MAVIS Staging E2E focus keyword" &&
+        JSON.stringify(publishedImageArticle.published_content?.related_keywords) === JSON.stringify([
+          "MAVIS Staging related keyword one",
+          "MAVIS Staging related keyword two",
+        ]),
+      "Published snapshot did not preserve the independent SEO keyword metadata."
+    );
     const publicArticleResponse = await fetch(new URL(`/articles/${slug}`, stagingOrigin), {
       headers: { accept: "text/html" },
       redirect: "error",
@@ -550,6 +558,8 @@ async function main() {
       hasImageAlt: publicArticleHtml.includes(imageMetadata.alt),
       hasOpenGraphImage: publicArticleHtml.includes("og:image"),
       hasBlogPosting: publicArticleHtml.includes("BlogPosting"),
+      hasFocusKeyword: publicArticleHtml.includes("MAVIS Staging E2E focus keyword"),
+      hasRelatedKeywords: publicArticleHtml.includes("MAVIS Staging related keyword one"),
       hasRouteLoading: publicArticleHtml.includes("route-loading"),
       hasNextError: publicArticleHtml.includes("NEXT_HTTP_ERROR_FALLBACK"),
       snippets: articleSnippets,
@@ -561,7 +571,9 @@ async function main() {
         articleHtmlDiagnostics.hasHeroImageUrl &&
         articleHtmlDiagnostics.hasImageAlt &&
         articleHtmlDiagnostics.hasOpenGraphImage &&
-        articleHtmlDiagnostics.hasBlogPosting,
+        articleHtmlDiagnostics.hasBlogPosting &&
+        articleHtmlDiagnostics.hasFocusKeyword &&
+        articleHtmlDiagnostics.hasRelatedKeywords,
       "Published Staging article page did not render its hero image and SEO metadata."
     );
     const sitemapResponse = await fetch(new URL("/sitemap.xml", stagingOrigin), {
