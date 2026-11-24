@@ -20,7 +20,17 @@ async function loadPublishedArticles() {
     .filter(Boolean);
 }
 
-export const getMavisPublishedArticlesForSitemap = cache(loadPublishedArticles);
+export const getMavisPublishedArticlesForSitemap = cache(async function getMavisPublishedArticlesForSitemap() {
+  try {
+    return await loadPublishedArticles();
+  } catch (error) {
+    console.error(
+      "[mavis] Sitemap could not load CMS published articles; static URLs remain available:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    return [];
+  }
+});
 
 export const getMavisPublishedArticles = cache(async function getMavisPublishedArticles() {
   try {
