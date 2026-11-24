@@ -117,7 +117,15 @@ export function parseMavisArticleImageMetadata(input) {
 }
 
 export function isMavisArticleImageOwnedByUser(image, supabaseUrl, userId) {
-  if (!image || !UUID_PATTERN.test(String(userId || ""))) return false;
+  if (
+    !image ||
+    typeof image.url !== "string" ||
+    !image.variants ||
+    typeof image.variants !== "object" ||
+    Array.isArray(image.variants) ||
+    typeof image.ogUrl !== "string" ||
+    !UUID_PATTERN.test(String(userId || ""))
+  ) return false;
   let expectedOrigin;
   try {
     expectedOrigin = new URL(supabaseUrl).origin;
