@@ -90,3 +90,67 @@ test("maps unified CMS snapshots into the public article page shape", () => {
   assert.equal(article.warning, "توضیح احتیاطی");
   assert.match(article.readTime, /دقیقه$/);
 });
+
+test("maps versioned article image metadata to public image fields", () => {
+  const prefix = "https://srbwniqhaxwaoepjfizf.supabase.co/storage/v1/object/public/mavis-article-images/550e8400-e29b-41d4-a716-446655440000/b3a1f9d0-2c64-4d17-9f2f-1a2b3c4d5e6f/";
+  const article = mapPublishedEditorialRecord({
+    status: "published",
+    slug: "article-with-image",
+    published_content: {
+      title: "مقاله دارای تصویر",
+      content: {
+        intro: "مقدمه کافی برای آزمون مقاله تصویردار",
+        sections: [{ heading: "بخش نخست", body: "متن نمونه این بخش برای آزمون است." }],
+        image: {
+          url: prefix + "wide.webp",
+          ogUrl: prefix + "og.webp",
+          variants: {
+            small: prefix + "small.webp",
+            medium: prefix + "medium.webp",
+            wide: prefix + "wide.webp",
+            landscape: prefix + "landscape.webp",
+            square: prefix + "square.webp",
+          },
+          alt: "تصویر شاخص مقاله حقوقی",
+          title: "راهنمای حقوقی",
+          caption: "زیرنویس تصویر",
+          width: 1600,
+          height: 900,
+          mimeType: "image/webp",
+          showInArticle: true,
+          useForSeo: true,
+        },
+      },
+    },
+    is_indexable: true,
+    published_at: "2026-11-24T10:00:00.000Z",
+    updated_at: "2026-11-24T10:00:00.000Z",
+  });
+
+  assert.equal(article.coverImageUrl, prefix + "wide.webp");
+  assert.equal(article.coverImageAlt, "تصویر شاخص مقاله حقوقی");
+  assert.equal(article.coverImageUseForSeo, true);
+  assert.equal(article.coverImageVariants.square, prefix + "square.webp");
+});
+
+test("does not expose a disabled cover image to public pages or SEO", () => {
+  const article = mapPublishedEditorialRecord({
+    status: "published",
+    slug: "hidden-cover-image",
+    published_content: {
+      title: "مقاله بدون تصویر عمومی",
+      content: {
+        intro: "مقدمه کافی برای آزمون مقاله",
+        sections: [{ heading: "بخش نخست", body: "متن نمونه این بخش برای آزمون است." }],
+        image: {
+          url: "https://srbwniqhaxwaoepjfizf.supabase.co/storage/v1/object/public/mavis-article-images/550e8400-e29b-41d4-a716-446655440000/b3a1f9d0-2c64-4d17-9f2f-1a2b3c4d5e6f/wide.webp",
+          showInArticle: false,
+          useForSeo: false,
+        },
+      },
+    },
+  });
+
+  assert.equal(article.coverImageUrl, "");
+  assert.equal(article.coverImageUseForSeo, false);
+});
