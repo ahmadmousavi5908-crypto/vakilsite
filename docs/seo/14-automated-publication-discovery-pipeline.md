@@ -8,7 +8,7 @@ This pipeline applies to every MAVIS article and every future publication. It do
 
 1. The authenticated administrator action changes the exact approved article version in Supabase.
 2. The application revalidates the home page, article archive, article library, article detail route, and /sitemap.xml.
-3. The dynamic XML sitemap reads the published article catalogue directly. A database failure causes the sitemap request to fail visibly instead of silently returning a sitemap that omits all CMS articles.
+3. The dynamic XML sitemap reads the published article catalogue directly. If the CMS database is temporarily unavailable, the sitemap remains a valid XML response with static public URLs, while a server-side warning records that dynamic CMS URLs could not be loaded.
 4. Every published CMS article is listed only when is_indexable = true, with its actual publication timestamp as lastmod. The article archive and library use the newest valid publication timestamp.
 5. IndexNow receives the changed article URL and both affected archive URLs in one deduplicated batch. The same lifecycle hook handles unpublishing so participating engines can refresh stale URLs.
 6. The IndexNow API key is read from the single public verification file named {key}.txt. The deployment validates that the filename and file contents match, then injects the same value into the Cloudflare Worker runtime without logging it. The keyLocation sent to IndexNow is derived from that exact key filename.
