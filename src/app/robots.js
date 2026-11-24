@@ -4,6 +4,12 @@ const privatePaths = ["/admin", "/api"];
 
 export default function robots() {
   const siteUrl = getSiteUrl();
+  if (siteUrl === "https://staging.vakilahmadmousavi.ir") {
+    return {
+      rules: [{ userAgent: "*", disallow: "/" }],
+    };
+  }
+
   return {
     rules: [
       {
