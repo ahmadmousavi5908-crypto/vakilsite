@@ -1,1 +1,1 @@
-final-immutable-version-image-migration-dry-run
+apply-reviewed-image-migration-to-staging
