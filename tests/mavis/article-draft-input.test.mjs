@@ -33,6 +33,21 @@ test("normalizes tags and builds structured article content", () => {
   assert.equal(result.payload.content.sections[0].heading, "مبانی قرارداد");
 });
 
+test("generates safe default SEO metadata when optional fields are empty", () => {
+  const result = parseMavisArticleDraftInput(formWith({
+    seo_title: "",
+    seo_description: "",
+    focus_keyword: "",
+    related_keywords: "",
+    tags: "حقوق کیفری، اجرای احکام",
+  }));
+  assert.equal(result.ok, true);
+  assert.equal(result.payload.seo_title, "راهنمای حقوقی قرارداد");
+  assert.equal(result.payload.seo_description, "خلاصه‌ای کامل و کاربردی برای بررسی حقوقی قرارداد.");
+  assert.equal(result.focusKeyword, "راهنمای حقوقی قرارداد");
+  assert.deepEqual(result.relatedKeywords, ["حقوق کیفری", "اجرای احکام"]);
+});
+
 test("keeps focus and related SEO keywords separate from editorial tags", () => {
   const result = parseMavisArticleDraftInput(formWith({
     focus_keyword: "پابند الکترونیکی قبل از ورود به زندان",
