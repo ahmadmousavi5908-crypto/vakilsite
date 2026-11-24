@@ -2,8 +2,8 @@ import { normalizePersianSearchText } from "./persian-text-normalization.mjs";
 
 function normalizeArticleText(value) {
   return normalizePersianSearchText(value)
-    .replace(/[^\\p{L}\\p{N}\\s]/gu, " ")
-    .replace(/\\s+/g, " ")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
