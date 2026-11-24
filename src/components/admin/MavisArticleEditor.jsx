@@ -412,7 +412,6 @@ export default function MavisArticleEditor({
         <input type="hidden" name="article_id" value={articleId} />
         <input type="hidden" name="expected_version" value={articleId ? expectedVersion : ""} />
         <input type="hidden" name="image_metadata" value={image ? JSON.stringify(image) : ""} />
-        <input type="hidden" name="seo_cluster_id" value={initialArticle?.content?.seoClusterId || initialClusterId} />
         <div className={styles.grid}>
           <label className={styles.field}><span>عنوان مقاله <b>*</b></span><input name="title" defaultValue={initialArticle?.title || initialTopic || ""} required minLength={3} maxLength={300} /></label>
           <label className={styles.field}><span>نامک انگلیسی <b>*</b></span><input name="slug" defaultValue={initialArticle?.slug || ""} required minLength={3} maxLength={180} dir="ltr" pattern="[a-z0-9]+([a-z0-9-]*[a-z0-9])?" placeholder="contract-legal-guide" /><small>حروف کوچک انگلیسی، عدد و خط تیره</small></label>
