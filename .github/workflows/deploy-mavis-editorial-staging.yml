@@ -24,7 +24,7 @@ jobs:
     environment: staging
     env:
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      NEXT_PUBLIC_SITE_URL: https://staging.vakilahmadmousavi.ir
+      NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi-ir-staging.ahmadmousavi5908.workers.dev
       NEXT_PUBLIC_SUPABASE_URL: ${{ vars.STAGING_SUPABASE_URL }}
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.STAGING_SUPABASE_PUBLISHABLE_KEY }}
     steps:
