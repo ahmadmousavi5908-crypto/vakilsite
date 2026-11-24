@@ -38,24 +38,24 @@ export function buildSitemapEntries(entries, siteOrigin) {
     if (
       !path.startsWith("/") ||
       path.startsWith("//") ||
-      path.includes("\\\\") ||
-      /[\\u0000-\\u001f\\u007f]/.test(path) ||
+      path.includes("\\") ||
+      /[\u0000-\u001f\u007f]/.test(path) ||
       /%(?:00|0[1-9a-f]|1[0-9a-f]|7f|5c)/i.test(path) ||
       path.includes("?") ||
       path.includes("#")
     ) {
-      throw new Error(`Invalid sitemap path: ${path}`);
+      throw new Error(\`Invalid sitemap path: \${path}\`);
     }
 
     let url;
     try {
       url = new URL(path, base);
     } catch {
-      throw new Error(`Invalid sitemap URL path: ${path}`);
+      throw new Error(\`Invalid sitemap URL path: \${path}\`);
     }
 
     if (url.origin !== base || url.username || url.password) {
-      throw new Error(`Sitemap path escaped the canonical origin: ${path}`);
+      throw new Error(\`Sitemap path escaped the canonical origin: \${path}\`);
     }
 
     if (
@@ -64,11 +64,11 @@ export function buildSitemapEntries(entries, siteOrigin) {
       url.pathname === "/api" ||
       url.pathname.startsWith("/api/")
     ) {
-      throw new Error(`Private route cannot be included in sitemap: ${path}`);
+      throw new Error(\`Private route cannot be included in sitemap: \${path}\`);
     }
 
     if (!ALLOWED_CHANGE_FREQUENCIES.has(entry.changeFrequency)) {
-      throw new Error(`Invalid sitemap changeFrequency for path: ${path}`);
+      throw new Error(\`Invalid sitemap changeFrequency for path: \${path}\`);
     }
 
     if (
@@ -77,36 +77,36 @@ export function buildSitemapEntries(entries, siteOrigin) {
       entry.priority < 0 ||
       entry.priority > 1
     ) {
-      throw new Error(`Invalid sitemap priority for path: ${path}`);
+      throw new Error(\`Invalid sitemap priority for path: \${path}\`);
     }
 
     let lastModified;
     if (entry.lastModified !== undefined && entry.lastModified !== null) {
       if (!(entry.lastModified instanceof Date) && typeof entry.lastModified !== "string") {
-        throw new Error(`Invalid sitemap lastModified for path: ${path}`);
+        throw new Error(\`Invalid sitemap lastModified for path: \${path}\`);
       }
       const lastModifiedDate = entry.lastModified instanceof Date
         ? entry.lastModified
         : new Date(entry.lastModified);
       if (!Number.isFinite(lastModifiedDate.getTime())) {
-        throw new Error(`Invalid sitemap lastModified for path: ${path}`);
+        throw new Error(\`Invalid sitemap lastModified for path: \${path}\`);
       }
       lastModified = lastModifiedDate.toISOString();
     }
 
     const images = Array.isArray(entry.images) ? [...new Set(entry.images)] : [];
     if (images.length > 1000) {
-      throw new Error(`Sitemap entry exceeds the 1,000 image limit: ${path}`);
+      throw new Error(\`Sitemap entry exceeds the 1,000 image limit: \${path}\`);
     }
     for (const imageValue of images) {
       let imageUrl;
       try {
         imageUrl = new URL(imageValue);
       } catch {
-        throw new Error(`Invalid sitemap image URL for path: ${path}`);
+        throw new Error(\`Invalid sitemap image URL for path: \${path}\`);
       }
       if (imageUrl.protocol !== "https:" || !imageUrl.hostname || imageUrl.username || imageUrl.password) {
-        throw new Error(`Sitemap image URL must be a safe HTTPS URL: ${path}`);
+        throw new Error(\`Sitemap image URL must be a safe HTTPS URL: \${path}\`);
       }
     }
 
