@@ -5,3 +5,5 @@ Post-merge verification after Workers AI output validation and IndexNow client f
 Post-deploy verification after secure Search Console OAuth and read-only inspection integration. No Production actions.
 
 Run the complete post-deploy article-image validation against the deployed Workers.dev staging Worker and the isolated staging Supabase database. Confirm upload, admin-only write, anonymous denial, immutable version mapping, publication, public article HTML, Open Graph, BlogPosting, image sitemap and cleanup. No Production actions.
+
+Rerun the full authenticated staging E2E after collecting safe HTML response diagnostics for the published article rendering failure. Confirm complete temporary record and storage cleanup. No Production actions.
