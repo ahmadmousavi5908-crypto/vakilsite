@@ -26,7 +26,7 @@ export default function GoogleAnalytics({ measurementId }) {
       if (!anchor) return;
       const method = getLeadMethodFromHref(anchor.getAttribute("href"));
       if (!method) return;
-      window.gtag("event", "generate_lead", { method, page_path: window.location.pathname });
+      window.gtag("event", "contact_click", { method, page_path: window.location.pathname });
     }
 
     document.addEventListener("click", handleContactClick, true);
