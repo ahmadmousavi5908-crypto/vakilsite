@@ -293,8 +293,8 @@ test("keeps colloquial people-first legal problem language searchable by legal c
     "اخراجم کردن، حق و حقوقم چیه؟"
   ];
 
-  assert.equal(getKeywordLibrarySnapshot().colloquialPhraseCount, 45);
-  assert.equal(family.length, 45);
+  assert.equal(getKeywordLibrarySnapshot().colloquialPhraseCount, 47);
+  assert.equal(family.length, 47);
   for (const term of expected) assert.ok(family.some((entry) => entry.term === term));
   assert.ok(lease.every((entry) => entry.clusterId === "lease-shop-tenancy"));
   assert.ok(familyLaw.every((entry) => entry.clusterId === "family-law"));
