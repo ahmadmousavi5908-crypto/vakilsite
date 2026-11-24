@@ -520,7 +520,7 @@ export async function unpublishMavisArticle(articleId, expectedVersion) {
 }
 
 
-async function runMavisArticleLifecycleAction(rpcName, args, expectedStatus) {
+async function runMavisArticleLifecycleAction(rpcName, args, expectedStatus, options = {}) {
   let access;
   try {
     access = await requireAdmin();
@@ -532,6 +532,14 @@ async function runMavisArticleLifecycleAction(rpcName, args, expectedStatus) {
   }
 
   try {
+    let wasPublished = false;
+    if (options.notifyIfPreviouslyPublished === true && typeof args?.p_article_id === "string") {
+      const { data: before, error: beforeError } = await queryMavisEditorialArticles(access.supabase, (table) =>
+        table.select("status").eq("id", args.p_article_id).maybeSingle()
+      );
+      wasPublished = !beforeError && before?.status === "published";
+    }
+
     const { data, error } = await access.supabase.rpc(rpcName, args);
     if (error?.code === "42501") return { ok: false, error: "دسترسی مدیر تأیید نشد." };
     if (error?.code === "40001") return { ok: false, error: "نسخه مقاله تغییر کرده است. صفحه را تازه‌سازی و دوباره بررسی کنید." };
@@ -544,7 +552,10 @@ async function runMavisArticleLifecycleAction(rpcName, args, expectedStatus) {
       return { ok: false, error: "پاسخ پایگاه داده برای این عملیات معتبر نبود." };
     }
     revalidatePublicMavisArticlePaths();
-    return { ok: true, data };
+    const indexNow = wasPublished
+      ? await notifyMavisArticleIndexNow(access, args.p_article_id)
+      : undefined;
+    return { ok: true, data, ...(indexNow ? { indexNow } : {}) };
   } catch {
     return { ok: false, error: "ارتباط امن با سرور برقرار نشد." };
   }
@@ -560,8 +571,10 @@ export async function archiveMavisArticle(articleId, expectedVersion, note = "")
     p_article_id: articleId,
     p_expected_version: expectedVersion,
     p_note: note,
-  }, "archived");
-  return result.ok ? { ok: true, status: result.data.status } : result;
+  }, "archived", { notifyIfPreviouslyPublished: true });
+  return result.ok
+    ? { ok: true, status: result.data.status, ...(result.indexNow ? { indexNow: result.indexNow } : {}) }
+    : result;
 }
 
 export async function restoreMavisArticle(articleId, expectedVersion) {
