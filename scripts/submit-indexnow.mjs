@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { isPrivateIndexNowPath, isValidIndexNowKey } from "./indexnow-validation.mjs";
+import { isPrivateIndexNowPath } from "./indexnow-validation.mjs";
+import { resolveIndexNowKey } from "./indexnow-key-config.mjs";
 
 async function loadLocalEnv() {
   try {
@@ -17,12 +18,15 @@ async function loadLocalEnv() {
 
 await loadLocalEnv();
 
-const key = process.env.INDEXNOW_KEY?.trim();
+const key = await resolveIndexNowKey({
+  key: process.env.INDEXNOW_KEY,
+  publicDirectory: resolve(process.cwd(), "public"),
+});
 const configuredSite = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 const inputUrls = process.argv.slice(2);
 
-if (!isValidIndexNowKey(key)) {
-  throw new Error("Set a valid INDEXNOW_KEY in .env.local or the deployment environment.");
+if (!key) {
+  throw new Error("Add one valid {key}.txt verification file to public/ or set INDEXNOW_KEY.");
 }
 if (!configuredSite) {
   throw new Error("Set NEXT_PUBLIC_SITE_URL to the canonical HTTPS site origin.");
