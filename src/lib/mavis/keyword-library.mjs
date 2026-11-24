@@ -202,7 +202,7 @@ export function getKeywordLibraryClusters() {
 }
 
 /**
- * Builds an editorial SEO brief from one approved taxonomy cluster.
+ * Builds an editorial SEO brief from one selected taxonomy cluster.
  * Candidate phrases are planning inputs, not measured search demand.
  */
 export function getKeywordClusterSeoBrief({
