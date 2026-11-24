@@ -15,3 +15,5 @@ Run the final authenticated Staging E2E against the latest deployed Worker after
 Execute the final authenticated staging article-image E2E on the latest feature branch revision after confirming staging Worker health. Validate admin authentication, draft creation, direct WebP upload, RLS enforcement, immutable version metadata, publication, public SSR article HTML, OG/BlogPosting, image sitemap, and cleanup. Never touch Production.
 
 Run authenticated Staging E2E for the independent focus/related SEO metadata, immutable version snapshot, image upload, publication output, source metadata, and cleanup on the deployed isolated Worker. No Production actions.
+
+Rerun authenticated Staging lifecycle after explicitly resetting the temporary SEO snapshot context. Verify subsequent static imports, source attachment, publication, public SEO metadata, and complete cleanup. No Production actions.
