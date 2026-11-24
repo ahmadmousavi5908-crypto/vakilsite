@@ -162,6 +162,14 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
   const legalBaseCount = uniqueEntries(legalBaseTerms.map((term) => ({ term }))).length;
   const legalLawyerCount = uniqueEntries(legalLawyerTerms.map((term) => ({ term }))).length;
   const legalQuestionCount = uniqueEntries(legalQuestionTerms.map((term) => ({ term }))).length;
+  const methodology = seoKeywordLibrary.methodology || {};
+  const gscObserved = methodology.gscObserved || {};
+  const metricsStatus = methodology.researchStatus === "candidate-ideas-not-volume-validated"
+    ? "پیشنهادی؛ حجم جست‌وجو و سختی تأیید نشده"
+    : String(methodology.researchStatus || "نامشخص");
+  const gscStatus = gscObserved.queryRows > 0
+    ? `متصل؛ ${gscObserved.queryRows} عبارت و ${gscObserved.pageRows || 0} صفحه قابل مشاهده؛ عبارت‌های کم‌حجم یا ناشناس در گزارش کامل نیستند`
+    : String(gscObserved.status || "نامشخص");
 
   return Object.freeze({
     version: seoKeywordLibrary.schemaVersion,
@@ -180,6 +188,8 @@ export function getKeywordLibrarySnapshot(taxonomyEntries = []) {
     legalLawyerPhraseCount: legalLawyerCount,
     legalQuestionPhraseCount: legalQuestionCount,
     legalTermsPendingReview: legalRecords.filter((record) => record.reviewStatus !== "verified_primary_source").length,
+    metricsStatus,
+    gscStatus,
     totalCandidateCount: lawyerCount + baseCount + problemCount + englishCount
       + legalBaseCount + legalLawyerCount + legalQuestionCount + localPhraseCount + positioningPhraseCount + colloquialPhraseCount
   });
