@@ -184,8 +184,24 @@ export default async function ArticleDetailPage({ params }) {
             <h2>مستندات و منابع قانونی</h2>
             <p>برای مطالعه متن قوانین و تطبیق آخرین اصلاحات، از منابع زیر استفاده کنید:</p>
             <ul>{article.sources.map((source) => {
+              const sourceTypeLabels = {
+                official_law: "قانون یا مقرره رسمی",
+                judiciary: "مرجع قضایی",
+                government: "مرجع دولتی",
+                academic: "منبع علمی و پژوهشی",
+                journal: "نشریه",
+                news: "منبع خبری",
+                manual: "منبع ثبت‌شده دستی",
+                other: "منبع تکمیلی",
+              };
+              const relationLabels = {
+                primary_authority: "مستند اولیه",
+                secondary_reference: "مرجع ثانویه",
+                research_background: "پیشینه پژوهش",
+              };
               const details = [
-                source.source_type,
+                sourceTypeLabels[source.source_type] || source.source_type,
+                relationLabels[source.relation_type],
                 source.author_name,
                 source.publisher,
                 source.published_on,
