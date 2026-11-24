@@ -65,6 +65,51 @@ create policy "MAVIS admins delete article images"
     and (storage.foldername(name))[1] = (select auth.uid()::text)
   );
 
+create or replace function public.get_mavis_published_articles()
+returns table (
+  slug text,
+  published_content jsonb,
+  is_indexable boolean,
+  published_at timestamptz,
+  updated_at timestamptz
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $function$
+  select
+    article.slug,
+    case
+      when image.image is null then article.published_content
+      else jsonb_set(
+        article.published_content,
+        '{content}',
+        coalesce(article.published_content->'content', '{}'::jsonb)
+          || jsonb_build_object('image', image.image),
+        true
+      )
+    end as published_content,
+    article.is_indexable,
+    article.published_at,
+    article.updated_at
+  from public.mavis_editorial_articles as article
+  left join public.mavis_article_version_images as image
+    on image.article_id = article.id
+    and image.article_version = article.published_version
+  where article.status = 'published'
+    and article.published_content is not null
+  order by article.published_at desc nulls last;
+$function$;
+
+revoke all on function public.get_mavis_published_articles()
+  from public, anon, authenticated;
+grant execute on function public.get_mavis_published_articles()
+  to anon, authenticated;
+
+comment on function public.get_mavis_published_articles() is
+  'Returns published immutable article snapshots with separately stored image metadata joined by the exact published version.';
+
 create or replace function public.save_mavis_article_draft_with_image(
   p_payload jsonb,
   p_image jsonb,
