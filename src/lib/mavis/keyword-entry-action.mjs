@@ -20,9 +20,11 @@ export function getKeywordEntryAction(entry) {
   const term = String(entry?.term || "").normalize("NFC").trim();
   if (!term) return null;
 
-  const params = new URLSearchParams({ topic: term });
+  const params = new URLSearchParams({ topic: term, focus_keyword: term });
   const category = String(entry?.clusterTitle || "").normalize("NFC").trim().slice(0, 100);
+  const clusterId = String(entry?.clusterId || "").trim();
   if (category) params.set("category", category);
+  if (/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(clusterId)) params.set("cluster_id", clusterId);
 
   return { kind: "draft", href: `/admin/mavis/articles/new?${params.toString()}` };
 }
