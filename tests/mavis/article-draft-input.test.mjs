@@ -33,6 +33,18 @@ test("normalizes tags and builds structured article content", () => {
   assert.equal(result.payload.content.sections[0].heading, "مبانی قرارداد");
 });
 
+test("keeps focus and related SEO keywords separate from editorial tags", () => {
+  const result = parseMavisArticleDraftInput(formWith({
+    focus_keyword: "پابند الکترونیکی قبل از ورود به زندان",
+    related_keywords: "نظارت الکترونیکی، رأی وحدت رویه ۸۷۴, پابند الکترونیکی قبل از ورود به زندان",
+    tags: "حقوق کیفری، اجرای احکام",
+  }));
+  assert.equal(result.ok, true);
+  assert.equal(result.focusKeyword, "پابند الکترونیکی قبل از ورود به زندان");
+  assert.deepEqual(result.relatedKeywords, ["نظارت الکترونیکی", "رأی وحدت رویه ۸۷۴"]);
+  assert.deepEqual(result.payload.tags, ["حقوق کیفری", "اجرای احکام"]);
+});
+
 test("rejects unsafe slugs", () => {
   const result = parseMavisArticleDraftInput(formWith({ slug: "مقاله-حقوقی" }));
   assert.equal(result.ok, false);
