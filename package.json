@@ -20,7 +20,7 @@
     "test:site-url": "node --test tests/site-url/*.test.mjs",
     "test:indexnow": "node --test scripts/indexnow-validation.test.mjs",
     "test:mavis-iranian-source-search": "node --test tests/mavis/iranian-source-search.test.mjs",
-    "test:mavis-editorial-core": "node --test tests/mavis/editorial-content-core.test.mjs tests/mavis/article-image-metadata.test.mjs"
+    "test:mavis-editorial-core": "node --test tests/mavis/editorial-content-core.test.mjs tests/mavis/article-draft-input.test.mjs tests/mavis/article-image-metadata.test.mjs tests/mavis/article-image-browser.test.mjs"
   },
   "dependencies": {
     "next": "16.4.6",

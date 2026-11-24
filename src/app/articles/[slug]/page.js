@@ -89,6 +89,13 @@ export default async function ArticleDetailPage({ params }) {
         article.coverImageVariants.wide ? article.coverImageVariants.wide + " 1600w" : null,
       ].filter(Boolean).join(", ")
     : "";
+  const structuredKeywords = [...new Set([
+    article.focusKeyword,
+    ...(Array.isArray(article.relatedKeywords) ? article.relatedKeywords : []),
+    ...(Array.isArray(article.tags) ? article.tags : []),
+  ].map((keyword) => typeof keyword === "string" ? keyword.trim() : "")
+    .filter(Boolean))];
+
   const structuredArticle = articleUrl
     ? {
         "@context": "https://schema.org",
@@ -97,6 +104,7 @@ export default async function ArticleDetailPage({ params }) {
         description: article.excerpt,
         inLanguage: "fa-IR",
         articleSection: article.category,
+        ...(structuredKeywords.length ? { keywords: structuredKeywords.join(", ") } : {}),
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": articleUrl,
@@ -175,7 +183,42 @@ export default async function ArticleDetailPage({ params }) {
           <section className="article-sources">
             <h2>مستندات و منابع قانونی</h2>
             <p>برای مطالعه متن قوانین و تطبیق آخرین اصلاحات، از منابع زیر استفاده کنید:</p>
-            <ul>{article.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul>
+            <ul>{article.sources.map((source) => {
+              const sourceTypeLabels = {
+                official_law: "قانون یا مقرره رسمی",
+                judiciary: "مرجع قضایی",
+                government: "مرجع دولتی",
+                academic: "منبع علمی و پژوهشی",
+                journal: "نشریه",
+                news: "منبع خبری",
+                manual: "منبع ثبت‌شده دستی",
+                other: "منبع تکمیلی",
+              };
+              const relationLabels = {
+                primary_authority: "مستند اولیه",
+                secondary_reference: "مرجع ثانویه",
+                research_background: "پیشینه پژوهش",
+              };
+              const details = [
+                sourceTypeLabels[source.source_type] || source.source_type,
+                relationLabels[source.relation_type],
+                source.author_name,
+                source.publisher,
+                source.published_on,
+                source.external_id ? "شماره سند: " + source.external_id : "",
+                source.metadata?.issuing_authority ? "مرجع صادرکننده: " + source.metadata.issuing_authority : "",
+                source.metadata?.document_type ? "نوع سند: " + source.metadata.document_type : "",
+                source.metadata?.document_number && source.metadata.document_number !== source.external_id
+                  ? "شناسه سند: " + source.metadata.document_number
+                  : "",
+              ].filter(Boolean);
+              return (
+                <li key={source.id || source.url}>
+                  <a href={source.url} target="_blank" rel="noopener noreferrer">{source.label || source.title} ↗</a>
+                  {details.length ? <small>{details.join(" · ")}</small> : null}
+                </li>
+              );
+            })}</ul>
           </section>
           <div className="article-next-actions">
             <Link href="/articles">← بازگشت به همه مقالات</Link>

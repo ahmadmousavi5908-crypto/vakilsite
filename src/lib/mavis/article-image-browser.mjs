@@ -6,6 +6,14 @@ const MAX_OUTPUT_BYTES = Math.floor(2.8 * 1024 * 1024);
 const WEBP_QUALITIES = [0.84, 0.76, 0.68, 0.6];
 const ACCEPTED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
+export function validateMavisArticleImageDimensions(width, height) {
+  return Number.isSafeInteger(width)
+    && Number.isSafeInteger(height)
+    && width > 0
+    && height > 0
+    && width * height <= MAX_SOURCE_PIXELS;
+}
+
 function canvasToWebp(canvas, quality) {
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
@@ -65,11 +73,8 @@ export async function prepareMavisArticleImage(file) {
   let bitmap;
   try {
     bitmap = await createImageBitmap(file);
-    if (bitmap.width < 1600 || bitmap.height < 1200) {
-      throw new Error("برای ساخت نسخه‌های باکیفیت، تصویر اولیه باید حداقل ۱۶۰۰ در ۱۲۰۰ پیکسل باشد.");
-    }
-    if (bitmap.width * bitmap.height > MAX_SOURCE_PIXELS) {
-      throw new Error("تصویر اولیه بیش از ۲۴ مگاپیکسل است؛ نسخه‌ای با وضوح متعارف انتخاب کنید تا مرورگر موبایل تحت فشار قرار نگیرد.");
+    if (!validateMavisArticleImageDimensions(bitmap.width, bitmap.height)) {
+      throw new Error("ابعاد فایل تصویر قابل پردازش نیست یا از سقف فنی ۲۴ مگاپیکسل بیشتر است.");
     }
 
     const variants = {};

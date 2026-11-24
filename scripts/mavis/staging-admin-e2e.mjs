@@ -350,9 +350,11 @@ async function main() {
     assert(Boolean(anonymousUploadError), "Anonymous users unexpectedly uploaded an article image.");
 
     const { data: articleId, error: draftError } = await client.rpc(
-      "save_mavis_article_draft_with_image",
+      "save_mavis_article_draft_with_metadata",
       {
         p_payload: payload,
+        p_focus_keyword: "MAVIS Staging E2E focus keyword",
+        p_related_keywords: ["MAVIS Staging related keyword one", "MAVIS Staging related keyword two"],
         p_image: imageMetadata,
         p_article_id: null,
         p_expected_version: null,
@@ -364,11 +366,34 @@ async function main() {
 
     const { data: adminRead, error: adminReadError } = await client
       .from("mavis_editorial_articles")
-      .select("id, slug, status, current_version, content")
+      .select("id, slug, status, current_version, content, focus_keyword, related_keywords")
       .eq("id", articleId)
       .single();
     if (adminReadError) throw new Error(`Canonical admin read failed: ${adminReadError.message}`);
     assert(adminRead.slug === slug && adminRead.status === "draft", "Admin read did not return the created draft.");
+    assert(adminRead.focus_keyword === "MAVIS Staging E2E focus keyword", "Focus keyword was not persisted independently.");
+    assert(
+      JSON.stringify(adminRead.related_keywords) === JSON.stringify([
+        "MAVIS Staging related keyword one",
+        "MAVIS Staging related keyword two",
+      ]),
+      "Related SEO keywords were not persisted independently."
+    );
+    const { data: versionSnapshot, error: versionSnapshotError } = await client
+      .from("mavis_article_versions")
+      .select("snapshot")
+      .eq("article_id", articleId)
+      .eq("version", adminRead.current_version)
+      .single();
+    if (versionSnapshotError) throw new Error(`Versioned SEO snapshot read failed: ${versionSnapshotError.message}`);
+    assert(
+      versionSnapshot?.snapshot?.focus_keyword === "MAVIS Staging E2E focus keyword" &&
+        JSON.stringify(versionSnapshot?.snapshot?.related_keywords) === JSON.stringify([
+          "MAVIS Staging related keyword one",
+          "MAVIS Staging related keyword two",
+        ]),
+      "SEO metadata was not preserved in the immutable version snapshot."
+    );
     const { data: versionImage, error: versionImageError } = await client
       .from("mavis_article_version_images")
       .select("image")
@@ -501,6 +526,14 @@ async function main() {
       publishedImageArticle.published_content?.content?.image?.url === imageMetadata.url,
       "The exact published version did not expose its matching article image metadata."
     );
+    assert(
+      publishedImageArticle.published_content?.focus_keyword === "MAVIS Staging E2E focus keyword" &&
+        JSON.stringify(publishedImageArticle.published_content?.related_keywords) === JSON.stringify([
+          "MAVIS Staging related keyword one",
+          "MAVIS Staging related keyword two",
+        ]),
+      "Published snapshot did not preserve the independent SEO keyword metadata."
+    );
     const publicArticleResponse = await fetch(new URL(`/articles/${slug}`, stagingOrigin), {
       headers: { accept: "text/html" },
       redirect: "error",
@@ -525,6 +558,8 @@ async function main() {
       hasImageAlt: publicArticleHtml.includes(imageMetadata.alt),
       hasOpenGraphImage: publicArticleHtml.includes("og:image"),
       hasBlogPosting: publicArticleHtml.includes("BlogPosting"),
+      hasFocusKeyword: publicArticleHtml.includes("MAVIS Staging E2E focus keyword"),
+      hasRelatedKeywords: publicArticleHtml.includes("MAVIS Staging related keyword one"),
       hasRouteLoading: publicArticleHtml.includes("route-loading"),
       hasNextError: publicArticleHtml.includes("NEXT_HTTP_ERROR_FALLBACK"),
       snippets: articleSnippets,
@@ -536,7 +571,9 @@ async function main() {
         articleHtmlDiagnostics.hasHeroImageUrl &&
         articleHtmlDiagnostics.hasImageAlt &&
         articleHtmlDiagnostics.hasOpenGraphImage &&
-        articleHtmlDiagnostics.hasBlogPosting,
+        articleHtmlDiagnostics.hasBlogPosting &&
+        articleHtmlDiagnostics.hasFocusKeyword &&
+        articleHtmlDiagnostics.hasRelatedKeywords,
       "Published Staging article page did not render its hero image and SEO metadata."
     );
     const sitemapResponse = await fetch(new URL("/sitemap.xml", stagingOrigin), {

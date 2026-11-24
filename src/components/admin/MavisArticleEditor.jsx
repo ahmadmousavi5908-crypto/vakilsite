@@ -297,7 +297,8 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
       setField("checklist", suggestions.checklist.join("\n"));
       setField("seo_title", suggestions.seoTitle);
       setField("seo_description", suggestions.seoDescription);
-      setField("tags", [...new Set([suggestions.focusKeyword, ...suggestions.relatedKeywords].filter(Boolean))].join("، "));
+      setField("focus_keyword", suggestions.focusKeyword);
+      setField("related_keywords", suggestions.relatedKeywords.join("، "));
       setSections(suggestions.sections);
       setAiReport({
         focusKeyword: suggestions.focusKeyword,
@@ -406,7 +407,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           <label className={styles.field}><span>نام نویسنده</span><input name="author_name" defaultValue={initialArticle?.author_name || ""} maxLength={180} /></label>
           <label className={styles.field}><span>دسته‌بندی <b>*</b></span><input name="category" defaultValue={initialArticle?.category || initialCategory || ""} required minLength={2} maxLength={100} placeholder="حقوق کیفری، مدنی، خانواده..." /></label>
           <label className={styles.fieldWide}><span>خلاصه مقاله <b>*</b></span><textarea name="excerpt" defaultValue={initialArticle?.excerpt || ""} required minLength={10} maxLength={1200} rows={3} /></label>
-          <label className={styles.fieldWide}><span>برچسب‌ها</span><input name="tags" defaultValue={Array.isArray(initialArticle?.tags) ? initialArticle.tags.join("، ") : ""} placeholder="قرارداد، حقوق مدنی، دعاوی" /><small>برچسب‌ها را با ویرگول فارسی یا انگلیسی جدا کنید.</small></label>
+          <label className={styles.fieldWide}><span>برچسب‌های موضوعی</span><input name="tags" defaultValue={Array.isArray(initialArticle?.tags) ? initialArticle.tags.join("، ") : ""} placeholder="قرارداد، حقوق مدنی، دعاوی" /><small>برچسب‌های دسته‌بندی مقاله؛ مستقل از کلیدواژه‌های سئو.</small></label>
           <label className={styles.fieldWide}><span>مقدمه مقاله <b>*</b></span><textarea name="intro" defaultValue={content.intro || ""} required minLength={10} maxLength={8000} rows={5} /></label>
           <label className={styles.fieldWide}><span>هشدار یا توضیح حقوقی</span><textarea name="warning" defaultValue={content.warning || ""} maxLength={2000} rows={2} /></label>
           <label className={styles.fieldWide}><span>چک‌لیست نکات (هر مورد در یک خط)</span><textarea name="checklist" defaultValue={Array.isArray(content.checklist) ? content.checklist.join("\n") : ""} rows={3} /><small>تا ۶۰ مورد، هر مورد حداکثر ۵۰۰ نویسه</small></label>
@@ -417,7 +418,7 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
             <div>
               <span className={styles.eyebrow}>EDITORIAL IMAGE · WEBP</span>
               <h3 id="mavis-editor-image">تصویر شاخص مقاله</h3>
-              <p>اختیاری است. فایل اصلی حداقل ۱۶۰۰×۱۲۰۰ پیکسل باشد؛ نسخه‌های واکنش‌گرا، ۱۶:۹، ۴:۳، مربعی و شبکه‌های اجتماعی به‌صورت WebP ساخته می‌شوند.</p>
+              <p>اختیاری است. محدودیت حداقل وضوح وجود ندارد؛ تصویر کم‌وضوح نیز پذیرفته و برای اندازه‌های استاندارد آماده می‌شود. نسخه‌های واکنش‌گرا و شبکه‌های اجتماعی به‌صورت WebP ساخته می‌شوند.</p>
             </div>
             <label className={styles.imagePicker}>
               <input
@@ -486,6 +487,8 @@ export default function MavisArticleEditor({ initialArticle = null, initialSourc
           <div className={styles.grid}>
             <label className={styles.field}><span>عنوان سئو</span><input name="seo_title" defaultValue={initialArticle?.seo_title || ""} maxLength={300} /></label>
             <label className={styles.field}><span>توضیحات سئو</span><textarea name="seo_description" defaultValue={initialArticle?.seo_description || ""} maxLength={500} rows={3} /></label>
+            <label className={styles.fieldWide}><span>کلیدواژه اصلی سئو</span><input name="focus_keyword" defaultValue={initialArticle?.focus_keyword || ""} maxLength={240} placeholder="عبارت جست‌وجوی اصلی مقاله" /><small>یک عبارت هدف مشخص؛ مستقل از برچسب‌های موضوعی.</small></label>
+            <label className={styles.fieldWide}><span>کلیدواژه‌های مرتبط سئو</span><textarea name="related_keywords" defaultValue={Array.isArray(initialArticle?.related_keywords) ? initialArticle.related_keywords.join("، ") : ""} maxLength={2600} rows={3} placeholder="عبارت مرتبط اول، عبارت مرتبط دوم، عبارت مرتبط سوم" /><small>حداکثر ۲۰ عبارت، با ویرگول فارسی یا انگلیسی جدا شوند.</small></label>
           </div>
         </section>
 

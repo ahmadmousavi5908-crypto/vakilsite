@@ -56,6 +56,46 @@ test("only published snapshots are exposed to public pages", () => {
   assert.equal(draft, null);
 });
 
+test("maps independent SEO keywords and source provenance from published snapshots", () => {
+  const article = mapPublishedEditorialRecord({
+    status: "published",
+    slug: "seo-and-source-metadata",
+    published_content: {
+      title: "مقاله دارای کلیدواژه و منبع",
+      seo_title: "عنوان سئوی مستقل",
+      seo_description: "توضیح سئوی مستقل",
+      focus_keyword: "پابند الکترونیکی قبل از زندان",
+      related_keywords: ["نظارت الکترونیکی", "رأی وحدت رویه ۸۷۴"],
+      tags: ["حقوق کیفری", "اجرای احکام"],
+      content: {
+        intro: "مقدمه مقاله برای آزمون",
+        sections: [{ heading: "بخش", body: "متن کافی برای آزمون این بخش" }],
+        sources: [{
+          id: "source-1",
+          label: "رأی وحدت رویه شماره ۸۷۴",
+          title: "رأی وحدت رویه شماره ۸۷۴",
+          url: "https://example.com/legal/874",
+          source_type: "judiciary",
+          publisher: "هیأت عمومی دیوان عالی کشور",
+          published_on: "2026-01-01",
+          metadata: { document_number: "۸۷۴", document_type: "رأی وحدت رویه" },
+        }],
+      },
+    },
+    is_indexable: true,
+    published_at: "2026-11-24T10:00:00.000Z",
+    updated_at: "2026-11-24T10:00:00.000Z",
+  });
+
+  assert.equal(article.seoTitle, "عنوان سئوی مستقل");
+  assert.equal(article.seoDescription, "توضیح سئوی مستقل");
+  assert.equal(article.focusKeyword, "پابند الکترونیکی قبل از زندان");
+  assert.deepEqual(article.relatedKeywords, ["نظارت الکترونیکی", "رأی وحدت رویه ۸۷۴"]);
+  assert.deepEqual(article.tags, ["حقوق کیفری", "اجرای احکام"]);
+  assert.equal(article.sources[0].publisher, "هیأت عمومی دیوان عالی کشور");
+  assert.equal(article.sources[0].metadata.document_number, "۸۷۴");
+});
+
 test("CSV export neutralizes spreadsheet formula prefixes", () => {
   const csv = serializeEditorialCsv([["title"], ["=HYPERLINK(\"https://bad.example\")"]]);
   assert.match(csv, /'=HYPERLINK/);

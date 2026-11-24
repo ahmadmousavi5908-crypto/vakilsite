@@ -1,6 +1,6 @@
 import { parseMavisArticleImageMetadata } from "./article-image-metadata.mjs";
 
-const LIMITS = { title: 300, slug: 180, excerpt: 1200, category: 100, author: 180, seoTitle: 300, seoDescription: 500, intro: 8000, heading: 240, body: 12000, tag: 60, tags: 40, sections: 80, warning: 2000, checklist: 60, checklistItem: 500, totalContent: 200000 };
+const LIMITS = { title: 300, slug: 180, excerpt: 1200, category: 100, author: 180, seoTitle: 300, seoDescription: 500, focusKeyword: 240, relatedKeyword: 120, relatedKeywords: 20, intro: 8000, heading: 240, body: 12000, tag: 60, tags: 40, sections: 80, warning: 2000, checklist: 60, checklistItem: 500, totalContent: 200000 };
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function text(form, key) {
@@ -25,6 +25,10 @@ export function parseMavisArticleDraftInput(form) {
   const author = text(form, "author_name");
   const seoTitle = text(form, "seo_title");
   const seoDescription = text(form, "seo_description");
+  const focusKeyword = text(form, "focus_keyword");
+  const focusKeywordKey = focusKeyword.normalize("NFC").toLocaleLowerCase("fa");
+  const relatedKeywords = [...new Set(text(form, "related_keywords").split(/[,،]/).map((item) => item.trim()).filter(Boolean))]
+    .filter((item) => item.normalize("NFC").toLocaleLowerCase("fa") !== focusKeywordKey);
   const warning = text(form, "warning");
   const checklist = text(form, "checklist").split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   const tags = [...new Set(text(form, "tags").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
@@ -43,7 +47,9 @@ export function parseMavisArticleDraftInput(form) {
   if (!between(excerpt, 10, LIMITS.excerpt)) return { ok: false, error: "خلاصه باید بین ۱۰ تا ۱۲۰۰ نویسه باشد." };
   if (!between(category, 2, LIMITS.category)) return { ok: false, error: "دسته‌بندی باید بین ۲ تا ۱۰۰ نویسه باشد." };
   if (!between(intro, 10, LIMITS.intro)) return { ok: false, error: "مقدمه باید بین ۱۰ تا ۸۰۰۰ نویسه باشد." };
-  if (author.length > LIMITS.author || seoTitle.length > LIMITS.seoTitle || seoDescription.length > LIMITS.seoDescription) {
+  if (author.length > LIMITS.author || seoTitle.length > LIMITS.seoTitle || seoDescription.length > LIMITS.seoDescription
+    || focusKeyword.length > LIMITS.focusKeyword || relatedKeywords.length > LIMITS.relatedKeywords
+    || relatedKeywords.some((item) => item.length > LIMITS.relatedKeyword)) {
     return { ok: false, error: "یکی از فیلدهای نویسنده یا سئو بیش از حد مجاز است." };
   }
   if (warning.length > LIMITS.warning || checklist.length > LIMITS.checklist || checklist.some((item) => !between(item, 1, LIMITS.checklistItem))) {
@@ -69,8 +75,8 @@ export function parseMavisArticleDraftInput(form) {
   }
 
   const totalContentLength = [
-    title, slug, excerpt, category, intro, author, seoTitle, seoDescription, warning,
-    ...tags, ...checklist, ...sections.flatMap((section) => [section.heading, section.body]),
+    title, slug, excerpt, category, intro, author, seoTitle, seoDescription, focusKeyword, warning,
+    ...relatedKeywords, ...tags, ...checklist, ...sections.flatMap((section) => [section.heading, section.body]),
   ].reduce((total, value) => total + value.length, 0);
   if (totalContentLength > LIMITS.totalContent) {
     return { ok: false, error: "حجم کل متن مقاله بیش از حد مجاز است. مقاله را به چند بخش کوتاه‌تر تقسیم کنید." };
@@ -84,5 +90,13 @@ export function parseMavisArticleDraftInput(form) {
   if (author) payload.author_name = author;
   if (seoTitle) payload.seo_title = seoTitle;
   if (seoDescription) payload.seo_description = seoDescription;
-  return { ok: true, payload, image: imageResult.image, articleId: articleId || null, expectedVersion };
+  return {
+    ok: true,
+    payload,
+    focusKeyword,
+    relatedKeywords,
+    image: imageResult.image,
+    articleId: articleId || null,
+    expectedVersion,
+  };
 }

@@ -66,18 +66,15 @@ export async function saveMavisArticleDraft(formData) {
   }
 
   try {
-    const rpcName = parsed.image
-      ? "save_mavis_article_draft_with_image"
-      : "save_mavis_article_draft";
-    const rpcArguments = {
+    const { data, error } = await access.supabase.rpc("save_mavis_article_draft_with_metadata", {
       p_payload: parsed.payload,
+      p_focus_keyword: parsed.focusKeyword || null,
+      p_related_keywords: parsed.relatedKeywords,
       p_article_id: parsed.articleId,
       p_expected_version: parsed.expectedVersion,
       p_change_note: parsed.articleId ? "Administrator draft edit" : "Initial editorial draft",
-    };
-    if (parsed.image) rpcArguments.p_image = parsed.image;
-
-    const { data, error } = await access.supabase.rpc(rpcName, rpcArguments);
+      p_image: parsed.image,
+    });
 
     if (error?.code === "23505") return { ok: false, error: "این نامک قبلاً استفاده شده است. نامک دیگری انتخاب کنید." };
     if (error?.code === "40001") return { ok: false, error: "نسخه مقاله تغییر کرده است. صفحه را تازه‌سازی کنید و تغییرات جدید را دوباره اعمال کنید." };
@@ -87,8 +84,8 @@ export async function saveMavisArticleDraft(formData) {
       return {
         ok: false,
         error: parsed.image
-          ? "زیرساخت ذخیره تصویر مقاله هنوز روی این پایگاه داده فعال نشده است؛ تصویر بارگذاری شده اما پیش‌نویس ذخیره نشد."
-          : "زیرساخت ذخیره پیش‌نویس هنوز روی این پایگاه داده فعال نشده است.",
+          ? "زیرساخت ذخیره تصویر و فراداده سئو هنوز روی این پایگاه داده فعال نشده است؛ پیش‌نویس ذخیره نشد."
+          : "زیرساخت ذخیره پیش‌نویس و فراداده سئو هنوز روی این پایگاه داده فعال نشده است.",
       };
     }
     if (error) return { ok: false, error: "ذخیره پیش‌نویس انجام نشد. ورودی‌ها و اتصال پایگاه داده را بررسی کنید." };
