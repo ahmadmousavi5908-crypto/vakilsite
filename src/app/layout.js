@@ -1,5 +1,6 @@
 import "./globals.css";
 import SocialContactDock from "../components/SocialContactDock";
+import GoogleAnalytics from "../components/GoogleAnalytics";
 import AttorneyProfileDock from "../components/AttorneyProfileDock";
 import GlobalMobileMenu from "../components/GlobalMobileMenu";
 import { getSiteUrl } from "../lib/site-url.mjs";
@@ -79,6 +80,7 @@ export default function RootLayout({ children }) {
     <html lang="fa" dir="rtl" data-scroll-behavior="smooth">
       <body>
         {children}
+        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
         <GlobalMobileMenu />
         <AttorneyProfileDock />
         <SocialContactDock />
