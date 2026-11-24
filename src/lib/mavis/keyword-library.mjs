@@ -85,6 +85,9 @@ const POSITIONING_TERMS = Object.freeze([
   { term: "بهترین وکیل ضرب و جرح اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
   { term: "بهترین وکیل جراحات اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
   { term: "بهترین وکیل توهین و افترا اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل جرایم قتل اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل جرایم جراحات اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل جرایم توهین اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
   { term: "بهترین وکیل خانواده اهواز", intent: "superlative-family-comparison", claimRisk: "high" }
 ]);
 
