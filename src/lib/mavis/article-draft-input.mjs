@@ -43,9 +43,11 @@ export function parseMavisArticleDraftInput(form) {
   const seoDescription = rawSeoDescription || truncateSearchText(excerpt, 160);
   const focusKeyword = rawFocusKeyword || title.slice(0, LIMITS.focusKeyword);
   const focusKeywordKey = focusKeyword.normalize("NFC").toLocaleLowerCase("fa");
-  const relatedKeywords = (rawRelatedKeywords.length ? rawRelatedKeywords : tags)
-    .filter((item) => item.normalize("NFC").toLocaleLowerCase("fa") !== focusKeywordKey)
-    .slice(0, LIMITS.relatedKeywords);
+  const relatedKeywordCandidates = (rawRelatedKeywords.length ? rawRelatedKeywords : tags)
+    .filter((item) => item.normalize("NFC").toLocaleLowerCase("fa") !== focusKeywordKey);
+  const relatedKeywords = rawRelatedKeywords.length
+    ? relatedKeywordCandidates
+    : relatedKeywordCandidates.slice(0, LIMITS.relatedKeywords);
   const warning = text(form, "warning");
   const checklist = text(form, "checklist").split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   const headings = form.getAll("section_heading");
