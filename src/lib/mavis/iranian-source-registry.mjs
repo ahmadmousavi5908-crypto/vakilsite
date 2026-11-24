@@ -14,6 +14,8 @@ export const IRANIAN_LEGAL_SOURCES = Object.freeze([
   { id: "irandoc", name: "پژوهشگاه علوم و فناوری اطلاعات ایران", domains: ["irandoc.ac.ir"], group: "academic", authority: "academic", documentKinds: ["thesis", "dissertation", "research_record"] },
   { id: "civilica", name: "سیویلیکا", domains: ["civilica.com"], group: "academic", authority: "academic_index", documentKinds: ["conference_paper", "journal_article"] },
   { id: "lawlex", name: "لالکس، مرجع ثانویه حقوقی", domains: ["lawlex.ir"], group: "secondary", authority: "secondary_reference", documentKinds: ["law_reference", "judgment_reference", "advisory_opinion_reference"] },
+  { id: "mizan", name: "خبرگزاری میزان، مرکز رسانه قوه قضاییه", domains: ["mizanonline.ir"], group: "secondary", authority: "official_news", documentKinds: ["judicial_news", "legal_update", "judicial_notice"] },
+  { id: "ekhtebar", name: "پایگاه خبری اختبار", domains: ["ekhtebar.ir"], group: "secondary", authority: "legal_news", documentKinds: ["legal_news", "judicial_decision", "legal_article"] },
 ]);
 
 const SOURCE_BY_DOMAIN = new Map(

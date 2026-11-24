@@ -3,11 +3,20 @@ import assert from "node:assert/strict";
 import { getIranianSourceDomains, normalizeIranianSourceUrl } from "../../src/lib/mavis/iranian-source-registry.mjs";
 import { createIranianSourceSearch } from "../../src/lib/mavis/iranian-source-search.mjs";
 
-test("the source allowlist contains Iranian official and academic domains only", () => {
+test("the source allowlist preserves all existing Iranian legal sources and adds two secondary sources", () => {
   const domains = getIranianSourceDomains("all");
+  assert.equal(domains.length, 17);
   assert.ok(domains.includes("qavanin.ir"));
-  assert.ok(domains.includes("sid.ir"));
   assert.ok(domains.includes("magiran.com"));
+  assert.ok(domains.includes("eadil.com"));
+  assert.ok(domains.includes("sid.ir"));
+  assert.ok(domains.includes("noormags.ir"));
+  assert.ok(domains.includes("ensani.ir"));
+  assert.ok(domains.includes("irandoc.ac.ir"));
+  assert.ok(domains.includes("civilica.com"));
+  assert.ok(domains.includes("lawlex.ir"));
+  assert.ok(domains.includes("mizanonline.ir"));
+  assert.ok(domains.includes("ekhtebar.ir"));
   assert.ok(!domains.includes("crossref.org"));
   assert.ok(!domains.includes("semanticscholar.org"));
 });
@@ -18,6 +27,8 @@ test("source URL validation accepts known sources and rejects unknown or unsafe 
   assert.equal(normalizeIranianSourceUrl("http://qavanin.ir"), null);
   assert.equal(normalizeIranianSourceUrl("https://user:pass@qavanin.ir"), null);
   assert.equal(normalizeIranianSourceUrl("https://qavanin.ir:8443"), null);
+  assert.equal(normalizeIranianSourceUrl("https://mizanonline.ir/news/1").source.authority, "official_news");
+  assert.equal(normalizeIranianSourceUrl("https://ekhtebar.ir/news/1").source.authority, "legal_news");
 });
 
 test("search restricts provider domains and filters out unapproved provider results", async () => {
@@ -122,7 +133,8 @@ test("all-source fallback includes academic domains instead of only legal portal
     group: "all",
     limit: 10
   });
-  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Asid.ir")));
   assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amagiran.com")));
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Amizanonline.ir")));
+  assert.ok(result.searchLinks.some((item) => item.url.includes("site%3Aekhtebar.ir")));
   assert.ok(result.searchLinks.some((item) => item.id === "qavanin"));
 });
