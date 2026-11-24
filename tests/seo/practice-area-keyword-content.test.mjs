@@ -83,6 +83,19 @@ test("keeps selected intent phrases in crawlable service-page content", () => {
   }
 });
 
+test("covers best-lawyer search intent with neutral selection guidance on property and family pages", () => {
+  const bySlug = new Map(practiceAreas.map((area) => [area.slug, area]));
+  const property = visiblePracticeAreaText(bySlug.get("property-law"));
+  const family = visiblePracticeAreaText(bySlug.get("family-law"));
+
+  assert.ok(property.includes(normalizePersianSearchText("بهترین وکیل ملکی اهواز")));
+  assert.ok(family.includes(normalizePersianSearchText("بهترین وکیل خانواده اهواز")));
+  assert.ok(property.includes(normalizePersianSearchText("اعتبار پروانه")));
+  assert.ok(family.includes(normalizePersianSearchText("حفظ محرمانگی")));
+  assert.ok(property.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
+  assert.ok(family.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
+});
+
 test("does not count the internal searchTerms array as public page content", () => {
   const area = practiceAreas.find((item) => item.slug === "criminal-law");
   const visibleText = visiblePracticeAreaText(area);
