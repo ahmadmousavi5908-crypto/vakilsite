@@ -6,7 +6,6 @@ on:
       - main
       - feature/mavis-third-arm-delivery-20261116
       - feature/mavis-article-images-active-editor
-      - fix/mavis-editorial-seo-sources-image-20261124
     paths:
       - "ops/mavis-staging-admin-e2e-trigger.txt"
   workflow_dispatch:
