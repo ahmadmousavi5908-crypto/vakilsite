@@ -9,3 +9,5 @@ Run the complete post-deploy article-image validation against the deployed Worke
 Rerun the full authenticated staging E2E after collecting safe HTML response diagnostics for the published article rendering failure. Confirm complete temporary record and storage cleanup. No Production actions.
 
 Repeat the authenticated Staging E2E with richer streamed HTML markers to isolate why the published dynamic article returns the loading shell instead of the server-rendered article and JSON-LD. Clean up all temporary data.
+
+Run the final authenticated Staging E2E against the latest deployed Worker after the imageAlt scope fix. Verify editor API, WebP upload, anonymous denial, immutable version metadata, publication, public article HTML, Open Graph, BlogPosting, image sitemap, and clean all temporary records and objects. Do not touch Production.
