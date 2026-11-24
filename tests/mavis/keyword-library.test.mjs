@@ -33,7 +33,7 @@ test("routes each practice-area keyword cluster to its matching public service p
   const cases = [
     ["family-law", "وکیل مهریه", ["وکیل قتل عمد", "وکیل سرقفلی"]],
     ["criminal-law", "وکیل قتل عمد", ["وکیل مهریه", "وکیل سرقفلی"]],
-    ["property-law", "وکیل سرقفلی", ["وکیل مهریه", "وکیل قتل عمد"]],
+    ["property-law", "وکیل سرقفلی مغازه", ["وکیل مهریه", "وکیل قتل عمد"]],
     ["contracts-and-obligations", "وکیل فسخ قرارداد", ["وکیل مهریه", "وکیل قتل عمد"]],
     ["claims-and-enforcement", "وکیل مطالبه وجه چک", ["وکیل مهریه", "وکیل قتل عمد"]],
     ["legal-consultation", "وکیل آیین دادرسی مدنی", ["وکیل مهریه", "وکیل قتل عمد"]]
