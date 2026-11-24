@@ -69,7 +69,7 @@ export async function prepareMavisArticleImage(file) {
       throw new Error("برای ساخت نسخه‌های باکیفیت، تصویر اولیه باید حداقل ۱۶۰۰ در ۱۲۰۰ پیکسل باشد.");
     }
     if (bitmap.width * bitmap.height > MAX_SOURCE_PIXELS) {
-      throw new Error("ابعاد تصویر اولیه بیش از حد مجاز است.");
+      throw new Error("تصویر اولیه بیش از ۲۴ مگاپیکسل است؛ نسخه‌ای با وضوح متعارف انتخاب کنید تا مرورگر موبایل تحت فشار قرار نگیرد.");
     }
 
     const variants = {};
