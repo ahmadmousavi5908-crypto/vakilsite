@@ -70,6 +70,9 @@ export function normalizeMavisEditorialAiInput(input = {}) {
     topic: text(input.topic, 240), title: text(input.title, 300), slug: text(input.slug, 120),
     category: text(input.category, 100), excerpt: text(input.excerpt, 1200),
     intro: text(input.intro, 8000), warning: text(input.warning, 1200),
+    focusKeyword: text(input.focusKeyword, 240),
+    relatedKeywords: [...new Set((Array.isArray(input.relatedKeywords) ? input.relatedKeywords : [])
+      .slice(0, 20).map((keyword) => text(keyword, 120)).filter(Boolean))],
     checklist: (Array.isArray(input.checklist) ? input.checklist : []).slice(0, 15).map((x) => text(x, 400)).filter(Boolean),
     sections: (Array.isArray(input.sections) ? input.sections : []).slice(0, 10).map((x) => ({
       heading: text(x?.heading, 200), body: text(x?.body, 5000)
@@ -172,7 +175,7 @@ function normalizeOutput(value, allowedIds, input = {}) {
     checklist: (Array.isArray(value.checklist) ? value.checklist : []).slice(0, 15).map((x) => text(x, 400)).filter(Boolean),
     sections, seoTitle: text(value.seoTitle, 70), seoDescription: text(value.seoDescription, 180),
     focusKeyword: text(input.focusKeyword, 240) || text(value.focusKeyword, 240),
-    relatedKeywords: (Array.isArray(input.relatedKeywords) && input.relatedKeywords.length
+    relatedKeywords: (Array.isArray(input.relatedKeywords)
       ? input.relatedKeywords
       : Array.isArray(value.relatedKeywords) ? value.relatedKeywords : [])
       .slice(0, 20).map((x) => text(x, 120)).filter(Boolean),
