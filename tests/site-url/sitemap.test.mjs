@@ -48,7 +48,7 @@ test("rejects invalid priority and change frequency", () => {
 test("rejects empty and oversized sitemaps", () => {
   assert.throws(() => buildSitemapEntries([], origin), /no public URLs/);
   assert.throws(
-    () => buildSitemapEntries(Array.from({ length: 50001 }, (_, i) => entry(`/p-${i}`)), origin),
+    () => buildSitemapEntries(Array.from({ length: 50001 }, (_, i) => entry("/p-" + i)), origin),
     /50,000 URL limit/,
   );
 });
@@ -71,4 +71,19 @@ test("rejects insecure sitemap image URLs", () => {
     ...entry("/articles/image-aware-guide"),
     images: ["http://example.com/article.webp"],
   }], origin), /HTTPS/);
+});
+
+test("includes accurate last-modified timestamps", () => {
+  const result = buildSitemapEntries([{
+    ...entry("/articles/new-article"),
+    lastModified: "2026-11-24T11:15:46.150Z",
+  }], origin);
+  assert.equal(result[0].lastModified, "2026-11-24T11:15:46.150Z");
+});
+
+test("rejects invalid last-modified timestamps", () => {
+  assert.throws(() => buildSitemapEntries([{
+    ...entry("/articles/new-article"),
+    lastModified: "not-a-date",
+  }], origin), /lastModified/);
 });
