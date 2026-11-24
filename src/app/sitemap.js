@@ -1,5 +1,5 @@
 import { articles } from "../data/articles";
-import { getMavisPublishedArticles } from "../lib/mavis/published-editorial";
+import { getMavisPublishedArticlesForSitemap } from "../lib/mavis/published-editorial";
 import { practiceAreas } from "../data/practice-areas";
 import { getIndexableLegalRecords } from "../lib/legal-library";
 import { getSiteUrl } from "../lib/site-url.mjs";
@@ -9,9 +9,14 @@ export const dynamic = "force-dynamic";
 
 export default async function sitemap() {
   const siteUrl = getSiteUrl(process.env, { required: true });
-  const publishedArticles = await getMavisPublishedArticles();
+  const publishedArticles = await getMavisPublishedArticlesForSitemap();
   const publishedSlugs = new Set(publishedArticles.map((article) => article.slug));
-  const latestPublishedAt = publishedArticles[0]?.publishedAt || null;
+  const latestPublishedAt = publishedArticles.reduce((latest, article) => {
+    const value = article.publishedAt;
+    const timestamp = typeof value === "string" ? Date.parse(value) : NaN;
+    if (!Number.isFinite(timestamp)) return latest;
+    return !latest || timestamp > Date.parse(latest) ? value : latest;
+  }, null);
   const entries = [
     { path: "/", changeFrequency: "weekly", priority: 1 },
     { path: "/ai-assistant", changeFrequency: "monthly", priority: 0.6 },
