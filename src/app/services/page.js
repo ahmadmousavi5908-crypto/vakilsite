@@ -3,9 +3,10 @@ import JsonLd from "../../components/JsonLd";
 import { practiceAreas } from "../../data/practice-areas";
 import { getSiteUrl } from "../../lib/site-url.mjs";
 import { buildBreadcrumbSchema } from "../../lib/seo/breadcrumb-schema.mjs";
+import { SERVICES_HUB_TITLE } from "../../lib/seo/services-hub-title.mjs";
 
 export const metadata = {
-  title: "وکیل حقوقی در اهواز و خوزستان | حوزه‌های خدمات سید احمد موسوی",
+  title: SERVICES_HUB_TITLE,
   description: "معرفی حوزه‌های بررسی دعاوی حقوقی و مدنی، کیفری، ملکی، خانواده، قراردادها و مطالبات نزد سید احمد موسوی؛ دفتر اهواز و امکان ثبت درخواست اولیه از سراسر ایران.",
   alternates: { canonical: "/services" },
 };
