@@ -36,7 +36,7 @@ const INSTRUCTIONS = [
   "Do not claim that a law or judgment is currently in force unless the supplied evidence establishes its current status.",
   "Do not include personal data, client names, case facts, phone numbers, addresses, or confidential information.",
   "When a focusKeyword is supplied, preserve it exactly in the output and include it naturally in the introduction or body. Do not replace it with a broader phrase.",
-  "Use only relevant supplied relatedKeywords. Include at least one naturally in the article body when it fits; never force every phrase or repeat phrases unnaturally.",
+  "Include at least one supplied relatedKeyword naturally in the article body. Do not force every phrase or repeat phrases unnaturally.",
   "Produce an editable draft for lawyer review only. Never publish, approve, or claim legal verification.",
   "Do not add fake placeholders or invented legal citations. Return only the JSON object required by the schema."
 ].join("\n");
