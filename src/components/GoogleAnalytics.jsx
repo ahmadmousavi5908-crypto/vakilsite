@@ -1,0 +1,59 @@
+"use client";
+
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import Script from "next/script";
+import { getGoogleAnalyticsMeasurementId, getLeadMethodFromHref } from "../lib/google-analytics.mjs";
+
+export default function GoogleAnalytics({ measurementId }) {
+  const id = getGoogleAnalyticsMeasurementId(measurementId);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!id || !pathname || pathname.startsWith("/admin")) return undefined;
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function gtag() { window.dataLayer.push(arguments); };
+    if (window.__vakilsiteGaConfigured !== id) {
+      window.gtag("js", new Date());
+      window.gtag("config", id, { send_page_view: false });
+      window.__vakilsiteGaConfigured = id;
+    }
+
+    window.gtag("event", "page_view", {
+      page_title: document.title,
+      page_location: window.location.href,
+      page_path: pathname,
+    });
+
+    function handleContactClick(event) {
+      if (!(event.target instanceof Element)) return;
+      const anchor = event.target.closest("a[href]");
+      if (!anchor) return;
+      const method = getLeadMethodFromHref(anchor.getAttribute("href"));
+      if (!method) return;
+      window.gtag("event", "generate_lead", { method, page_path: window.location.pathname });
+    }
+
+    document.addEventListener("click", handleContactClick, true);
+    return () => document.removeEventListener("click", handleContactClick, true);
+  }, [id, pathname]);
+
+  if (!id || !pathname || pathname.startsWith("/admin")) return null;
+
+  return (
+    <Script id="vakilsite-google-analytics-init" strategy="afterInteractive">
+      {`window.dataLayer = window.dataLayer || [];
+window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
+if (window.__vakilsiteGaConfigured !== '${id}') {
+  window.gtag('js', new Date());
+  window.gtag('config', '${id}', { send_page_view: false });
+  window.__vakilsiteGaConfigured = '${id}';
+}
+var vakilsiteGaScript = document.createElement('script');
+vakilsiteGaScript.async = true;
+vakilsiteGaScript.src = 'https://www.googletagmanager.com/gtag/js?id=${id}';
+document.head.appendChild(vakilsiteGaScript);`}
+    </Script>
+  );
+}
