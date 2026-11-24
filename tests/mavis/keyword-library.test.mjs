@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { getKeywordTaxonomyEntries } from "../../src/lib/mavis/keyword-taxonomy-adapter.mjs";
+import { getSearchTermsForPracticeArea } from "../../src/data/seo-keyword-library.js";
+import { practiceAreas } from "../../src/data/practice-areas.js";
 import { getKeywordEntryAction } from "../../src/lib/mavis/keyword-entry-action.mjs";
 import {
   getKeywordLibraryClusters,
@@ -25,6 +27,54 @@ test("exposes current metric and Search Console evidence status to the internal 
   assert.equal(snapshot.metricsStatus, "پیشنهادی؛ حجم جست‌وجو و سختی تأیید نشده");
   assert.match(snapshot.gscStatus, /3 عبارت/);
   assert.match(snapshot.gscStatus, /19 صفحه/);
+});
+
+test("routes each practice-area keyword cluster to its matching public service page", () => {
+  const cases = [
+    ["family-law", "وکیل مهریه", ["وکیل قتل عمد", "وکیل سرقفلی"]],
+    ["criminal-law", "وکیل قتل عمد", ["وکیل مهریه", "وکیل سرقفلی"]],
+    ["property-law", "وکیل سرقفلی", ["وکیل مهریه", "وکیل قتل عمد"]],
+    ["contracts-and-obligations", "وکیل فسخ قرارداد", ["وکیل مهریه", "وکیل قتل عمد"]],
+    ["claims-and-enforcement", "وکیل مطالبه وجه چک", ["وکیل مهریه", "وکیل قتل عمد"]],
+    ["legal-consultation", "وکیل آیین دادرسی مدنی", ["وکیل مهریه", "وکیل قتل عمد"]]
+  ];
+
+  for (const [slug, expected, excluded] of cases) {
+    const terms = getSearchTermsForPracticeArea(slug);
+    assert.ok(terms.includes(expected), `Missing ${expected} from ${slug}`);
+    for (const term of excluded) {
+      assert.ok(!terms.includes(term), `Unrelated phrase ${term} was assigned to ${slug}`);
+    }
+    assert.equal(new Set(terms).size, terms.length, `Duplicate search phrases in ${slug}`);
+  }
+});
+
+test("keeps unserved clusters in the editorial pipeline instead of assigning them to a generic public service page", () => {
+  const clusters = new Map(getKeywordLibraryClusters().map((cluster) => [cluster.id, cluster]));
+  const futureClusters = [
+    "commercial-law",
+    "inheritance-estate",
+    "labor-administrative-tax",
+    "insurance-accident-torts",
+    "intellectual-digital-commerce",
+    "international-foreign-nationals"
+  ];
+
+  for (const id of futureClusters) {
+    assert.equal(clusters.get(id)?.target, "محتوای آتی", `Cluster ${id} needs an approved content owner`);
+  }
+  assert.equal(clusters.get("lawyer-core")?.target, "/");
+  assert.equal(clusters.get("civil-law-eight-domains")?.target, "/services");
+});
+
+test("keeps four unique, people-first FAQs on every public practice area", () => {
+  assert.equal(practiceAreas.length, 6);
+  for (const area of practiceAreas) {
+    assert.equal(area.faqs?.length, 4, `Expected four FAQs for ${area.slug}`);
+    const questions = area.faqs.map((faq) => faq.question);
+    assert.equal(new Set(questions).size, questions.length, `Duplicate FAQ question in ${area.slug}`);
+    assert.ok(area.faqs.every((faq) => faq.question && faq.answer && faq.answer.length > 80));
+  }
 });
 
 test("normalizes Persian and Arabic character variants", () => {
