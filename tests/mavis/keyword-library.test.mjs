@@ -260,10 +260,13 @@ test("keeps broad attorney-positioning and synonym candidates in a separate revi
     "بهترین وکیل تخلیه ید اهواز",
     "بهترین وکیل قتل اهواز",
     "بهترین وکیل ضرب و جرح اهواز",
-    "بهترین وکیل توهین و افترا اهواز"
+    "بهترین وکیل توهین و افترا اهواز",
+    "بهترین وکیل جرایم قتل اهواز",
+    "بهترین وکیل جرایم جراحات اهواز",
+    "بهترین وکیل جرایم توهین اهواز"
   ];
 
-  assert.equal(snapshot.positioningPhraseCount, 30);
+  assert.equal(snapshot.positioningPhraseCount, 33);
   for (const term of expected) {
     assert.ok(entries.some((entry) => entry.term === term), `Missing ${term}`);
   }
