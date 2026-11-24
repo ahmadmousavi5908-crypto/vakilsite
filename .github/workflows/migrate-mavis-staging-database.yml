@@ -251,6 +251,9 @@ jobs:
                   output += current;
                   state = "double";
                   index++;
+                } else if (/\s/.test(current)) {
+                  addSpace();
+                  index++;
                 } else {
                   output += current;
                   index++;
