@@ -2081,6 +2081,15 @@ p, li, label, input, textarea, button{
 .practice-library-note p{color:#667483;font-size:12px;line-height:2.3}
 .practice-library-note div{display:flex;flex-wrap:wrap;gap:18px;margin-top:15px}
 .practice-library-note a{color:#967746;font-size:12px;font-weight:700}
+.practice-faq{margin-top:34px}
+.practice-faq h2{margin-bottom:12px}
+.practice-faq .faq-list{border-top:1px solid #ded8cc}
+.practice-faq .faq-item{border-bottom:1px solid #ded8cc}
+.practice-faq .faq-item summary{display:block;padding:16px 2px;color:#304358;font-size:13px;line-height:2;cursor:pointer;list-style-position:inside}
+.practice-faq .faq-item summary::marker{color:#a78b58}
+.practice-faq .faq-item[open] summary{font-weight:700}
+.practice-faq .faq-item p{font-size:12px;color:#667483;line-height:2.3;margin:0;padding:0 2px 17px}
+
 @media(max-width:850px){.practice-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.practice-detail-layout{grid-template-columns:minmax(0,1fr)}.practice-detail-aside{position:static}}
 @media(max-width:560px){.practice-card-grid{grid-template-columns:minmax(0,1fr)}.practice-hero{padding:38px 0 45px}.practice-hero p{font-size:13px}.practice-list-section{padding-top:30px}}
 
