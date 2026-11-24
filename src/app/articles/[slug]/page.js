@@ -50,6 +50,20 @@ export default async function ArticleDetailPage({ params }) {
         description: article.excerpt,
         inLanguage: "fa-IR",
         articleSection: article.category,
+        ...((article.focusKeyword || article.relatedKeywords?.length || article.keywords?.length) ? {
+          keywords: [...new Set([
+            article.focusKeyword,
+            ...(article.relatedKeywords || article.keywords || []),
+          ].filter(Boolean))].join(", "),
+        } : {}),
+        ...(article.sources?.length ? {
+          citation: article.sources.map((source) => ({
+            "@type": "CreativeWork",
+            name: source.title || source.label,
+            url: source.url,
+            ...(source.publisher ? { publisher: { "@type": "Organization", name: source.publisher } } : {}),
+          })),
+        } : {}),
         ...(article.publishedAt ? { datePublished: article.publishedAt } : {}),
         ...(article.updatedAt ? { dateModified: article.updatedAt } : {}),
         author: {
@@ -158,7 +172,17 @@ export default async function ArticleDetailPage({ params }) {
           {article.sources?.length ? <section className="article-sources">
             <h2>مستندات و منابع قانونی</h2>
             <p>برای مطالعه متن قوانین و تطبیق آخرین اصلاحات، از منابع زیر استفاده کنید:</p>
-            <ul>{article.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul>
+            <ul>{article.sources.map((source) => <li key={source.url}>
+              <a href={source.url} target="_blank" rel="noopener noreferrer">{source.title || source.label} ↗</a>
+              {(source.type || source.publisher || source.reference || source.date) ? (
+                <small>{[
+                  source.type,
+                  source.publisher,
+                  source.reference ? "شناسه: " + source.reference : "",
+                  source.date ? "تاریخ: " + source.date : "",
+                ].filter(Boolean).join(" · ")}</small>
+              ) : null}
+            </li>)}</ul>
           </section> : null}
           <div className="article-next-actions">
             <Link href="/articles">← بازگشت به همه مقالات</Link>
