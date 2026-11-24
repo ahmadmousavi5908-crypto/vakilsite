@@ -433,7 +433,7 @@ const keywordLibrary = {
     {
       "id": "civil-law-eight-domains",
       "title": "حقوق مدنی؛ هشت قلمرو کاربردی",
-      "target": "/services/contracts-and-obligations",
+      "target": "/services",
       "intent": "mixed",
       "coverage": "طبقه‌بندی تحریریه، نه ادعای هشت جلد رسمی قانون",
       "fa": [
@@ -1089,7 +1089,7 @@ const keywordLibrary = {
     {
       "id": "commercial-law",
       "title": "قانون تجارت، شرکت‌ها و روابط تجاری",
-      "target": "/services/contracts-and-obligations",
+      "target": "محتوای آتی",
       "intent": "commercial-investigation",
       "coverage": "فرصت گسترش؛ صفحه مستقل فقط با احراز دامنه واقعی خدمات",
       "fa": [
@@ -1287,7 +1287,7 @@ const keywordLibrary = {
     {
       "id": "inheritance-estate",
       "title": "ارث، وصیت، ترکه و امور حسبی",
-      "target": "/services/legal-consultation",
+      "target": "محتوای آتی",
       "intent": "informational-to-service",
       "coverage": "راهنمای موضوعی؛ قانون امور حسبی و مدنی لازم است",
       "fa": [
@@ -1588,12 +1588,19 @@ const keywordLibrary = {
   ]
 };
 const practiceAreaClusterMap = {
- "family-law":["lawyer-core","family-law","civil-procedure","inheritance-estate"],
- "criminal-law":["lawyer-core","criminal-procedure","criminal-life-and-body","criminal-property","criminal-financial-public","criminal-cyber","criminal-other"],
- "property-law":["lawyer-core","civil-law-eight-domains","lease-shop-tenancy","registration-land","construction-urban","civil-procedure"],
- "contracts-and-obligations":["lawyer-core","civil-law-eight-domains","civil-contracts-obligations","lease-shop-tenancy","commercial-law","civil-procedure"],
- "claims-and-enforcement":["lawyer-core","cheques-commercial-papers","enforcement-debt","commercial-law","civil-procedure"],
- "legal-consultation":["lawyer-core","civil-procedure","inheritance-estate","labor-administrative-tax","insurance-accident-torts","intellectual-digital-commerce","international-foreign-nationals"]
+  "family-law": ["family-law"],
+  "criminal-law": [
+    "criminal-procedure",
+    "criminal-life-and-body",
+    "criminal-property",
+    "criminal-financial-public",
+    "criminal-cyber",
+    "criminal-other"
+  ],
+  "property-law": ["lease-shop-tenancy", "registration-land", "construction-urban"],
+  "contracts-and-obligations": ["civil-contracts-obligations"],
+  "claims-and-enforcement": ["cheques-commercial-papers", "enforcement-debt"],
+  "legal-consultation": ["civil-procedure"]
 };
 export const seoKeywordLibrary=Object.freeze(keywordLibrary);
 export const khuzestanKeywordLocations=Object.freeze(keywordLibrary.khuzestanLocations);
