@@ -50,11 +50,13 @@ export const metadata = {
     "خدمات حقوقی",
   ],
   robots: {
-    index: true,
-    follow: true,
+    index: !isStagingSite,
+    follow: !isStagingSite,
+    ...(isStagingSite ? { noarchive: true } : {}),
     googleBot: {
-      index: true,
-      follow: true,
+      index: !isStagingSite,
+      follow: !isStagingSite,
+      ...(isStagingSite ? { noimageindex: true } : {}),
       "max-image-preview": "large",
       "max-snippet": -1,
       "max-video-preview": -1,
