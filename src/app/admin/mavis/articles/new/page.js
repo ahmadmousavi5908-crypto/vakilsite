@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "../../../../../lib/supabase/admin";
 import MavisArticleEditor from "../../../../../components/admin/MavisArticleEditor";
+import { getKeywordClusterSeoBrief } from "../../../../../lib/mavis/keyword-library.mjs";
 import { signOut } from "../../../../admin/actions";
 
 export const metadata = {
@@ -13,6 +14,12 @@ export default async function NewMavisArticlePage({ searchParams }) {
   const params = await searchParams;
   const initialTopic = typeof params?.topic === "string" ? params.topic.slice(0, 240) : "";
   const initialCategory = typeof params?.category === "string" ? params.category.slice(0, 100) : "";
+  const requestedClusterId = typeof params?.cluster_id === "string" ? params.cluster_id : "";
+  const initialFocusKeyword = typeof params?.focus_keyword === "string" ? params.focus_keyword.slice(0, 240) : initialTopic;
+  const keywordBrief = getKeywordClusterSeoBrief({
+    clusterId: requestedClusterId,
+    focusKeyword: initialFocusKeyword
+  });
   let access;
   try {
     access = await requireAdmin();
@@ -41,7 +48,15 @@ export default async function NewMavisArticlePage({ searchParams }) {
         <header className="admin-topbar"><div><span>فضای مدیریت / MAVIS</span><strong>ساخت پیش‌نویس مقاله</strong></div><form action={signOut}><button type="submit">خروج امن</button></form></header>
         <main className="admin-content">
           <section className="admin-welcome"><div><span className="admin-eyebrow">MAVIS · EDITORIAL CMS</span><h1>ایجاد محتوای جدید</h1><p>فرم ساخت پیش‌نویس ساختاریافته با ذخیره امن و نسخه‌بندی‌شده.</p></div><div className="admin-status"><i /> دسترسی مدیر تأیید شده</div></section>
-          <MavisArticleEditor initialTopic={initialTopic} initialCategory={initialCategory} aiEnabled={Boolean(process.env.MAVIS_OPENAI_API_KEY || process.env.OPENAI_API_KEY)} />
+          <MavisArticleEditor
+            initialTopic={initialTopic}
+            initialCategory={initialCategory}
+            initialClusterId={keywordBrief?.clusterId || ""}
+            initialClusterTitle={keywordBrief?.clusterTitle || ""}
+            initialFocusKeyword={keywordBrief?.focusKeyword || initialFocusKeyword}
+            initialRelatedKeywords={keywordBrief?.relatedKeywords || []}
+            aiEnabled={Boolean(process.env.MAVIS_OPENAI_API_KEY || process.env.OPENAI_API_KEY)}
+          />
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>
       </div>
