@@ -1,6 +1,10 @@
+import { HTML_LIMITED_BOT_USER_AGENT } from "./src/lib/seo/html-limited-bots.mjs";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
+  // Keep metadata in the initial HTML for search and AI crawlers that do not execute JavaScript.
+  htmlLimitedBots: HTML_LIMITED_BOT_USER_AGENT,
 
   images: {
     // Keep the existing 82-quality attorney image valid under Next.js 16.
