@@ -11,13 +11,24 @@ export default async function sitemap() {
   const siteUrl = getSiteUrl(process.env, { required: true });
   const publishedArticles = await getMavisPublishedArticles();
   const publishedSlugs = new Set(publishedArticles.map((article) => article.slug));
+  const latestPublishedAt = publishedArticles[0]?.publishedAt || null;
   const entries = [
     { path: "/", changeFrequency: "weekly", priority: 1 },
     { path: "/ai-assistant", changeFrequency: "monthly", priority: 0.6 },
     { path: "/lawyer-cooperation", changeFrequency: "monthly", priority: 0.6 },
     { path: "/privacy", changeFrequency: "yearly", priority: 0.3 },
-    { path: "/articles", changeFrequency: "weekly", priority: 0.8 },
-    { path: "/articles/library", changeFrequency: "weekly", priority: 0.75 },
+    {
+      path: "/articles",
+      changeFrequency: "weekly",
+      priority: 0.8,
+      ...(latestPublishedAt ? { lastModified: latestPublishedAt } : {}),
+    },
+    {
+      path: "/articles/library",
+      changeFrequency: "weekly",
+      priority: 0.75,
+      ...(latestPublishedAt ? { lastModified: latestPublishedAt } : {}),
+    },
     { path: "/services", changeFrequency: "monthly", priority: 0.9 },
     { path: "/about", changeFrequency: "monthly", priority: 0.8 },
     { path: "/locations/khuzestan", changeFrequency: "monthly", priority: 0.8 },
@@ -43,6 +54,7 @@ export default async function sitemap() {
       path: "/articles/" + article.slug,
       changeFrequency: "monthly",
       priority: 0.7,
+      ...(article.publishedAt ? { lastModified: article.publishedAt } : {}),
       ...(article.coverImageUseForSeo && article.coverImageUrl
         ? { images: [article.coverImageUrl] }
         : {}),
