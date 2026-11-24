@@ -184,7 +184,9 @@ jobs:
                   continue;
                 }
                 if (current === ";") {
-                  output = output.trimEnd() + ";";
+                  // Supabase CLI may serialize top-level statement terminators differently
+                  // when fetching applied migrations. Compare statement bodies, not separators.
+                  addSpace();
                   index++;
                   while (index < source.length && /\s/.test(source[index])) index++;
                   continue;
