@@ -51,7 +51,6 @@ export default async function NewMavisArticlePage({ searchParams }) {
           <MavisArticleEditor
             initialTopic={initialTopic}
             initialCategory={initialCategory}
-            initialClusterId={keywordBrief?.clusterId || ""}
             initialClusterTitle={keywordBrief?.clusterTitle || ""}
             initialFocusKeyword={keywordBrief?.focusKeyword || initialFocusKeyword}
             initialRelatedKeywords={keywordBrief?.relatedKeywords || []}
