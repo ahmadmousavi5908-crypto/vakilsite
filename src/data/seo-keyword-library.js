@@ -24,6 +24,35 @@ const keywordLibrary = {
         "queryRows": 3,
         "pageRows": 19
       },
+      "queryPageRows": 4,
+      "observedQueries": [
+        {
+          "query": "وکیل سید احمد موسوی",
+          "classification": "brand",
+          "landingPages": [
+            { "path": "/", "clicks": 4, "impressions": 7, "ctr": 0.5714, "averagePosition": 1.6 },
+            { "path": "/about", "clicks": 0, "impressions": 7, "ctr": 0, "averagePosition": 4.9 }
+          ],
+          "note": "The query-level and query/page aggregates do not reconcile; do not sum page rows into query totals."
+        },
+        {
+          "query": "بهترین وکیل خلع ید و تخلیه در اهواز",
+          "classification": "service-intent-with-claim-risk",
+          "requiresComplianceReview": true,
+          "landingPages": [
+            { "path": "/services/property-law", "clicks": 0, "impressions": 2, "ctr": 0, "averagePosition": 47.5 }
+          ],
+          "note": "Observed search wording only; it is not an endorsement or a claim the lawyer is the best."
+        },
+        {
+          "query": "یونس نادمی",
+          "classification": "unrelated-entity-or-author-query",
+          "landingPages": [
+            { "path": "/about", "clicks": 0, "impressions": 18, "ctr": 0, "averagePosition": 9.9 }
+          ],
+          "note": "Do not count this query as branded demand for the lawyer."
+        }
+      ],
       "indexInspection": {
         "inspectedUrls": 10,
         "indexedPass": 10,
