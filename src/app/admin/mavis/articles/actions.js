@@ -10,6 +10,7 @@ import { queryMavisEditorialArticles } from "../../../../lib/mavis/editorial-tab
 import { buildMavisStaticArticleImport } from "../../../../lib/mavis/static-article-import.mjs";
 import { isMavisArticleImageOwnedByUser } from "../../../../lib/mavis/article-image-metadata.mjs";
 import { analyzeMavisArticleKeywordCoverage } from "../../../../lib/mavis/article-keyword-coverage.mjs";
+import { analyzeMavisArticleImageReadiness } from "../../../../lib/mavis/article-image-readiness.mjs";
 
 async function attachStaticArticleSources(articleId, initialVersion, sources, skippedSources = 0) {
   let currentVersion = initialVersion;
@@ -391,6 +392,28 @@ export async function submitMavisArticleForReview(articleId, expectedVersion) {
     if (!article) return { ok: false, error: "مقاله پیدا نشد." };
     if (article.current_version !== expectedVersion) {
       return { ok: false, error: "نسخه مقاله تغییر کرده است. صفحه را تازه‌سازی کنید و تغییرات جدید را دوباره بررسی کنید." };
+    }
+
+    const { data: imageRecord, error: imageLookupError } = await access.supabase
+      .from("mavis_article_version_images")
+      .select("image")
+      .eq("article_id", articleId)
+      .eq("article_version", expectedVersion)
+      .maybeSingle();
+
+    if (imageLookupError) {
+      return { ok: false, error: "تصویر نسخه جاری مقاله برای کنترل سئو بررسی نشد. وضعیت ذخیره تصویر را بررسی کنید." };
+    }
+
+    const imageReadiness = analyzeMavisArticleImageReadiness(imageRecord?.image);
+    if (!imageReadiness.ready) {
+      const imageErrors = {
+        missing_image: "برای ارسال مقاله به بازبینی، ابتدا تصویر شاخص مرتبط را از پنل MAVIS بارگذاری کنید.",
+        not_visible: "تصویر شاخص باید در ابتدای متن مقاله قابل مشاهده باشد.",
+        seo_disabled: "گزینه استفاده از تصویر برای Google Images، Open Graph و داده ساختاریافته باید فعال باشد.",
+        invalid_metadata: "فراداده تصویر شاخص معتبر نیست. تصویر را دوباره بارگذاری و متن جایگزین را تکمیل کنید."
+      };
+      return { ok: false, error: imageErrors[imageReadiness.reason] || imageErrors.invalid_metadata };
     }
 
     const keywordCoverage = analyzeMavisArticleKeywordCoverage(article);
