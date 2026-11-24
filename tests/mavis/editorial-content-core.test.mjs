@@ -5,8 +5,10 @@ import {
   formatEditorialSources,
   mapPublishedEditorialRecord,
   parseEditorialBody,
+  parseEditorialList,
   parseEditorialSources,
   serializeEditorialCsv,
+  validateArticleImageDimensions,
   validateEditorialSlug,
 } from "../../src/lib/mavis/editorial-content-core.mjs";
 
@@ -27,6 +29,36 @@ test("editorial sources accept only labelled HTTPS links", () => {
   );
   assert.deepEqual(sources, [{ label: "روزنامه رسمی", url: "https://rrk.ir/" }]);
   assert.equal(formatEditorialSources(sources), "روزنامه رسمی | https://rrk.ir/");
+});
+
+test("structured sources preserve type, title, publisher, reference and date", () => {
+  const value = "رأی وحدت رویه | رأی وحدت رویه شماره ۸۷۴ | هیأت عمومی دیوان عالی کشور | ۸۷۴ | ۱۴۰۴/۱۰/۲۳ | https://example.com/raye-874";
+  const [source] = parseEditorialSources(value);
+  assert.deepEqual(source, {
+    type: "رأی وحدت رویه",
+    title: "رأی وحدت رویه شماره ۸۷۴",
+    label: "رأی وحدت رویه شماره ۸۷۴",
+    publisher: "هیأت عمومی دیوان عالی کشور",
+    reference: "۸۷۴",
+    date: "۱۴۰۴/۱۰/۲۳",
+    url: "https://example.com/raye-874",
+  });
+  assert.equal(formatEditorialSources([source]), value);
+});
+
+test("SEO keywords and editorial tags are parsed as separate lists", () => {
+  assert.deepEqual(parseEditorialList("پابند الکترونیکی, نظارت الکترونیکی, پابند الکترونیکی"), [
+    "پابند الکترونیکی",
+    "نظارت الکترونیکی",
+  ]);
+  assert.deepEqual(parseEditorialList("کیفری, اجرای احکام", 30, 80), ["کیفری", "اجرای احکام"]);
+});
+
+test("valid low-resolution images are accepted while invalid or oversized images are rejected", () => {
+  assert.equal(validateArticleImageDimensions(64, 64), true);
+  assert.equal(validateArticleImageDimensions(320, 180), true);
+  assert.equal(validateArticleImageDimensions(0, 180), false);
+  assert.equal(validateArticleImageDimensions(10000, 10000), false);
 });
 
 test("slugs are lowercase URL-safe identifiers", () => {
