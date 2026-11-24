@@ -33,7 +33,7 @@ export default async function EditMavisArticlePage({ params, searchParams }) {
   try {
     const { data, error } = await queryMavisEditorialArticles(access.supabase, (table) =>
       table
-        .select("id, slug, title, author_name, excerpt, category, tags, content, content_schema_version, seo_title, seo_description, status, current_version, updated_at")
+        .select("id, slug, title, author_name, excerpt, category, tags, content, content_schema_version, seo_title, seo_description, focus_keyword, related_keywords, status, current_version, updated_at")
         .eq("id", id)
         .in("status", ["draft", "changes_requested", "needs_update"])
         .maybeSingle()
