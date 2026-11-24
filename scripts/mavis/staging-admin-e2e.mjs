@@ -369,7 +369,14 @@ async function main() {
       .single();
     if (adminReadError) throw new Error(`Canonical admin read failed: ${adminReadError.message}`);
     assert(adminRead.slug === slug && adminRead.status === "draft", "Admin read did not return the created draft.");
-    assert(adminRead.content?.image?.url === imageMetadata.url, "Image metadata was not stored with the draft content.");
+    const { data: versionImage, error: versionImageError } = await client
+      .from("mavis_article_version_images")
+      .select("image")
+      .eq("article_id", articleId)
+      .eq("article_version", adminRead.current_version)
+      .single();
+    if (versionImageError) throw new Error(`Versioned image metadata read failed: ${versionImageError.message}`);
+    assert(versionImage?.image?.url === imageMetadata.url, "Image metadata was not stored for the exact draft version.");
     const publicImageResponse = await fetch(imageMetadata.url, { signal: AbortSignal.timeout(15000) });
     assert(
       publicImageResponse.ok && (publicImageResponse.headers.get("content-type") || "").startsWith("image/webp"),
@@ -494,7 +501,31 @@ async function main() {
       publishedImageArticle.published_content?.content?.image?.url === imageMetadata.url,
       "The exact published version did not expose its matching article image metadata."
     );
-    console.log("PASS: publication exposed the image metadata from the same version snapshot.");
+    const publicArticleResponse = await fetch(new URL(`/articles/${slug}`, stagingOrigin), {
+      headers: { accept: "text/html" },
+      redirect: "error",
+      signal: AbortSignal.timeout(20000),
+    });
+    const publicArticleHtml = await publicArticleResponse.text();
+    assert(
+      publicArticleResponse.status === 200 &&
+        publicArticleHtml.includes(imageMetadata.url) &&
+        publicArticleHtml.includes(imageMetadata.alt) &&
+        publicArticleHtml.includes("og:image") &&
+        publicArticleHtml.includes("BlogPosting"),
+      "Published Staging article page did not render its hero image and SEO metadata."
+    );
+    const sitemapResponse = await fetch(new URL("/sitemap.xml", stagingOrigin), {
+      signal: AbortSignal.timeout(15000),
+    });
+    const sitemapText = await sitemapResponse.text();
+    assert(
+      sitemapResponse.ok &&
+        sitemapText.includes(imageMetadata.url) &&
+        sitemapText.includes("<image:image>"),
+      "The published article image is missing from the XML image sitemap."
+    );
+    console.log("PASS: publication exposed the image metadata for the exact published version; public article HTML, Open Graph, BlogPosting and image sitemap all include it.");
 
     const { data: publicCanonicalRead, error: publicCanonicalReadError } = await anonymous
       .from("mavis_editorial_articles")
