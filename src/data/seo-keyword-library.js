@@ -5,29 +5,31 @@ const keywordLibrary = {
   "market": "Iran",
   "brand": "وکیل سید احمد موسوی",
   "domain": "vakilahmadmousavi.ir",
-  "generatedAt": "2026-11-19",
+  "generatedAt": "2026-11-24",
   "methodology": {
     "researchStatus": "candidate-ideas-not-volume-validated",
     "note": "Candidate terms from the existing site, legal subject taxonomy, user-problem wording, public SERP discovery and bilingual query ideation. Not a Google Keyword Planner export.",
+    "candidateCount": 5584,
+    "candidateCountNote": "5,584 is the total of internally generated editorial candidates across lawyer, base, problem, local, positioning, colloquial and legal taxonomy expansions; it is not search volume, observed query count, indexable URL count, or proof of demand.",
     "gscObserved": {
       "property": "sc-domain:vakilahmadmousavi.ir",
-      "period": "2025-07-18 to 2026-11-15",
-      "queryRows": 0,
-      "pageRows": 0,
-      "status": "connected-but-no-rows-returned",
+      "period": "2026-10-25 to 2026-11-21",
+      "queryRows": 3,
+      "pageRows": 19,
+      "status": "connected; visible query rows are incomplete because Google omits anonymized and low-volume queries",
       "connectionVerified": true,
       "permissionLevel": "siteOwner",
       "lastThreeMonths": {
-        "period": "2026-08-15 to 2026-11-15",
-        "queryRows": 0,
-        "pageRows": 0
+        "period": "2026-08-21 to 2026-11-21",
+        "queryRows": 3,
+        "pageRows": 19
       },
       "indexInspection": {
         "inspectedUrls": 10,
         "indexedPass": 10,
         "robotsAllowed": 10,
         "successfulFetch": 10,
-        "lastCrawlWindow": "2026-11-16 to 2026-11-17"
+        "lastCrawlWindow": "2026-11-20 to 2026-11-24"
       }
     },
     "paidKeywordResearch": {
@@ -46,7 +48,7 @@ const keywordLibrary = {
       "provider": "OpenSEO location lookup",
       "country": "Iran",
       "locationsFound": 0,
-      "status": "Iran and Ahvaz locations unavailable in this provider"
+      "status": "Ahvaz city location unavailable in OpenSEO; Ahrefs Keywords Explorer rejected Iran (IR) as an unsupported country code, so no Iran-local volume or difficulty is claimed"
     },
     "metrics": {
       "searchVolume": null,
