@@ -22,6 +22,10 @@ export async function generateMetadata({ params }) {
   }
   const canonicalPath = "/articles/" + article.slug;
   const searchMetadata = getArticleSearchMetadata(article);
+  const imageForSearch = article.coverImageUseForSeo === true && article.coverImageUrl
+    ? article.coverImageOgUrl || article.coverImageUrl
+    : "";
+  const imageAlt = article.coverImageAlt || article.title;
   return {
     title: searchMetadata.title,
     description: searchMetadata.description,
@@ -31,10 +35,20 @@ export async function generateMetadata({ params }) {
       type: "article",
       title: searchMetadata.title,
       description: searchMetadata.description,
-      ...(article.coverImageUrl ? { images: [article.coverImageUrl] } : {}),
+      ...(imageForSearch ? {
+        images: [{
+          url: imageForSearch,
+          width: 1200,
+          height: 630,
+          alt: imageAlt,
+        }],
+      } : {}),
       locale: "fa_IR",
       url: canonicalPath,
     },
+    twitter: imageForSearch
+      ? { card: "summary_large_image", images: [imageForSearch] }
+      : { card: "summary" },
   };
 }
 
@@ -53,6 +67,27 @@ export default async function ArticleDetailPage({ params }) {
       ])
     : null;
   const structuredAuthor = articleUrl ? buildArticleAuthorSchema(siteUrl, article.authorName) : null;
+  const coverImageVariants = article.coverImageUseForSeo === true && article.coverImageUrl
+    ? [
+        article.coverImageVariants?.wide
+          ? { "@type": "ImageObject", url: article.coverImageVariants.wide, width: 1600, height: 900 }
+          : { "@type": "ImageObject", url: article.coverImageUrl, width: 1600, height: 900 },
+        article.coverImageVariants?.landscape
+          ? { "@type": "ImageObject", url: article.coverImageVariants.landscape, width: 1200, height: 900 }
+          : null,
+        article.coverImageVariants?.square
+          ? { "@type": "ImageObject", url: article.coverImageVariants.square, width: 1200, height: 1200 }
+          : null,
+      ].filter(Boolean)
+    : [];
+  const primaryImage = coverImageVariants[0] || null;
+  const coverImageSrcSet = article.coverImageUrl && article.coverImageVariants
+    ? [
+        article.coverImageVariants.small ? article.coverImageVariants.small + " 640w" : null,
+        article.coverImageVariants.medium ? article.coverImageVariants.medium + " 960w" : null,
+        article.coverImageVariants.wide ? article.coverImageVariants.wide + " 1600w" : null,
+      ].filter(Boolean).join(", ")
+    : "";
   const structuredArticle = articleUrl
     ? {
         "@context": "https://schema.org",
@@ -64,12 +99,13 @@ export default async function ArticleDetailPage({ params }) {
         mainEntityOfPage: {
           "@type": "WebPage",
           "@id": articleUrl,
+          ...(primaryImage ? { primaryImageOfPage: primaryImage } : {}),
         },
         url: articleUrl,
         ...(article.publishedAt ? { datePublished: article.publishedAt } : {}),
         ...(article.updatedAt ? { dateModified: article.updatedAt } : {}),
         ...(structuredAuthor ? { author: structuredAuthor } : {}),
-        ...(article.coverImageUrl ? { image: article.coverImageUrl } : {}),
+        ...(coverImageVariants.length ? { image: coverImageVariants } : {}),
       }
     : null;
 
@@ -86,6 +122,23 @@ export default async function ArticleDetailPage({ params }) {
       <section className="article-detail-hero">
         <div className="container">
           <div className="article-breadcrumb"><Link href="/">صفحه اصلی</Link><span>←</span><Link href="/articles">مقالات حقوقی</Link></div>
+          {article.coverImageUrl ? (
+            <figure className="article-featured-image">
+              <img
+                src={article.coverImageUrl}
+                srcSet={coverImageSrcSet || undefined}
+                sizes="(max-width: 760px) calc(100vw - 36px), (max-width: 1200px) calc(100vw - 64px), 1056px"
+                alt={imageAlt}
+                title={article.coverImageTitle || undefined}
+                width="1600"
+                height="900"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+              />
+              {article.coverImageCaption ? <figcaption>{article.coverImageCaption}</figcaption> : null}
+            </figure>
+          ) : null}
           <span className="section-kicker">راهنمای حقوقی · قوانین ایران</span>
           <h1>{article.title}</h1>
           <p>{article.excerpt}</p>
@@ -94,7 +147,6 @@ export default async function ArticleDetailPage({ params }) {
       </section>
       <div className="container article-detail-layout">
         <article className="article-body">
-          {article.coverImageUrl ? <figure className="article-cover-image"><img src={article.coverImageUrl} alt={article.coverImageAlt || article.title} loading="lazy" decoding="async" /><figcaption>{article.coverImageAlt || article.title}</figcaption></figure> : null}
           <p className="article-intro">{article.intro}</p>
           {article.sections.map((section, index) => (
             <section className="article-body-section" key={section.heading}>
