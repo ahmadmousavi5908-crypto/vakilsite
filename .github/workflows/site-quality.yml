@@ -41,6 +41,8 @@ jobs:
         run: node --test tests/seo/static-page-search-signals.test.mjs
       - name: Test Google Analytics measurement and lead tracking configuration
         run: node --test tests/seo/google-analytics.test.mjs
+      - name: Test AI crawler metadata, llms.txt and privacy-safe service schema
+        run: npm run test:seo-ai-readiness
       - name: Test IndexNow key and URL validation
         run: npm run test:indexnow
       - name: Test IndexNow publication notification client
