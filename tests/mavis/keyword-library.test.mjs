@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { getKeywordTaxonomyEntries } from "../../src/lib/mavis/keyword-taxonomy-adapter.mjs";
-import { getSearchTermsForPracticeArea } from "../../src/data/seo-keyword-library.js";
+import { getSearchTermsForPracticeArea, seoKeywordLibrary } from "../../src/data/seo-keyword-library.js";
 import { practiceAreas } from "../../src/data/practice-areas.js";
 import { getKeywordEntryAction } from "../../src/lib/mavis/keyword-entry-action.mjs";
 import {
@@ -28,6 +28,25 @@ test("exposes current metric and Search Console evidence status to the internal 
   assert.equal(snapshot.metricsStatus, "پیشنهادی؛ حجم جست‌وجو و سختی تأیید نشده");
   assert.match(snapshot.gscStatus, /3 عبارت/);
   assert.match(snapshot.gscStatus, /19 صفحه/);
+});
+
+test("keeps observed Search Console queries separate from editorial candidates and classifies risk", () => {
+  const observed = seoKeywordLibrary.methodology.gscObserved.observedQueries;
+  assert.equal(observed.length, 3);
+  assert.equal(seoKeywordLibrary.methodology.gscObserved.queryPageRows, 4);
+
+  const brand = observed.find((entry) => entry.classification === "brand");
+  assert.deepEqual(brand.landingPages.map((page) => page.path), ["/", "/about"]);
+  assert.equal(brand.landingPages[0].averagePosition, 1.6);
+
+  const risky = observed.find((entry) => entry.classification === "service-intent-with-claim-risk");
+  assert.equal(risky.requiresComplianceReview, true);
+  assert.equal(risky.landingPages[0].path, "/services/property-law");
+  assert.match(risky.note, /not an endorsement/i);
+
+  const unrelated = observed.find((entry) => entry.classification === "unrelated-entity-or-author-query");
+  assert.ok(unrelated);
+  assert.match(unrelated.note, /not.*branded demand/i);
 });
 
 test("routes each practice-area keyword cluster to its matching public service page", () => {
