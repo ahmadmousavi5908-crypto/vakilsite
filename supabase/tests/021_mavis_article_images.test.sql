@@ -1,6 +1,6 @@
 begin;
 
-select plan(8);
+select plan(9);
 
 select is(
   (select public from storage.buckets where id = 'mavis-article-images'),
@@ -77,6 +77,13 @@ select ok(
     where oid = to_regprocedure('public.save_mavis_article_draft_with_image(jsonb,jsonb,uuid,integer,text)')
   ), false),
   'Image-save RPC is security-definer, available to authenticated admins, and unavailable to anonymous users'
+);
+
+select ok(
+  not has_table_privilege('authenticated', 'public.mavis_article_version_images', 'INSERT')
+    and not has_table_privilege('authenticated', 'public.mavis_article_version_images', 'UPDATE')
+    and not has_table_privilege('authenticated', 'public.mavis_article_version_images', 'DELETE'),
+  'Administrators cannot mutate version image records outside the guarded versioned RPC'
 );
 
 select * from finish();
