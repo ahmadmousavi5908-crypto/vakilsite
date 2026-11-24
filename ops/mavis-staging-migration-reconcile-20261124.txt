@@ -1,3 +1,5 @@
 Approved by the repository owner on 2026-11-24.
 Apply only the reviewed, idempotent MAVIS reconciliation migrations to vakilsite-staging.
 This trigger never targets Production.
+
+Retry approval marker after correcting the explicit main-branch apply gate.

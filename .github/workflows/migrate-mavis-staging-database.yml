@@ -330,14 +330,14 @@ jobs:
           fi
 
       - name: Apply migrations to staging only
-        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true) || (github.event_name == 'push' && ((github.ref == 'refs/heads/feature/mavis-third-arm-delivery-20261116' && github.event.head_commit.message == 'apply approved MAVIS staging migration 019') || (github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'apply approved MAVIS staging migration reconciliation 20261124') && (contains(github.event.head_commit.added, 'ops/mavis-staging-migration-reconcile-20261124.txt') || contains(github.event.head_commit.modified, 'ops/mavis-staging-migration-reconcile-20261124.txt'))))) }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true) || (github.event_name == 'push' && ((github.ref == 'refs/heads/feature/mavis-third-arm-delivery-20261116' && github.event.head_commit.message == 'apply approved MAVIS staging migration 019') || (github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'apply approved MAVIS staging migration reconciliation 20261124')))) }}
         run: >-
           npx --yes supabase@3.0.0 db push
           --yes
           --remote="$STAGING_DATABASE_URL"
 
       - name: Verify remote migration history
-        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true) || (github.event_name == 'push' && ((github.ref == 'refs/heads/feature/mavis-third-arm-delivery-20261116' && github.event.head_commit.message == 'apply approved MAVIS staging migration 019') || (github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'apply approved MAVIS staging migration reconciliation 20261124') && (contains(github.event.head_commit.added, 'ops/mavis-staging-migration-reconcile-20261124.txt') || contains(github.event.head_commit.modified, 'ops/mavis-staging-migration-reconcile-20261124.txt'))))) }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.apply_migrations == true) || (github.event_name == 'push' && ((github.ref == 'refs/heads/feature/mavis-third-arm-delivery-20261116' && github.event.head_commit.message == 'apply approved MAVIS staging migration 019') || (github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'apply approved MAVIS staging migration reconciliation 20261124')))) }}
         run: >-
           npx --yes supabase@3.0.0 migration list
           --remote="$STAGING_DATABASE_URL"
