@@ -296,6 +296,14 @@ async function main() {
       aiSmokePayload.model + ")."
     );
 
+    const anonymous = createClient(projectUrl, publishableKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false,
+      },
+    });
+
     const uploadId = randomUUID();
     const objectNames = ["small", "medium", "wide", "landscape", "square", "og"];
     const baseObjectPath = `${userId}/${uploadId}/`;
@@ -368,14 +376,6 @@ async function main() {
       "Uploaded WebP image is not publicly readable from the Staging bucket."
     );
     console.log("PASS: administrator uploaded six WebP variants, anonymous upload was denied, draft image metadata was persisted, and public image fetch succeeded.");
-
-    const anonymous = createClient(projectUrl, publishableKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-        detectSessionInUrl: false,
-      },
-    });
 
     const staticArticle = staticArticles.find((item) => item.slug === "civil-claim-checklist") || staticArticles[0];
     const { data: existingStaticArticle, error: existingStaticArticleError } = await client
