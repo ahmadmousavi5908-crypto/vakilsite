@@ -23,6 +23,27 @@ jobs:
         with:
           version: 2.84.2
 
+      - name: Add local-only RLS event-trigger bootstrap
+        run: |
+          cat > supabase/migrations/20261120112513_local_rls_auto_enable_stub.sql <<'SQL'
+          DO $bootstrap$
+          BEGIN
+            IF to_regprocedure('public.rls_auto_enable()') IS NULL THEN
+              EXECUTE $function$
+                CREATE FUNCTION public.rls_auto_enable()
+                RETURNS event_trigger
+                LANGUAGE plpgsql
+                AS $body$
+                BEGIN
+                  NULL;
+                END;
+                $body$
+              $function$;
+            END IF;
+          END;
+          $bootstrap$;
+          SQL
+
       - name: Start isolated local Supabase stack
         run: supabase start -x gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
 
