@@ -60,6 +60,18 @@ test("keeps focus and related SEO keywords separate from editorial tags", () => 
   assert.deepEqual(result.payload.tags, ["حقوق کیفری", "اجرای احکام"]);
 });
 
+test("persists a valid keyword cluster in the immutable draft content payload", () => {
+  const result = parseMavisArticleDraftInput(formWith({ seo_cluster_id: "criminal-procedure" }));
+  assert.equal(result.ok, true);
+  assert.equal(result.payload.content.seoClusterId, "criminal-procedure");
+});
+
+test("rejects an unknown keyword cluster instead of silently losing its ownership", () => {
+  const result = parseMavisArticleDraftInput(formWith({ seo_cluster_id: "not-a-real-cluster" }));
+  assert.equal(result.ok, false);
+  assert.match(result.error, /خوشه کلیدواژه/);
+});
+
 test("rejects unsafe slugs", () => {
   const result = parseMavisArticleDraftInput(formWith({ slug: "مقاله-حقوقی" }));
   assert.equal(result.ok, false);
