@@ -26,7 +26,9 @@ export function parseMavisArticleDraftInput(form) {
   const seoTitle = text(form, "seo_title");
   const seoDescription = text(form, "seo_description");
   const focusKeyword = text(form, "focus_keyword");
-  const relatedKeywords = [...new Set(text(form, "related_keywords").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
+  const focusKeywordKey = focusKeyword.normalize("NFC").toLocaleLowerCase("fa");
+  const relatedKeywords = [...new Set(text(form, "related_keywords").split(/[,،]/).map((item) => item.trim()).filter(Boolean))]
+    .filter((item) => item.normalize("NFC").toLocaleLowerCase("fa") !== focusKeywordKey);
   const warning = text(form, "warning");
   const checklist = text(form, "checklist").split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
   const tags = [...new Set(text(form, "tags").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
