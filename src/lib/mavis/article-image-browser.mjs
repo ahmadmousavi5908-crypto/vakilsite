@@ -2,6 +2,8 @@ import { MAVIS_ARTICLE_IMAGE_VARIANTS } from "./article-image-metadata.mjs";
 
 const MAX_SOURCE_BYTES = 15 * 1024 * 1024;
 const MAX_SOURCE_PIXELS = 24_000_000;
+const MIN_SOURCE_WIDTH = 1200;
+const MIN_SOURCE_HEIGHT = 675;
 const MAX_OUTPUT_BYTES = Math.floor(2.8 * 1024 * 1024);
 const WEBP_QUALITIES = [0.84, 0.76, 0.68, 0.6];
 const ACCEPTED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -9,8 +11,8 @@ const ACCEPTED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 export function validateMavisArticleImageDimensions(width, height) {
   return Number.isSafeInteger(width)
     && Number.isSafeInteger(height)
-    && width > 0
-    && height > 0
+    && width >= MIN_SOURCE_WIDTH
+    && height >= MIN_SOURCE_HEIGHT
     && width * height <= MAX_SOURCE_PIXELS;
 }
 
@@ -74,7 +76,7 @@ export async function prepareMavisArticleImage(file) {
   try {
     bitmap = await createImageBitmap(file);
     if (!validateMavisArticleImageDimensions(bitmap.width, bitmap.height)) {
-      throw new Error("ابعاد فایل تصویر قابل پردازش نیست یا از سقف فنی ۲۴ مگاپیکسل بیشتر است.");
+      throw new Error("ابعاد فایل اصلی تصویر باید حداقل ۱۲۰۰×۶۷۵ و حداکثر ۲۴ مگاپیکسل باشد.");
     }
 
     const variants = {};
