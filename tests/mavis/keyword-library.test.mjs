@@ -99,10 +99,10 @@ test("assigns all 22 keyword clusters to a public owner or an explicit editorial
   assert.deepEqual(Object.fromEntries(actual), expected);
 });
 
-test("keeps four unique, people-first FAQs on every public practice area", () => {
+test("keeps six unique, people-first FAQs on every public practice area", () => {
   assert.equal(practiceAreas.length, 6);
   for (const area of practiceAreas) {
-    assert.equal(area.faqs?.length, 4, `Expected four FAQs for ${area.slug}`);
+    assert.equal(area.faqs?.length, 6, `Expected six FAQs for ${area.slug}`);
     const questions = area.faqs.map((faq) => faq.question);
     assert.equal(new Set(questions).size, questions.length, `Duplicate FAQ question in ${area.slug}`);
     assert.ok(area.faqs.every((faq) => faq.question && faq.answer && faq.answer.length > 80));
