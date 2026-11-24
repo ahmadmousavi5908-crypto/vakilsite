@@ -7,7 +7,7 @@ test("matches the primary keyword in visible article content with Persian normal
     focus_keyword: "پابند الکترونیکی پیش از ورود به زندان",
     related_keywords: ["رأی وحدت رویه ۸۷۴", "نظارت الکترونیکی"],
     content: {
-      intro: "پابند الکترونیکی پیش‌از ورود به زندان موضوع این راهنماست.",
+      intro: "پابند الکترونیکی، پیش‌از ورود به زندان موضوع این راهنماست.",
       sections: [{ heading: "رأی وحدت رویه ۸۷۴", body: "نظارت الکترونیکی با شرایط قانونی بررسی می‌شود." }]
     }
   });
