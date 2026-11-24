@@ -55,7 +55,7 @@ const response = await fetch("https://api.indexnow.org/indexnow", {
   body: JSON.stringify({
     host: site.host,
     key,
-    keyLocation: new URL("/indexnow-key.txt", site.origin).href,
+    keyLocation: new URL("/" + encodeURIComponent(key) + ".txt", site.origin).href,
     urlList: urls,
   }),
 });
