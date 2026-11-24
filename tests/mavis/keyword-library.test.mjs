@@ -360,6 +360,23 @@ test("builds bounded, cluster-specific article SEO briefs without presenting can
   assert.equal(getKeywordClusterSeoBrief({ clusterId: "unknown-cluster" }), null);
 });
 
+test("excludes unreviewed legal glossary candidates from automatic article briefs", () => {
+  const brief = getKeywordClusterSeoBrief({
+    clusterId: "registration-land",
+    taxonomyEntries: [{
+      id: "term_land_record",
+      canonical: "حدنگار",
+      aliases: ["سامانه حدنگار"],
+      category: "REG",
+      reviewStatus: "needs_legal_review",
+      clusterId: "registration-land"
+    }]
+  });
+  assert.ok(brief);
+  assert.ok(!brief.relatedKeywords.includes("حدنگار"));
+  assert.ok(!brief.relatedKeywords.includes("وکیل حدنگار"));
+});
+
 test("does not turn local, English, legal-review or compliance-risk phrases into drafts", () => {
   const blocked = [
     { target: "محتوای آتی", family: "local", term: "وکیل ملکی در آبادان" },
