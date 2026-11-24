@@ -37,6 +37,8 @@ jobs:
           wrangler@4.161.0
       - name: Test canonical site URL and sitemap invariants
         run: npm run test:site-url
+      - name: Test static sitemap image and recrawl signals
+        run: node --test tests/seo/static-page-search-signals.test.mjs
       - name: Test Google Analytics measurement and lead tracking configuration
         run: node --test tests/seo/google-analytics.test.mjs
       - name: Test IndexNow key and URL validation
