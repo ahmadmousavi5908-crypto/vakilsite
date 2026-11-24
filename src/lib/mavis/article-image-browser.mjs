@@ -9,8 +9,8 @@ const ACCEPTED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 function canvasToWebp(canvas, quality) {
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => {
-      if (!blob) {
-        reject(new Error("مرورگر نتوانست تصویر WebP بسازد."));
+      if (!blob || blob.type !== "image/webp") {
+        reject(new Error("مرورگر یا دستگاه فعلی خروجی WebP واقعی تولید نمی‌کند."));
         return;
       }
       resolve(blob);
