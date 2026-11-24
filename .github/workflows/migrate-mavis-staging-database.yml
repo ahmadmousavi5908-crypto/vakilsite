@@ -184,7 +184,9 @@ jobs:
                   continue;
                 }
                 if (current === ";") {
-                  output = output.trimEnd() + ";";
+                  // Supabase CLI may serialize top-level statement terminators differently
+                  // when fetching applied migrations. Compare statement bodies, not separators.
+                  addSpace();
                   index++;
                   while (index < source.length && /\s/.test(source[index])) index++;
                   continue;
@@ -271,7 +273,17 @@ jobs:
             const remoteSql = normalizeSql(fs.readFileSync(path.join(remoteDirectory, name), "utf8"));
             const localSql = normalizeSql(fs.readFileSync(path.join(localDirectory, name), "utf8"));
             if (remoteSql !== localSql) {
+              let mismatchIndex = 0;
+              while (mismatchIndex < remoteSql.length && mismatchIndex < localSql.length
+                && remoteSql[mismatchIndex] === localSql[mismatchIndex]) mismatchIndex++;
               console.error(`SQL statements differ from the applied Staging history: ${name}`);
+              console.error(JSON.stringify({
+                mismatchIndex,
+                remoteLength: remoteSql.length,
+                localLength: localSql.length,
+                remoteContext: remoteSql.slice(Math.max(0, mismatchIndex - 180), mismatchIndex + 300),
+                localContext: localSql.slice(Math.max(0, mismatchIndex - 180), mismatchIndex + 300)
+              }, null, 2));
               process.exit(1);
             }
           }
