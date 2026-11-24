@@ -54,6 +54,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           NEXT_PUBLIC_SITE_URL: https://vakilahmadmousavi.ir
+          NEXT_PUBLIC_GA_MEASUREMENT_ID: G-4W4H01THN5
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
           GOOGLE_SITE_VERIFICATION: ${{ secrets.GOOGLE_SITE_VERIFICATION }}
           BING_SITE_VERIFICATION: ${{ secrets.BING_SITE_VERIFICATION }}
@@ -82,6 +83,12 @@ jobs:
           NODE
 
           npx opennextjs-cloudflare build
+
+          if ! grep -R -F -q --binary-files=text "$NEXT_PUBLIC_GA_MEASUREMENT_ID" .open-next; then
+            echo "::error::The production Worker bundle does not contain the configured Google Analytics measurement ID."
+            exit 1
+          fi
+          echo "Google Analytics measurement ID is present in the production Worker bundle."
 
           node --input-type=module <<'NODE'
           import fs from "node:fs";
@@ -137,3 +144,25 @@ jobs:
           NODE
 
           npx wrangler deploy --secrets-file .wrangler-runtime-secrets.json
+
+      - name: Verify production publication and analytics endpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://vakilahmadmousavi.ir"
+          article_path="/articles/unified-judicial-precedent-874-electronic-monitoring-before-prison"
+
+          for route in "/" "/articles" "$article_path" "/sitemap.xml" "/robots.txt"; do
+            echo "Checking $route"
+            curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors \
+              "$base$route" -o /tmp/vakilsite-smoke-response
+          done
+
+
+          sitemap="$(curl --fail --silent --show-error --location "$base/sitemap.xml")"
+          if ! grep -Fq "$article_path" <<< "$sitemap"; then
+            echo "::error::The published Unified Precedent 874 article is missing from the production sitemap."
+            exit 1
+          fi
+
+          echo "Production routes, Google Analytics tag, and published-article sitemap entry verified."

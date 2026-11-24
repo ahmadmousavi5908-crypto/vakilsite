@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEXT_PUBLIC_SITE_URL: https://vakilsite-ci.example
+      NEXT_PUBLIC_GA_MEASUREMENT_ID: G-4W4H01THN5
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -36,6 +37,8 @@ jobs:
           wrangler@4.161.0
       - name: Test canonical site URL and sitemap invariants
         run: npm run test:site-url
+      - name: Test Google Analytics measurement and lead tracking configuration
+        run: node --test tests/seo/google-analytics.test.mjs
       - name: Test IndexNow key and URL validation
         run: npm run test:indexnow
       - name: Test IndexNow publication notification client
