@@ -67,6 +67,37 @@ test("keeps unserved clusters in the editorial pipeline instead of assigning the
   assert.equal(clusters.get("civil-law-eight-domains")?.target, "/services");
 });
 
+test("assigns all 22 keyword clusters to a public owner or an explicit editorial hold", () => {
+  const actual = new Map(getKeywordLibraryClusters().map(({ id, target }) => [id, target]));
+  const expected = {
+    "lawyer-core": "/",
+    "civil-law-eight-domains": "/services",
+    "civil-contracts-obligations": "/services/contracts-and-obligations",
+    "lease-shop-tenancy": "/services/property-law",
+    "civil-procedure": "/services/legal-consultation",
+    "family-law": "/services/family-law",
+    "criminal-procedure": "/services/criminal-law",
+    "criminal-life-and-body": "/services/criminal-law",
+    "criminal-property": "/services/criminal-law",
+    "criminal-financial-public": "/services/criminal-law",
+    "criminal-cyber": "/services/criminal-law",
+    "criminal-other": "/services/criminal-law",
+    "commercial-law": "محتوای آتی",
+    "cheques-commercial-papers": "/services/claims-and-enforcement",
+    "registration-land": "/services/property-law",
+    "inheritance-estate": "محتوای آتی",
+    "enforcement-debt": "/services/claims-and-enforcement",
+    "labor-administrative-tax": "محتوای آتی",
+    "insurance-accident-torts": "محتوای آتی",
+    "construction-urban": "/services/property-law",
+    "intellectual-digital-commerce": "محتوای آتی",
+    "international-foreign-nationals": "محتوای آتی"
+  };
+
+  assert.equal(actual.size, 22);
+  assert.deepEqual(Object.fromEntries(actual), expected);
+});
+
 test("keeps four unique, people-first FAQs on every public practice area", () => {
   assert.equal(practiceAreas.length, 6);
   for (const area of practiceAreas) {
