@@ -20,6 +20,13 @@ test("exposes the complete cluster inventory and separate phrase families", () =
   assert.equal(getKeywordLibraryClusters().length, 22);
 });
 
+test("exposes current metric and Search Console evidence status to the internal library", () => {
+  const snapshot = getKeywordLibrarySnapshot();
+  assert.equal(snapshot.metricsStatus, "پیشنهادی؛ حجم جست‌وجو و سختی تأیید نشده");
+  assert.match(snapshot.gscStatus, /3 عبارت/);
+  assert.match(snapshot.gscStatus, /19 صفحه/);
+});
+
 test("normalizes Persian and Arabic character variants", () => {
   assert.equal(normalizeKeywordQuery("ي ك نیم‌فاصله"), "ی ک نیم فاصله");
 });
