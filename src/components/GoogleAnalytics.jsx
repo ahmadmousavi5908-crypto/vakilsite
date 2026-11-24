@@ -16,15 +16,9 @@ export default function GoogleAnalytics({ measurementId }) {
     window.gtag = window.gtag || function gtag() { window.dataLayer.push(arguments); };
     if (window.__vakilsiteGaConfigured !== id) {
       window.gtag("js", new Date());
-      window.gtag("config", id, { send_page_view: false });
+      window.gtag("config", id);
       window.__vakilsiteGaConfigured = id;
     }
-
-    window.gtag("event", "page_view", {
-      page_title: document.title,
-      page_location: window.location.href,
-      page_path: pathname,
-    });
 
     function handleContactClick(event) {
       if (!(event.target instanceof Element)) return;
@@ -47,7 +41,7 @@ export default function GoogleAnalytics({ measurementId }) {
 window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
 if (window.__vakilsiteGaConfigured !== '${id}') {
   window.gtag('js', new Date());
-  window.gtag('config', '${id}', { send_page_view: false });
+  window.gtag('config', '${id}');
   window.__vakilsiteGaConfigured = '${id}';
 }
 var vakilsiteGaScript = document.createElement('script');
