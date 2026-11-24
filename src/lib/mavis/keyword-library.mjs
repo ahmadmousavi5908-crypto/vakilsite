@@ -75,7 +75,6 @@ const POSITIONING_TERMS = Object.freeze([
   { term: "وکیل معتبر اهواز", intent: "trust-comparison", claimRisk: "evidence-required" },
   { term: "وکیل متخصص اهواز", intent: "specialization-claim", claimRisk: "high" },
   { term: "بهترین وکیل ملکی اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل ملکی خوزستان", intent: "superlative-property-comparison", claimRisk: "high" },
   { term: "بهترین وکیل دعاوی ملکی اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
   { term: "بهترین وکیل خلع ید اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
   { term: "بهترین وکیل تخلیه ید اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
