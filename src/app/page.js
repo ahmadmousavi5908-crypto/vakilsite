@@ -65,9 +65,10 @@ export default async function Home() {
             knowsLanguage: "fa",
           },
           {
-            "@type": "LegalService",
+            "@type": "Service",
             "@id": siteUrl + "/#legal-service",
             name: "خدمات حقوقی سید احمد موسوی",
+            serviceType: "خدمات حقوقی",
             url: siteUrl,
             provider: { "@id": siteUrl + "/#attorney" },
             telephone: "+989169165902",
