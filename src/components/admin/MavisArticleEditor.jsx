@@ -20,7 +20,6 @@ export default function MavisArticleEditor({
   aiEnabled = false,
   initialTopic = "",
   initialCategory = "",
-  initialClusterId = "",
   initialClusterTitle = "",
   initialFocusKeyword = "",
   initialRelatedKeywords = []
