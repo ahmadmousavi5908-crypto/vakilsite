@@ -16,6 +16,33 @@ set
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
+create table if not exists public.mavis_article_version_images (
+  article_id uuid not null,
+  article_version integer not null,
+  image jsonb not null,
+  created_at timestamptz not null default now(),
+  constraint mavis_article_version_images_pk primary key (article_id, article_version),
+  constraint mavis_article_version_images_image_object check (jsonb_typeof(image) = 'object'),
+  constraint mavis_article_version_images_version_fk
+    foreign key (article_id, article_version)
+    references public.mavis_article_versions (article_id, version)
+    on delete cascade
+);
+
+alter table public.mavis_article_version_images enable row level security;
+revoke all on table public.mavis_article_version_images from public, anon, authenticated, service_role;
+grant select on table public.mavis_article_version_images to authenticated;
+
+drop policy if exists "MAVIS admins can read versioned article images" on public.mavis_article_version_images;
+create policy "MAVIS admins can read versioned article images"
+  on public.mavis_article_version_images
+  for select
+  to authenticated
+  using (public.is_site_admin());
+
+comment on table public.mavis_article_version_images is
+  'Append-only article image metadata keyed to an immutable MAVIS article version. Image metadata is never written back into an immutable version snapshot.';
+
 drop policy if exists "MAVIS admins upload article images" on storage.objects;
 create policy "MAVIS admins upload article images"
   on storage.objects
@@ -136,7 +163,8 @@ begin
     end if;
   end loop;
 
-  -- The existing RPC retains all content, status, concurrency, version and audit validation.
+  -- Reuse the established draft RPC for authorization, content validation,
+  -- optimistic concurrency, immutable version INSERT and audit event.
   v_article_id := public.save_mavis_article_draft(
     p_payload,
     p_article_id,
@@ -149,24 +177,17 @@ begin
     from public.mavis_editorial_articles
     where id = v_article_id;
 
-  update public.mavis_article_versions
-  set snapshot = jsonb_set(snapshot, '{content,image}', p_image, true)
-  where article_id = v_article_id
-    and version = v_current_version;
-
-  if not found then
-    raise exception using errcode = '55000', message = 'The saved article version snapshot was not found';
+  if v_current_version is null then
+    raise exception using errcode = '55000', message = 'The saved article version was not found';
   end if;
 
-  -- The existing BEFORE UPDATE trigger copies the now-updated version snapshot into draft_content.
-  update public.mavis_editorial_articles
-  set content = jsonb_set(content, '{image}', p_image, true)
-  where id = v_article_id
-    and current_version = v_current_version;
-
-  if not found then
-    raise exception using errcode = '40001', message = 'The article changed while attaching its image';
-  end if;
+  -- Store image metadata separately, keyed to this exact immutable version.
+  insert into public.mavis_article_version_images (
+    article_id, article_version, image
+  )
+  values (
+    v_article_id, v_current_version, p_image
+  );
 
   return v_article_id;
 end;
