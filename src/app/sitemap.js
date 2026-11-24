@@ -43,6 +43,9 @@ export default async function sitemap() {
       path: "/articles/" + article.slug,
       changeFrequency: "monthly",
       priority: 0.7,
+      ...(article.coverImageUseForSeo && article.coverImageUrl
+        ? { images: [article.coverImageUrl] }
+        : {}),
     })),
   ];
 
