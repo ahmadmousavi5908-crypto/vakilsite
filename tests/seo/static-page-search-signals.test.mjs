@@ -5,8 +5,8 @@ import { getStaticPageSearchSignals } from "../../src/lib/seo/static-page-search
 const origin = "https://vakilahmadmousavi.ir";
 const portrait = origin + "/images/lawyer.jpg";
 
-test("adds the attorney portrait only to pages that visibly contain it", () => {
-  assert.deepEqual(getStaticPageSearchSignals("/", origin), { images: [portrait] });
+test("associates the attorney portrait only with the visible attorney profile page", () => {
+  assert.deepEqual(getStaticPageSearchSignals("/", origin), {});
   assert.deepEqual(getStaticPageSearchSignals("/about", origin), { images: [portrait] });
   assert.deepEqual(getStaticPageSearchSignals("/services", origin), { lastModified: "2026-11-24" });
 });
