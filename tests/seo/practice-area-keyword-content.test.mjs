@@ -87,5 +87,5 @@ test("does not count the internal searchTerms array as public page content", () 
   const area = practiceAreas.find((item) => item.slug === "criminal-law");
   const visibleText = visiblePracticeAreaText(area);
   assert.ok(!visibleText.includes(normalizePersianSearchText("وکیل جرایم مواد مخدر")));
-  assert.ok(visibleText.includes(normalizePersianSearchText("دفاع در تحقیقات مقدماتی")));
+  assert.ok(visibleText.includes(normalizePersianSearchText("دفاع از متهم")));
 });
