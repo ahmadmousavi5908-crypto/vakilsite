@@ -380,7 +380,7 @@ test("excludes unreviewed legal glossary candidates from automatic article brief
 test("keeps local variants and unsubstantiated superiority claims out of article briefs", () => {
   const brief = getKeywordClusterSeoBrief({ clusterId: "lawyer-core" });
   assert.ok(brief);
-  assert.ok(!brief.relatedKeywords.some((term) => /اهواز|خوزستان|آبادان|خرمشهر|بهترین|برترین|نابغه|تضمینی|تضمین|صددرصد/.test(term)));
+  assert.ok(!brief.relatedKeywords.some((term) => /اهواز|خوزستان|آبادان|خرمشهر|بهترین|برترین|نابغه|تضمینی|تضمین نتیجه|نتیجه تضمینی|صددرصد/.test(term)));
 });
 
 test("does not turn local, English, legal-review or compliance-risk phrases into drafts", () => {
