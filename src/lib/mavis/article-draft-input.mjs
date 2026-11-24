@@ -1,4 +1,5 @@
 import { parseMavisArticleImageMetadata } from "./article-image-metadata.mjs";
+import { getKeywordLibraryClusters } from "./keyword-library.mjs";
 
 const LIMITS = { title: 300, slug: 180, excerpt: 1200, category: 100, author: 180, seoTitle: 300, seoDescription: 500, focusKeyword: 240, relatedKeyword: 120, relatedKeywords: 20, intro: 8000, heading: 240, body: 12000, tag: 60, tags: 40, sections: 80, warning: 2000, checklist: 60, checklistItem: 500, totalContent: 200000 };
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -37,6 +38,11 @@ export function parseMavisArticleDraftInput(form) {
   const rawSeoTitle = text(form, "seo_title");
   const rawSeoDescription = text(form, "seo_description");
   const rawFocusKeyword = text(form, "focus_keyword");
+  const seoClusterId = text(form, "seo_cluster_id");
+  const validClusterIds = new Set(getKeywordLibraryClusters().map((cluster) => cluster.id));
+  if (seoClusterId && !validClusterIds.has(seoClusterId)) {
+    return { ok: false, error: "خوشه کلیدواژه انتخاب‌شده در کتابخانه معتبر نیست." };
+  }
   const tags = [...new Set(text(form, "tags").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
   const rawRelatedKeywords = [...new Set(text(form, "related_keywords").split(/[,،]/).map((item) => item.trim()).filter(Boolean))];
   const seoTitle = rawSeoTitle || truncateSearchText(title, 70);
@@ -103,6 +109,7 @@ export function parseMavisArticleDraftInput(form) {
   const content = { intro, sections };
   if (warning) content.warning = warning;
   if (checklist.length) content.checklist = checklist;
+  if (seoClusterId) content.seoClusterId = seoClusterId;
 
   const payload = { slug, title, excerpt, category, tags, content };
   if (author) payload.author_name = author;
