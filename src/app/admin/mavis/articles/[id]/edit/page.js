@@ -53,6 +53,19 @@ export default async function EditMavisArticlePage({ params, searchParams }) {
 
   if (!article) notFound();
 
+  let initialArticleImage = null;
+  const { data: imageRecord, error: imageReadError } = await access.supabase
+    .from("mavis_article_version_images")
+    .select("image")
+    .eq("article_id", article.id)
+    .eq("article_version", article.current_version)
+    .maybeSingle();
+
+  if (imageReadError) {
+    redirect("/admin/mavis/articles?error=article-image-read");
+  }
+  initialArticleImage = imageRecord?.image || null;
+
   let initialSources = [];
   let sourceLoadError = "";
   try {
@@ -104,7 +117,7 @@ export default async function EditMavisArticlePage({ params, searchParams }) {
               <Link href="/admin/mavis/articles">مشاهده همه پیش‌نویس‌ها ←</Link>
             </section>
           ) : null}
-          <MavisArticleEditor initialArticle={article} initialSources={initialSources} sourceLoadError={sourceLoadError} aiEnabled={Boolean(process.env.MAVIS_OPENAI_API_KEY || process.env.OPENAI_API_KEY)} />
+          <MavisArticleEditor initialArticle={{ ...article, content: { ...(article.content || {}), image: initialArticleImage } }} initialSources={initialSources} sourceLoadError={sourceLoadError} aiEnabled={Boolean(process.env.MAVIS_OPENAI_API_KEY || process.env.OPENAI_API_KEY)} />
           <span className="admin-user-note">حساب مدیر: {access.user.email || "حساب تأییدشده"}</span>
         </main>
       </div>
