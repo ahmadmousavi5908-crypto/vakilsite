@@ -345,12 +345,17 @@ export async function generateMavisEditorialSuggestions(input, {
   }
 
   try {
-    const allowedIds = new Set(normalizeMavisEditorialAiInput(input).sources.map((source) => source.id));
+    const normalizedInput = normalizeMavisEditorialAiInput(input);
+    const allowedIds = new Set(normalizedInput.sources.map((source) => source.id));
+    const outputInput = {
+      ...normalizedInput,
+      relatedKeywords: Array.isArray(input.relatedKeywords) ? normalizedInput.relatedKeywords : undefined
+    };
     return {
       ok: true,
       model,
       provider: hasWorkersAi ? "cloudflare_workers_ai" : "openai",
-      suggestions: normalizeOutput(parsed, allowedIds, input)
+      suggestions: normalizeOutput(parsed, allowedIds, outputInput)
     };
   } catch (error) {
     const reason = error?.message === "Invalid slug" ? "invalid_slug"
