@@ -46,8 +46,8 @@ const COLLOQUIAL_SUBJECTS = Object.freeze({
   "lease-shop-tenancy": ["مستأجرم خونه رو تخلیه نمی‌کنه، چیکار کنم؟", "صاحبخونه پول پیشمو پس نمی‌ده، چطور بگیرمش؟", "مغازه‌مو پس نمی‌ده، از کجا شروع کنم؟", "اجاره‌مو نداده، چطور برای تخلیه اقدام کنم؟"],
   "family-law": ["چطور مهریه‌ام رو بگیرم؟", "همسرم نفقه نمی‌ده، چیکار کنم؟", "اجازه نمی‌ده بچه‌مو ببینم، چه راهی دارم؟", "برای طلاق از کجا باید شروع کنم؟"],
   "cheques-commercial-papers": ["چکم برگشت خورده، حالا چیکار کنم؟", "طرف پولمو پس نمی‌ده، چطور شکایت کنم؟", "سفته‌مو گذاشتن اجرا، چیکار کنم؟", "چک دستمه، چطور پولمو بگیرم؟"],
-  "criminal-procedure": ["ازم شکایت شده، باید چیکار کنم؟", "احضاریه دادگاه اومده، حالا چی می‌شه؟", "ابلاغیه ثنا اومده، از کجا بفهمم یعنی چی؟", "برام حکم جلب صادر شده، چه اقدامی می‌تونم بکنم؟"],
-  "registration-land": ["سند خونه رو به نامم نمی‌زنن، چیکار کنم؟", "یکی زمینمو گرفته، چطور پسش بگیرم؟", "ملکمو بدون اجازه فروختن، چه راهی دارم؟", "همسایه راه عبورمو بسته، چطور پیگیری کنم؟"],
+  "criminal-procedure": ["ازم شکایت شده، باید چیکار کنم؟", "احضاریه دادگاه اومده، حالا چی می‌شه؟", "ابلاغیه ثنا اومده، از کجا بفهمم یعنی چی؟", "برام حکم جلب صادر شده، چه اقدامی می‌تونم بکنم؟", "به قتل متهم شدم، الان چه کار کنم؟", "ازم به خاطر ضرب و جرح شکایت کردن، چیکار کنم؟", "به من توهین کردن، چطور شکایت کنم؟", "به توهین متهم شدم، چطور از خودم دفاع کنم؟", "ازم بابت نشر اکاذیب شکایت شده، چه کنم؟"],
+  "registration-land": ["سند خونه رو به نامم نمی‌زنن، چیکار کنم؟", "یکی زمینمو گرفته، چطور پسش بگیرم؟", "ملکمو بدون اجازه فروختن، چه راهی دارم؟", "همسایه راه عبورمو بسته، چطور پیگیری کنم؟", "یکی ملکمو گرفته و پس نمی‌ده، چطور خلع ید بگیرم؟", "مستأجر تخلیه نمی‌کنه، چطور حکم تخلیه بگیرم؟"],
   "inheritance-estate": ["ارثمو نمی‌دن، چطور سهممو بگیرم؟", "یکی از ورثه ملک رو نمی‌فروشه، چیکار کنیم؟", "وصیت‌نامه رو قبول نداریم، چطور اعتراض کنیم؟", "برای تقسیم ارث باید از کجا شروع کنم؟"],
   "labor-administrative-tax": ["اخراجم کردن، حق و حقوقم چیه؟", "کارفرما حقوقمو نمی‌ده، چطور شکایت کنم؟", "بیمه‌ام نکردن، از کجا پیگیری کنم؟", "سنواتمو ندادن، چطور بگیرمش؟"],
   "insurance-accident-torts": ["بیمه خسارتمو نمی‌ده، چیکار کنم؟", "بعد تصادف دیه‌مو چطور بگیرم؟", "مقصر تصادف خسارت ماشینمو نمی‌ده، چه راهی دارم؟", "برای گرفتن خسارت از بیمه از کجا شروع کنم؟"],
@@ -73,7 +73,22 @@ const POSITIONING_TERMS = Object.freeze([
   { term: "وکیل مجرب خوزستان", intent: "experience-comparison", claimRisk: "evidence-required" },
   { term: "وکیل خوب اهواز", intent: "quality-comparison", claimRisk: "subjective" },
   { term: "وکیل معتبر اهواز", intent: "trust-comparison", claimRisk: "evidence-required" },
-  { term: "وکیل متخصص اهواز", intent: "specialization-claim", claimRisk: "high" }
+  { term: "وکیل متخصص اهواز", intent: "specialization-claim", claimRisk: "high" },
+  { term: "بهترین وکیل ملکی اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل دعاوی ملکی اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل خلع ید اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل تخلیه ید اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل تخلیه ملک اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل کیفری اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل قتل اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل پرونده قتل اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل ضرب و جرح اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل جراحات اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل توهین و افترا اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل جرایم قتل اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل جرایم جراحات اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل جرایم توهین اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
+  { term: "بهترین وکیل خانواده اهواز", intent: "superlative-family-comparison", claimRisk: "high" }
 ]);
 
 const QUESTION_TEMPLATES = Object.freeze([

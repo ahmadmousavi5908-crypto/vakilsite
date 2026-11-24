@@ -79,6 +79,8 @@ jobs:
         run: node --test tests/mavis/article-search-metadata.test.mjs
       - name: Test MAVIS keyword library
         run: node --test tests/mavis/keyword-library.test.mjs
+      - name: Enforce SEO keyword governance and operating rules
+        run: npm run validate:seo-governance
       - name: Run MAVIS editorial AI provider tests
         run: node --test tests/mavis/editorial-ai.test.mjs
       - name: Validate isolated Cloudflare Worker configurations

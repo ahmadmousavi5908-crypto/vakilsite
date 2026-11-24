@@ -197,6 +197,10 @@ test("covers focused lawyer-intent phrases for homicide, injuries, registration,
   const inheritance = searchKeywordLibrary({ clusterId: "inheritance-estate", family: "lawyer" });
   const lease = searchKeywordLibrary({ clusterId: "lease-shop-tenancy", family: "lawyer" });
   assert.ok(criminal.some((entry) => entry.term === "وکیل قتل غیرعمد"));
+  assert.ok(criminal.some((entry) => entry.term === "وکیل پرونده قتل عمد در اهواز"));
+  assert.ok(criminal.some((entry) => entry.term === "وکیل دفاع در اتهام ضرب و جرح"));
+  assert.ok(registration.some((entry) => entry.term === "وکیل خلع ید در اهواز"));
+  assert.ok(lease.some((entry) => entry.term === "وکیل تخلیه ید ملک"));
   assert.ok(criminal.some((entry) => entry.term === "وکیل اعتراض به نظریه پزشکی قانونی"));
   assert.ok(registration.some((entry) => entry.term === "وکیل ابطال اجراییه ثبتی"));
   assert.ok(inheritance.some((entry) => entry.term === "وکیل اعتراض به تقسیم ترکه"));
@@ -250,10 +254,19 @@ test("keeps broad attorney-positioning and synonym candidates in a separate revi
     "وکیل حقوقی اهواز",
     "مشاوره فوری وکیل",
     "وکیل نابغه",
-    "نابغه وکالت"
+    "نابغه وکالت",
+    "بهترین وکیل ملکی اهواز",
+    "بهترین وکیل خلع ید اهواز",
+    "بهترین وکیل تخلیه ید اهواز",
+    "بهترین وکیل قتل اهواز",
+    "بهترین وکیل ضرب و جرح اهواز",
+    "بهترین وکیل توهین و افترا اهواز",
+    "بهترین وکیل جرایم قتل اهواز",
+    "بهترین وکیل جرایم جراحات اهواز",
+    "بهترین وکیل جرایم توهین اهواز"
   ];
 
-  assert.equal(snapshot.positioningPhraseCount, 18);
+  assert.equal(snapshot.positioningPhraseCount, 33);
   for (const term of expected) {
     assert.ok(entries.some((entry) => entry.term === term), `Missing ${term}`);
   }
@@ -271,6 +284,8 @@ test("keeps colloquial people-first legal problem language searchable by legal c
   const criminal = searchKeywordLibrary({ clusterId: "criminal-procedure", family: "colloquial" });
   const expected = [
     "مستأجرم خونه رو تخلیه نمی‌کنه، چیکار کنم؟",
+    "یکی ملکمو گرفته و پس نمی‌ده، چطور خلع ید بگیرم؟",
+    "به قتل متهم شدم، الان چه کار کنم؟",
     "چطور مهریه‌ام رو بگیرم؟",
     "چکم برگشت خورده، حالا چیکار کنم؟",
     "ازم شکایت شده، باید چیکار کنم؟",
@@ -278,8 +293,8 @@ test("keeps colloquial people-first legal problem language searchable by legal c
     "اخراجم کردن، حق و حقوقم چیه؟"
   ];
 
-  assert.equal(getKeywordLibrarySnapshot().colloquialPhraseCount, 40);
-  assert.equal(family.length, 40);
+  assert.equal(getKeywordLibrarySnapshot().colloquialPhraseCount, 47);
+  assert.equal(family.length, 47);
   for (const term of expected) assert.ok(family.some((entry) => entry.term === term));
   assert.ok(lease.every((entry) => entry.clusterId === "lease-shop-tenancy"));
   assert.ok(familyLaw.every((entry) => entry.clusterId === "family-law"));
@@ -296,8 +311,8 @@ test("does not mix Persian positioning candidates into English search results", 
 
 test("expands labor, tax, administrative, insurance, municipal, commercial and emerging digital legal searches", () => {
   const snapshot = getKeywordLibrarySnapshot();
-  assert.equal(snapshot.lawyerPhraseCount, 799);
-  assert.equal(snapshot.basePhraseCount, 768);
+  assert.equal(snapshot.lawyerPhraseCount, 817);
+  assert.equal(snapshot.basePhraseCount, 786);
   assert.equal(snapshot.problemPhraseCount, 376);
 
   const lawyerCases = [

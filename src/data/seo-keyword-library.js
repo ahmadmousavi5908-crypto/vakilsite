@@ -5,12 +5,56 @@ const keywordLibrary = {
   "market": "Iran",
   "brand": "وکیل سید احمد موسوی",
   "domain": "vakilahmadmousavi.ir",
-  "generatedAt": "2026-11-24",
+  "generatedAt": "2026-11-25",
+
+  "competitorResearch": {
+    "schemaVersion": "1.0.0",
+    "observedAt": "2026-11-25",
+    "status": "public-page-patterns-observed-not-search-volume-validated",
+    "sources": [
+      { "name": "سعید فدائی", "city": "مشهد", "url": "https://www.vakilfadai.com/", "observedTerms": ["وکیل ملکی و اراضی", "وکیل خانواده، ارث و مهریه", "وکیل کیفری و چک برگشتی", "وکیل قراردادهای تجاری", "استعلام پروانه وکالت", "سامانه ثنا", "عدل ایران"] },
+      { "name": "دکتر رضا قدمیان", "city": "تهران", "url": "https://ghadamianlaw.com/", "observedTerms": ["دعاوی ثبتی", "کلاهبرداری", "سرقفلی", "چک و سفته", "تنظیم قرارداد", "قراردادهای تجاری بین‌المللی"] },
+      { "name": "مسعود محمدی", "city": "تهران", "url": "https://www.masoudmohamadi.ir/", "observedTerms": ["دعاوی ملکی و قراردادها", "دعاوی خانواده", "دعاوی کیفری", "خلع ید مشاعی", "اجرت‌المثل ایام تصرف", "اعتراض به رأی", "نمونه لایحه دفاعیه"] },
+      { "name": "دکتر زهرا اکبریان", "city": "تهران", "url": "https://drakbarian.org/", "observedTerms": ["حقوق خصوصی", "حقوق خانواده", "حقوق تجارت", "قراردادهای داخلی و بین‌المللی", "حقوق بین‌الملل", "مالکیت فکری", "حقوق فناوری", "املاک و اراضی", "داوری", "حقوق کیفری", "مشاوره حقوقی آنلاین"] },
+      { "name": "Iran Lawyers profile", "city": "تهران", "url": "https://iranlawyers.org/lawyers/zahra-akbarian.html", "observedTerms": ["وکیل پایه یک دادگستری", "دعاوی حقوقی، خانواده و طلاق، ملکی، تجاری، قراردادها، کیفری و فناوری"] }
+    ],
+    "nationalPatterns": [
+      { "cluster": "property", "terms": ["وکیل دعاوی ملکی", "وکیل امور ثبتی", "وکیل خلع ید", "وکیل سرقفلی", "وکیل الزام به تنظیم سند رسمی", "وکیل افراز و تفکیک"] },
+      { "cluster": "family", "terms": ["وکیل خانواده", "وکیل طلاق", "وکیل مهریه", "وکیل نفقه", "وکیل حضانت", "وکیل ارث و انحصار وراثت"] },
+      { "cluster": "criminal", "terms": ["وکیل دعاوی کیفری", "وکیل کلاهبرداری", "وکیل چک برگشتی", "دفاع در پرونده کیفری", "اعتراض به رأی کیفری"] },
+      { "cluster": "commercial-financial", "terms": ["وکیل قراردادهای تجاری", "وکیل چک و سفته", "وکیل مطالبه وجه", "وکیل دعاوی مالی", "وکیل تنظیم و بررسی قرارداد"] },
+      { "cluster": "procedure-education", "terms": ["نمونه لایحه دفاعیه", "اعتراض به رأی", "اعتراض ثالث اجرایی", "تجدیدنظرخواهی", "مشاوره حقوقی"] },
+      { "cluster": "trust-process", "terms": ["استعلام پروانه وکالت", "شفافیت حق‌الوکاله", "محرمانگی اطلاعات موکل", "بررسی مدارک پرونده", "مراحل رسیدگی پرونده"] }
+    ],
+    "localAhvazKhuzestanPatterns": [
+      { "cluster": "property", "terms": ["وکیل دعاوی ملکی اهواز", "وکیل امور ثبتی اهواز", "وکیل خلع ید در اهواز", "وکیل سرقفلی اهواز", "وکیل الزام به تنظیم سند رسمی اهواز"] },
+      { "cluster": "family", "terms": ["وکیل خانواده اهواز", "وکیل طلاق اهواز", "وکیل مهریه اهواز", "وکیل حضانت اهواز", "وکیل ارث در خوزستان"] },
+      { "cluster": "criminal", "terms": ["وکیل کیفری اهواز", "وکیل کلاهبرداری اهواز", "وکیل چک برگشتی اهواز", "مشاوره پرونده کیفری در اهواز"] },
+      { "cluster": "commercial-financial", "terms": ["وکیل قرارداد در اهواز", "وکیل دعاوی تجاری خوزستان", "وکیل مطالبه وجه در اهواز", "وکیل چک و سفته اهواز"] }
+    ],
+    "questionLedPatterns": [
+      "برای خلع ید از ملک چه اقدامی لازم است؟",
+      "برای اعتراض به رأی دادگاه چه مهلتی وجود دارد؟",
+      "اگر قرارداد را امضا کرده‌ام و طرف مقابل تعهدش را انجام نمی‌دهد چه کنم؟",
+      "برای مطالبه مهریه یا نفقه از کجا شروع کنم؟",
+      "چطور اصالت پروانه وکیل را استعلام کنم؟",
+      "برای جلسه مشاوره حقوقی چه مدارکی همراه داشته باشم؟"
+    ],
+    "usageRules": [
+      "These are observed competitor page terms and editorial candidates, not Google rankings or search-volume data.",
+      "Keep original source wording and provenance; do not copy competitor prose, credentials, case counts, testimonials, or claims.",
+      "National patterns do not imply nationwide service availability.",
+      "Local variants may only be assigned to an existing canonical page when genuinely useful Ahvaz/Khuzestan-specific content supports them.",
+      "Do not create city doorway pages or public keyword blocks.",
+      "Best/top/specialist wording is intent research only and must not become an unsupported self-claim.",
+      "Legally distinct causes of action must remain separate; legal review and human approval are required before publication."
+    ]
+  },
   "methodology": {
     "researchStatus": "candidate-ideas-not-volume-validated",
     "note": "Candidate terms from the existing site, legal subject taxonomy, user-problem wording, public SERP discovery and bilingual query ideation. Not a Google Keyword Planner export.",
-    "candidateCount": 5584,
-    "candidateCountNote": "5,584 is the total of internally generated editorial candidates across lawyer, base, problem, local, positioning, colloquial and legal taxonomy expansions; it is not search volume, observed query count, indexable URL count, or proof of demand.",
+    "candidateCount": 5640,
+    "candidateCountNote": "5,640 is the total of internally generated editorial candidates across lawyer, base, problem, local, positioning, colloquial and legal taxonomy expansions; it is not search volume, observed query count, indexable URL count, or proof of demand.",
     "gscObserved": {
       "property": "sc-domain:vakilahmadmousavi.ir",
       "period": "2026-10-25 to 2026-11-21",
@@ -633,6 +677,10 @@ const keywordLibrary = {
         "وکیل تعمیرات ملک اجاره‌ای",
         "وکیل خسارت به ملک اجاره‌ای",
         "وکیل اختلاف قرارداد رهن و اجاره",
+        "وکیل تخلیه ید",
+        "وکیل تخلیه ید ملک",
+        "وکیل دعوای تخلیه ملک",
+        "وکیل تخلیه مستأجر در اهواز",
         "وکیل تخلیه سرقفلی",
         "وکیل تخلیه با حفظ سرقفلی",
         "وکیل مطالبه حق کسب و پیشه",
@@ -903,6 +951,16 @@ const keywordLibrary = {
         "وکیل قسامه و لوث",
         "وکیل مطالبه دیه از عاقله",
         "وکیل مطالبه دیه از بیت‌المال",
+        "وکیل پرونده قتل عمد در اهواز",
+        "وکیل دفاع از اتهام قتل در اهواز",
+        "وکیل پرونده قتل شبه عمد",
+        "وکیل پرونده قتل غیرعمد",
+        "وکیل دفاع در اتهام ضرب و جرح",
+        "وکیل پرونده ضرب و شتم",
+        "وکیل توهین و افترا در اهواز",
+        "وکیل دفاع از اتهام توهین",
+        "وکیل دفاع در پرونده نشر اکاذیب",
+        "وکیل پرونده تهدید و مزاحمت",
         "وکیل تهدید و حبس غیرقانونی"
       ],
       "en": [
@@ -1288,6 +1346,10 @@ const keywordLibrary = {
         "وکیل اعتراض به اجراییه ثبت",
         "وکیل ابطال سند مالکیت",
         "وکیل اثبات مالکیت زمین",
+        "وکیل خلع ید ملک",
+        "وکیل دعوای خلع ید",
+        "وکیل خلع ید در اهواز",
+        "وکیل رفع تصرف عدوانی در اهواز",
         "وکیل خلع ید زمین",
         "وکیل خلع ید و قلع و قمع",
         "وکیل رفع تصرف عدوانی ملکی",
