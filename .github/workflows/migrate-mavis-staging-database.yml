@@ -131,6 +131,8 @@ jobs:
             let output = "";
             let index = 0;
             let state = "normal";
+            let returnState = "normal";
+            let dollarReturnState = "normal";
             let blockDepth = 0;
             let dollarTag = "";
 
@@ -150,6 +152,7 @@ jobs:
                   continue;
                 }
                 if (current === "/" && next === "*") {
+                  returnState = "normal";
                   state = "block";
                   blockDepth = 1;
                   index += 2;
@@ -157,12 +160,14 @@ jobs:
                   continue;
                 }
                 if (current === "'") {
+                  returnState = "normal";
                   output += current;
                   state = "single";
                   index++;
                   continue;
                 }
                 if (current === '"') {
+                  returnState = "normal";
                   output += current;
                   state = "double";
                   index++;
@@ -173,6 +178,7 @@ jobs:
                   if (match) {
                     dollarTag = match[0];
                     output += dollarTag;
+                    dollarReturnState = "normal";
                     state = "dollar";
                     index += dollarTag.length;
                     continue;
@@ -184,8 +190,7 @@ jobs:
                   continue;
                 }
                 if (current === ";") {
-                  // Supabase CLI may serialize top-level statement terminators differently
-                  // when fetching applied migrations. Compare statement bodies, not separators.
+                  // Compare SQL statements independent of top-level terminator serialization.
                   addSpace();
                   index++;
                   while (index < source.length && /\s/.test(source[index])) index++;
@@ -202,8 +207,8 @@ jobs:
                 if (current === "'" && next === "'") {
                   output += next;
                   index++;
-                } else if (current === "'" ) {
-                  state = "normal";
+                } else if (current === "'") {
+                  state = returnState;
                 } else if (current === "\\" && index < source.length) {
                   output += source[index++];
                 }
@@ -217,7 +222,7 @@ jobs:
                   output += next;
                   index++;
                 } else if (current === '"') {
-                  state = "normal";
+                  state = returnState;
                 }
                 continue;
               }
@@ -226,7 +231,30 @@ jobs:
                 if (source.startsWith(dollarTag, index)) {
                   output += dollarTag;
                   index += dollarTag.length;
-                  state = "normal";
+                  state = dollarReturnState;
+                } else if (current === "-" && next === "-") {
+                  index += 2;
+                  while (index < source.length && source[index] !== "\n" && source[index] !== "\r") index++;
+                  addSpace();
+                } else if (current === "/" && next === "*") {
+                  returnState = "dollar";
+                  state = "block";
+                  blockDepth = 1;
+                  index += 2;
+                  addSpace();
+                } else if (current === "'") {
+                  returnState = "dollar";
+                  output += current;
+                  state = "single";
+                  index++;
+                } else if (current === '"') {
+                  returnState = "dollar";
+                  output += current;
+                  state = "double";
+                  index++;
+                } else if (/\s/.test(current)) {
+                  addSpace();
+                  index++;
                 } else {
                   output += current;
                   index++;
@@ -241,7 +269,7 @@ jobs:
                 } else if (current === "*" && next === "/") {
                   blockDepth--;
                   index += 2;
-                  if (blockDepth === 0) state = "normal";
+                  if (blockDepth === 0) state = returnState;
                 } else {
                   index++;
                 }
