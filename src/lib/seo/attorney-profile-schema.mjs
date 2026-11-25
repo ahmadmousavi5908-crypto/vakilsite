@@ -1,3 +1,5 @@
+import { ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL } from "./structured-content-schema.mjs";
+
 export function buildAttorneyProfileSchema(siteUrl) {
   if (typeof siteUrl !== "string" || !siteUrl.trim()) return null;
 
@@ -28,6 +30,7 @@ export function buildAttorneyProfileSchema(siteUrl) {
       "@id": origin + "/#attorney",
       name: "سید احمد موسوی",
       url: profileUrl,
+      sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL],
       identifier: "74516",
       description: "وکیل پایه یک دادگستری و عضو مرکز وکلای قوه قضائیه؛ دارای کارشناسی ارشد حقوق. محل فعالیت دفتر در اهواز، استان خوزستان.",
       jobTitle: "وکیل پایه یک دادگستری",
