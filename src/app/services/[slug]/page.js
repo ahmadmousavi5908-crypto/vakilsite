@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { practiceAreas } from "../../../data/practice-areas";
 import { getPracticeAreaSearchTitle } from "../../../lib/seo/practice-area-search-titles.mjs";
+import { getRelatedArticlesForPracticeArea } from "../../../lib/seo/article-related-practice-area.mjs";
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
 import { buildBreadcrumbSchema } from "../../../lib/seo/breadcrumb-schema.mjs";
@@ -33,6 +34,7 @@ export default async function PracticeAreaPage({ params }) {
   const serviceSchema = buildPracticeAreaServiceSchema(siteUrl, area);
   const pageUrl = siteUrl ? new URL("/services/" + area.slug, siteUrl).href : null;
   const faqSchema = pageUrl ? buildFaqPageSchema(pageUrl, area.faqs) : null;
+  const relatedArticles = getRelatedArticlesForPracticeArea(slug);
   const structuredBreadcrumb = siteUrl
     ? buildBreadcrumbSchema(siteUrl, [
         { name: "صفحه اصلی", path: "/" },
@@ -74,6 +76,19 @@ export default async function PracticeAreaPage({ params }) {
                   </details>
                 ))}
               </div>
+            </section>
+          )}
+          {relatedArticles.length > 0 && (
+            <section className="practice-related-articles" aria-labelledby="practice-related-articles-title">
+              <h2 id="practice-related-articles-title">راهنماهای مرتبط با {area.shortTitle}</h2>
+              <ul>
+                {relatedArticles.map((article) => (
+                  <li key={article.slug}>
+                    <Link href={article.href}>{article.title}</Link>
+                    <p>{article.excerpt}</p>
+                  </li>
+                ))}
+              </ul>
             </section>
           )}
         </article>
