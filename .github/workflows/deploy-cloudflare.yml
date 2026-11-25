@@ -246,7 +246,7 @@ jobs:
           }
           if (
             typeof legalService.telephone !== "string" ||
-            !/^\\+989\\d{9}$/.test(legalService.telephone)
+            !/^\+989\d{9}$/.test(legalService.telephone)
           ) {
             throw new Error("LegalService JSON-LD must include a validated public office telephone.");
           }
