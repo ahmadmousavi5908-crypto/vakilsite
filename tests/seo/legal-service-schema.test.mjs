@@ -53,6 +53,19 @@ test("builds LegalService schema from complete public office details", () => {
   assert.equal(schema.hasMap, "https://maps.google.com/?q=31.3184,48.6706");
 });
 
+test("formats already-international Iranian office phones exactly like the visible contact label", () => {
+  const schema = buildLegalServiceSchema(siteUrl, {
+    is_location_public: true,
+    office_name: "وکیل سید احمد موسوی",
+    address: "خوزستان اهواز",
+    city: "اهواز",
+    province: "خوزستان",
+    phone: "+989169165902",
+  });
+
+  assert.equal(schema.telephone, "+98 916 916 5902");
+});
+
 test("publishes city and region without mislabeling them as a street address", () => {
   const schema = buildLegalServiceSchema(siteUrl, {
     is_location_public: true,
