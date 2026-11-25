@@ -10,7 +10,7 @@ import LegalIcon from "../components/LegalIcon";
 import CitySelector from "../components/CitySelector";
 import MavisAvatarDock from "../components/mavis/MavisAvatarDock";
 import { getSiteUrl } from "../lib/site-url.mjs";
-import { buildFaqPageSchema } from "../lib/seo/structured-content-schema.mjs";
+import { buildFaqPageSchema, buildSchemaGraph } from "../lib/seo/structured-content-schema.mjs";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -84,12 +84,12 @@ export default async function Home() {
         ],
       }
     : null;
+  const structuredData = buildSchemaGraph(structuredSite, faqSchema);
 
   return (
     <main id="main-content" dir="rtl">
       <MavisAvatarDock />
-      {structuredSite && <JsonLd data={structuredSite} />}
-      {faqSchema && <JsonLd data={faqSchema} />}
+      {structuredData && <JsonLd data={structuredData} />}
       <a className="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
       <div className="topline">
         <div className="container topline-inner">

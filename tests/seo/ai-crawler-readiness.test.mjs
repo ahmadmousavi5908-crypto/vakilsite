@@ -5,7 +5,7 @@ import { HTML_LIMITED_BOT_USER_AGENT } from "../../src/lib/seo/html-limited-bots
 import { articles } from "../../src/data/articles.js";
 import { getArticleSearchMetadata } from "../../src/lib/mavis/article-search-metadata.mjs";
 import { mapPublishedEditorialRecord } from "../../src/lib/mavis/editorial-content-core.mjs";
-import { buildFaqPageSchema, buildPracticeAreaServiceSchema } from "../../src/lib/seo/structured-content-schema.mjs";
+import { buildFaqPageSchema, buildPracticeAreaServiceSchema, buildSchemaGraph } from "../../src/lib/seo/structured-content-schema.mjs";
 
 const llms = readFileSync(new URL("../../public/llms.txt", import.meta.url), "utf8");
 const robots = readFileSync(new URL("../../src/app/robots.js", import.meta.url), "utf8");
@@ -125,14 +125,44 @@ test("FAQPage schema mirrors visible array and object FAQs and rejects empty dat
 
 test("renders service and FAQ structured data on pages with visible matching content", () => {
   assert.match(home, /buildFaqPageSchema\(siteUrl, faqs\)/);
-  assert.match(home, /faqSchema && <JsonLd data=\{faqSchema\} \/>/);
+  assert.match(home, /buildSchemaGraph\(structuredSite, faqSchema\)/);
+  assert.equal((home.match(/<JsonLd data=/g) || []).length, 1);
   assert.match(servicePage, /buildPracticeAreaServiceSchema\(siteUrl, area\)/);
   assert.match(servicePage, /buildFaqPageSchema\(pageUrl, area\.faqs\)/);
-  assert.match(servicePage, /serviceSchema && <JsonLd data=\{serviceSchema\} \/>/);
-  assert.match(servicePage, /faqSchema && <JsonLd data=\{faqSchema\} \/>/);
+  assert.match(servicePage, /buildSchemaGraph\(structuredBreadcrumb, serviceSchema, faqSchema\)/);
+  assert.equal((servicePage.match(/<JsonLd data=/g) || []).length, 1);
 });
 
 test("uses the verified legal-services brand consistently in Open Graph metadata", () => {
   assert.match(layout, /applicationName: "خدمات حقوقی سید احمد موسوی"/);
   assert.match(layout, /siteName: "خدمات حقوقی سید احمد موسوی"/);
+});
+
+test("combines multiple JSON-LD entities into one parser-friendly schema graph", () => {
+  const graph = buildSchemaGraph(
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      name: "دعاوی ملکی و ثبتی",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [],
+    },
+  );
+
+  assert.equal(graph["@context"], "https://schema.org");
+  assert.deepEqual(graph["@graph"].map((entity) => entity["@type"]), [
+    "BreadcrumbList",
+    "Service",
+    "FAQPage",
+  ]);
+  assert.ok(graph["@graph"].every((entity) => !("@context" in entity)));
+  assert.equal(buildSchemaGraph(null, undefined), null);
 });

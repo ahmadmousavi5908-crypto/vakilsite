@@ -77,3 +77,23 @@ export function buildFaqPageSchema(pageUrl, faqs) {
     mainEntity,
   };
 }
+
+export function buildSchemaGraph(...entities) {
+  const graph = entities.flatMap((entity) => {
+    if (!entity || typeof entity !== "object") return [];
+    const nodes = Array.isArray(entity["@graph"]) ? entity["@graph"] : [entity];
+    return nodes
+      .filter((node) => node && typeof node === "object")
+      .map((node) => {
+        const normalized = { ...node };
+        delete normalized["@context"];
+        delete normalized["@graph"];
+        return normalized;
+      })
+      .filter((node) => Object.keys(node).length > 0);
+  });
+
+  return graph.length
+    ? { "@context": "https://schema.org", "@graph": graph }
+    : null;
+}
