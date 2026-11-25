@@ -57,18 +57,18 @@ const keywordLibrary = {
     "candidateCountNote": "5,640 is the total of internally generated editorial candidates across lawyer, base, problem, local, positioning, colloquial and legal taxonomy expansions; it is not search volume, observed query count, indexable URL count, or proof of demand.",
     "gscObserved": {
       "property": "sc-domain:vakilahmadmousavi.ir",
-      "period": "2026-10-25 to 2026-11-21",
-      "queryRows": 3,
-      "pageRows": 19,
-      "status": "connected; visible query rows are incomplete because Google omits anonymized and low-volume queries",
+      "period": "2026-10-26 to 2026-11-22",
+      "queryRows": 8,
+      "pageRows": 20,
+      "status": "connected; latest complete 28-day window refreshed on 2026-11-25; visible query rows remain incomplete because Google omits anonymized and low-volume queries",
       "connectionVerified": true,
       "permissionLevel": "siteOwner",
       "lastThreeMonths": {
-        "period": "2026-08-21 to 2026-11-21",
-        "queryRows": 3,
-        "pageRows": 19
+        "period": "2026-08-22 to 2026-11-22",
+        "queryRows": 8,
+        "pageRows": 20
       },
-      "queryPageRows": 4,
+      "queryPageRows": 9,
       "observedQueries": [
         {
           "query": "وکیل سید احمد موسوی",
@@ -77,7 +77,15 @@ const keywordLibrary = {
             { "path": "/", "clicks": 4, "impressions": 7, "ctr": 0.5714, "averagePosition": 1.6 },
             { "path": "/about", "clicks": 0, "impressions": 7, "ctr": 0, "averagePosition": 4.9 }
           ],
-          "note": "The query-level and query/page aggregates do not reconcile; do not sum page rows into query totals."
+          "note": "Page-level rows are diagnostic and do not reconcile to the query aggregate; do not sum them into query totals."
+        },
+        {
+          "query": "ادای توضیح دعوی به طرفیت",
+          "classification": "legal-glossary-informational",
+          "landingPages": [
+            { "path": "/legal-glossary", "clicks": 0, "impressions": 2, "ctr": 0, "averagePosition": 39.5 }
+          ],
+          "note": "Low-volume legal glossary query; not a service-lead signal."
         },
         {
           "query": "بهترین وکیل خلع ید و تخلیه در اهواز",
@@ -86,15 +94,48 @@ const keywordLibrary = {
           "landingPages": [
             { "path": "/services/property-law", "clicks": 0, "impressions": 2, "ctr": 0, "averagePosition": 47.5 }
           ],
-          "note": "Observed search wording only; it is not an endorsement or a claim the lawyer is the best."
+          "note": "Observed search wording only, not an endorsement or permission to claim the lawyer is best."
+        },
+        {
+          "query": "بهترین وکیل ملکی در اهواز",
+          "classification": "service-intent-with-claim-risk",
+          "requiresComplianceReview": true,
+          "landingPages": [
+            { "path": "/services/property-law", "clicks": 0, "impressions": 1, "ctr": 0, "averagePosition": 65 }
+          ],
+          "note": "Observed search wording only; one impression is not evidence of meaningful demand or endorsement."
+        },
+        {
+          "query": "دستیار حقوقی",
+          "classification": "site-feature-intent",
+          "landingPages": [
+            { "path": "/ai-assistant", "clicks": 0, "impressions": 1, "ctr": 0, "averagePosition": 65 }
+          ],
+          "note": "Search intent relates to the site's assistant feature, not attorney hiring."
+        },
+        {
+          "query": "دستیار هوش مصنوعی حقوقی",
+          "classification": "site-feature-intent",
+          "landingPages": [
+            { "path": "/ai-assistant", "clicks": 0, "impressions": 1, "ctr": 0, "averagePosition": 64 }
+          ],
+          "note": "Search intent relates to the site's assistant feature, not attorney hiring."
+        },
+        {
+          "query": "دستیار هوشمند حقوقی",
+          "classification": "site-feature-intent",
+          "landingPages": [
+            { "path": "/ai-assistant", "clicks": 0, "impressions": 1, "ctr": 0, "averagePosition": 57 }
+          ],
+          "note": "Search intent relates to the site's assistant feature, not attorney hiring."
         },
         {
           "query": "یونس نادمی",
           "classification": "unrelated-entity-or-author-query",
           "landingPages": [
-            { "path": "/about", "clicks": 0, "impressions": 18, "ctr": 0, "averagePosition": 9.9 }
+            { "path": "/about", "clicks": 0, "impressions": 21, "ctr": 0, "averagePosition": 8.6 }
           ],
-          "note": "Do not count this query as branded demand for the lawyer."
+          "note": "Do not count this query as branded demand for the lawyer; it reflects the separately credited co-author name."
         }
       ],
       "indexInspection": {
@@ -132,6 +173,7 @@ const keywordLibrary = {
     "rules": [
       "Never render this library as public or hidden keyword blocks.",
       "Google does not use meta keywords for ranking.",
+      "Search phrases containing best/top are searcher-intent candidates only; never turn them into unsupported first-person superiority claims. Prefer neutral selection criteria and evidence.",
       "One primary intent maps to one canonical URL; close variants belong on the same useful page.",
       "Do not create city doorway pages by replacing only the city name.",
       "Do not claim any practice specialty or service only because a phrase appears here.",
