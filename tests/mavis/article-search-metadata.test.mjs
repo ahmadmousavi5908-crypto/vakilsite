@@ -63,9 +63,36 @@ test("uses the article introduction when an excerpt is absent", () => {
   );
 });
 
-test("returns safe defaults for invalid input", () => {
+test("blank CMS SEO fields fall back to the article's editorial metadata", () => {
+  const result = getArticleSearchMetadata({
+    slug: "cms-article",
+    seoTitle: "   ",
+    metaTitle: "عنوان جایگزین",
+    seoDescription: "  ",
+    excerpt: "خلاصه قابل استفاده برای توضیحات موتور جست‌وجو.",
+    intro: "مقدمه مقاله",
+  });
+
+  assert.deepEqual(result, {
+    title: "عنوان جایگزین",
+    description: "خلاصه قابل استفاده برای توضیحات موتور جست‌وجو.",
+  });
+});
+
+test("all static public articles have non-empty search metadata", async () => {
+  const { articles } = await import("../../src/data/articles.js");
+  assert.equal(articles.length, 10);
+
+  for (const article of articles) {
+    const result = getArticleSearchMetadata(article);
+    assert.ok(result.title.trim(), article.slug + " title");
+    assert.ok(result.description.trim(), article.slug + " description");
+  }
+});
+
+test("returns safe non-empty defaults for invalid input", () => {
   assert.deepEqual(getArticleSearchMetadata(null), {
     title: "مقاله حقوقی",
-    description: "",
+    description: "راهنمای حقوقی بر پایه قوانین ایران.",
   });
 });

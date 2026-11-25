@@ -6,26 +6,33 @@ const articleSearchMetadataOverrides = Object.freeze({
   },
 });
 
+function firstNonEmptyText(values, fallback = "") {
+  for (const value of values) {
+    if (typeof value === "string" && value.trim()) return value.trim();
+  }
+  return fallback;
+}
+
 export function getArticleSearchMetadata(article) {
   if (!article || typeof article !== "object") {
-    return { title: "مقاله حقوقی", description: "" };
+    return { title: "مقاله حقوقی", description: "راهنمای حقوقی بر پایه قوانین ایران." };
   }
 
   const override = articleSearchMetadataOverrides[article.slug];
 
   return {
-    title:
-      override?.title ||
-      article.seoTitle ||
-      article.metaTitle ||
-      article.title ||
-      "مقاله حقوقی",
-    description:
-      override?.description ||
-      article.seoDescription ||
-      article.excerpt ||
-      article.intro ||
-      article.title ||
-      "راهنمای حقوقی بر پایه قوانین ایران.",
+    title: firstNonEmptyText([
+      override?.title,
+      article.seoTitle,
+      article.metaTitle,
+      article.title,
+    ], "مقاله حقوقی"),
+    description: firstNonEmptyText([
+      override?.description,
+      article.seoDescription,
+      article.excerpt,
+      article.intro,
+      article.title,
+    ], "راهنمای حقوقی بر پایه قوانین ایران."),
   };
 }
