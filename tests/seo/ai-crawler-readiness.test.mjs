@@ -171,7 +171,7 @@ test("uses the canonical attorney brand consistently in root and Open Graph meta
   assert.match(layout, /siteName: "وکیل سید احمد موسوی"/);
   assert.match(layout, /default: "وکیل سید احمد موسوی/);
   assert.match(home, /name: "وکیل سید احمد موسوی"/);
-  assert.ok(layout.includes('types: { "text/plain": "/llms.txt" }));
+  assert.ok(layout.includes('types: { "text/plain": "/llms.txt" }'));
 });
 
 test("combines multiple JSON-LD entities into one parser-friendly schema graph", () => {
