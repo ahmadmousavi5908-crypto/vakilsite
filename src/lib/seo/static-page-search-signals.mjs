@@ -11,7 +11,8 @@ const STATIC_PAGE_LAST_MODIFIED = Object.freeze({
   "/services/legal-consultation": "2026-11-24",
 });
 
-const ATTORNEY_IMAGE_PAGES = new Set(["/", "/about"]);
+// Keep the portrait associated with the page that visibly identifies the attorney.
+const ATTORNEY_IMAGE_PAGES = new Set(["/about"]);
 
 export function getStaticPageSearchSignals(path, siteUrl) {
   let origin;

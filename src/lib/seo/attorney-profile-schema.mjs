@@ -8,6 +8,8 @@ export function buildAttorneyProfileSchema(siteUrl) {
     return null;
   }
 
+  const profileImage = origin + "/images/lawyer.jpg";
+
   return {
     "@context": "https://schema.org",
     "@type": "ProfilePage",
@@ -15,12 +17,17 @@ export function buildAttorneyProfileSchema(siteUrl) {
     url: origin + "/about",
     name: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری",
     inLanguage: "fa-IR",
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: profileImage,
+      caption: "تصویر سید احمد موسوی، وکیل پایه یک دادگستری",
+    },
     mainEntity: {
       "@type": "Person",
       "@id": origin + "/#attorney",
       name: "سید احمد موسوی",
       jobTitle: "وکیل پایه یک دادگستری",
-      image: origin + "/images/lawyer.jpg",
+      image: profileImage,
     },
   };
 }
