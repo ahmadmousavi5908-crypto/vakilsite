@@ -7,12 +7,12 @@ function getDisplayAddress(location) {
   const city = typeof location.city === "string" ? location.city.trim() : "";
   const province = typeof location.province === "string" ? location.province.trim() : "";
   const address = typeof location.address === "string" ? location.address.trim() : "";
-  const normalizedAddress = address.replace(/[\\s،,]+/g, " ").toLocaleLowerCase("fa");
+  const normalizedAddress = address.replace(/[\s،,]+/g, " ").toLocaleLowerCase("fa");
   const genericAddresses = new Set([
-    city.replace(/\\s+/g, " ").toLocaleLowerCase("fa"),
-    province.replace(/\\s+/g, " ").toLocaleLowerCase("fa"),
-    (city + " " + province).replace(/\\s+/g, " ").toLocaleLowerCase("fa"),
-    (province + " " + city).replace(/\\s+/g, " ").toLocaleLowerCase("fa"),
+    city.replace(/\s+/g, " ").toLocaleLowerCase("fa"),
+    province.replace(/\s+/g, " ").toLocaleLowerCase("fa"),
+    (city + " " + province).replace(/\s+/g, " ").toLocaleLowerCase("fa"),
+    (province + " " + city).replace(/\s+/g, " ").toLocaleLowerCase("fa"),
   ]);
   const parts = [
     ...(address && !genericAddresses.has(normalizedAddress) ? [address] : []),
