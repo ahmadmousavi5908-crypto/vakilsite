@@ -145,7 +145,7 @@ test("renders service and FAQ structured data on pages with visible matching con
 test("uses the verified legal-services brand consistently in Open Graph metadata", () => {
   assert.match(layout, /applicationName: "خدمات حقوقی سید احمد موسوی"/);
   assert.match(layout, /siteName: "خدمات حقوقی سید احمد موسوی"/);
-  assert.match(layout, /"text\\/plain": "\\/llms\\.txt"/);
+  assert.ok(layout.includes('types: { "text/plain": "/llms.txt" }'));
 });
 
 test("combines multiple JSON-LD entities into one parser-friendly schema graph", () => {
