@@ -17,11 +17,12 @@ export async function generateMetadata({ params }) {
   const area = practiceAreas.find((item) => item.slug === slug);
   if (!area) return { title: "حوزه خدمات پیدا نشد" };
   const searchTitle = getPracticeAreaSearchTitle(slug, area.title);
+  const metaTitle = getPracticeAreaMetaTitle(slug, searchTitle);
   return {
-    title: getPracticeAreaMetaTitle(slug, searchTitle),
+    title: metaTitle,
     description: area.description,
     alternates: { canonical: "/services/" + area.slug },
-    openGraph: { type: "website", locale: "fa_IR", title: searchTitle, description: area.description },
+    openGraph: { type: "website", locale: "fa_IR", title: metaTitle, description: area.description },
   };
 }
 
