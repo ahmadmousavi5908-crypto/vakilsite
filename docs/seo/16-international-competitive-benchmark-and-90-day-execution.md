@@ -291,7 +291,7 @@
 مرور ادبیات Undermind در پروژه «Iranian legal services SEO topical architecture and local organic growth» در ۲۵ نوامبر ۲۰۲۶ تکمیل شد. خلاصه آن بر طراحی اطلاعات بر مبنای نیاز واقعی کاربر، دشواری تشخیص اعتبار اطلاعات حقوقی برای افراد غیرحقوقی، اهمیت تست زبان فارسی و تفاوت محلی، و اندازه‌گیری جداگانه بازدید و تماس واجد شرایط تأکید دارد. این مرور بر اساس چکیده و فراداده مقالات بود، نه مطالعه کامل همه متون؛ بنابراین برای ادعای علّی درباره رتبه گوگل استفاده نمی‌شود.
 
 پیوند پژوهش:
-https://app.undermind.ai/projects/e5df61c8-b5f8-4d4b-a7ad-4e9c58a1728d
+https://app.undermind.ai/projects/e5df61c8-b0e0-4716-912e-5d3f2aab7853?path=%2FIranian%20legal%20services%20SEO%20topical%20architecture%20and%20local%20organic%20growth
 
 ---
 
