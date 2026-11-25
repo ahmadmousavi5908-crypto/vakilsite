@@ -10,7 +10,8 @@ import LegalIcon from "../components/LegalIcon";
 import CitySelector from "../components/CitySelector";
 import MavisAvatarDock from "../components/mavis/MavisAvatarDock";
 import { getSiteUrl } from "../lib/site-url.mjs";
-import { buildFaqPageSchema, buildSchemaGraph } from "../lib/seo/structured-content-schema.mjs";
+import { buildFaqPageSchema, buildLegalServiceSchema, buildSchemaGraph } from "../lib/seo/structured-content-schema.mjs";
+import { getPublicOfficeLocation } from "../lib/public-office-location";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -41,7 +42,10 @@ const faqs = [
 ];
 
 export default async function Home() {
-  const [articles] = await Promise.all([getPublicArticleCatalog()]);
+  const [articles, officeLocation] = await Promise.all([
+    getPublicArticleCatalog(),
+    getPublicOfficeLocation(),
+  ]);
   const siteUrl = getSiteUrl();
   const faqSchema = siteUrl ? buildFaqPageSchema(siteUrl, faqs) : null;
   const structuredSite = siteUrl
@@ -84,7 +88,8 @@ export default async function Home() {
         ],
       }
     : null;
-  const structuredData = buildSchemaGraph(structuredSite, faqSchema);
+  const legalServiceOffice = buildLegalServiceSchema(siteUrl, officeLocation);
+  const structuredData = buildSchemaGraph(structuredSite, faqSchema, legalServiceOffice);
 
   return (
     <main id="main-content" dir="rtl">

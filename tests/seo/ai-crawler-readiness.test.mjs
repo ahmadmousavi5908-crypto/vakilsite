@@ -134,7 +134,9 @@ test("FAQPage schema mirrors visible array and object FAQs and rejects empty dat
 
 test("renders service and FAQ structured data on pages with visible matching content", () => {
   assert.match(home, /buildFaqPageSchema\(siteUrl, faqs\)/);
-  assert.match(home, /buildSchemaGraph\(structuredSite, faqSchema\)/);
+  assert.match(home, /buildLegalServiceSchema\(siteUrl, officeLocation\)/);
+  assert.match(home, /buildSchemaGraph\(structuredSite, faqSchema, legalServiceOffice\)/);
+  assert.match(home, /getPublicOfficeLocation\(\)/);
   assert.equal((home.match(/<JsonLd data=/g) || []).length, 1);
   assert.match(servicePage, /buildPracticeAreaServiceSchema\(siteUrl, area\)/);
   assert.match(servicePage, /buildFaqPageSchema\(pageUrl, area\.faqs\)/);
