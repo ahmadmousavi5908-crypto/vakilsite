@@ -11,19 +11,19 @@ test("adds the attorney portrait only to pages that visibly contain it", () => {
   assert.deepEqual(getStaticPageSearchSignals("/services", origin), { lastModified: "2026-11-24" });
 });
 
-test("publishes an accurate last-modified date for the seven service pages changed on 24 November", () => {
-  const paths = [
+test("publishes accurate last-modified dates for service pages by their latest content change", () => {
+  const pathsUpdatedOnNovember24 = [
     "/services",
     "/services/family-law",
     "/services/criminal-law",
-    "/services/property-law",
     "/services/contracts-and-obligations",
     "/services/claims-and-enforcement",
     "/services/legal-consultation",
   ];
-  for (const path of paths) {
+  for (const path of pathsUpdatedOnNovember24) {
     assert.equal(getStaticPageSearchSignals(path, origin).lastModified, "2026-11-24");
   }
+  assert.equal(getStaticPageSearchSignals("/services/property-law", origin).lastModified, "2026-11-25");
 });
 
 test("does not invent image or update metadata for unrelated pages", () => {
