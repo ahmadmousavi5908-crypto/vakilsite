@@ -7,6 +7,14 @@ export const PRACTICE_AREA_SEARCH_TITLES = Object.freeze({
   "legal-consultation": "مشاوره حقوقی در اهواز و خوزستان"
 });
 
+export const PRACTICE_AREA_META_TITLES = Object.freeze({
+  "property-law": "وکیل ملکی در اهواز | خلع ید، تخلیه و دعاوی ثبتی"
+});
+
 export function getPracticeAreaSearchTitle(slug, fallbackTitle = "") {
   return PRACTICE_AREA_SEARCH_TITLES[slug] || fallbackTitle;
+}
+
+export function getPracticeAreaMetaTitle(slug, fallbackTitle = "") {
+  return PRACTICE_AREA_META_TITLES[slug] || fallbackTitle;
 }

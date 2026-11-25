@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { practiceAreas } from "../../../data/practice-areas";
-import { getPracticeAreaSearchTitle } from "../../../lib/seo/practice-area-search-titles.mjs";
+import { getPracticeAreaMetaTitle, getPracticeAreaSearchTitle } from "../../../lib/seo/practice-area-search-titles.mjs";
 import { getRelatedArticlesForPracticeArea } from "../../../lib/seo/article-related-practice-area.mjs";
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
@@ -17,11 +17,12 @@ export async function generateMetadata({ params }) {
   const area = practiceAreas.find((item) => item.slug === slug);
   if (!area) return { title: "حوزه خدمات پیدا نشد" };
   const searchTitle = getPracticeAreaSearchTitle(slug, area.title);
+  const metaTitle = getPracticeAreaMetaTitle(slug, searchTitle);
   return {
-    title: searchTitle,
+    title: metaTitle,
     description: area.description,
     alternates: { canonical: "/services/" + area.slug },
-    openGraph: { type: "website", locale: "fa_IR", title: searchTitle, description: area.description },
+    openGraph: { type: "website", locale: "fa_IR", title: metaTitle, description: area.description },
   };
 }
 
