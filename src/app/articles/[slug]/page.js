@@ -7,6 +7,7 @@ import { getSiteUrl } from "../../../lib/site-url.mjs";
 import { getArticleSearchMetadata } from "../../../lib/mavis/article-search-metadata.mjs";
 import { buildBreadcrumbSchema } from "../../../lib/seo/breadcrumb-schema.mjs";
 import { buildArticleAuthorSchema } from "../../../lib/seo/article-author-schema.mjs";
+import { getRelatedPracticeAreaForArticle } from "../../../lib/seo/article-related-practice-area.mjs";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
@@ -68,6 +69,7 @@ export default async function ArticleDetailPage({ params }) {
       ])
     : null;
   const structuredAuthor = articleUrl ? buildArticleAuthorSchema(siteUrl, article.authorName) : null;
+  const relatedPracticeArea = getRelatedPracticeAreaForArticle(article.slug);
   const coverImageVariants = article.coverImageUseForSeo === true && article.coverImageUrl
     ? [
         article.coverImageVariants?.wide
@@ -156,7 +158,10 @@ export default async function ArticleDetailPage({ params }) {
       </section>
       <div className="container article-detail-layout">
         <article className="article-body">
-          <p className="article-intro">{article.intro}</p>
+          <p className="article-intro">
+            {article.intro}
+            {relatedPracticeArea ? <> برای آشنایی با حوزه مرتبط، صفحه <Link href={relatedPracticeArea.href}>{relatedPracticeArea.label}</Link> را نیز مطالعه کنید.</> : null}
+          </p>
           {article.sections.map((section, index) => (
             <section className="article-body-section" key={section.heading}>
               <h2>{section.heading}</h2>

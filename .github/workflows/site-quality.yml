@@ -57,6 +57,8 @@ jobs:
         run: node --test tests/seo/breadcrumb-schema.test.mjs
       - name: Test article author entity mapping
         run: node --test tests/seo/article-author-schema.test.mjs
+      - name: Test contextual article to service links
+        run: node --test tests/seo/article-related-practice-area.test.mjs
       - name: Test practice area search titles
         run: node --test tests/seo/practice-area-search-titles.test.mjs
       - name: Test service-page keyword intent coverage
