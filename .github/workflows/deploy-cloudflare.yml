@@ -165,4 +165,32 @@ jobs:
             exit 1
           fi
 
-          echo "Production routes, Google Analytics tag, and published-article sitemap entry verified."
+          curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors \
+            "$base/llms.txt" -o /tmp/vakilsite-llms.txt
+          if ! grep -Fq "# خدمات حقوقی سید احمد موسوی" /tmp/vakilsite-llms.txt; then
+            echo "::error::The public llms.txt file is missing its verified site identity."
+            exit 1
+          fi
+
+          for user_agent in "OAI-SearchBot/1.0" "Claude-SearchBot/1.0" "PerplexityBot/1.0"; do
+            echo "Checking initial HTML metadata for $user_agent"
+            curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors \
+              --user-agent "$user_agent" "$base$article_path" -o /tmp/vakilsite-ai-crawler.html
+
+            VAKILSITE_HTML_FILE=/tmp/vakilsite-ai-crawler.html node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const html = fs.readFileSync(process.env.VAKILSITE_HTML_FILE, "utf8");
+          const head = html.match(/<head\\b[^>]*>([\\s\\S]*?)<\\/head>/i)?.[1] ?? "";
+          const title = head.match(/<title\\b[^>]*>([\\s\\S]*?)<\\/title>/i)?.[1]?.replace(/<[^>]*>/g, "").trim();
+          const descriptionTag = [...head.matchAll(/<meta\\b[^>]*>/gi)]
+            .map(([tag]) => tag)
+            .find((tag) => /\\bname=["']description["']/i.test(tag));
+          const description = descriptionTag?.match(/\\bcontent=["']([^"']+)["']/i)?.[1]?.trim();
+          if (!title || !description || description.length < 40) {
+            throw new Error("The article title and useful meta description must be present in the initial HTML head.");
+          }
+          console.log("Initial HTML title and meta description verified.");
+          NODE
+          done
+
+          echo "Production routes, llms.txt, AI crawler metadata, Google Analytics tag, and sitemap entry verified."
