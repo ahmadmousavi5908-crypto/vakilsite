@@ -10,8 +10,8 @@ function getOrigin(siteUrl) {
 
 function normalizePublicTelephone(value) {
   if (typeof value !== "string") return null;
-  const compact = value.trim().replace(/[\\s().-]/g, "");
-  if (!/^\\+?[0-9]+$/.test(compact)) return null;
+  const compact = value.trim().replace(/[\s().-]/g, "");
+  if (!/^\+?[0-9]+$/.test(compact)) return null;
   if (compact.startsWith("+")) return compact;
   if (compact.startsWith("00")) return "+" + compact.slice(2);
   if (compact.startsWith("0")) return "+98" + compact.slice(1);
