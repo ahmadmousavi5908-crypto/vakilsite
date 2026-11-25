@@ -28,7 +28,10 @@ export function isProductionAnalyticsHost(value) {
 
 export function trackLeadContact(method, pagePath, source = "link") {
   if (!["phone", "email", "whatsapp"].includes(method)) return false;
-  if (typeof window === "undefined" || typeof window.gtag !== "function") return false;
+  if (typeof window === "undefined" || !isProductionAnalyticsHost(window.location?.hostname)) return false;
+
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function gtag() { window.dataLayer.push(arguments); };
 
   const safePath = typeof pagePath === "string" && pagePath.startsWith("/")
     ? pagePath.slice(0, 2048)
