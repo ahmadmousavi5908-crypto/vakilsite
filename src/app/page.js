@@ -145,7 +145,7 @@ export default async function Home() {
               <div className="visual-top"><span>ATTORNEY PROFILE · AHVAZ</span><span className="visual-dot" /></div>
               <div className="lawyer-photo-wrap">
                 <Image
-                  src="/images/lawyer.jpg"
+                  src="/images/lawyer.webp"
                   alt="سید احمد موسوی، وکیل پایه یک دادگستری"
                   width={800}
                   height={1000}
