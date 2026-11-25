@@ -48,3 +48,6 @@ next-env.d.ts
 
 # Generated local font asset (source is stored under assets/fonts)
 /public/fonts/Vazirmatn-variable.woff2
+
+# Generated optimized hero image (source remains public/images/lawyer.jpg)
+/public/images/lawyer.webp
