@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildLegalServiceSchema } from "../../src/lib/seo/structured-content-schema.mjs";
+import { buildLegalServiceSchema, normalizePublicOfficeName } from "../../src/lib/seo/structured-content-schema.mjs";
 
 const siteUrl = "https://vakilahmadmousavi.ir";
+
+test("normalizes the owner-configured compact office name without changing unrelated names", () => {
+  assert.equal(normalizePublicOfficeName("وکیل سیداحمدموسوی"), "وکیل سید احمد موسوی");
+  assert.equal(normalizePublicOfficeName("  دفتر خدمات حقوقی سید احمد موسوی  "), "دفتر خدمات حقوقی سید احمد موسوی");
+});
 
 test("does not publish legal service location when the office is not explicitly public", () => {
   assert.equal(buildLegalServiceSchema(siteUrl, null), null);
@@ -63,6 +68,7 @@ test("publishes city and region without mislabeling them as a street address", (
   });
   assert.equal("streetAddress" in schema.address, false);
   assert.equal("telephone" in schema, false);
+  assert.equal(schema.name, "وکیل سید احمد موسوی");
 });
 
 test("omits incomplete or invalid optional office fields", () => {
