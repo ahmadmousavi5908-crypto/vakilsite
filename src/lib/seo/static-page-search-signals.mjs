@@ -6,7 +6,7 @@ const STATIC_PAGE_LAST_MODIFIED = Object.freeze({
   "/services": "2026-11-24",
   "/services/family-law": "2026-11-24",
   "/services/criminal-law": "2026-11-24",
-  "/services/property-law": "2026-11-25",
+  "/services/property-law": "2026-11-26",
   "/services/contracts-and-obligations": "2026-11-24",
   "/services/claims-and-enforcement": "2026-11-24",
   "/services/legal-consultation": "2026-11-24",
