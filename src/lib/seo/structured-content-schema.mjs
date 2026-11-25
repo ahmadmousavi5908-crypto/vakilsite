@@ -29,14 +29,31 @@ function normalizeHttpsUrl(value) {
   }
 }
 
+function normalizeAddressText(value) {
+  return typeof value === "string"
+    ? value.trim().replace(/[\s،,]+/g, " ").toLocaleLowerCase("fa")
+    : "";
+}
+
 export function buildLegalServiceSchema(siteUrl, officeLocation) {
   const origin = getOrigin(siteUrl);
   if (!origin || !officeLocation || officeLocation.is_location_public !== true) return null;
 
-  const streetAddress = typeof officeLocation.address === "string" ? officeLocation.address.trim() : "";
+  const rawStreetAddress = typeof officeLocation.address === "string" ? officeLocation.address.trim() : "";
   const city = typeof officeLocation.city === "string" ? officeLocation.city.trim() : "";
   const region = typeof officeLocation.province === "string" ? officeLocation.province.trim() : "";
-  if (!streetAddress || !city || !region) return null;
+  if (!city || !region) return null;
+
+  const normalizedAddress = normalizeAddressText(rawStreetAddress);
+  const genericAddressValues = new Set([
+    normalizeAddressText(city),
+    normalizeAddressText(region),
+    normalizeAddressText(city + " " + region),
+    normalizeAddressText(region + " " + city),
+  ]);
+  const streetAddress = normalizedAddress && !genericAddressValues.has(normalizedAddress)
+    ? rawStreetAddress
+    : null;
 
   const latitude = Number(officeLocation.latitude);
   const longitude = Number(officeLocation.longitude);
@@ -67,7 +84,7 @@ export function buildLegalServiceSchema(siteUrl, officeLocation) {
     url: origin,
     address: {
       "@type": "PostalAddress",
-      streetAddress,
+      ...(streetAddress ? { streetAddress } : {}),
       addressLocality: city,
       addressRegion: region,
       addressCountry: "IR",

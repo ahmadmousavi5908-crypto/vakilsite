@@ -3,6 +3,25 @@
 import { useEffect, useState } from "react";
 import LegalIcon from "./LegalIcon";
 
+function getDisplayAddress(location) {
+  const city = typeof location.city === "string" ? location.city.trim() : "";
+  const province = typeof location.province === "string" ? location.province.trim() : "";
+  const address = typeof location.address === "string" ? location.address.trim() : "";
+  const normalizedAddress = address.replace(/[\s،,]+/g, " ").toLocaleLowerCase("fa");
+  const genericAddresses = new Set([
+    city.replace(/\s+/g, " ").toLocaleLowerCase("fa"),
+    province.replace(/\s+/g, " ").toLocaleLowerCase("fa"),
+    (city + " " + province).replace(/\s+/g, " ").toLocaleLowerCase("fa"),
+    (province + " " + city).replace(/\s+/g, " ").toLocaleLowerCase("fa"),
+  ]);
+  const parts = [
+    ...(address && !genericAddresses.has(normalizedAddress) ? [address] : []),
+    city,
+    province,
+  ].filter(Boolean);
+  return [...new Set(parts)].join("، ");
+}
+
 export default function OfficeLocationPublic() {
   const [location, setLocation] = useState(null);
 
@@ -29,8 +48,7 @@ export default function OfficeLocationPublic() {
       <div className="public-office-mark" aria-hidden="true"><LegalIcon name="pin" size={22} /></div>
       <div className="public-office-copy">
         <strong>{location.office_name || "نشانی دفتر"}</strong>
-        <span>{[location.address, location.city, location.province].filter(Boolean).join("، ")}</span>
-        {location.phone && <a href={`tel:${location.phone.replace(/[^0-9+]/g, "")}`} dir="ltr">{location.phone}</a>}
+        <span>{getDisplayAddress(location)}</span>
       </div>
       {mapHref && <a className="public-office-map" href={mapHref} target="_blank" rel="noopener noreferrer">نمایش روی نقشه ↗</a>}
     </section>

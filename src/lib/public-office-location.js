@@ -5,7 +5,7 @@ async function loadPublicOfficeLocation() {
   const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("site_settings")
-    .select("office_name,address,city,province,latitude,longitude,map_url,phone,is_location_public")
+    .select("office_name,address,city,province,latitude,longitude,map_url,is_location_public")
     .eq("setting_key", "office_location")
     .eq("is_location_public", true)
     .maybeSingle();
