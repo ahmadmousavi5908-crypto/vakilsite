@@ -86,6 +86,9 @@ test("renders the public office identity as server HTML without a client fetch",
 });
 
 test("describes only public, canonical site resources in llms.txt", () => {
+  assert.ok(llms.startsWith("# وکیل سید احمد موسوی"));
+  assert.ok(llms.includes("[وکیل سید احمد موسوی؛ وکیل پایه یک دادگستری در اهواز و خوزستان]"));
+  assert.doesNotMatch(llms, /^# خدمات حقوقی سید احمد موسوی/m);
   for (const path of [
     "https://vakilahmadmousavi.ir/",
     "https://vakilahmadmousavi.ir/about",
