@@ -86,6 +86,9 @@ test("renders the public office identity as server HTML without a client fetch",
 });
 
 test("describes only public, canonical site resources in llms.txt", () => {
+  assert.ok(llms.startsWith("# وکیل سید احمد موسوی"));
+  assert.ok(llms.includes("[وکیل سید احمد موسوی؛ وکیل پایه یک دادگستری در اهواز و خوزستان]"));
+  assert.doesNotMatch(llms, /^# خدمات حقوقی سید احمد موسوی/m);
   for (const path of [
     "https://vakilahmadmousavi.ir/",
     "https://vakilahmadmousavi.ir/about",
@@ -163,9 +166,11 @@ test("renders service and FAQ structured data on pages with visible matching con
   assert.equal((servicePage.match(/<JsonLd data=/g) || []).length, 1);
 });
 
-test("uses the verified legal-services brand consistently in Open Graph metadata", () => {
-  assert.match(layout, /applicationName: "خدمات حقوقی سید احمد موسوی"/);
-  assert.match(layout, /siteName: "خدمات حقوقی سید احمد موسوی"/);
+test("uses the canonical attorney brand consistently in root and Open Graph metadata", () => {
+  assert.match(layout, /applicationName: "وکیل سید احمد موسوی"/);
+  assert.match(layout, /siteName: "وکیل سید احمد موسوی"/);
+  assert.match(layout, /default: "وکیل سید احمد موسوی/);
+  assert.match(home, /name: "وکیل سید احمد موسوی"/);
   assert.ok(layout.includes('types: { "text/plain": "/llms.txt" }'));
 });
 
@@ -199,7 +204,7 @@ test("combines multiple JSON-LD entities into one parser-friendly schema graph",
 });
 
 test("keeps the shared route loading fallback descriptive for non-rendering crawlers", () => {
-  assert.match(loading, /خدمات حقوقی سید احمد موسوی، وب‌سایت رسمی معرفی خدمات وکیل پایه یک دادگستری در اهواز و خوزستان است/);
+  assert.match(loading, /وکیل سید احمد موسوی، وب‌سایت رسمی معرفی خدمات حقوقی وکیل پایه یک دادگستری در اهواز و خوزستان است/);
   assert.match(loading, /route-loading-mark" aria-hidden="true"/);
   assert.match(loading, /امکان ثبت درخواست اولیه از سراسر ایران/);
   assert.doesNotMatch(loading, /<small>در حال بارگذاری صفحه/);

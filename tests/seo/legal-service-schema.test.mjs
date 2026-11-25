@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { buildLegalServiceSchema, normalizePublicOfficeName } from "../../src/lib/seo/structured-content-schema.mjs";
 
@@ -88,4 +89,17 @@ test("omits incomplete or invalid optional office fields", () => {
   assert.equal("geo" in schema, false);
   assert.equal("hasMap" in schema, false);
   assert.equal("telephone" in schema, false);
+});
+
+
+test("keeps the homepage visible brand, WebSite, Service and root metadata on the canonical attorney name", () => {
+  const homepage = readFileSync(new URL("../../src/app/page.js", import.meta.url), "utf8");
+  const layout = readFileSync(new URL("../../src/app/layout.js", import.meta.url), "utf8");
+
+  assert.equal(homepage.split('<strong>وکیل سید احمد موسوی</strong>').length - 1, 2);
+  assert.equal(homepage.split('name: "وکیل سید احمد موسوی"').length - 1, 2);
+  assert.ok(layout.includes('default: "وکیل سید احمد موسوی | وکیل پایه یک در اهواز و خوزستان"'));
+  assert.ok(layout.includes('applicationName: "وکیل سید احمد موسوی"'));
+  assert.ok(layout.includes('title: "وکیل سید احمد موسوی | اهواز و خوزستان"'));
+  assert.ok(layout.includes('siteName: "وکیل سید احمد موسوی"'));
 });
