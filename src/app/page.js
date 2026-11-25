@@ -11,7 +11,7 @@ import CitySelector from "../components/CitySelector";
 import MavisAvatarDock from "../components/mavis/MavisAvatarDock";
 import { getSiteUrl } from "../lib/site-url.mjs";
 import { buildFaqPageSchema, buildLegalServiceSchema, buildSchemaGraph, normalizePublicOfficeName } from "../lib/seo/structured-content-schema.mjs";
-import { getPublicOfficeLocation } from "../lib/public-office-location";
+import { getOfficeLocationForStructuredData } from "../lib/public-office-location";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -44,12 +44,24 @@ const faqs = [
 export default async function Home() {
   const [articles, officeLocation] = await Promise.all([
     getPublicArticleCatalog(),
-    getPublicOfficeLocation(),
+    getOfficeLocationForStructuredData(),
   ]);
   const siteUrl = getSiteUrl();
   const normalizedOfficeLocation = officeLocation
     ? { ...officeLocation, office_name: normalizePublicOfficeName(officeLocation.office_name) }
     : officeLocation;
+  const officeLocationForDisplay = normalizedOfficeLocation
+    ? {
+        office_name: normalizedOfficeLocation.office_name,
+        address: normalizedOfficeLocation.address,
+        city: normalizedOfficeLocation.city,
+        province: normalizedOfficeLocation.province,
+        latitude: normalizedOfficeLocation.latitude,
+        longitude: normalizedOfficeLocation.longitude,
+        map_url: normalizedOfficeLocation.map_url,
+        is_location_public: normalizedOfficeLocation.is_location_public,
+      }
+    : null;
   const faqSchema = siteUrl ? buildFaqPageSchema(siteUrl, faqs) : null;
   const structuredSite = siteUrl
     ? {
@@ -330,7 +342,7 @@ export default async function Home() {
           <section className="footer-contact-block" aria-label="راه‌های ارتباطی">
             <h2>ارتباط با دفتر</h2>
             <SocialLinksPublic compact />
-            <OfficeLocationPublic initialLocation={normalizedOfficeLocation} />
+            <OfficeLocationPublic initialLocation={officeLocationForDisplay} />
           </section>
           <nav className="footer-navigation" aria-label="پیوندهای اصلی">
             <h2>دسترسی سریع</h2>
