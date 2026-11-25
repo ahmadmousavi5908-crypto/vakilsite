@@ -1,16 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Script from "next/script";
-import { getGoogleAnalyticsMeasurementId, getLeadMethodFromHref } from "../lib/google-analytics.mjs";
+import { getGoogleAnalyticsMeasurementId, getLeadMethodFromHref, isProductionAnalyticsHost, trackLeadContact } from "../lib/google-analytics.mjs";
 
 export default function GoogleAnalytics({ measurementId }) {
   const id = getGoogleAnalyticsMeasurementId(measurementId);
   const pathname = usePathname();
+  const [isProductionHost, setIsProductionHost] = useState(false);
 
   useEffect(() => {
-    if (!id || !pathname || pathname.startsWith("/admin")) return undefined;
+    setIsProductionHost(isProductionAnalyticsHost(window.location.hostname));
+  }, []);
+
+  useEffect(() => {
+    if (!isProductionHost || !id || !pathname || pathname.startsWith("/admin")) return undefined;
 
     window.dataLayer = window.dataLayer || [];
     window.gtag = window.gtag || function gtag() { window.dataLayer.push(arguments); };
@@ -26,14 +31,14 @@ export default function GoogleAnalytics({ measurementId }) {
       if (!anchor) return;
       const method = getLeadMethodFromHref(anchor.getAttribute("href"));
       if (!method) return;
-      window.gtag("event", "contact_click", { method, page_path: window.location.pathname });
+      trackLeadContact(method, window.location.pathname, "link");
     }
 
     document.addEventListener("click", handleContactClick, true);
     return () => document.removeEventListener("click", handleContactClick, true);
-  }, [id, pathname]);
+  }, [id, pathname, isProductionHost]);
 
-  if (!id || !pathname || pathname.startsWith("/admin")) return null;
+  if (!isProductionHost || !id || !pathname || pathname.startsWith("/admin")) return null;
 
   return (
     <Script id="vakilsite-google-analytics-init" strategy="afterInteractive">
