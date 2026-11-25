@@ -73,6 +73,26 @@ export default async function PracticeAreaPage({ params }) {
               </ul>
             </section>
           )}
+          {Array.isArray(area.legalGuides) && area.legalGuides.length > 0 && (
+            <section className="practice-review-steps practice-legal-guides" aria-labelledby="practice-legal-guides-title">
+              <h2 id="practice-legal-guides-title">خلع ید، تصرف عدوانی یا تخلیه؟ تفاوت مسیرهای قانونی</h2>
+              <ul className="practice-check-list">
+                {area.legalGuides.map((guide) => (
+                  <li key={guide.title}>
+                    <p><b>{guide.title}</b></p>
+                    <p>{guide.summary}</p>
+                    <p><b>مدارک تعیین‌کننده:</b> {guide.evidence.join("، ")}</p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          {area.registrationNotice && (
+            <div className="article-legal-note">
+              <b>{area.registrationNotice.title}</b>
+              <p>{area.registrationNotice.body}</p>
+            </div>
+          )}
           <div className="article-legal-note"><b>توضیح مهم</b><p>{area.note}</p></div>
           {Array.isArray(area.faqs) && area.faqs.length > 0 && (
             <section className="practice-faq" aria-labelledby="practice-faq-title">
@@ -85,6 +105,19 @@ export default async function PracticeAreaPage({ params }) {
                   </details>
                 ))}
               </div>
+            </section>
+          )}
+          {Array.isArray(area.legalSources) && area.legalSources.length > 0 && (
+            <section className="practice-related-articles" aria-labelledby="practice-legal-sources-title">
+              <h2 id="practice-legal-sources-title">منابع قانونی و مقررات قابل مراجعه</h2>
+              <ul>
+                {area.legalSources.map((source) => (
+                  <li key={source.url}>
+                    <a href={source.url} target="_blank" rel="noopener noreferrer">{source.title}</a>
+                    <p>{source.summary}</p>
+                  </li>
+                ))}
+              </ul>
             </section>
           )}
           {relatedArticles.length > 0 && (

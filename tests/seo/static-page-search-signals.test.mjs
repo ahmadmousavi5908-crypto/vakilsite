@@ -26,7 +26,7 @@ test("publishes accurate last-modified dates for service pages by their latest c
   for (const path of pathsUpdatedOnNovember24) {
     assert.equal(getStaticPageSearchSignals(path, origin).lastModified, "2026-11-24");
   }
-  assert.equal(getStaticPageSearchSignals("/services/property-law", origin).lastModified, "2026-11-25");
+  assert.equal(getStaticPageSearchSignals("/services/property-law", origin).lastModified, "2026-11-26");
 });
 
 test("does not invent image or update metadata for unrelated pages", () => {

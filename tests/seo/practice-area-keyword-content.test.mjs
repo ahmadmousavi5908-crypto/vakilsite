@@ -68,6 +68,10 @@ function visiblePracticeAreaText(area) {
     ...(area.topics || []),
     ...(area.checks || []),
     ...(area.reviewSteps || []),
+    ...(area.legalGuides || []).flatMap((guide) => [guide.title, guide.summary, ...(guide.evidence || [])]),
+    area.registrationNotice?.title,
+    area.registrationNotice?.body,
+    ...(area.legalSources || []).flatMap((source) => [source.title, source.summary]),
     ...(area.faqs || []).flatMap((faq) => [faq.question, faq.answer]),
     area.note
   ].filter(Boolean).join(" "));
@@ -129,4 +133,31 @@ test("does not count the internal searchTerms array as public page content", () 
   const visibleText = visiblePracticeAreaText(area);
   assert.ok(!visibleText.includes(normalizePersianSearchText("وکیل جرایم مواد مخدر")));
   assert.ok(visibleText.includes(normalizePersianSearchText("دفاع از متهم")));
+});
+
+
+test("provides substantive legal distinctions and cited primary references for property disputes", () => {
+  const property = practiceAreas.find((area) => area.slug === "property-law");
+  assert.ok(property);
+  assert.equal(property.legalGuides.length, 3);
+  assert.equal(property.legalSources.length, 6);
+
+  const visibleText = visiblePracticeAreaText(property);
+  for (const phrase of [
+    "خلع ید: بررسی مالکیت و تصرف بدون مجوز",
+    "تصرف عدوانی حقوقی: سبق تصرف و خروج بدون رضایت",
+    "تخلیه: رابطه استیجاری، مدت و وضعیت ودیعه",
+    "مواد ۳۰۸ و ۳۱۱",
+    "مواد ۱۵۸ و ۱۶۱",
+    "مواد ۴۳ و ۴۴",
+    "۱۴۰۵/۰۳/۰۱",
+    "تاریخ شمول سایر املاک"
+  ]) {
+    assert.ok(visibleText.includes(normalizePersianSearchText(phrase)), "Missing property-law guidance: " + phrase);
+  }
+
+  for (const source of property.legalSources) {
+    assert.ok(source.title && source.summary);
+    assert.equal(new URL(source.url).protocol, "https:");
+  }
 });
