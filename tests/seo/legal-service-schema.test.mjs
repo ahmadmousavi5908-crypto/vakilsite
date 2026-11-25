@@ -46,6 +46,25 @@ test("builds LegalService schema from complete public office details", () => {
   assert.equal(schema.hasMap, "https://maps.google.com/?q=31.3184,48.6706");
 });
 
+test("publishes city and region without mislabeling them as a street address", () => {
+  const schema = buildLegalServiceSchema(siteUrl, {
+    is_location_public: true,
+    office_name: "وکیل سیداحمدموسوی",
+    address: "خوزستان اهواز",
+    city: "اهواز",
+    province: "خوزستان",
+  });
+
+  assert.deepEqual(schema.address, {
+    "@type": "PostalAddress",
+    addressLocality: "اهواز",
+    addressRegion: "خوزستان",
+    addressCountry: "IR",
+  });
+  assert.equal("streetAddress" in schema.address, false);
+  assert.equal("telephone" in schema, false);
+});
+
 test("omits incomplete or invalid optional office fields", () => {
   const schema = buildLegalServiceSchema(siteUrl, {
     is_location_public: true,
@@ -59,6 +78,7 @@ test("omits incomplete or invalid optional office fields", () => {
   });
 
   assert.equal(schema["@type"], "LegalService");
+  assert.equal("streetAddress" in schema.address, false);
   assert.equal("geo" in schema, false);
   assert.equal("hasMap" in schema, false);
   assert.equal("telephone" in schema, false);
