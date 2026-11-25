@@ -81,7 +81,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="fa" dir="rtl" data-scroll-behavior="smooth">
-      <body>
+      <head>\n        <link rel="preload" href="/fonts/Vazirmatn%5Bwght%5D.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />\n      </head>\n      <body>
         {children}
         <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
         <GlobalMobileMenu />
