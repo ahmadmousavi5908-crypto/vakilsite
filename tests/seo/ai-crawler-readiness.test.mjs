@@ -12,6 +12,7 @@ const robots = readFileSync(new URL("../../src/app/robots.js", import.meta.url),
 const home = readFileSync(new URL("../../src/app/page.js", import.meta.url), "utf8");
 const servicePage = readFileSync(new URL("../../src/app/services/[slug]/page.js", import.meta.url), "utf8");
 const layout = readFileSync(new URL("../../src/app/layout.js", import.meta.url), "utf8");
+const loading = readFileSync(new URL("../../src/app/loading.js", import.meta.url), "utf8");
 
 test("provides non-empty title and description for every legacy article", () => {
   assert.ok(articles.length >= 10);
@@ -165,4 +166,10 @@ test("combines multiple JSON-LD entities into one parser-friendly schema graph",
   ]);
   assert.ok(graph["@graph"].every((entity) => !("@context" in entity)));
   assert.equal(buildSchemaGraph(null, undefined), null);
+});
+
+test("keeps the shared route loading fallback descriptive for non-rendering crawlers", () => {
+  assert.match(loading, /خدمات حقوقی سید احمد موسوی؛ راهنمای حقوقی و بررسی اولیه پرونده‌ها در اهواز و خوزستان/);
+  assert.match(loading, /در حال بارگذاری صفحه/);
+  assert.doesNotMatch(loading, /در حال آماده‌سازی صفحه/);
 });
