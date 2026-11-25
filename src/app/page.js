@@ -59,7 +59,7 @@ export default async function Home() {
             "@type": "WebSite",
             "@id": siteUrl + "/#website",
             url: siteUrl,
-            name: "خدمات حقوقی سید احمد موسوی",
+            name: "وکیل سید احمد موسوی",
             inLanguage: "fa-IR",
           },
           {
@@ -76,7 +76,7 @@ export default async function Home() {
           {
             "@type": "Service",
             "@id": siteUrl + "/#legal-service",
-            name: "خدمات حقوقی سید احمد موسوی",
+            name: "وکیل سید احمد موسوی",
             serviceType: "خدمات حقوقی",
             url: siteUrl,
             provider: { "@id": siteUrl + "/#attorney" },
@@ -110,7 +110,7 @@ export default async function Home() {
         <div className="container nav-wrap">
           <a className="brand" href="#" aria-label="صفحه اصلی">
             <span className="brand-mark"><span>و</span></span>
-            <span className="brand-copy"><strong>مجموعه خدمات حقوقی</strong><small>اهواز، خوزستان · پذیرش درخواست از سراسر ایران</small></span>
+            <span className="brand-copy"><strong>وکیل سید احمد موسوی</strong><small>اهواز، خوزستان · پذیرش درخواست از سراسر ایران</small></span>
           </a>
           <nav className="desktop-nav" aria-label="منوی اصلی">
             <Link href="/services">حوزه‌های فعالیت</Link>
@@ -320,7 +320,7 @@ export default async function Home() {
           <Link className="brand footer-brand" href="/">
             <span className="brand-mark"><span>و</span></span>
             <span className="brand-copy">
-              <strong>مجموعه خدمات حقوقی</strong>
+              <strong>وکیل سید احمد موسوی</strong>
               <small>اهواز، خوزستان · خدمات حقوقی در سراسر ایران</small>
             </span>
           </Link>
