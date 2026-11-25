@@ -17,3 +17,30 @@ export function getLeadMethodFromHref(value) {
   if (url.protocol === "https:" && WHATSAPP_HOSTS.has(url.hostname.toLowerCase())) return "whatsapp";
   return null;
 }
+export const PRODUCTION_ANALYTICS_HOSTS = Object.freeze([
+  "vakilahmadmousavi.ir",
+  "www.vakilahmadmousavi.ir",
+]);
+
+export function isProductionAnalyticsHost(value) {
+  return typeof value === "string" && PRODUCTION_ANALYTICS_HOSTS.includes(value.trim().toLowerCase());
+}
+
+export function trackLeadContact(method, pagePath, source = "link") {
+  if (!["phone", "email", "whatsapp"].includes(method)) return false;
+  if (typeof window === "undefined" || !isProductionAnalyticsHost(window.location?.hostname)) return false;
+
+  if (typeof window.gtag !== "function") return false;
+
+  const safePath = typeof pagePath === "string" && pagePath.startsWith("/")
+    ? pagePath.slice(0, 2048)
+    : "/";
+  const safeSource = source === "request_form" ? "request_form" : "link";
+
+  window.gtag("event", "contact_click", {
+    method,
+    page_path: safePath,
+    source: safeSource,
+  });
+  return true;
+}

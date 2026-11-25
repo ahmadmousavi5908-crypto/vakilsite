@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { trackLeadContact } from "../lib/google-analytics.mjs";
 
 export default function RequestForm({ services }) {
   const [topic, setTopic] = useState("موضوع پرونده را انتخاب کنید");
@@ -49,6 +50,7 @@ export default function RequestForm({ services }) {
     const phone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "989169165902").replace(/\D/g, "");
 
     if (phone) {
+      trackLeadContact("whatsapp", window.location.pathname, "request_form");
       window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(message), "_blank", "noopener,noreferrer");
       return;
     }
