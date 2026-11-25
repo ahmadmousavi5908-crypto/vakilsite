@@ -56,39 +56,50 @@ const COLLOQUIAL_SUBJECTS = Object.freeze({
 });
 
 const POSITIONING_TERMS = Object.freeze([
-  { term: "وکیل خوزستان", intent: "regional-attorney-discovery", claimRisk: "low" },
-  { term: "وکیل اهواز", intent: "local-attorney-discovery", claimRisk: "low" },
-  { term: "وکیل حقوقی اهواز", intent: "local-attorney-discovery", claimRisk: "low" },
-  { term: "وکیل پایه یک دادگستری اهواز", intent: "credential-search", claimRisk: "credential-verification" },
-  { term: "وکیل دادگستری خوزستان", intent: "regional-attorney-discovery", claimRisk: "credential-verification" },
-  { term: "وکیل پایه یک خوزستان", intent: "regional-attorney-discovery", claimRisk: "credential-verification" },
+  { term: "وکیل خوزستان", intent: "regional-attorney-discovery", claimRisk: "low", clusterId: "lawyer-core" },
+  { term: "وکیل اهواز", intent: "local-attorney-discovery", claimRisk: "low", clusterId: "lawyer-core" },
+  { term: "وکیل حقوقی اهواز", intent: "local-attorney-discovery", claimRisk: "low", clusterId: "lawyer-core" },
+  { term: "وکیل پایه یک دادگستری اهواز", intent: "credential-search", claimRisk: "credential-verification", clusterId: "lawyer-core" },
+  { term: "وکیل دادگستری خوزستان", intent: "regional-attorney-discovery", claimRisk: "credential-verification", clusterId: "lawyer-core" },
+  { term: "وکیل پایه یک خوزستان", intent: "regional-attorney-discovery", claimRisk: "credential-verification", clusterId: "lawyer-core" },
   { term: "بهترین وکیل اهواز", intent: "superlative-comparison", claimRisk: "high" },
   { term: "بهترین وکیل خوزستان", intent: "superlative-comparison", claimRisk: "high" },
   { term: "بهترین وکیل پایه یک دادگستری", intent: "superlative-comparison", claimRisk: "high" },
-  { term: "مشاوره فوری وکیل", intent: "urgent-consultation", claimRisk: "service-availability" },
-  { term: "مشاوره حقوقی فوری اهواز", intent: "urgent-consultation", claimRisk: "service-availability" },
+  { term: "مشاوره فوری وکیل", intent: "urgent-consultation", claimRisk: "service-availability", clusterId: "legal-consultation" },
+  { term: "مشاوره حقوقی فوری اهواز", intent: "urgent-consultation", claimRisk: "service-availability", clusterId: "legal-consultation" },
   { term: "وکیل نابغه", intent: "hyperbolic-brand-language", claimRisk: "high" },
   { term: "نابغه وکالت", intent: "hyperbolic-brand-language", claimRisk: "high" },
-  { term: "وکیل باتجربه اهواز", intent: "experience-comparison", claimRisk: "evidence-required" },
-  { term: "وکیل مجرب خوزستان", intent: "experience-comparison", claimRisk: "evidence-required" },
-  { term: "وکیل خوب اهواز", intent: "quality-comparison", claimRisk: "subjective" },
-  { term: "وکیل معتبر اهواز", intent: "trust-comparison", claimRisk: "evidence-required" },
+  { term: "وکیل باتجربه اهواز", intent: "experience-comparison", claimRisk: "evidence-required", clusterId: "lawyer-core" },
+  { term: "وکیل مجرب خوزستان", intent: "experience-comparison", claimRisk: "evidence-required", clusterId: "lawyer-core" },
+  { term: "وکیل خوب اهواز", intent: "quality-comparison", claimRisk: "subjective", clusterId: "lawyer-core" },
+  { term: "وکیل معتبر اهواز", intent: "trust-comparison", claimRisk: "evidence-required", clusterId: "lawyer-core" },
   { term: "وکیل متخصص اهواز", intent: "specialization-claim", claimRisk: "high" },
-  { term: "بهترین وکیل ملکی اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل دعاوی ملکی اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل خلع ید اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل تخلیه ید اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل تخلیه ملک اهواز", intent: "superlative-property-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل کیفری اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل قتل اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل پرونده قتل اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل ضرب و جرح اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل جراحات اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل توهین و افترا اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل جرایم قتل اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل جرایم جراحات اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل جرایم توهین اهواز", intent: "superlative-criminal-comparison", claimRisk: "high" },
-  { term: "بهترین وکیل خانواده اهواز", intent: "superlative-family-comparison", claimRisk: "high" }
+  { term: "بهترین وکیل ملکی اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "registration-land" },
+  { term: "بهترین وکیل دعاوی ملکی اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "registration-land" },
+  { term: "بهترین وکیل خلع ید اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "registration-land" },
+  { term: "بهترین وکیل تخلیه ید اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "lease-shop-tenancy" },
+  { term: "بهترین وکیل تخلیه ملک اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "lease-shop-tenancy" },
+  { term: "بهترین وکیل کیفری اهواز", intent: "superlative-criminal-comparison", claimRisk: "high", clusterId: "criminal-procedure" },
+  { term: "بهترین وکیل قتل اهواز", intent: "superlative-criminal-comparison", claimRisk: "high", clusterId: "criminal-life-and-body" },
+  { term: "بهترین وکیل پرونده قتل اهواز", intent: "superlative-criminal-comparison", claimRisk: "high", clusterId: "criminal-life-and-body" },
+  { term: "بهترین وکیل ضرب و جرح اهواز", intent: "superlative-criminal-comparison", claimRisk: "high", clusterId: "criminal-life-and-body" },
+  { term: "بهترین وکیل جراحات اهواز", intent: "superlative-criminal-comparison", claimRisk: "high", clusterId: "criminal-life-and-body" },
+  { term: "بهترین وکیل توهین و افترا اهواز", intent: "superlative-criminal-comparison", claimRisk: "high", clusterId: "criminal-other" },
+  { term: "بهترین وکیل جرایم قتل اهواز", intent: "superlative-criminal-comparison", claimRisk: "high", clusterId: "criminal-life-and-body" },
+  { term: "بهترین وکیل جرایم جراحات اهواز", intent: "superlative-criminal-comparison", claimRisk: "high", clusterId: "criminal-life-and-body" },
+  { term: "بهترین وکیل جرایم توهین اهواز", intent: "superlative-criminal-comparison", claimRisk: "high", clusterId: "criminal-other" },
+  { term: "بهترین وکیل خانواده اهواز", intent: "superlative-family-comparison", claimRisk: "high", clusterId: "family-law" },
+  { term: "بهترین وکیل طلاق اهواز", intent: "superlative-family-comparison", claimRisk: "high", clusterId: "family-law" },
+  { term: "بهترین وکیل مهریه اهواز", intent: "superlative-family-comparison", claimRisk: "high", clusterId: "family-law" },
+  { term: "بهترین وکیل حضانت اهواز", intent: "superlative-family-comparison", claimRisk: "high", clusterId: "family-law" },
+  { term: "بهترین وکیل سرقفلی اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "lease-shop-tenancy" },
+  { term: "بهترین وکیل اجاره مغازه اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "lease-shop-tenancy" },
+  { term: "بهترین وکیل قرارداد اهواز", intent: "superlative-contract-comparison", claimRisk: "high", clusterId: "civil-contracts-obligations" },
+  { term: "بهترین وکیل چک برگشتی اهواز", intent: "superlative-debt-comparison", claimRisk: "high", clusterId: "cheques-commercial-papers" },
+  { term: "بهترین وکیل کلاهبرداری اهواز", intent: "superlative-criminal-comparison", claimRisk: "high", clusterId: "criminal-property" },
+  { term: "معیارهای انتخاب بهترین وکیل ملکی در اهواز چیست؟", intent: "neutral-selection-guide", claimRisk: "low", clusterId: "registration-land", neutralUseOnly: true },
+  { term: "چطور بهترین وکیل خانواده در اهواز را انتخاب کنم؟", intent: "neutral-selection-guide", claimRisk: "low", clusterId: "family-law", neutralUseOnly: true },
+  { term: "برای انتخاب بهترین وکیل کیفری در اهواز چه معیارهایی مهم است؟", intent: "neutral-selection-guide", claimRisk: "low", clusterId: "criminal-procedure", neutralUseOnly: true }
 ]);
 
 const QUESTION_TEMPLATES = Object.freeze([
@@ -270,20 +281,24 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
   const clusterById = new Map(seoKeywordLibrary.clusters.map((cluster) => [cluster.id, cluster]));
   const entries = [];
 
-  if (language !== "en" && (clusterId === "all" || clusterId === "general-attorney-selection")
-    && (family === "all" || family === "positioning")) {
+  if (language !== "en" && (family === "all" || family === "positioning")) {
     for (const item of POSITIONING_TERMS) {
+      const targetCluster = item.clusterId ? clusterById.get(item.clusterId) : null;
+      const effectiveClusterId = targetCluster?.id || "general-attorney-selection";
+      if (clusterId !== "all" && clusterId !== effectiveClusterId) continue;
+
       entries.push({
-        clusterId: "general-attorney-selection",
-        clusterTitle: "جست‌وجوی عمومی و انتخاب وکیل",
-        target: "محتوای آتی",
+        clusterId: effectiveClusterId,
+        clusterTitle: targetCluster?.title || "جست‌وجوی عمومی و انتخاب وکیل",
+        target: targetCluster?.target || "محتوای آتی",
         intent: item.intent,
-        coverage: "عبارت‌های عمومی، منطقه‌ای، مقایسه‌ای و زبان بازاریابی جست‌وجو",
+        coverage: targetCluster?.coverage || "عبارت‌های عمومی و مقایسه‌ای برای پژوهش داخلی",
         term: item.term,
         family: "positioning",
         origin: "curated-search-language-candidate",
         claimRisk: item.claimRisk,
-        requiresComplianceReview: true
+        requiresComplianceReview: true,
+        neutralUseOnly: true
       });
     }
   }
@@ -389,6 +404,6 @@ export const keywordLibraryProvenance = Object.freeze({
   local: "ترکیب محدود موضوعات خدماتی با ۳۰ موقعیت خوزستان؛ ایده پژوهشی برای جست‌وجوی منطقه‌ای است و وجود دفتر فیزیکی یا تقاضای واقعی در آن شهر را اثبات نمی‌کند.",
   english: "عبارت‌های انگلیسی برای نگهداری و پژوهش داخلی؛ بدون اثبات تقاضای بازار ایران.",
   colloquial: "پرسش‌ها و صورت‌بندی‌های محاوره‌ای مردم برای بیان مسئله؛ بر پایه الگوهای پرسش عمومی و نمونه‌های منتشرشده، نه داده مستقیم حجم جست‌وجو. پیش از استفاده محتوایی باید با زبان واقعی مخاطب و صحت حقوقی بازبینی شوند.",
-  positioning: "عبارت‌های عمومی و توصیفی برای پژوهش داخلی؛ ادعاهای برتری، تخصص و فوریت نیازمند بررسی جداگانه‌اند و نباید خودکار منتشر شوند.",
+  positioning: "عبارت‌های عمومی و مقایسه‌ای، از جمله جست‌وجوهای دارای «بهترین وکیل»، برای تحلیل نیت جست‌وجو هستند؛ هرگز مجوز ادعای برتری، تخصص یا نتیجه درباره وکیل نیستند. این خانواده همیشه نیازمند بازبینی و استفاده خنثی و معیارمحور است.",
   legal: "اصطلاحات و پرسش‌های واردشده از بانک حقوقی داخلی؛ وضعیت اعتبار حقوقی آن‌ها باید پیش از هر انتشار جداگانه بررسی شود."
 });

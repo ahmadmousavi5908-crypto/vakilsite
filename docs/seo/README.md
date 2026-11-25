@@ -35,6 +35,7 @@
 - [نقشه نیت جست‌وجو و مقصد صفحات حقوقی](./11-keyword-intent-page-map-fa-en.md)
 - [بانک مادر کلیدواژه‌های حقوقی و وکالت ایران — نسخه ۲](./12-master-legal-keyword-taxonomy-fa.md)
 - [راهنمای عملیاتی و به‌روزرسانی بانک کلیدواژه MAVIS](./13-keyword-library-operations.md)
+- [نقشه پوشش نیت «وکیل» و «بهترین وکیل»](./21-keyword-intent-coverage-and-best-lawyer-policy-2026-11-25.md)
 
 ## قاعده نگهداری کتابخانه
 

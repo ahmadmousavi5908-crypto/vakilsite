@@ -83,17 +83,29 @@ test("keeps selected intent phrases in crawlable service-page content", () => {
   }
 });
 
-test("covers best-lawyer search intent with neutral selection guidance on property and family pages", () => {
+test("covers best-lawyer search intent with neutral selection guidance across existing service pages", () => {
   const bySlug = new Map(practiceAreas.map((area) => [area.slug, area]));
   const property = visiblePracticeAreaText(bySlug.get("property-law"));
   const family = visiblePracticeAreaText(bySlug.get("family-law"));
+  const criminal = visiblePracticeAreaText(bySlug.get("criminal-law"));
+  const contracts = visiblePracticeAreaText(bySlug.get("contracts-and-obligations"));
+  const claims = visiblePracticeAreaText(bySlug.get("claims-and-enforcement"));
 
   assert.ok(property.includes(normalizePersianSearchText("بهترین وکیل ملکی اهواز")));
   assert.ok(family.includes(normalizePersianSearchText("بهترین وکیل خانواده اهواز")));
-  assert.ok(property.includes(normalizePersianSearchText("اعتبار پروانه")));
+  assert.ok(criminal.includes(normalizePersianSearchText("بهترین وکیل کیفری اهواز")));
+  assert.ok(contracts.includes(normalizePersianSearchText("بهترین وکیل قرارداد اهواز")));
+  assert.ok(claims.includes(normalizePersianSearchText("بهترین وکیل چک برگشتی اهواز")));
+  for (const content of [property, family, criminal]) {
+    assert.ok(content.includes(normalizePersianSearchText("اعتبار پروانه")));
+    assert.ok(content.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
+  }
+  for (const content of [contracts, claims]) {
+    assert.ok(content.includes(normalizePersianSearchText("تناسب تجربه قابل‌اثبات")));
+    assert.ok(content.includes(normalizePersianSearchText("پرهیز از وعده نتیجه")));
+  }
   assert.ok(family.includes(normalizePersianSearchText("حفظ محرمانگی")));
   assert.ok(property.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
-  assert.ok(family.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
 });
 
 test("does not count the internal searchTerms array as public page content", () => {
