@@ -24,7 +24,10 @@ export const metadata = {
   description: "سید احمد موسوی، وکیل پایه یک دادگستری در اهواز؛ معرفی خدمات حقوقی، مقالات و راهنمای اولیه مسائل حقوقی در خوزستان و سراسر ایران.",
   applicationName: "خدمات حقوقی سید احمد موسوی",
   ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: "/",
+    types: { "text/plain": "/llms.txt" },
+  },
   ...(process.env.GOOGLE_SITE_VERIFICATION || process.env.BING_SITE_VERIFICATION
     ? {
         verification: {
