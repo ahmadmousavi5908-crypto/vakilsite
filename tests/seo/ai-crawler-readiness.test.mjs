@@ -5,6 +5,7 @@ import { HTML_LIMITED_BOT_USER_AGENT } from "../../src/lib/seo/html-limited-bots
 import { articles } from "../../src/data/articles.js";
 import { getArticleSearchMetadata } from "../../src/lib/mavis/article-search-metadata.mjs";
 import { mapPublishedEditorialRecord } from "../../src/lib/mavis/editorial-content-core.mjs";
+import { buildFaqPageSchema, buildPracticeAreaServiceSchema } from "../../src/lib/seo/structured-content-schema.mjs";
 
 const llms = readFileSync(new URL("../../public/llms.txt", import.meta.url), "utf8");
 const robots = readFileSync(new URL("../../src/app/robots.js", import.meta.url), "utf8");
@@ -87,4 +88,35 @@ test("describes only public, canonical site resources in llms.txt", () => {
 test("uses a non-local Service schema when no public street address is provided", () => {
   assert.match(home, /"@type": "Service"/);
   assert.doesNotMatch(home, /"@type": "LegalService"|"@type": "LocalBusiness"/);
+});
+
+test("builds a page-specific Service entity without inventing a public office address", () => {
+  const schema = buildPracticeAreaServiceSchema("https://vakilahmadmousavi.ir", {
+    slug: "property-law",
+    title: "دعاوی ملکی و ثبتی",
+    description: "بررسی اختلافات مالکیت و اسناد ملکی در اهواز و خوزستان.",
+  });
+
+  assert.equal(schema["@type"], "Service");
+  assert.equal(schema.url, "https://vakilahmadmousavi.ir/services/property-law");
+  assert.equal(schema.provider["@id"], "https://vakilahmadmousavi.ir/#attorney");
+  assert.deepEqual(schema.areaServed.map((area) => area.name), ["اهواز", "استان خوزستان"]);
+  assert.equal("address" in schema, false);
+  assert.equal("geo" in schema, false);
+  assert.equal(buildPracticeAreaServiceSchema("not-a-url", {}), null);
+});
+
+test("FAQPage schema mirrors visible array and object FAQs and rejects empty data", () => {
+  const schema = buildFaqPageSchema("https://vakilahmadmousavi.ir/", [
+    ["پرسش نخست؟", "پاسخ نخست."],
+    { question: "پرسش دوم؟", answer: "پاسخ دوم." },
+    { question: "", answer: "پاسخ نامعتبر." },
+  ]);
+
+  assert.equal(schema["@type"], "FAQPage");
+  assert.equal(schema.mainEntity.length, 2);
+  assert.equal(schema.mainEntity[0].acceptedAnswer.text, "پاسخ نخست.");
+  assert.equal(schema.mainEntity[1].name, "پرسش دوم؟");
+  assert.equal(buildFaqPageSchema("https://vakilahmadmousavi.ir/", []), null);
+  assert.equal(buildFaqPageSchema("not-a-url", [["پرسش؟", "پاسخ"]]), null);
 });
