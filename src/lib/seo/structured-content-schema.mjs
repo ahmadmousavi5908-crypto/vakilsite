@@ -1,3 +1,5 @@
+export const ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL = "https://www.instagram.com/vakilahmadmousavi/";
+
 function getOrigin(siteUrl) {
   if (typeof siteUrl !== "string" || !siteUrl.trim()) return null;
   try {
@@ -83,10 +85,11 @@ export function buildLegalServiceSchema(siteUrl, officeLocation) {
 
   return {
     "@context": "https://schema.org",
-    "@type": "LegalService",
+    "@type": ["LegalService", "LocalBusiness"],
     "@id": origin + "/#legal-service-office",
     name: normalizePublicOfficeName(officeLocation.office_name),
     url: origin,
+    sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL],
     address: {
       "@type": "PostalAddress",
       ...(streetAddress ? { streetAddress } : {}),

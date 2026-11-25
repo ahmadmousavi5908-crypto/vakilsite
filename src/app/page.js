@@ -10,7 +10,7 @@ import LegalIcon from "../components/LegalIcon";
 import CitySelector from "../components/CitySelector";
 import MavisAvatarDock from "../components/mavis/MavisAvatarDock";
 import { getSiteUrl } from "../lib/site-url.mjs";
-import { buildFaqPageSchema, buildLegalServiceSchema, buildSchemaGraph, normalizePublicOfficeName } from "../lib/seo/structured-content-schema.mjs";
+import { ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL, buildFaqPageSchema, buildLegalServiceSchema, buildSchemaGraph, normalizePublicOfficeName } from "../lib/seo/structured-content-schema.mjs";
 import { getOfficeLocationForStructuredData } from "../lib/public-office-location";
 
 const services = [
@@ -79,6 +79,7 @@ export default async function Home() {
             "@id": siteUrl + "/#attorney",
             name: "سید احمد موسوی",
             jobTitle: "وکیل پایه یک دادگستری",
+            sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL],
             telephone: ["+989169165902", "+989388322230"],
             ...(process.env.NEXT_PUBLIC_CONTACT_EMAIL ? { email: process.env.NEXT_PUBLIC_CONTACT_EMAIL } : {}),
             memberOf: { "@type": "Organization", name: "مرکز وکلای قوه قضائیه" },

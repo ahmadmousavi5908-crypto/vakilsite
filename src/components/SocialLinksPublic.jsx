@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { formatIranianPhoneLabel } from "../lib/public-phone-label.mjs";
 
 const fallbackContacts = [
   { platform: "phone", label: "0916 916 5902", url: "tel:09169165902", link_type: "contact" },
@@ -16,12 +17,7 @@ const marks = {
 
 function getLinkLabel(item) {
   if (item.platform === "email") return "ایمیل دفتر";
-  if (item.platform === "phone" && typeof item.url === "string") {
-    const digits = item.url.replace(/^tel:/i, "").replace(/[^0-9]/g, "");
-    if (digits.length === 11 && digits.startsWith("0")) {
-      return digits.slice(0, 4) + " " + digits.slice(4, 7) + " " + digits.slice(7);
-    }
-  }
+  if (item.platform === "phone") return formatIranianPhoneLabel(item.url) || item.label;
   return item.label;
 }
 
@@ -34,7 +30,7 @@ function LinkCard({ item, compact = false }) {
       <span className={"social-link-mark social-mark-" + (item.platform || "other")} aria-hidden="true">
         {marks[item.platform] || marks.other}
       </span>
-      <span className="social-link-label">{compact ? getLinkLabel(item) : item.label}</span>
+      <span className="social-link-label">{item.platform === "phone" || compact ? getLinkLabel(item) : item.label}</span>
       <span className="social-link-arrow" aria-hidden="true">↗</span>
     </a>
   );
