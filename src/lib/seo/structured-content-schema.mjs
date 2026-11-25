@@ -12,13 +12,29 @@ function getOrigin(siteUrl) {
 
 function normalizePublicTelephone(value) {
   if (typeof value !== "string") return null;
+
   const compact = value.trim().replace(/[\s().-]/g, "");
   if (!/^\+?[0-9]+$/.test(compact)) return null;
-  if (compact.startsWith("+")) return compact;
-  if (compact.startsWith("00")) return "+" + compact.slice(2);
-  if (compact.startsWith("0")) return "+98" + compact.slice(1);
-  if (compact.startsWith("98")) return "+" + compact;
-  return null;
+
+  let international;
+  if (compact.startsWith("+")) international = compact;
+  else if (compact.startsWith("00")) international = "+" + compact.slice(2);
+  else if (compact.startsWith("0")) international = "+98" + compact.slice(1);
+  else if (compact.startsWith("98")) international = "+" + compact;
+  else return null;
+
+  const iranianMobile = /^\+98(9\d{9})$/.exec(international);
+  if (!iranianMobile) return international;
+
+  const nationalNumber = iranianMobile[1];
+  return (
+    "+98 " +
+    nationalNumber.slice(0, 3) +
+    " " +
+    nationalNumber.slice(3, 6) +
+    " " +
+    nationalNumber.slice(6)
+  );
 }
 
 function normalizeHttpsUrl(value) {
@@ -85,7 +101,7 @@ export function buildLegalServiceSchema(siteUrl, officeLocation) {
 
   return {
     "@context": "https://schema.org",
-    "@type": ["LegalService", "LocalBusiness"],
+    "@type": "LegalService",
     "@id": origin + "/#legal-service-office",
     name: normalizePublicOfficeName(officeLocation.office_name),
     url: origin,
