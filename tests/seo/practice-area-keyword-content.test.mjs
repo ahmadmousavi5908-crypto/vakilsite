@@ -96,9 +96,13 @@ test("covers best-lawyer search intent with neutral selection guidance across ex
   assert.ok(criminal.includes(normalizePersianSearchText("بهترین وکیل کیفری اهواز")));
   assert.ok(contracts.includes(normalizePersianSearchText("بهترین وکیل قرارداد اهواز")));
   assert.ok(claims.includes(normalizePersianSearchText("بهترین وکیل چک برگشتی اهواز")));
-  for (const content of [property, family, criminal, contracts, claims]) {
+  for (const content of [property, family, criminal]) {
     assert.ok(content.includes(normalizePersianSearchText("اعتبار پروانه")));
-    assert.ok(content.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")) || content.includes(normalizePersianSearchText("پرهیز از وعده نتیجه")));
+    assert.ok(content.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
+  }
+  for (const content of [contracts, claims]) {
+    assert.ok(content.includes(normalizePersianSearchText("تناسب تجربه قابل‌اثبات")));
+    assert.ok(content.includes(normalizePersianSearchText("پرهیز از وعده نتیجه")));
   }
   assert.ok(family.includes(normalizePersianSearchText("حفظ محرمانگی")));
   assert.ok(property.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
