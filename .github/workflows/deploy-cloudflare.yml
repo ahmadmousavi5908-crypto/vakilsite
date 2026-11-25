@@ -244,7 +244,35 @@ jobs:
           ) {
             throw new Error("LegalService geo coordinates must match the public office-location API.");
           }
-          if (legalService.address?.streetAddress) {
+          if (
+            typeof legalService.telephone !== "string" ||
+            !/^\+989\d{9}$/.test(legalService.telephone)
+          ) {
+            throw new Error("LegalService JSON-LD must include a validated public office telephone.");
+          }
+          const normalizeAddress = (value) =>
+            typeof value === "string"
+              ? value.trim().replace(/[\\s،,]+/g, " ").toLocaleLowerCase("fa")
+              : "";
+          const normalizedAddress = normalizeAddress(location.address);
+          const genericAddressValues = new Set([
+            normalizeAddress(location.city),
+            normalizeAddress(location.province),
+            normalizeAddress(location.city + " " + location.province),
+            normalizeAddress(location.province + " " + location.city),
+          ]);
+          const hasSpecificStreetAddress =
+            normalizedAddress && !genericAddressValues.has(normalizedAddress);
+          if (
+            hasSpecificStreetAddress &&
+            legalService.address?.streetAddress !== location.address
+          ) {
+            throw new Error("LegalService street address must match the public office-location API.");
+          }
+          if (
+            !hasSpecificStreetAddress &&
+            legalService.address?.streetAddress
+          ) {
             throw new Error("City/province-only data must not be emitted as a street address.");
           }
 
