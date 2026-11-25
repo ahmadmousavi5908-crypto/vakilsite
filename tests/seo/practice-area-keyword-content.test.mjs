@@ -67,6 +67,7 @@ function visiblePracticeAreaText(area) {
     area.intro,
     ...(area.topics || []),
     ...(area.checks || []),
+    ...(area.reviewSteps || []),
     ...(area.faqs || []).flatMap((faq) => [faq.question, faq.answer]),
     area.note
   ].filter(Boolean).join(" "));
@@ -106,6 +107,21 @@ test("covers best-lawyer search intent with neutral selection guidance across ex
   }
   assert.ok(family.includes(normalizePersianSearchText("حفظ محرمانگی")));
   assert.ok(property.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
+});
+
+test("adds practical property-case review guidance to the existing Ahvaz service page", () => {
+  const property = practiceAreas.find((area) => area.slug === "property-law");
+  assert.ok(property);
+  assert.equal(property.reviewSteps.length, 4);
+  const visibleText = visiblePracticeAreaText(property);
+  for (const phrase of [
+    "خلع ید، تخلیه و تصرف عدوانی چه تفاوتی دارند؟",
+    "برای بررسی اولیه پرونده ملکی در اهواز چه مدارکی آماده کنم؟",
+    "پرونده ملکی پیش از انتخاب مسیر قضایی چگونه بررسی می‌شود؟",
+    "مرجع و مهلت‌های قانونی"
+  ]) {
+    assert.ok(visibleText.includes(normalizePersianSearchText(phrase)), "Missing property guidance: " + phrase);
+  }
 });
 
 test("does not count the internal searchTerms array as public page content", () => {
