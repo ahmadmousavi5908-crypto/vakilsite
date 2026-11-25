@@ -1,8 +1,8 @@
-import { createClient } from "./supabase/server";
+import { createPublicClient } from "./supabase/public";
 import { getInMemoryCachedValue } from "./cache/in-memory-cache.mjs";
 
 async function loadPublicOfficeLocation() {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("site_settings")
     .select("office_name,address,city,province,latitude,longitude,map_url,phone,is_location_public")
