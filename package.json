@@ -22,7 +22,7 @@
     "test:mavis-iranian-source-search": "node --test tests/mavis/iranian-source-search.test.mjs",
     "test:mavis-editorial-core": "node --test tests/mavis/editorial-content-core.test.mjs tests/mavis/article-draft-input.test.mjs tests/mavis/article-keyword-coverage.test.mjs tests/mavis/article-image-metadata.test.mjs tests/mavis/article-image-browser.test.mjs tests/mavis/article-image-readiness.test.mjs",
     "validate:seo-governance": "node scripts/validate-seo-governance.mjs",
-    "test:seo-ai-readiness": "node --test tests/seo/ai-crawler-readiness.test.mjs tests/seo/legal-service-schema.test.mjs"
+    "test:seo-ai-readiness": "node --test tests/seo/ai-crawler-readiness.test.mjs tests/seo/legal-service-schema.test.mjs tests/seo/public-data-client.test.mjs"
   },
   "dependencies": {
     "next": "16.4.6",
