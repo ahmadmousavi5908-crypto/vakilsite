@@ -45,4 +45,6 @@ next-env.d.ts
 /public/indexnow-key.txt
 /.gitignore.before-safety.bak
 .next-cache-backup/
-\n# Generated local font asset (source is stored under assets/fonts)\n/public/fonts/Vazirmatn[wght].woff2\n
+
+# Generated local font asset (source is stored under assets/fonts)
+/public/fonts/Vazirmatn[wght].woff2
