@@ -44,6 +44,7 @@ test("tracks direct contact and request-form WhatsApp intent with a clear source
   const originalWindow = globalThis.window;
   const calls = [];
   globalThis.window = {
+    location: { hostname: "vakilahmadmousavi.ir" },
     gtag: (...args) => calls.push(args),
   };
 
@@ -75,4 +76,41 @@ test("gates the GA4 component to production and instruments the request form", (
   assert.match(analyticsComponent, /isProductionAnalyticsHost\(window\.location\.hostname\)/);
   assert.match(analyticsComponent, /!isProductionHost/);
   assert.match(requestForm, /trackLeadContact\("whatsapp", window\.location\.pathname, "request_form"\)/);
+});
+
+test("queues lead events only on the production host when gtag is not initialized yet", () => {
+  const originalWindow = globalThis.window;
+  globalThis.window = {
+    location: { hostname: "vakilahmadmousavi.ir" },
+    dataLayer: [],
+  };
+
+  try {
+    assert.equal(trackLeadContact("whatsapp", "/services", "request_form"), true);
+    assert.equal(globalThis.window.dataLayer.length, 1);
+    assert.deepEqual(Array.from(globalThis.window.dataLayer[0]), [
+      "event",
+      "contact_click",
+      { method: "whatsapp", page_path: "/services", source: "request_form" },
+    ]);
+  } finally {
+    if (originalWindow === undefined) delete globalThis.window;
+    else globalThis.window = originalWindow;
+  }
+});
+
+test("never queues contact events on localhost or staging hosts", () => {
+  const originalWindow = globalThis.window;
+  globalThis.window = {
+    location: { hostname: "localhost" },
+    dataLayer: [],
+  };
+
+  try {
+    assert.equal(trackLeadContact("whatsapp", "/", "request_form"), false);
+    assert.equal(globalThis.window.dataLayer.length, 0);
+  } finally {
+    if (originalWindow === undefined) delete globalThis.window;
+    else globalThis.window = originalWindow;
+  }
 });
