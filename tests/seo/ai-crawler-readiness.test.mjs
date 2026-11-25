@@ -12,6 +12,7 @@ const robots = readFileSync(new URL("../../src/app/robots.js", import.meta.url),
 const home = readFileSync(new URL("../../src/app/page.js", import.meta.url), "utf8");
 const servicePage = readFileSync(new URL("../../src/app/services/[slug]/page.js", import.meta.url), "utf8");
 const layout = readFileSync(new URL("../../src/app/layout.js", import.meta.url), "utf8");
+const officeLocation = readFileSync(new URL("../../src/components/OfficeLocationPublic.jsx", import.meta.url), "utf8");
 const loading = readFileSync(new URL("../../src/app/loading.js", import.meta.url), "utf8");
 
 test("provides non-empty title and description for every legacy article", () => {
@@ -76,6 +77,14 @@ test("keeps model-training crawlers blocked and private paths disallowed", () =>
   assert.match(robots, /privatePaths\s*=\s*\["\/admin",\s*"\/api"\]/);
 });
 
+test("renders the public office identity as server HTML without a client fetch", () => {
+  assert.doesNotMatch(officeLocation, /^["']use client["'];/);
+  assert.doesNotMatch(officeLocation, /useState|useEffect|fetch\(/);
+  assert.match(officeLocation, /<strong>\{location\.office_name/);
+  assert.match(home, /<OfficeLocationPublic initialLocation=\{normalizedOfficeLocation\} \/>/);
+  assert.match(home, /normalizePublicOfficeName\(officeLocation\.office_name\)/);
+});
+
 test("describes only public, canonical site resources in llms.txt", () => {
   for (const path of [
     "https://vakilahmadmousavi.ir/",
@@ -94,6 +103,14 @@ test("describes only public, canonical site resources in llms.txt", () => {
     "وکیل چک و مطالبه وجه در اهواز بررسی موردی و مستند",
     "مشاوره حقوقی در اهواز و خوزستان بررسی موردی و مستند",
   ]) assert.ok(llms.includes("[" + title + "]"), `Missing service title ${title}`);
+  for (const serviceName of [
+    "حقوق خانواده در اهواز و خوزستان",
+    "دعاوی کیفری در اهواز و خوزستان",
+    "دعاوی ملکی و ثبتی در اهواز و خوزستان",
+    "قراردادها و تعهدات",
+    "مطالبات و اجرای احکام",
+    "مشاوره و بررسی پرونده",
+  ]) assert.ok(llms.includes(serviceName), `Missing exact service name ${serviceName}`);
 });
 
 test("uses a non-local Service schema when no public street address is provided", () => {
