@@ -158,6 +158,78 @@ jobs:
               "$base$route" -o /tmp/vakilsite-smoke-response
           done
 
+          echo "Checking public office-location API and first-party LegalService JSON-LD"
+          curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors \
+            "$base/api/office-location" -o /tmp/vakilsite-office-location.json
+          curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors \
+            "$base/" -o /tmp/vakilsite-home.html
+
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+
+          const payload = JSON.parse(fs.readFileSync("/tmp/vakilsite-office-location.json", "utf8"));
+          const location = payload?.location;
+          if (!location || location.is_location_public !== true) {
+            throw new Error("Public office-location API must return an explicitly public location.");
+          }
+          if (!location.city?.trim() || !location.province?.trim()) {
+            throw new Error("Public office-location API must include city and province.");
+          }
+          const latitude = Number(location.latitude);
+          const longitude = Number(location.longitude);
+          if (
+            !Number.isFinite(latitude) ||
+            !Number.isFinite(longitude) ||
+            latitude < -90 ||
+            latitude > 90 ||
+            longitude < -180 ||
+            longitude > 180
+          ) {
+            throw new Error("Public office-location API must include valid geographic coordinates.");
+          }
+          if (Object.hasOwn(location, "phone")) {
+            throw new Error("The public office-location API must not expose a phone field.");
+          }
+
+          const html = fs.readFileSync("/tmp/vakilsite-home.html", "utf8");
+          const scripts = [...html.matchAll(/<script\\b[^>]*type=["']application\\/ld\\+json["'][^>]*>([\\s\\S]*?)<\\/script>/gi)];
+          const nodes = scripts.flatMap(([, raw]) => {
+            try {
+              const parsed = JSON.parse(raw);
+              return Array.isArray(parsed?.["@graph"]) ? parsed["@graph"] : [parsed];
+            } catch {
+              return [];
+            }
+          });
+          const legalService = nodes.find((node) => {
+            const types = Array.isArray(node?.["@type"]) ? node["@type"] : [node?.["@type"]];
+            return types.includes("LegalService");
+          });
+          if (!legalService) {
+            throw new Error("Homepage initial HTML must include the public LegalService JSON-LD entity.");
+          }
+          if (legalService.name !== "وکیل سید احمد موسوی") {
+            throw new Error("LegalService name must match the canonical public brand.");
+          }
+          if (
+            legalService.address?.addressLocality !== location.city ||
+            legalService.address?.addressRegion !== location.province ||
+            legalService.address?.addressCountry !== "IR"
+          ) {
+            throw new Error("LegalService address must match the public office-location API.");
+          }
+          if (
+            Number(legalService.geo?.latitude) !== latitude ||
+            Number(legalService.geo?.longitude) !== longitude
+          ) {
+            throw new Error("LegalService geo coordinates must match the public office-location API.");
+          }
+          if (legalService.address?.streetAddress) {
+            throw new Error("City/province-only data must not be emitted as a street address.");
+          }
+
+          console.log("Public office-location API and initial HTML LegalService JSON-LD verified.");
+          NODE
 
           sitemap="$(curl --fail --silent --show-error --location "$base/sitemap.xml")"
           if ! grep -Fq "$article_path" <<< "$sitemap"; then
