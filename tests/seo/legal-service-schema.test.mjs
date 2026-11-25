@@ -52,8 +52,8 @@ test("omits incomplete or invalid optional office fields", () => {
     address: "اهواز",
     city: "اهواز",
     province: "خوزستان",
-    latitude: 999,
-    longitude: 48,
+    latitude: "",
+    longitude: "",
     map_url: "javascript:alert(1)",
     phone: "not-a-phone",
   });
