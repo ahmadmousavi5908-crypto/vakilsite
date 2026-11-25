@@ -35,6 +35,13 @@ function normalizeAddressText(value) {
     : "";
 }
 
+export function normalizePublicOfficeName(value) {
+  if (typeof value !== "string" || !value.trim()) return "خدمات حقوقی سید احمد موسوی";
+  const normalized = value.trim().replace(/\s+/g, " ");
+  const compact = normalized.replace(/[\s\u200c\u200e\u200f]/g, "");
+  return compact === "وکیلسیداحمدموسوی" ? "وکیل سید احمد موسوی" : normalized;
+}
+
 export function buildLegalServiceSchema(siteUrl, officeLocation) {
   const origin = getOrigin(siteUrl);
   if (!origin || !officeLocation || officeLocation.is_location_public !== true) return null;
@@ -78,9 +85,7 @@ export function buildLegalServiceSchema(siteUrl, officeLocation) {
     "@context": "https://schema.org",
     "@type": "LegalService",
     "@id": origin + "/#legal-service-office",
-    name: typeof officeLocation.office_name === "string" && officeLocation.office_name.trim()
-      ? officeLocation.office_name.trim()
-      : "خدمات حقوقی سید احمد موسوی",
+    name: normalizePublicOfficeName(officeLocation.office_name),
     url: origin,
     address: {
       "@type": "PostalAddress",

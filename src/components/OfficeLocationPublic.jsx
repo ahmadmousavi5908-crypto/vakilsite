@@ -22,10 +22,11 @@ function getDisplayAddress(location) {
   return [...new Set(parts)].join("، ");
 }
 
-export default function OfficeLocationPublic() {
-  const [location, setLocation] = useState(null);
+export default function OfficeLocationPublic({ initialLocation = null }) {
+  const [location, setLocation] = useState(initialLocation);
 
   useEffect(() => {
+    if (initialLocation) return;
     let active = true;
     fetch("/api/office-location")
       .then((response) => response.json())
@@ -34,7 +35,7 @@ export default function OfficeLocationPublic() {
       })
       .catch(() => {});
     return () => { active = false; };
-  }, []);
+  }, [initialLocation]);
 
   if (!location) return null;
 
