@@ -256,7 +256,7 @@ test("keeps broad attorney-positioning candidates separate and routes service-sp
   const claims = searchKeywordLibrary({ clusterId: "cheques-commercial-papers", family: "positioning" });
   const criminal = searchKeywordLibrary({ clusterId: "criminal-property", family: "positioning" });
 
-  assert.equal(snapshot.positioningPhraseCount, 44);
+  assert.equal(snapshot.positioningPhraseCount, 46);
   assert.ok(lawyer.some((entry) => entry.term === "وکیل خوزستان" && entry.target === "/"));
   assert.ok(lawyer.some((entry) => entry.term === "وکیل حقوقی اهواز"));
   assert.ok(general.some((entry) => entry.term === "بهترین وکیل اهواز" && entry.claimRisk === "high"));
@@ -270,6 +270,8 @@ test("keeps broad attorney-positioning candidates separate and routes service-sp
 
   const expectedMappings = [
     [property, "بهترین وکیل ملکی اهواز", "/services/property-law"],
+    [property, "بهترین وکیل ملکی در اهواز", "/services/property-law"],
+    [property, "بهترین وکیل خلع ید و تخلیه در اهواز", "/services/property-law"],
     [property, "معیارهای انتخاب بهترین وکیل ملکی در اهواز چیست؟", "/services/property-law"],
     [leasing, "بهترین وکیل سرقفلی اهواز", "/services/property-law"],
     [family, "بهترین وکیل طلاق اهواز", "/services/family-law"],
@@ -284,6 +286,13 @@ test("keeps broad attorney-positioning candidates separate and routes service-sp
     assert.equal(entry.target, target);
     assert.deepEqual(getKeywordEntryAction(entry), { kind: "owner", href: target });
   }
+
+  const observedGsc = property.filter((entry) => entry.observedInGsc === true);
+  assert.deepEqual(observedGsc.map((entry) => entry.term).sort(), [
+    "بهترین وکیل خلع ید و تخلیه در اهواز",
+    "بهترین وکیل ملکی در اهواز"
+  ].sort());
+  assert.ok(observedGsc.every((entry) => entry.claimRisk === "high" && entry.neutralUseOnly === true));
 
   const unsupportedSuperlative = general.find((entry) => entry.term === "بهترین وکیل اهواز");
   assert.equal(getKeywordEntryAction(unsupportedSuperlative), null);
