@@ -17,21 +17,20 @@ export function getLeadMethodFromHref(value) {
   if (url.protocol === "https:" && WHATSAPP_HOSTS.has(url.hostname.toLowerCase())) return "whatsapp";
   return null;
 }
-const PRODUCTION_ANALYTICS_HOSTS = new Set([
+export const PRODUCTION_ANALYTICS_HOSTS = Object.freeze([
   "vakilahmadmousavi.ir",
   "www.vakilahmadmousavi.ir",
 ]);
 
 export function isProductionAnalyticsHost(value) {
-  return typeof value === "string" && PRODUCTION_ANALYTICS_HOSTS.has(value.trim().toLowerCase());
+  return typeof value === "string" && PRODUCTION_ANALYTICS_HOSTS.includes(value.trim().toLowerCase());
 }
 
 export function trackLeadContact(method, pagePath, source = "link") {
   if (!["phone", "email", "whatsapp"].includes(method)) return false;
   if (typeof window === "undefined" || !isProductionAnalyticsHost(window.location?.hostname)) return false;
 
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = window.gtag || function gtag() { window.dataLayer.push(arguments); };
+  if (typeof window.gtag !== "function") return false;
 
   const safePath = typeof pagePath === "string" && pagePath.startsWith("/")
     ? pagePath.slice(0, 2048)
