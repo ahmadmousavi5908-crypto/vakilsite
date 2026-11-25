@@ -74,7 +74,7 @@ test("does not track when the GA4 runtime is unavailable", () => {
 
 test("gates the GA4 component to production and instruments the request form", () => {
   assert.match(analyticsComponent, /isProductionAnalyticsHost\(window\.location\.hostname\)/);
-  assert.match(analyticsComponent, /JSON\.stringify\(PRODUCTION_ANALYTICS_HOSTS\)\.includes\(window\.location\.hostname\)/);
+  assert.match(analyticsComponent, /JSON\.stringify\(PRODUCTION_ANALYTICS_HOSTS\)\}\.includes\(window\.location\.hostname\)/);
   assert.match(analyticsComponent, /__vakilsiteGaScriptLoaded/);
   assert.doesNotMatch(analyticsComponent, /useState/);
   assert.match(requestForm, /trackLeadContact\("whatsapp", window\.location\.pathname, "request_form"\)/);
