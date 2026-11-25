@@ -33,7 +33,8 @@ test("builds LegalService schema from complete public office details", () => {
     phone: "09169165902",
   });
 
-  assert.equal(schema["@type"], "LegalService");
+  assert.deepEqual(schema["@type"], ["LegalService", "LocalBusiness"]);
+  assert.deepEqual(schema.sameAs, ["https://www.instagram.com/vakilahmadmousavi/"]);
   assert.equal(schema["@id"], siteUrl + "/#legal-service-office");
   assert.equal(schema.name, "دفتر خدمات حقوقی سید احمد موسوی");
   assert.deepEqual(schema.address, {
@@ -84,7 +85,8 @@ test("omits incomplete or invalid optional office fields", () => {
     phone: "not-a-phone",
   });
 
-  assert.equal(schema["@type"], "LegalService");
+  assert.deepEqual(schema["@type"], ["LegalService", "LocalBusiness"]);
+  assert.deepEqual(schema.sameAs, ["https://www.instagram.com/vakilahmadmousavi/"]);
   assert.equal("streetAddress" in schema.address, false);
   assert.equal("geo" in schema, false);
   assert.equal("hasMap" in schema, false);
@@ -98,6 +100,7 @@ test("keeps the homepage visible brand, WebSite, Service and root metadata on th
 
   assert.equal(homepage.split('<strong>وکیل سید احمد موسوی</strong>').length - 1, 2);
   assert.equal(homepage.split('name: "وکیل سید احمد موسوی"').length - 1, 2);
+  assert.ok(homepage.includes("sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL]"));
   assert.ok(layout.includes('default: "وکیل سید احمد موسوی | وکیل پایه یک در اهواز و خوزستان"'));
   assert.ok(layout.includes('applicationName: "وکیل سید احمد موسوی"'));
   assert.ok(layout.includes('title: "وکیل سید احمد موسوی | اهواز و خوزستان"'));
