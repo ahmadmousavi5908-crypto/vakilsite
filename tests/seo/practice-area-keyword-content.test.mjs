@@ -117,7 +117,7 @@ test("adds practical property-case review guidance to the existing Ahvaz service
   for (const phrase of [
     "خلع ید، تخلیه و تصرف عدوانی چه تفاوتی دارند؟",
     "برای بررسی اولیه پرونده ملکی در اهواز چه مدارکی آماده کنم؟",
-    "پرونده ملکی پیش از انتخاب مسیر قضایی چگونه بررسی می‌شود؟",
+    "تعیین موضوع اختلاف و خواسته واقعی",
     "مرجع مرتبط و مهلت‌های قانونی"
   ]) {
     assert.ok(visibleText.includes(normalizePersianSearchText(phrase)), "Missing property guidance: " + phrase);
