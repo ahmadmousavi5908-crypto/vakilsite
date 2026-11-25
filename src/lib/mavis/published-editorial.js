@@ -1,10 +1,10 @@
 import { cache } from "react";
 import { articles as siteArticles } from "../../data/articles";
-import { createClient } from "../supabase/server";
+import { createPublicClient } from "../supabase/public";
 import { mapPublishedEditorialRecord } from "./editorial-content-core.mjs";
 
 async function loadPublishedArticles() {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data, error } = await supabase.rpc("get_mavis_published_articles");
   if (error) throw error;
   if (!Array.isArray(data)) {
