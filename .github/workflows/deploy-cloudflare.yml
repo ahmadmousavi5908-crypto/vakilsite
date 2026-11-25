@@ -287,7 +287,7 @@ jobs:
           import fs from "node:fs";
 
           const html = fs.readFileSync("/tmp/vakilsite-about.html", "utf8");
-          const scripts = [...html.matchAll(/<script\\b[^>]*type=["']application\\/ld\\+json["'][^>]*>([\\s\\S]*?)<\\/script>/gi)];
+          const scripts = [...html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
           const nodes = scripts.flatMap(([, raw]) => {
             try {
               const parsed = JSON.parse(raw);
