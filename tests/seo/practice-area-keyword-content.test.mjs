@@ -140,13 +140,14 @@ test("provides substantive legal distinctions and cited primary references for p
   const property = practiceAreas.find((area) => area.slug === "property-law");
   assert.ok(property);
   assert.equal(property.legalGuides.length, 3);
-  assert.equal(property.legalSources.length, 5);
+  assert.equal(property.legalSources.length, 6);
 
   const visibleText = visiblePracticeAreaText(property);
   for (const phrase of [
     "خلع ید: بررسی مالکیت و تصرف بدون مجوز",
     "تصرف عدوانی حقوقی: سبق تصرف و خروج بدون رضایت",
     "تخلیه: رابطه استیجاری، مدت و وضعیت ودیعه",
+    "مواد ۳۰۸ و ۳۱۱",
     "مواد ۱۵۸ و ۱۶۱",
     "مواد ۴۳ و ۴۴",
     "۱۴۰۵/۰۳/۰۱",
