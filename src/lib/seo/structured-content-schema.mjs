@@ -40,10 +40,13 @@ export function buildLegalServiceSchema(siteUrl, officeLocation) {
 
   const latitude = Number(officeLocation.latitude);
   const longitude = Number(officeLocation.longitude);
-  const hasValidCoordinates = officeLocation.latitude !== null
+  const hasCoordinateValues = officeLocation.latitude !== null
     && officeLocation.latitude !== undefined
+    && String(officeLocation.latitude).trim() !== ""
     && officeLocation.longitude !== null
     && officeLocation.longitude !== undefined
+    && String(officeLocation.longitude).trim() !== "";
+  const hasValidCoordinates = hasCoordinateValues
     && Number.isFinite(latitude)
     && Number.isFinite(longitude)
     && latitude >= -90
