@@ -1,0 +1,23 @@
+import { createClient } from "./supabase/server";
+import { getInMemoryCachedValue } from "./cache/in-memory-cache.mjs";
+
+async function loadPublicOfficeLocation() {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("site_settings")
+    .select("office_name,address,city,province,latitude,longitude,map_url,phone,is_location_public")
+    .eq("setting_key", "office_location")
+    .eq("is_location_public", true)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data || null;
+}
+
+export function getPublicOfficeLocation() {
+  return getInMemoryCachedValue(
+    "public:office-location:v1",
+    loadPublicOfficeLocation,
+    { ttlMs: 60_000, staleIfErrorMs: 300_000 },
+  );
+}
