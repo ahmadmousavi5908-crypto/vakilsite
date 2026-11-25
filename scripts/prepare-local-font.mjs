@@ -16,4 +16,4 @@ if (font.subarray(0, 4).toString("ascii") !== "wOF2") {
 
 await mkdir(dirname(targetPath), { recursive: true });
 await writeFile(targetPath, font);
-console.log(\`Prepared local Vazirmatn font (\${font.length} bytes).\`);
+console.log("Prepared local Vazirmatn font (" + font.length + " bytes).");
