@@ -248,6 +248,7 @@ test("generates a separate, bounded local phrase family for Khuzestan service-ar
 test("keeps broad attorney-positioning candidates separate and routes service-specific comparison intent to its owner page", () => {
   const snapshot = getKeywordLibrarySnapshot();
   const general = searchKeywordLibrary({ clusterId: "general-attorney-selection", family: "positioning" });
+  const lawyer = searchKeywordLibrary({ clusterId: "lawyer-core", family: "positioning" });
   const property = searchKeywordLibrary({ clusterId: "registration-land", family: "positioning" });
   const leasing = searchKeywordLibrary({ clusterId: "lease-shop-tenancy", family: "positioning" });
   const family = searchKeywordLibrary({ clusterId: "family-law", family: "positioning" });
@@ -256,10 +257,11 @@ test("keeps broad attorney-positioning candidates separate and routes service-sp
   const criminal = searchKeywordLibrary({ clusterId: "criminal-property", family: "positioning" });
 
   assert.equal(snapshot.positioningPhraseCount, 44);
-  assert.ok(general.some((entry) => entry.term === "وکیل خوزستان"));
+  assert.ok(lawyer.some((entry) => entry.term === "وکیل خوزستان" && entry.target === "/"));
+  assert.ok(lawyer.some((entry) => entry.term === "وکیل حقوقی اهواز"));
   assert.ok(general.some((entry) => entry.term === "بهترین وکیل اهواز" && entry.claimRisk === "high"));
   assert.ok(general.every((entry) => entry.target === "محتوای آتی"));
-  for (const group of [general, property, leasing, family, contracts, claims, criminal]) {
+  for (const group of [general, lawyer, property, leasing, family, contracts, claims, criminal]) {
     assert.ok(group.every((entry) => entry.family === "positioning"));
     assert.ok(group.every((entry) => entry.requiresComplianceReview === true));
     assert.ok(group.every((entry) => entry.neutralUseOnly === true));
