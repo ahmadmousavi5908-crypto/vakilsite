@@ -87,12 +87,12 @@ test("describes only public, canonical site resources in llms.txt", () => {
   assert.doesNotMatch(llms, /\/admin|\/api\/|supabase\.co|\+989\d{10}/i);
   assert.match(llms, /نشانی خیابانی دفتر عمداً/);
   for (const title of [
-    "وکیل خانواده در اهواز و خوزستان",
-    "وکیل کیفری در اهواز و خوزستان",
-    "وکیل ملکی در اهواز و خوزستان",
-    "وکیل قرارداد در اهواز و خوزستان",
-    "وکیل چک و مطالبه وجه در اهواز",
-    "مشاوره حقوقی در اهواز و خوزستان",
+    "وکیل خانواده در اهواز و خوزستان بررسی موردی و مستند",
+    "وکیل کیفری در اهواز و خوزستان بررسی موردی و مستند",
+    "وکیل ملکی در اهواز و خوزستان بررسی موردی و مستند",
+    "وکیل قرارداد در اهواز و خوزستان بررسی موردی و مستند",
+    "وکیل چک و مطالبه وجه در اهواز بررسی موردی و مستند",
+    "مشاوره حقوقی در اهواز و خوزستان بررسی موردی و مستند",
   ]) assert.ok(llms.includes("[" + title + "]"), `Missing service title ${title}`);
 });
 
@@ -178,7 +178,8 @@ test("combines multiple JSON-LD entities into one parser-friendly schema graph",
 });
 
 test("keeps the shared route loading fallback descriptive for non-rendering crawlers", () => {
-  assert.match(loading, /سید احمد موسوی، وکیل پایه یک دادگستری در اهواز و خوزستان است/);
+  assert.match(loading, /خدمات حقوقی سید احمد موسوی، وب‌سایت رسمی معرفی خدمات وکیل پایه یک دادگستری در اهواز و خوزستان است/);
+  assert.match(loading, /route-loading-mark" aria-hidden="true"/);
   assert.match(loading, /امکان ثبت درخواست اولیه از سراسر ایران/);
   assert.doesNotMatch(loading, /<small>در حال بارگذاری صفحه/);
 });
