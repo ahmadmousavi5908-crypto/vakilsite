@@ -24,6 +24,8 @@ export function getArticleSearchMetadata(article) {
       override?.description ||
       article.seoDescription ||
       article.excerpt ||
-      "",
+      article.intro ||
+      article.title ||
+      "راهنمای حقوقی بر پایه قوانین ایران.",
   };
 }

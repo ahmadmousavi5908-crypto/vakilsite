@@ -50,6 +50,19 @@ test("falls back to legacy title and excerpt when CMS SEO fields are absent", ()
   });
 });
 
+test("uses the article introduction when an excerpt is absent", () => {
+  const result = getArticleSearchMetadata({
+    slug: "article-without-excerpt",
+    title: "عنوان مقاله",
+    intro: "این مقدمه توضیح مشخصی درباره موضوع و مسیر حقوقی مقاله ارائه می‌کند.",
+  });
+
+  assert.equal(
+    result.description,
+    "این مقدمه توضیح مشخصی درباره موضوع و مسیر حقوقی مقاله ارائه می‌کند.",
+  );
+});
+
 test("returns safe defaults for invalid input", () => {
   assert.deepEqual(getArticleSearchMetadata(null), {
     title: "مقاله حقوقی",

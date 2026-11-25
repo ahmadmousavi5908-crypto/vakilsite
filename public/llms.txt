@@ -1,0 +1,55 @@
+# خدمات حقوقی سید احمد موسوی
+
+> وب‌سایت رسمی معرفی خدمات حقوقی، اطلاعات حرفه‌ای و محتوای آموزشی حقوق ایران؛ دفتر فعالیت در اهواز، استان خوزستان.
+
+## زبان و محدوده فعالیت
+
+- زبان اصلی وب‌سایت: فارسی (fa-IR).
+- محل فعالیت دفتر: اهواز، استان خوزستان.
+- امکان ثبت درخواست اولیه از سراسر ایران وجود دارد؛ درج نام شهرها به معنی وجود دفتر یا شعبه فیزیکی در آن شهرها یا پذیرش قطعی پرونده نیست.
+- نشانی خیابانی دفتر عمداً در این فایل درج نشده است.
+
+## صفحات اصلی
+
+- [صفحه اصلی](https://vakilahmadmousavi.ir/)
+- [معرفی سید احمد موسوی](https://vakilahmadmousavi.ir/about)
+- [حوزه‌های خدمات حقوقی](https://vakilahmadmousavi.ir/services)
+- [مناطق تحت پوشش در خوزستان](https://vakilahmadmousavi.ir/locations/khuzestan)
+- [مقالات حقوقی](https://vakilahmadmousavi.ir/articles)
+- [کتابخانه حقوقی ایران](https://vakilahmadmousavi.ir/legal-library)
+- [واژه‌نامه حقوقی](https://vakilahmadmousavi.ir/legal-glossary)
+- [نقشه سایت XML](https://vakilahmadmousavi.ir/sitemap.xml)
+
+## حوزه‌های خدمات معرفی‌شده
+
+- [حقوق خانواده](https://vakilahmadmousavi.ir/services/family-law)
+- [دعاوی کیفری](https://vakilahmadmousavi.ir/services/criminal-law)
+- [دعاوی ملکی و ثبتی](https://vakilahmadmousavi.ir/services/property-law)
+- [قراردادها و تعهدات](https://vakilahmadmousavi.ir/services/contracts-and-obligations)
+- [مطالبات و اجرای احکام](https://vakilahmadmousavi.ir/services/claims-and-enforcement)
+- [مشاوره و بررسی پرونده](https://vakilahmadmousavi.ir/services/legal-consultation)
+
+## نمونه مقالات آموزشی
+
+- [رأی وحدت رویه ۸۷۴ و نظارت الکترونیکی پیش از زندان](https://vakilahmadmousavi.ir/articles/unified-judicial-precedent-874-electronic-monitoring-before-prison)
+- [اختیار دادگاه کیفری در رد مال غیرمنقول به ثالث](https://vakilahmadmousavi.ir/articles/criminal-court-authority-restitution-real-estate-third-party-deed-annulment)
+- [چک‌لیست پیش از طرح دعوای حقوقی](https://vakilahmadmousavi.ir/articles/civil-claim-checklist)
+- [وکیل در تحقیقات مقدماتی و حقوق متهم](https://vakilahmadmousavi.ir/articles/criminal-investigation-lawyer)
+- [نکات حقوقی پیش از امضای قرارداد](https://vakilahmadmousavi.ir/articles/contract-before-signing)
+- [گام‌های نخست در اختلافات خانوادگی](https://vakilahmadmousavi.ir/articles/family-dispute-first-steps)
+- [مدارک لازم برای مطالبه وجه چک و سفته](https://vakilahmadmousavi.ir/articles/check-and-promissory-note-claim)
+- [مطالبه مهریه و حقوق مالی خانواده](https://vakilahmadmousavi.ir/articles/mahrieh-and-family-financial-claims)
+- [اعتراض به رأی دادگاه](https://vakilahmadmousavi.ir/articles/appeal-against-court-judgment)
+- [اجرای احکام مدنی](https://vakilahmadmousavi.ir/articles/civil-judgment-enforcement)
+
+## نحوه تفسیر محتوا
+
+- مقالات و کتابخانه، محتوای آموزشی و پژوهشی عمومی هستند و جایگزین متن رسمی و تنقیح‌شده قوانین، مقررات، آرای معتبر یا مشاوره متناسب با پرونده نیستند.
+- برای استناد حقوقی، متن جاری قانون، اصلاحات بعدی، رأی یا سند اولیه را از مرجع رسمی بررسی کنید.
+- نتیجه حقوقی هر موضوع به واقعیت‌های پرونده، مدارک، تاریخ‌ها، مرجع صالح و مقررات لازم‌الاجرا بستگی دارد.
+- ثبت درخواست اولیه به معنی قبول وکالت یا تضمین نتیجه نیست.
+- وب‌سایت وابسته به قوه قضاییه یا مراجع رسمی معرفی‌شده نیست.
+
+## محتوای غیرعمومی
+
+محتوای مدیریتی، پیش‌نویس‌ها، اطلاعات پرونده، اطلاعات شخصی کاربران و APIها محتوای عمومی نیستند و نباید درخواست، استخراج یا بازنشر شوند.
