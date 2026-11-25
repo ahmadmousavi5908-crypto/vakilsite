@@ -4596,3 +4596,12 @@ textarea:focus-visible,
 .article-featured-image img{display:block;width:100%;height:auto;max-height:560px;aspect-ratio:16/9;object-fit:cover}
 .article-featured-image figcaption{padding:10px 16px;background:#fff;color:#6c7680;font-size:11px;line-height:1.9}
 @media(max-width:760px){.article-featured-image{margin-bottom:19px;border-radius:11px}.article-featured-image img{max-height:330px}.article-featured-image figcaption{padding:8px 11px;font-size:10px}}
+
+.practice-related-articles{margin-top:34px;padding-top:24px;border-top:1px solid #ded8cc}
+.practice-related-articles h2{margin:0 0 12px;color:var(--navy);font-size:17px}
+.practice-related-articles ul{margin:0;padding:0 20px 0 0}
+.practice-related-articles li{padding:10px 0;color:#a78b58}
+.practice-related-articles li+li{border-top:1px solid #eee9df}
+.practice-related-articles a{color:#304b65;font-size:13px;font-weight:700;line-height:2}
+.practice-related-articles p{margin:3px 0 0;color:#667483;font-size:11px;line-height:2.1}
+@media(max-width:560px){.practice-related-articles{margin-top:26px;padding-top:19px}.practice-related-articles a{font-size:12px}}
