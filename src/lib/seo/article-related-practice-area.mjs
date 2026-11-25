@@ -1,3 +1,5 @@
+import { articles as staticArticles } from "../../data/articles.js";
+
 const RELATED_PRACTICE_AREAS = Object.freeze({
   "unified-judicial-precedent-874-electronic-monitoring-before-prison": {
     href: "/services/criminal-law",
@@ -52,4 +54,19 @@ const RELATED_PRACTICE_AREAS = Object.freeze({
 export function getRelatedPracticeAreaForArticle(slug) {
   if (typeof slug !== "string") return null;
   return RELATED_PRACTICE_AREAS[slug] || null;
+}
+
+export function getRelatedArticlesForPracticeArea(practiceAreaSlug) {
+  if (typeof practiceAreaSlug !== "string" || !practiceAreaSlug.trim()) return [];
+
+  const servicePath = "/services/" + practiceAreaSlug;
+  return staticArticles
+    .filter((article) => RELATED_PRACTICE_AREAS[article.slug]?.href === servicePath)
+    .slice(0, 3)
+    .map((article) => ({
+      slug: article.slug,
+      title: article.title,
+      excerpt: article.excerpt,
+      href: "/articles/" + article.slug,
+    }));
 }
