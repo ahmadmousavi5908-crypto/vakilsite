@@ -279,6 +279,47 @@ jobs:
           console.log("Public office-location API and initial HTML LegalService JSON-LD verified.");
           NODE
 
+          echo "Checking public attorney ProfilePage and license identifier"
+          curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors \
+            "$base/about" -o /tmp/vakilsite-about.html
+
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+
+          const html = fs.readFileSync("/tmp/vakilsite-about.html", "utf8");
+          const scripts = [...html.matchAll(/<script\\b[^>]*type=["']application\\/ld\\+json["'][^>]*>([\\s\\S]*?)<\\/script>/gi)];
+          const nodes = scripts.flatMap(([, raw]) => {
+            try {
+              const parsed = JSON.parse(raw);
+              return Array.isArray(parsed?.["@graph"]) ? parsed["@graph"] : [parsed];
+            } catch {
+              return [];
+            }
+          });
+          const hasSchemaType = (node, expected) => {
+            const types = Array.isArray(node?.["@type"]) ? node["@type"] : [node?.["@type"]];
+            return types.includes(expected);
+          };
+          const profilePage = nodes.find((node) => hasSchemaType(node, "ProfilePage"));
+          const attorney = profilePage?.mainEntity;
+          const expectedOrigin = "https://vakilahmadmousavi.ir";
+
+          if (
+            !profilePage ||
+            profilePage.url !== expectedOrigin + "/about" ||
+            !attorney ||
+            !hasSchemaType(attorney, "Person") ||
+            attorney["@id"] !== expectedOrigin + "/#attorney" ||
+            attorney.name !== "سید احمد موسوی" ||
+            attorney.url !== expectedOrigin + "/about" ||
+            attorney.identifier !== "74516"
+          ) {
+            throw new Error("The public About page must expose the canonical Person ProfilePage and confirmed license identifier.");
+          }
+
+          console.log("Public attorney ProfilePage and license identifier verified.");
+          NODE
+
           sitemap="$(curl --fail --silent --show-error --location "$base/sitemap.xml")"
           if ! grep -Fq "$article_path" <<< "$sitemap"; then
             echo "::error::The published Unified Precedent 874 article is missing from the production sitemap."
