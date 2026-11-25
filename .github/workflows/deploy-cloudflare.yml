@@ -192,6 +192,15 @@ jobs:
           }
 
           const html = fs.readFileSync("/tmp/vakilsite-home.html", "utf8");
+          const visibleText = html
+            .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+            .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+            .replace(/<[^>]*>/g, " ")
+            .replace(/&nbsp;|&#160;/gi, " ")
+            .replace(/\s+/g, " ");
+          if (!visibleText.includes("وکیل سید احمد موسوی")) {
+            throw new Error("Homepage visible text must include the canonical LegalService name.");
+          }
           const scripts = [...html.matchAll(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)];
           const nodes = scripts.flatMap(([, raw]) => {
             try {
