@@ -14,10 +14,14 @@ async function loadPublicOfficeLocation() {
   return data || null;
 }
 
-export function getPublicOfficeLocation() {
-  return getInMemoryCachedValue(
-    "public:office-location:v1",
-    loadPublicOfficeLocation,
-    { ttlMs: 60_000, staleIfErrorMs: 300_000 },
-  );
+export async function getPublicOfficeLocation() {
+  try {
+    return await getInMemoryCachedValue(
+      "public:office-location:v1",
+      loadPublicOfficeLocation,
+      { ttlMs: 60_000, staleIfErrorMs: 300_000 },
+    );
+  } catch {
+    return null;
+  }
 }
