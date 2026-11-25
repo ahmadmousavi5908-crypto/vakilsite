@@ -5,9 +5,12 @@ import { getStaticPageSearchSignals } from "../../src/lib/seo/static-page-search
 const origin = "https://vakilahmadmousavi.ir";
 const portrait = origin + "/images/lawyer.jpg";
 
-test("associates the attorney portrait only with the visible attorney profile page", () => {
+test("associates the attorney portrait with the visible attorney profile and its real update date", () => {
   assert.deepEqual(getStaticPageSearchSignals("/", origin), {});
-  assert.deepEqual(getStaticPageSearchSignals("/about", origin), { images: [portrait] });
+  assert.deepEqual(getStaticPageSearchSignals("/about", origin), {
+    lastModified: "2026-11-26",
+    images: [portrait],
+  });
   assert.deepEqual(getStaticPageSearchSignals("/services", origin), { lastModified: "2026-11-24" });
 });
 
