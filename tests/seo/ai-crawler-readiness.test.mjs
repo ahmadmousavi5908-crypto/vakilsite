@@ -81,7 +81,7 @@ test("renders the public office identity as server HTML without a client fetch",
   assert.doesNotMatch(officeLocation, /^["']use client["'];/);
   assert.doesNotMatch(officeLocation, /useState|useEffect|fetch\(/);
   assert.match(officeLocation, /<strong>\{location\.office_name/);
-  assert.match(home, /<OfficeLocationPublic initialLocation=\{normalizedOfficeLocation\} \/>/);
+  assert.match(home, /<OfficeLocationPublic initialLocation=\{officeLocationForDisplay\} \/>/);
   assert.match(home, /normalizePublicOfficeName\(officeLocation\.office_name\)/);
 });
 
@@ -156,9 +156,9 @@ test("renders service and FAQ structured data on pages with visible matching con
   assert.match(home, /buildFaqPageSchema\(siteUrl, faqs\)/);
   assert.match(home, /normalizePublicOfficeName\(officeLocation\.office_name\)/);
   assert.match(home, /buildLegalServiceSchema\(siteUrl, normalizedOfficeLocation\)/);
-  assert.match(home, /<OfficeLocationPublic initialLocation=\{normalizedOfficeLocation\} \/>/);
+  assert.match(home, /<OfficeLocationPublic initialLocation=\{officeLocationForDisplay\} \/>/);
   assert.match(home, /buildSchemaGraph\(structuredSite, faqSchema, legalServiceOffice\)/);
-  assert.match(home, /getPublicOfficeLocation\(\)/);
+  assert.match(home, /getOfficeLocationForStructuredData\(\)/);
   assert.equal((home.match(/<JsonLd data=/g) || []).length, 1);
   assert.match(servicePage, /buildPracticeAreaServiceSchema\(siteUrl, area\)/);
   assert.match(servicePage, /buildFaqPageSchema\(pageUrl, area\.faqs\)/);
