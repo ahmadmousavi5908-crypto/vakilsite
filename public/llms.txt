@@ -11,7 +11,7 @@
 
 ## صفحات اصلی
 
-- [صفحه اصلی](https://vakilahmadmousavi.ir/)
+- [سید احمد موسوی؛ وکیل پایه یک دادگستری در اهواز و خوزستان](https://vakilahmadmousavi.ir/)
 - [معرفی سید احمد موسوی](https://vakilahmadmousavi.ir/about)
 - [حوزه‌های خدمات حقوقی](https://vakilahmadmousavi.ir/services)
 - [مناطق تحت پوشش در خوزستان](https://vakilahmadmousavi.ir/locations/khuzestan)
@@ -22,12 +22,12 @@
 
 ## حوزه‌های خدمات معرفی‌شده
 
-- [حقوق خانواده](https://vakilahmadmousavi.ir/services/family-law)
-- [دعاوی کیفری](https://vakilahmadmousavi.ir/services/criminal-law)
-- [دعاوی ملکی و ثبتی](https://vakilahmadmousavi.ir/services/property-law)
-- [قراردادها و تعهدات](https://vakilahmadmousavi.ir/services/contracts-and-obligations)
-- [مطالبات و اجرای احکام](https://vakilahmadmousavi.ir/services/claims-and-enforcement)
-- [مشاوره و بررسی پرونده](https://vakilahmadmousavi.ir/services/legal-consultation)
+- [وکیل خانواده در اهواز و خوزستان](https://vakilahmadmousavi.ir/services/family-law)
+- [وکیل کیفری در اهواز و خوزستان](https://vakilahmadmousavi.ir/services/criminal-law)
+- [وکیل ملکی در اهواز و خوزستان](https://vakilahmadmousavi.ir/services/property-law)
+- [وکیل قرارداد در اهواز و خوزستان](https://vakilahmadmousavi.ir/services/contracts-and-obligations)
+- [وکیل چک و مطالبه وجه در اهواز](https://vakilahmadmousavi.ir/services/claims-and-enforcement)
+- [مشاوره حقوقی در اهواز و خوزستان](https://vakilahmadmousavi.ir/services/legal-consultation)
 
 ## نمونه مقالات آموزشی
 

@@ -86,6 +86,14 @@ test("describes only public, canonical site resources in llms.txt", () => {
   ]) assert.ok(llms.includes(path), `Missing ${path}`);
   assert.doesNotMatch(llms, /\/admin|\/api\/|supabase\.co|\+989\d{10}/i);
   assert.match(llms, /نشانی خیابانی دفتر عمداً/);
+  for (const title of [
+    "وکیل خانواده در اهواز و خوزستان",
+    "وکیل کیفری در اهواز و خوزستان",
+    "وکیل ملکی در اهواز و خوزستان",
+    "وکیل قرارداد در اهواز و خوزستان",
+    "وکیل چک و مطالبه وجه در اهواز",
+    "مشاوره حقوقی در اهواز و خوزستان",
+  ]) assert.ok(llms.includes("[" + title + "]"), `Missing service title ${title}`);
 });
 
 test("uses a non-local Service schema when no public street address is provided", () => {
@@ -137,6 +145,7 @@ test("renders service and FAQ structured data on pages with visible matching con
 test("uses the verified legal-services brand consistently in Open Graph metadata", () => {
   assert.match(layout, /applicationName: "خدمات حقوقی سید احمد موسوی"/);
   assert.match(layout, /siteName: "خدمات حقوقی سید احمد موسوی"/);
+  assert.ok(layout.includes('types: { "text/plain": "/llms.txt" }'));
 });
 
 test("combines multiple JSON-LD entities into one parser-friendly schema graph", () => {
@@ -169,7 +178,7 @@ test("combines multiple JSON-LD entities into one parser-friendly schema graph",
 });
 
 test("keeps the shared route loading fallback descriptive for non-rendering crawlers", () => {
-  assert.match(loading, /خدمات حقوقی سید احمد موسوی؛ راهنمای حقوقی و بررسی اولیه پرونده‌ها در اهواز و خوزستان/);
-  assert.match(loading, /در حال بارگذاری صفحه/);
-  assert.doesNotMatch(loading, /در حال آماده‌سازی صفحه/);
+  assert.match(loading, /سید احمد موسوی، وکیل پایه یک دادگستری در اهواز و خوزستان است/);
+  assert.match(loading, /امکان ثبت درخواست اولیه از سراسر ایران/);
+  assert.doesNotMatch(loading, /<small>در حال بارگذاری صفحه/);
 });
