@@ -53,8 +53,8 @@ const keywordLibrary = {
   "methodology": {
     "researchStatus": "candidate-ideas-not-volume-validated",
     "note": "Candidate terms from the existing site, legal subject taxonomy, user-problem wording, public SERP discovery and bilingual query ideation. Not a Google Keyword Planner export.",
-    "candidateCount": 5640,
-    "candidateCountNote": "5,640 is the total of internally generated editorial candidates across lawyer, base, problem, local, positioning, colloquial and legal taxonomy expansions; it is not search volume, observed query count, indexable URL count, or proof of demand.",
+    "candidateCount": 5651,
+    "candidateCountNote": "5,651 is the total of internally generated editorial candidates across lawyer, base, problem, local, positioning, colloquial and legal taxonomy expansions; it is not search volume, observed query count, indexable URL count, or proof of demand.",
     "gscObserved": {
       "property": "sc-domain:vakilahmadmousavi.ir",
       "period": "2026-10-26 to 2026-11-22",
