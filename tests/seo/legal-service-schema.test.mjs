@@ -33,7 +33,7 @@ test("builds LegalService schema from complete public office details", () => {
     phone: "09169165902",
   });
 
-  assert.deepEqual(schema["@type"], ["LegalService", "LocalBusiness"]);
+  assert.equal(schema["@type"], "LegalService");
   assert.deepEqual(schema.sameAs, ["https://www.instagram.com/vakilahmadmousavi/"]);
   assert.equal(schema["@id"], siteUrl + "/#legal-service-office");
   assert.equal(schema.name, "دفتر خدمات حقوقی سید احمد موسوی");
@@ -44,13 +44,26 @@ test("builds LegalService schema from complete public office details", () => {
     addressRegion: "خوزستان",
     addressCountry: "IR",
   });
-  assert.equal(schema.telephone, "+989169165902");
+  assert.equal(schema.telephone, "+98 916 916 5902");
   assert.deepEqual(schema.geo, {
     "@type": "GeoCoordinates",
     latitude: 31.3184,
     longitude: 48.6706,
   });
   assert.equal(schema.hasMap, "https://maps.google.com/?q=31.3184,48.6706");
+});
+
+test("formats already-international Iranian office phones exactly like the visible contact label", () => {
+  const schema = buildLegalServiceSchema(siteUrl, {
+    is_location_public: true,
+    office_name: "وکیل سید احمد موسوی",
+    address: "خوزستان اهواز",
+    city: "اهواز",
+    province: "خوزستان",
+    phone: "+989169165902",
+  });
+
+  assert.equal(schema.telephone, "+98 916 916 5902");
 });
 
 test("publishes city and region without mislabeling them as a street address", () => {
@@ -85,7 +98,7 @@ test("omits incomplete or invalid optional office fields", () => {
     phone: "not-a-phone",
   });
 
-  assert.deepEqual(schema["@type"], ["LegalService", "LocalBusiness"]);
+  assert.equal(schema["@type"], "LegalService");
   assert.deepEqual(schema.sameAs, ["https://www.instagram.com/vakilahmadmousavi/"]);
   assert.equal("streetAddress" in schema.address, false);
   assert.equal("geo" in schema, false);
@@ -101,6 +114,7 @@ test("keeps the homepage visible brand, WebSite, Service and root metadata on th
   assert.equal(homepage.split('<strong>وکیل سید احمد موسوی</strong>').length - 1, 2);
   assert.equal(homepage.split('name: "وکیل سید احمد موسوی"').length - 1, 2);
   assert.ok(homepage.includes("sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL]"));
+  assert.ok(homepage.includes('telephone: ["+98 916 916 5902", "+98 938 832 2230"]'));
   assert.ok(layout.includes('default: "وکیل سید احمد موسوی | وکیل پایه یک در اهواز و خوزستان"'));
   assert.ok(layout.includes('applicationName: "وکیل سید احمد موسوی"'));
   assert.ok(layout.includes('title: "وکیل سید احمد موسوی | اهواز و خوزستان"'));

@@ -245,10 +245,20 @@ jobs:
             throw new Error("LegalService geo coordinates must match the public office-location API.");
           }
           if (
+            legalService["@type"] !== "LegalService" ||
             typeof legalService.telephone !== "string" ||
-            !/^\+989\d{9}$/.test(legalService.telephone)
+            !/^\+98 9\d{2} \d{3} \d{4}$/.test(legalService.telephone)
           ) {
-            throw new Error("LegalService JSON-LD must include a validated public office telephone.");
+            throw new Error("LegalService JSON-LD must expose the specific LegalService type and a formatted Iranian mobile telephone.");
+          }
+          if (!visibleText.includes(legalService.telephone)) {
+            throw new Error("The exact LegalService telephone must also appear in the visible initial HTML.");
+          }
+          if (
+            !Array.isArray(legalService.sameAs) ||
+            !legalService.sameAs.includes("https://www.instagram.com/vakilahmadmousavi/")
+          ) {
+            throw new Error("LegalService JSON-LD must include the verified official social profile.");
           }
           const normalizeAddress = (value) =>
             typeof value === "string"

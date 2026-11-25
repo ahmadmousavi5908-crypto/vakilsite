@@ -80,7 +80,7 @@ export default async function Home() {
             name: "سید احمد موسوی",
             jobTitle: "وکیل پایه یک دادگستری",
             sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL],
-            telephone: ["+989169165902", "+989388322230"],
+            telephone: ["+98 916 916 5902", "+98 938 832 2230"],
             ...(process.env.NEXT_PUBLIC_CONTACT_EMAIL ? { email: process.env.NEXT_PUBLIC_CONTACT_EMAIL } : {}),
             memberOf: { "@type": "Organization", name: "مرکز وکلای قوه قضائیه" },
             identifier: { "@type": "PropertyValue", name: "شماره پروانه وکالت", value: "74516" },
