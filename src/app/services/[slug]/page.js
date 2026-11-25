@@ -5,6 +5,7 @@ import { getPracticeAreaSearchTitle } from "../../../lib/seo/practice-area-searc
 import JsonLd from "../../../components/JsonLd";
 import { getSiteUrl } from "../../../lib/site-url.mjs";
 import { buildBreadcrumbSchema } from "../../../lib/seo/breadcrumb-schema.mjs";
+import { buildFaqPageSchema, buildPracticeAreaServiceSchema } from "../../../lib/seo/structured-content-schema.mjs";
 
 export function generateStaticParams() {
   return practiceAreas.map((area) => ({ slug: area.slug }));
@@ -29,6 +30,9 @@ export default async function PracticeAreaPage({ params }) {
   if (!area) notFound();
 
   const siteUrl = getSiteUrl();
+  const serviceSchema = buildPracticeAreaServiceSchema(siteUrl, area);
+  const pageUrl = siteUrl ? new URL("/services/" + area.slug, siteUrl).href : null;
+  const faqSchema = pageUrl ? buildFaqPageSchema(pageUrl, area.faqs) : null;
   const structuredBreadcrumb = siteUrl
     ? buildBreadcrumbSchema(siteUrl, [
         { name: "صفحه اصلی", path: "/" },
@@ -40,6 +44,8 @@ export default async function PracticeAreaPage({ params }) {
   return (
     <main className="practice-page" dir="rtl">
       {structuredBreadcrumb && <JsonLd data={structuredBreadcrumb} />}
+      {serviceSchema && <JsonLd data={serviceSchema} />}
+      {faqSchema && <JsonLd data={faqSchema} />}
       <header className="article-header"><div className="container article-header-inner">
         <Link href="/" className="article-brand">خدمات حقوقی <span>سید احمد موسوی · اهواز و سراسر ایران</span></Link>
         <Link href="/#contact" className="article-header-cta">ثبت درخواست اولیه ←</Link>

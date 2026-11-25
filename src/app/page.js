@@ -10,6 +10,7 @@ import LegalIcon from "../components/LegalIcon";
 import CitySelector from "../components/CitySelector";
 import MavisAvatarDock from "../components/mavis/MavisAvatarDock";
 import { getSiteUrl } from "../lib/site-url.mjs";
+import { buildFaqPageSchema } from "../lib/seo/structured-content-schema.mjs";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -42,6 +43,7 @@ const faqs = [
 export default async function Home() {
   const [articles] = await Promise.all([getPublicArticleCatalog()]);
   const siteUrl = getSiteUrl();
+  const faqSchema = siteUrl ? buildFaqPageSchema(siteUrl, faqs) : null;
   const structuredSite = siteUrl
     ? {
         "@context": "https://schema.org",
@@ -87,6 +89,7 @@ export default async function Home() {
     <main id="main-content" dir="rtl">
       <MavisAvatarDock />
       {structuredSite && <JsonLd data={structuredSite} />}
+      {faqSchema && <JsonLd data={faqSchema} />}
       <a className="skip-link" href="#main-content">رفتن به محتوای اصلی</a>
       <div className="topline">
         <div className="container topline-inner">
