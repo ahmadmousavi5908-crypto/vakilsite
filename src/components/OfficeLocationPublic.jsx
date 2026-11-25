@@ -1,6 +1,3 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import LegalIcon from "./LegalIcon";
 
 function getDisplayAddress(location) {
@@ -23,25 +20,12 @@ function getDisplayAddress(location) {
 }
 
 export default function OfficeLocationPublic({ initialLocation = null }) {
-  const [location, setLocation] = useState(initialLocation);
-
-  useEffect(() => {
-    if (initialLocation) return;
-    let active = true;
-    fetch("/api/office-location")
-      .then((response) => response.json())
-      .then((result) => {
-        if (active && result.location) setLocation(result.location);
-      })
-      .catch(() => {});
-    return () => { active = false; };
-  }, [initialLocation]);
-
+  const location = initialLocation;
   if (!location) return null;
 
   const coordinatesReady = location.latitude != null && location.longitude != null;
   const mapHref = location.map_url || (coordinatesReady
-    ? `https://www.google.com/maps?q=${location.latitude},${location.longitude}`
+    ? "https://www.google.com/maps?q=" + location.latitude + "," + location.longitude
     : "");
 
   return (
