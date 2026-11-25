@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
 const sourcePath = resolve("assets/fonts/Vazirmatn[wght].woff2.base64");
-const targetPath = resolve("public/fonts/Vazirmatn[wght].woff2");
+const targetPath = resolve("public/fonts/Vazirmatn-variable.woff2");
 const encoded = (await readFile(sourcePath, "utf8")).replace(/\s+/g, "");
 
 if (!/^[A-Za-z0-9+/]+={0,2}$/.test(encoded)) {
