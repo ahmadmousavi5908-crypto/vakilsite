@@ -96,10 +96,10 @@ test("keeps the homepage visible brand, WebSite, Service and root metadata on th
   const homepage = readFileSync(new URL("../../src/app/page.js", import.meta.url), "utf8");
   const layout = readFileSync(new URL("../../src/app/layout.js", import.meta.url), "utf8");
 
-  assert.equal((homepage.match(/<strong>وکیل سید احمد موسوی<\\/strong>/g) || []).length, 2);
-  assert.equal((homepage.match(/name: "وکیل سید احمد موسوی"/g) || []).length, 2);
-  assert.match(layout, /default: "وکیل سید احمد موسوی \\| وکیل پایه یک در اهواز و خوزستان"/);
-  assert.match(layout, /applicationName: "وکیل سید احمد موسوی"/);
-  assert.match(layout, /title: "وکیل سید احمد موسوی \\| اهواز و خوزستان"/);
-  assert.match(layout, /siteName: "وکیل سید احمد موسوی"/);
+  assert.equal(homepage.split('<strong>وکیل سید احمد موسوی</strong>').length - 1, 2);
+  assert.equal(homepage.split('name: "وکیل سید احمد موسوی"').length - 1, 2);
+  assert.ok(layout.includes('default: "وکیل سید احمد موسوی | وکیل پایه یک در اهواز و خوزستان"'));
+  assert.ok(layout.includes('applicationName: "وکیل سید احمد موسوی"'));
+  assert.ok(layout.includes('title: "وکیل سید احمد موسوی | اهواز و خوزستان"'));
+  assert.ok(layout.includes('siteName: "وکیل سید احمد موسوی"'));
 });
