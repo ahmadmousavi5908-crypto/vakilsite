@@ -210,15 +210,26 @@ jobs:
               return [];
             }
           });
-          const legalService = nodes.find((node) => {
+          const hasSchemaType = (node, expected) => {
             const types = Array.isArray(node?.["@type"]) ? node["@type"] : [node?.["@type"]];
-            return types.includes("LegalService");
-          });
-          if (!legalService) {
-            throw new Error("Homepage initial HTML must include the public LegalService JSON-LD entity.");
+            return types.includes(expected);
+          };
+          const legalService = nodes.find((node) => hasSchemaType(node, "LegalService"));
+          const webSite = nodes.find((node) => hasSchemaType(node, "WebSite"));
+          const rootService = nodes.find((node) =>
+            hasSchemaType(node, "Service") && node?.["@id"]?.endsWith("/#legal-service")
+          );
+          if (!legalService || !webSite || !rootService) {
+            throw new Error("Homepage initial HTML must include WebSite, Service and LegalService JSON-LD entities.");
           }
-          if (legalService.name !== "وکیل سید احمد موسوی") {
-            throw new Error("LegalService name must match the canonical public brand.");
+          for (const [label, entity] of [
+            ["WebSite", webSite],
+            ["Service", rootService],
+            ["LegalService", legalService],
+          ]) {
+            if (entity.name !== "وکیل سید احمد موسوی") {
+              throw new Error(label + " name must match the canonical public brand.");
+            }
           }
           if (
             legalService.address?.addressLocality !== location.city ||
@@ -248,7 +259,7 @@ jobs:
 
           curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors \
             "$base/llms.txt" -o /tmp/vakilsite-llms.txt
-          if ! grep -Fq "# خدمات حقوقی سید احمد موسوی" /tmp/vakilsite-llms.txt; then
+          if ! grep -Fq "# وکیل سید احمد موسوی" /tmp/vakilsite-llms.txt; then
             echo "::error::The public llms.txt file is missing its verified site identity."
             exit 1
           fi
