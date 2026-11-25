@@ -15,6 +15,7 @@ test("builds a ProfilePage linked to the canonical attorney entity and portrait"
   assert.equal(schema.mainEntity["@id"], "https://vakilahmadmousavi.ir/#attorney");
   assert.equal(schema.mainEntity.name, "سید احمد موسوی");
   assert.equal(schema.mainEntity.url, "https://vakilahmadmousavi.ir/about");
+  assert.deepEqual(schema.mainEntity.sameAs, ["https://www.instagram.com/vakilahmadmousavi/"]);
   assert.equal(schema.mainEntity.identifier, "74516");
   assert.equal(
     schema.mainEntity.description,
