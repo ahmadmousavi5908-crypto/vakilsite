@@ -64,6 +64,14 @@ export default async function PracticeAreaPage({ params }) {
           <ul className="practice-topic-list">{area.topics.map((topic) => <li key={topic}>{topic}</li>)}</ul>
           <h2>برای بررسی اولیه چه مدارکی آماده کنید؟</h2>
           <ul className="practice-check-list">{area.checks.map((item) => <li key={item}>{item}</li>)}</ul>
+          {Array.isArray(area.reviewSteps) && area.reviewSteps.length > 0 && (
+            <section className="practice-review-steps" aria-labelledby="practice-review-steps-title">
+              <h2 id="practice-review-steps-title">پرونده ملکی چگونه بررسی می‌شود؟</h2>
+              <ul className="practice-check-list">
+                {area.reviewSteps.map((step) => <li key={step}>{step}</li>)}
+              </ul>
+            </section>
+          )}
           <div className="article-legal-note"><b>توضیح مهم</b><p>{area.note}</p></div>
           {Array.isArray(area.faqs) && area.faqs.length > 0 && (
             <section className="practice-faq" aria-labelledby="practice-faq-title">
