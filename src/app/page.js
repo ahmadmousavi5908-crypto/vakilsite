@@ -10,7 +10,7 @@ import LegalIcon from "../components/LegalIcon";
 import CitySelector from "../components/CitySelector";
 import MavisAvatarDock from "../components/mavis/MavisAvatarDock";
 import { getSiteUrl } from "../lib/site-url.mjs";
-import { buildFaqPageSchema, buildLegalServiceSchema, buildSchemaGraph } from "../lib/seo/structured-content-schema.mjs";
+import { buildFaqPageSchema, buildLegalServiceSchema, buildSchemaGraph, normalizePublicOfficeName } from "../lib/seo/structured-content-schema.mjs";
 import { getPublicOfficeLocation } from "../lib/public-office-location";
 
 const services = [
@@ -47,6 +47,9 @@ export default async function Home() {
     getPublicOfficeLocation(),
   ]);
   const siteUrl = getSiteUrl();
+  const normalizedOfficeLocation = officeLocation
+    ? { ...officeLocation, office_name: normalizePublicOfficeName(officeLocation.office_name) }
+    : officeLocation;
   const faqSchema = siteUrl ? buildFaqPageSchema(siteUrl, faqs) : null;
   const structuredSite = siteUrl
     ? {
@@ -88,7 +91,7 @@ export default async function Home() {
         ],
       }
     : null;
-  const legalServiceOffice = buildLegalServiceSchema(siteUrl, officeLocation);
+  const legalServiceOffice = buildLegalServiceSchema(siteUrl, normalizedOfficeLocation);
   const structuredData = buildSchemaGraph(structuredSite, faqSchema, legalServiceOffice);
 
   return (
@@ -327,7 +330,7 @@ export default async function Home() {
           <section className="footer-contact-block" aria-label="راه‌های ارتباطی">
             <h2>ارتباط با دفتر</h2>
             <SocialLinksPublic compact />
-            <OfficeLocationPublic />
+            <OfficeLocationPublic initialLocation={normalizedOfficeLocation} />
           </section>
           <nav className="footer-navigation" aria-label="پیوندهای اصلی">
             <h2>دسترسی سریع</h2>
