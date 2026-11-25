@@ -114,6 +114,8 @@ test("keeps the homepage visible brand, WebSite, Service and root metadata on th
   assert.equal(homepage.split('<strong>وکیل سید احمد موسوی</strong>').length - 1, 2);
   assert.equal(homepage.split('name: "وکیل سید احمد موسوی"').length - 1, 2);
   assert.ok(homepage.includes("sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL]"));
+  assert.ok(homepage.includes('formatIranianPhoneLabel(normalizedOfficeLocation?.phone || "")'));
+  assert.ok(homepage.includes('className="contact-assurance contact-phone-link"'));
   assert.ok(homepage.includes('telephone: ["+98 916 916 5902", "+98 938 832 2230"]'));
   assert.ok(layout.includes('default: "وکیل سید احمد موسوی | وکیل پایه یک در اهواز و خوزستان"'));
   assert.ok(layout.includes('applicationName: "وکیل سید احمد موسوی"'));
