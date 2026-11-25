@@ -172,7 +172,27 @@ jobs:
             exit 1
           fi
 
-          for user_agent in "OAI-SearchBot/1.0" "Claude-SearchBot/1.0" "PerplexityBot/1.0"; do
+          for service_title in \
+            "وکیل خانواده در اهواز و خوزستان بررسی موردی و مستند" \
+            "وکیل کیفری در اهواز و خوزستان بررسی موردی و مستند" \
+            "وکیل ملکی در اهواز و خوزستان بررسی موردی و مستند" \
+            "وکیل قرارداد در اهواز و خوزستان بررسی موردی و مستند" \
+            "وکیل چک و مطالبه وجه در اهواز بررسی موردی و مستند" \
+            "مشاوره حقوقی در اهواز و خوزستان بررسی موردی و مستند"; do
+            if ! grep -Fq "$service_title" /tmp/vakilsite-llms.txt; then
+              echo "::error::llms.txt is missing the public service title: $service_title"
+              exit 1
+            fi
+          done
+
+          curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors \
+            --user-agent "Googlebot/2.1" "$base/" -o /tmp/vakilsite-googlebot-home.html
+          if ! grep -Fq 'type="text/plain"' /tmp/vakilsite-googlebot-home.html; then
+            echo "::error::The homepage does not advertise the public llms.txt alternate."
+            exit 1
+          fi
+
+          for user_agent in "Googlebot/2.1" "bingbot/2.0" "OAI-SearchBot/1.0" "Claude-SearchBot/1.0" "PerplexityBot/1.0"; do
             echo "Checking initial HTML metadata for $user_agent"
             curl --fail --silent --show-error --location --retry 12 --retry-delay 5 --retry-all-errors \
               --user-agent "$user_agent" "$base$article_path" -o /tmp/vakilsite-ai-crawler.html
