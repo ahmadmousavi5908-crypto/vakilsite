@@ -67,6 +67,7 @@ function visiblePracticeAreaText(area) {
     area.intro,
     ...(area.topics || []),
     ...(area.checks || []),
+    ...(area.reviewSteps || []),
     ...(area.faqs || []).flatMap((faq) => [faq.question, faq.answer]),
     area.note
   ].filter(Boolean).join(" "));
@@ -106,6 +107,21 @@ test("covers best-lawyer search intent with neutral selection guidance across ex
   }
   assert.ok(family.includes(normalizePersianSearchText("حفظ محرمانگی")));
   assert.ok(property.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
+});
+
+test("adds a visible, bounded case-review workflow to the property service page", () => {
+  const property = practiceAreas.find((area) => area.slug === "property-law");
+  assert.ok(property);
+  assert.equal(property.reviewSteps.length, 4);
+  const visibleText = visiblePracticeAreaText(property);
+  for (const phrase of [
+    "تعیین موضوع اختلاف و خواسته واقعی",
+    "بررسی سند، پلاک و سوابق ثبتی",
+    "مقایسه قراردادها، پرداخت‌ها، مکاتبات",
+    "مرجع مرتبط و مهلت‌های قانونی"
+  ]) {
+    assert.ok(visibleText.includes(normalizePersianSearchText(phrase)), "Missing property review step: " + phrase);
+  }
 });
 
 test("does not count the internal searchTerms array as public page content", () => {
