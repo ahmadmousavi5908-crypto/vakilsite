@@ -47,4 +47,4 @@ next-env.d.ts
 .next-cache-backup/
 
 # Generated local font asset (source is stored under assets/fonts)
-/public/fonts/Vazirmatn[wght].woff2
+/public/fonts/Vazirmatn-variable.woff2
