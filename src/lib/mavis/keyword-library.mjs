@@ -76,6 +76,8 @@ const POSITIONING_TERMS = Object.freeze([
   { term: "وکیل متخصص اهواز", intent: "specialization-claim", claimRisk: "high" },
   { term: "بهترین وکیل ملکی اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "registration-land" },
   { term: "بهترین وکیل دعاوی ملکی اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "registration-land" },
+  { term: "بهترین وکیل ملکی در اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "registration-land", observedInGsc: true },
+  { term: "بهترین وکیل خلع ید و تخلیه در اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "registration-land", observedInGsc: true },
   { term: "بهترین وکیل خلع ید اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "registration-land" },
   { term: "بهترین وکیل تخلیه ید اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "lease-shop-tenancy" },
   { term: "بهترین وکیل تخلیه ملک اهواز", intent: "superlative-property-comparison", claimRisk: "high", clusterId: "lease-shop-tenancy" },
@@ -297,6 +299,7 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
         family: "positioning",
         origin: "curated-search-language-candidate",
         claimRisk: item.claimRisk,
+        observedInGsc: item.observedInGsc === true,
         requiresComplianceReview: true,
         neutralUseOnly: true
       });
