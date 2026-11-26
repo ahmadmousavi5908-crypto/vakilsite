@@ -5,8 +5,10 @@ import { getStaticPageSearchSignals } from "../../src/lib/seo/static-page-search
 const origin = "https://vakilahmadmousavi.ir";
 const portrait = origin + "/images/lawyer.jpg";
 
-test("associates the attorney portrait only with the visible attorney profile page", () => {
-  assert.deepEqual(getStaticPageSearchSignals("/", origin), {});
+test("publishes the homepage update date without associating the attorney portrait with it", () => {
+  assert.deepEqual(getStaticPageSearchSignals("/", origin), {
+    lastModified: "2026-11-26",
+  });
   assert.deepEqual(getStaticPageSearchSignals("/about", origin), {
     lastModified: "2026-11-26",
     images: [portrait],
