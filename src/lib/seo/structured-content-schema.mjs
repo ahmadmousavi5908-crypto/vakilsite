@@ -97,7 +97,8 @@ export function buildLegalServiceSchema(siteUrl, officeLocation) {
     && longitude <= 180;
 
   const telephone = normalizePublicTelephone(officeLocation.phone);
-  const hasMap = normalizeHttpsUrl(officeLocation.map_url);
+  const hasMap = normalizeHttpsUrl(officeLocation.map_url)
+    || (hasValidCoordinates ? "https://www.google.com/maps?q=" + latitude + "," + longitude : null);
 
   return {
     "@context": "https://schema.org",

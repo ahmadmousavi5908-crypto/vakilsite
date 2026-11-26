@@ -245,14 +245,30 @@ jobs:
             throw new Error("LegalService geo coordinates must match the public office-location API.");
           }
           if (
-            legalService["@type"] !== "LegalService" ||
+            !location.map_url?.trim() &&
+            legalService.hasMap !== "https://www.google.com/maps?q=" + latitude + "," + longitude
+          ) {
+            throw new Error("LegalService hasMap must be derived from the verified public coordinates.");
+          }
+          const legalServiceTypes = Array.isArray(legalService["@type"])
+            ? legalService["@type"]
+            : [legalService["@type"]];
+          if (
+            !legalServiceTypes.includes("LegalService") ||
+            !legalServiceTypes.includes("LocalBusiness") ||
             typeof legalService.telephone !== "string" ||
             !/^\+98 9\d{2} \d{3} \d{4}$/.test(legalService.telephone)
           ) {
             throw new Error("LegalService JSON-LD must expose the specific LegalService type and a formatted Iranian mobile telephone.");
           }
+          const visiblePhoneNumbers = [...visibleText.matchAll(/\+98 9\\d{2} \\d{3} \\d{4}/g)]
+            .map(([phone]) => phone);
+          console.log("Visible public phone numbers:", visiblePhoneNumbers.join(", ") || "none");
           if (!visibleText.includes(legalService.telephone)) {
-            throw new Error("The exact LegalService telephone must also appear in the visible initial HTML.");
+            throw new Error(
+              "The exact LegalService telephone must also appear in the visible initial HTML. " +
+              "Visible phone numbers: " + (visiblePhoneNumbers.join(", ") || "none"),
+            );
           }
           if (
             !Array.isArray(legalService.sameAs) ||

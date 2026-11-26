@@ -119,8 +119,41 @@ test("keeps the homepage visible brand, WebSite, Service and root metadata on th
   assert.ok(homepage.includes('className="contact-assurance contact-phone-links"'));
   assert.ok(homepage.includes("officePhoneLinks.map"));
   assert.ok(homepage.includes("PUBLIC_OFFICE_PHONE_FALLBACKS"));
+  const deploymentWorkflow = readFileSync(
+    new URL("../../.github/workflows/deploy-cloudflare.yml", import.meta.url),
+    "utf8",
+  );
+  assert.ok(deploymentWorkflow.includes('Array.isArray(legalService["@type"])'));
+  assert.ok(deploymentWorkflow.includes('legalServiceTypes.includes("LegalService")'));
+  assert.ok(deploymentWorkflow.includes('legalServiceTypes.includes("LocalBusiness")'));
+  assert.ok(deploymentWorkflow.includes("LegalService hasMap must be derived from the verified public coordinates."));
+  assert.ok(deploymentWorkflow.includes("Visible public phone numbers:"));
   assert.ok(layout.includes('default: "وکیل سید احمد موسوی | وکیل پایه یک در اهواز و خوزستان"'));
   assert.ok(layout.includes('applicationName: "وکیل سید احمد موسوی"'));
   assert.ok(layout.includes('title: "وکیل سید احمد موسوی | اهواز و خوزستان"'));
   assert.ok(layout.includes('siteName: "وکیل سید احمد موسوی"'));
+});
+
+test("derives a public map link from verified coordinates when no map URL is configured", () => {
+  const schema = buildLegalServiceSchema(siteUrl, {
+    is_location_public: true,
+    office_name: "وکیل سید احمد موسوی",
+    address: "خوزستان اهواز",
+    city: "اهواز",
+    province: "خوزستان",
+    latitude: 31.3193376,
+    longitude: 48.6832329,
+    map_url: "",
+    phone: "09169165902",
+  });
+
+  assert.deepEqual(schema.geo, {
+    "@type": "GeoCoordinates",
+    latitude: 31.3193376,
+    longitude: 48.6832329,
+  });
+  assert.equal(
+    schema.hasMap,
+    "https://www.google.com/maps?q=31.3193376,48.6832329",
+  );
 });
