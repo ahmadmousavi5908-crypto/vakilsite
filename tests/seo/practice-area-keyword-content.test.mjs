@@ -237,8 +237,8 @@ test("publishes Ahvaz neighborhood and Khuzestan city coverage as visible region
   ]) {
     assert.ok(visibleSource.includes(normalizePersianSearchText(phrase)), `Missing regional search coverage: ${phrase}`);
   }
-  assert.match(source, /openGraph:\s*\{/);
-  assert.match(source, /url:\s*"\\/locations\\/khuzestan"/);
-  assert.match(source, /title:\s*"خدمات حقوقی و وکیل در اهواز و خوزستان \\| موسوی"/);
-  assert.match(source, /twitter:\s*\{/);
+  assert.ok(source.includes("openGraph: {"));
+  assert.ok(source.includes('url: "/locations/khuzestan"'));
+  assert.ok(source.includes('title: "خدمات حقوقی و وکیل در اهواز و خوزستان | موسوی"'));
+  assert.ok(source.includes("twitter: {"));
 });
