@@ -8,12 +8,12 @@ export const PRACTICE_AREA_SEARCH_TITLES = Object.freeze({
 });
 
 export const PRACTICE_AREA_META_TITLES = Object.freeze({
-  "family-law": "بهترین وکیل خانواده اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی",
-  "criminal-law": "بهترین وکیل کیفری اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی",
-  "property-law": "بهترین وکیل ملکی اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی",
-  "contracts-and-obligations": "بهترین وکیل قرارداد اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی",
-  "claims-and-enforcement": "بهترین وکیل چک و مطالبه وجه اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی",
-  "legal-consultation": "بهترین وکیل اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی"
+  "family-law": "بهترین وکیل خانواده اهواز؛ معیارهای انتخاب وکیل",
+  "criminal-law": "بهترین وکیل کیفری اهواز؛ معیارهای انتخاب وکیل",
+  "property-law": "بهترین وکیل ملکی اهواز؛ معیارهای انتخاب وکیل",
+  "contracts-and-obligations": "بهترین وکیل قرارداد اهواز؛ معیارهای انتخاب وکیل",
+  "claims-and-enforcement": "بهترین وکیل چک و مطالبه وجه اهواز؛ معیارهای انتخاب وکیل",
+  "legal-consultation": "بهترین وکیل اهواز؛ راهنمای انتخاب وکیل"
 });
 
 export const PRACTICE_AREA_KEYWORDS = Object.freeze({
