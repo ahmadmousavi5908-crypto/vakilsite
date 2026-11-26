@@ -331,9 +331,14 @@ test("preserves user-supplied comparison modifiers and Khuzestan location varian
 
   const khuzestan = all.find((entry) => entry.term === "بهترین وکیل آبادان");
   assert.ok(khuzestan);
-  assert.equal(khuzestan.target, "/");
+  assert.equal(khuzestan.target, "محتوای آتی");
   assert.equal(khuzestan.location, "آبادان");
   assert.equal(khuzestan.userResearchSeed, true);
+
+  const neighborhood = all.find((entry) => entry.term === "بهترین وکیل کیانپارس");
+  assert.ok(neighborhood);
+  assert.equal(neighborhood.target, "/");
+  assert.equal(neighborhood.location, "کیانپارس");
 });
 
 
