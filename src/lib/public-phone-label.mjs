@@ -1,3 +1,5 @@
+export const PUBLIC_OFFICE_PHONE_FALLBACKS = Object.freeze(["09169165902", "09388322230"]);
+
 export function formatIranianPhoneLabel(value) {
   if (typeof value !== "string") return null;
 
