@@ -89,6 +89,8 @@ export default async function Home() {
             "@id": siteUrl + "/#attorney",
             name: "سید احمد موسوی",
             jobTitle: "وکیل پایه یک دادگستری",
+            description: "وکیل پایه یک دادگستری و عضو مرکز وکلای قوه قضائیه؛ دارای کارشناسی ارشد حقوق جزا و فعالیت تخصصی در حوزه حقوق کیفری. دفتر فعالیت در اهواز، استان خوزستان.",
+            knowsAbout: ["حقوق جزا", "حقوق کیفری", "دعاوی کیفری"],
             sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL],
             telephone: officePhoneLabels,
             ...(process.env.NEXT_PUBLIC_CONTACT_EMAIL ? { email: process.env.NEXT_PUBLIC_CONTACT_EMAIL } : {}),
