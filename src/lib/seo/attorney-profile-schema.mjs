@@ -18,7 +18,7 @@ export function buildAttorneyProfileSchema(siteUrl) {
     "@type": "ProfilePage",
     "@id": profileUrl + "#profilepage",
     url: profileUrl,
-    name: "معرفی سید احمد موسوی | وکیل پایه یک دادگستری",
+    name: "سوابق حرفه‌ای سید احمد موسوی",
     inLanguage: "fa-IR",
     primaryImageOfPage: {
       "@type": "ImageObject",
