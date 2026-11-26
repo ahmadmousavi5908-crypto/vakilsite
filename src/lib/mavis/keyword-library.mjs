@@ -205,9 +205,17 @@ function buildUserResearchPositioningTerms() {
   ]);
   for (const city of KHUZESTAN_SEARCH_LOCATIONS) {
     const ownerCluster = ahvazCoreLocations.has(city) ? "lawyer-core" : null;
-    for (const modifier of ["بهترین", "برترین", "حرفه‌ای‌ترین", "حرفه ای ترین", "باتجربه‌ترین", "متخصص‌ترین", "معتبرترین"]) {
+    entries.push(
+      highRisk(`وکیل ${city}`, ownerCluster, city),
+      highRisk(`وکیل در ${city}`, ownerCluster, city)
+    );
+    for (const modifier of USER_RESEARCH_COMPARISON_PREFIXES) {
       entries.push(highRisk(`${modifier} وکیل ${city}`, ownerCluster, city));
       entries.push(highRisk(`${modifier} وکیل در ${city}`, ownerCluster, city));
+    }
+    for (const qualifier of USER_RESEARCH_QUALIFIERS) {
+      entries.push(highRisk(`وکیل ${qualifier} ${city}`, ownerCluster, city));
+      entries.push(highRisk(`وکیل ${qualifier} در ${city}`, ownerCluster, city));
     }
   }
 
