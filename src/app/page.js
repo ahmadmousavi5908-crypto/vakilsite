@@ -12,7 +12,7 @@ import MavisAvatarDock from "../components/mavis/MavisAvatarDock";
 import { getSiteUrl } from "../lib/site-url.mjs";
 import { ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL, buildFaqPageSchema, buildLegalServiceSchema, buildSchemaGraph, normalizePublicOfficeName } from "../lib/seo/structured-content-schema.mjs";
 import { getOfficeLocationForStructuredData } from "../lib/public-office-location";
-import { formatIranianPhoneLabel } from "../lib/public-phone-label.mjs";
+import { formatIranianPhoneLabel, PUBLIC_OFFICE_PHONE_FALLBACKS } from "../lib/public-phone-label.mjs";
 
 const services = [
   { n: "۰۱", slug: "family-law", title: "حقوق خانواده", desc: "طلاق، مهریه، نفقه، حضانت فرزند و دعاوی مرتبط با خانواده.", tag: "خانواده" },
@@ -51,10 +51,15 @@ export default async function Home() {
   const normalizedOfficeLocation = officeLocation
     ? { ...officeLocation, office_name: normalizePublicOfficeName(officeLocation.office_name) }
     : officeLocation;
-  const officePhoneLabel = formatIranianPhoneLabel(normalizedOfficeLocation?.phone || "");
-  const officePhoneHref = officePhoneLabel
-    ? "tel:" + officePhoneLabel.replace(/\s/g, "")
-    : null;
+  const officePhoneLabels = [...new Set(
+    [normalizedOfficeLocation?.phone, ...PUBLIC_OFFICE_PHONE_FALLBACKS]
+      .map(formatIranianPhoneLabel)
+      .filter(Boolean),
+  )];
+  const officePhoneLinks = officePhoneLabels.map((label) => ({
+    label,
+    href: "tel:" + label.replace(/\s/g, ""),
+  }));
   const officeLocationForDisplay = normalizedOfficeLocation
     ? {
         office_name: normalizedOfficeLocation.office_name,
@@ -85,7 +90,7 @@ export default async function Home() {
             name: "سید احمد موسوی",
             jobTitle: "وکیل پایه یک دادگستری",
             sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL],
-            telephone: ["+98 916 916 5902", "+98 938 832 2230"],
+            telephone: officePhoneLabels,
             ...(process.env.NEXT_PUBLIC_CONTACT_EMAIL ? { email: process.env.NEXT_PUBLIC_CONTACT_EMAIL } : {}),
             memberOf: { "@type": "Organization", name: "مرکز وکلای قوه قضائیه" },
             identifier: { "@type": "PropertyValue", name: "شماره پروانه وکالت", value: "74516" },
@@ -98,7 +103,7 @@ export default async function Home() {
             serviceType: "خدمات حقوقی",
             url: siteUrl,
             provider: { "@id": siteUrl + "/#attorney" },
-            telephone: "+989169165902",
+            telephone: officePhoneLabels[0]?.replace(/\s/g, "") || "+989169165902",
             ...(process.env.NEXT_PUBLIC_CONTACT_EMAIL ? { email: process.env.NEXT_PUBLIC_CONTACT_EMAIL } : {}),
             areaServed: [
               { "@type": "AdministrativeArea", name: "استان خوزستان" },
@@ -321,7 +326,7 @@ export default async function Home() {
 
       <section className="contact-section" id="contact">
         <div className="container contact-layout">
-          <div className="contact-copy"><span className="section-kicker">START HERE</span><h2>مسئله‌تان را<br/><em>از همین‌جا</em> مطرح کنید.</h2><p>چند مورد کوتاه را تکمیل کنید تا متن درخواست اولیه آماده شود. لطفاً در این مرحله اطلاعات محرمانه، کد ملی، شماره پرونده یا تصویر اسناد را وارد نکنید.</p><div className="contact-assurance"><span>✓</span> ثبت درخواست اولیه به معنی قبول وکالت یا تضمین نتیجه پرونده نیست.</div>{officePhoneLabel && officePhoneHref ? <a className="contact-assurance contact-phone-link" href={officePhoneHref}>تماس مستقیم با دفتر: <b dir="ltr">{officePhoneLabel}</b></a> : null}</div>
+          <div className="contact-copy"><span className="section-kicker">START HERE</span><h2>مسئله‌تان را<br/><em>از همین‌جا</em> مطرح کنید.</h2><p>چند مورد کوتاه را تکمیل کنید تا متن درخواست اولیه آماده شود. لطفاً در این مرحله اطلاعات محرمانه، کد ملی، شماره پرونده یا تصویر اسناد را وارد نکنید.</p><div className="contact-assurance"><span>✓</span> ثبت درخواست اولیه به معنی قبول وکالت یا تضمین نتیجه پرونده نیست.</div><div className="contact-assurance contact-phone-links">{officePhoneLinks.map((item, index) => <a className="contact-phone-link" href={item.href} key={item.href}>{index === 0 ? "تماس مستقیم با دفتر: " : "شماره تماس دوم: "}<b dir="ltr">{item.label}</b></a>)}</div></div>
           <RequestForm services={services} />
         </div>
       </section>
