@@ -35,6 +35,19 @@ export default async function PracticeAreaPage({ params }) {
   const serviceSchema = buildPracticeAreaServiceSchema(siteUrl, area);
   const pageUrl = siteUrl ? new URL("/services/" + area.slug, siteUrl).href : null;
   const faqSchema = pageUrl ? buildFaqPageSchema(pageUrl, area.faqs) : null;
+  const pageSchema = pageUrl && area.lastReviewed
+    ? {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": pageUrl + "#webpage",
+        url: pageUrl,
+        name: getPracticeAreaSearchTitle(slug, area.title),
+        inLanguage: "fa-IR",
+        dateModified: area.lastReviewed,
+        author: { "@id": siteUrl + "/#attorney" },
+        ...(serviceSchema?.["@id"] ? { mainEntity: { "@id": serviceSchema["@id"] } } : {}),
+      }
+    : null;
   const relatedArticles = getRelatedArticlesForPracticeArea(slug);
   const structuredBreadcrumb = siteUrl
     ? buildBreadcrumbSchema(siteUrl, [
@@ -43,7 +56,7 @@ export default async function PracticeAreaPage({ params }) {
         { name: area.title },
       ])
     : null;
-  const structuredData = buildSchemaGraph(structuredBreadcrumb, serviceSchema, faqSchema);
+  const structuredData = buildSchemaGraph(structuredBreadcrumb, serviceSchema, faqSchema, pageSchema);
 
   return (
     <main className="practice-page" dir="rtl">
@@ -60,14 +73,20 @@ export default async function PracticeAreaPage({ params }) {
       </div></section>
       <section className="container practice-detail-layout">
         <article className="practice-detail-main">
-          <h2>درباره این حوزه</h2><p>{area.intro}</p>
-          <h2>موضوعات قابل بررسی</h2>
+          {area.contentAuthor && area.lastReviewed ? (
+            <div className="article-meta practice-content-meta">
+              <span>مسئول محتوای حقوقی: {area.contentAuthor}، {area.contentAuthorRole}</span>
+              <time dateTime={area.lastReviewed}>آخرین بازبینی: {area.lastReviewedLabel || area.lastReviewed}</time>
+            </div>
+          ) : null}
+          <h2>{area.sectionHeadings?.intro || "درباره این حوزه"}</h2><p>{area.intro}</p>
+          <h2>{area.sectionHeadings?.topics || "موضوعات قابل بررسی"}</h2>
           <ul className="practice-topic-list">{area.topics.map((topic) => <li key={topic}>{topic}</li>)}</ul>
-          <h2>برای بررسی اولیه چه مدارکی آماده کنید؟</h2>
+          <h2>{area.sectionHeadings?.checks || "برای بررسی اولیه چه مدارکی آماده کنید؟"}</h2>
           <ul className="practice-check-list">{area.checks.map((item) => <li key={item}>{item}</li>)}</ul>
           {Array.isArray(area.reviewSteps) && area.reviewSteps.length > 0 && (
             <section className="practice-review-steps" aria-labelledby="practice-review-steps-title">
-              <h2 id="practice-review-steps-title">پرونده ملکی چگونه بررسی می‌شود؟</h2>
+              <h2 id="practice-review-steps-title">{area.sectionHeadings?.review || "پرونده چگونه بررسی می‌شود؟"}</h2>
               <ul className="practice-check-list">
                 {area.reviewSteps.map((step) => <li key={step}>{step}</li>)}
               </ul>
@@ -75,7 +94,7 @@ export default async function PracticeAreaPage({ params }) {
           )}
           {Array.isArray(area.legalGuides) && area.legalGuides.length > 0 && (
             <section className="practice-review-steps practice-legal-guides" aria-labelledby="practice-legal-guides-title">
-              <h2 id="practice-legal-guides-title">خلع ید، تصرف عدوانی یا تخلیه؟ تفاوت مسیرهای قانونی</h2>
+              <h2 id="practice-legal-guides-title">{area.sectionHeadings?.guides || "تفاوت مسیرهای قانونی در این حوزه"}</h2>
               <ul className="practice-check-list">
                 {area.legalGuides.map((guide) => (
                   <li key={guide.title}>
