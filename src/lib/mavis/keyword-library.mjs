@@ -431,6 +431,8 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
         family: "positioning",
         origin: "curated-search-language-candidate",
         claimRisk: item.claimRisk,
+        ...(item.location ? { location: item.location } : {}),
+        userResearchSeed: item.userResearchSeed === true,
         observedInGsc: item.observedInGsc === true,
         requiresComplianceReview: true,
         neutralUseOnly: true
