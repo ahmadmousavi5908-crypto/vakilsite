@@ -12,10 +12,8 @@ test("publishes the confirmed criminal-law master's degree consistently in the a
   assert.ok(homepage.includes('knowsAbout: ["حقوق جزا", "حقوق کیفری", "دعاوی کیفری"]'));
 });
 
-
-test("keeps the co-authored research credit without exposing the other co-author as part of the attorney profile", async () => {
-  const { readFileSync: read } = await import("node:fs");
-  const publishedWorks = read(new URL("../../src/components/PublishedWorks.jsx", import.meta.url), "utf8");
+test("keeps the co-authored research credit without exposing the other co-author as part of the attorney profile", () => {
+  const publishedWorks = readFileSync(new URL("../../src/components/PublishedWorks.jsx", import.meta.url), "utf8");
   assert.ok(publishedWorks.includes('authors: "احمد موسوی و همکاران"'));
   assert.ok(!publishedWorks.includes("یونس نادمی"));
   assert.ok(!publishedWorks.includes("یوسف نادمی"));
