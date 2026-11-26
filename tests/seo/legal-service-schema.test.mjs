@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { buildLegalServiceSchema, normalizePublicOfficeName } from "../../src/lib/seo/structured-content-schema.mjs";
+import { buildLegalServiceSchema, buildPracticeAreaServiceSchema, normalizePublicOfficeName } from "../../src/lib/seo/structured-content-schema.mjs";
 
 const siteUrl = "https://vakilahmadmousavi.ir";
 
@@ -45,6 +45,15 @@ test("builds LegalService schema from complete public office details", () => {
     addressCountry: "IR",
   });
   assert.equal(schema.telephone, "+98 916 916 5902");
+  assert.deepEqual(
+    schema.areaServed.filter((area) => area["@type"] === "City").map((area) => area.name),
+    ["اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه"],
+  );
+  assert.deepEqual(schema.areaServed.at(-1), {
+    "@type": "AdministrativeArea",
+    name: "استان خوزستان",
+  });
+  assert.equal(schema.areaServed.some((area) => area["@type"] === "Country"), false);
   assert.deepEqual(schema.geo, {
     "@type": "GeoCoordinates",
     latitude: 31.3184,
@@ -156,4 +165,21 @@ test("derives a public map link from verified coordinates when no map URL is con
     schema.hasMap,
     "https://www.google.com/maps?q=31.3193376,48.6832329",
   );
+});
+
+test("uses the same verified Khuzestan service area for practice-area pages", () => {
+  const schema = buildPracticeAreaServiceSchema(siteUrl, {
+    slug: "property-law",
+    title: "دعاوی ملکی",
+    description: "بررسی حقوقی اختلافات ملکی در اهواز و خوزستان",
+  });
+
+  assert.deepEqual(
+    schema.areaServed.filter((area) => area["@type"] === "City").map((area) => area.name),
+    ["اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه"],
+  );
+  assert.deepEqual(schema.areaServed.at(-1), {
+    "@type": "AdministrativeArea",
+    name: "استان خوزستان",
+  });
 });
