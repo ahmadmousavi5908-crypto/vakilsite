@@ -1,1 +1,1 @@
-export const SERVICES_HUB_TITLE = "وکیل حقوقی در اهواز و خوزستان";
+export const SERVICES_HUB_TITLE = "بهترین وکیل حقوقی و مدنی اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی";
