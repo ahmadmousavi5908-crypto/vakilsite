@@ -13,6 +13,9 @@ test("publishes the homepage update date without associating the attorney portra
     lastModified: "2026-11-26",
     images: [portrait],
   });
+  assert.deepEqual(getStaticPageSearchSignals("/locations/khuzestan", origin), {
+    lastModified: "2026-11-27",
+  });
   assert.deepEqual(getStaticPageSearchSignals("/services", origin), { lastModified: "2026-11-24" });
 });
 

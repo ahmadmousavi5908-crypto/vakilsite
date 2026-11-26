@@ -209,3 +209,36 @@ test("assigns best-lawyer intent to each canonical service title and page keywor
     assert.ok(PRACTICE_AREA_KEYWORDS[slug].some((term) => /حرفه‌ای|باتجربه|متخصص/.test(term)));
   }
 });
+
+test("publishes Ahvaz neighborhood and Khuzestan city coverage as visible regional guidance", () => {
+  const source = readFileSync(
+    new URL("../../src/app/locations/khuzestan/page.js", import.meta.url),
+    "utf8",
+  );
+  const visibleSource = normalizePersianSearchText(source);
+  for (const phrase of [
+    "وکیل کیانپارس اهواز",
+    "وکیل کیان پارس",
+    "وکیل امانیه",
+    "وکیل زیتون",
+    "وکیل زیتون کارمندی",
+    "وکیل گلستان",
+    "بهترین وکیل اهواز",
+    "وکیل خوب در اهواز",
+    "وکیل باتجربه در اهواز",
+    "بهترین وکیل خرمشهر",
+    "بهترین وکیل آبادان",
+    "آبادان",
+    "خرمشهر",
+    "دزفول",
+    "شوشتر",
+    "ماهشهر",
+    "دفتر مستقل در هر محله نیست"
+  ]) {
+    assert.ok(visibleSource.includes(normalizePersianSearchText(phrase)), `Missing regional search coverage: ${phrase}`);
+  }
+  assert.ok(source.includes("openGraph: {"));
+  assert.ok(source.includes('url: "/locations/khuzestan"'));
+  assert.ok(source.includes('title: "خدمات حقوقی و وکیل در اهواز و خوزستان | موسوی"'));
+  assert.ok(source.includes("twitter: {"));
+});
