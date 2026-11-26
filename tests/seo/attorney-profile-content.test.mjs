@@ -19,5 +19,5 @@ test("keeps the co-authored research credit without exposing the other co-author
   assert.ok(publishedWorks.includes('authors: "احمد موسوی و همکاران"'));
   assert.ok(!publishedWorks.includes("یونس نادمی"));
   assert.ok(!publishedWorks.includes("یوسف نادمی"));
-  assert.ok(aboutPage.includes('title: "سوابق حرفه‌ای و تحصیلی سید احمد موسوی | موسوی"'));
+  assert.ok(aboutPage.includes('title: "سوابق تحصیلی و حرفه‌ای سید احمد موسوی"'));
 });
