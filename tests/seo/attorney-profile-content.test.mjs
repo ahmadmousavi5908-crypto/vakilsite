@@ -17,5 +17,7 @@ test("keeps the co-authored research credit without exposing the other co-author
   assert.ok(publishedWorks.includes('authors: "احمد موسوی و همکاران"'));
   assert.ok(!publishedWorks.includes("یونس نادمی"));
   assert.ok(!publishedWorks.includes("یوسف نادمی"));
+  assert.ok(aboutPage.includes('href="https://hub.23055.ir/search-lawyer"'));
+  assert.ok(aboutPage.includes("استعلام پروانه در سامانه رسمی مرکز وکلای قوه قضائیه"));
   assert.ok(aboutPage.includes('title: "سوابق تحصیلی و حرفه‌ای سید احمد موسوی"'));
 });
