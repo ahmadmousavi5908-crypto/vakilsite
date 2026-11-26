@@ -162,7 +162,9 @@ test("renders service and FAQ structured data on pages with visible matching con
   assert.equal((home.match(/<JsonLd data=/g) || []).length, 1);
   assert.match(servicePage, /buildPracticeAreaServiceSchema\(siteUrl, area\)/);
   assert.match(servicePage, /buildFaqPageSchema\(pageUrl, area\.faqs\)/);
-  assert.match(servicePage, /buildSchemaGraph\(structuredBreadcrumb, serviceSchema, faqSchema\)/);
+  assert.match(servicePage, /const pageSchema = pageUrl && area\.lastReviewed/);
+  assert.match(servicePage, /dateModified: area\.lastReviewed/);
+  assert.match(servicePage, /buildSchemaGraph\(structuredBreadcrumb, serviceSchema, faqSchema, pageSchema\)/);
   assert.equal((servicePage.match(/<JsonLd data=/g) || []).length, 1);
 });
 
