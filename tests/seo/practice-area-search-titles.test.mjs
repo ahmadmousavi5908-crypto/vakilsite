@@ -23,11 +23,18 @@ test("unknown practice areas keep their existing neutral title", () => {
 });
 
 
-test("property page metadata targets the observed service intent without changing its visible H1", () => {
+test("service metadata titles target best-lawyer intent while preserving descriptive visible H1 titles", () => {
   assert.deepEqual(PRACTICE_AREA_META_TITLES, {
-    "property-law": "وکیل ملکی در اهواز | خلع ید، تخلیه و دعاوی ثبتی"
+    "family-law": "بهترین وکیل خانواده اهواز؛ معیارهای انتخاب وکیل",
+    "criminal-law": "بهترین وکیل کیفری اهواز؛ معیارهای انتخاب وکیل",
+    "property-law": "بهترین وکیل ملکی اهواز؛ معیارهای انتخاب وکیل",
+    "contracts-and-obligations": "بهترین وکیل قرارداد اهواز؛ معیارهای انتخاب وکیل",
+    "claims-and-enforcement": "بهترین وکیل چک و مطالبه وجه اهواز؛ معیارهای انتخاب وکیل",
+    "legal-consultation": "مشاوره حقوقی اهواز؛ هزینه، مراحل و انتخاب وکیل"
   });
-  assert.equal(getPracticeAreaMetaTitle("property-law"), "وکیل ملکی در اهواز | خلع ید، تخلیه و دعاوی ثبتی");
-  assert.equal(getPracticeAreaMetaTitle("criminal-law", "وکیل کیفری در اهواز و خوزستان"), "وکیل کیفری در اهواز و خوزستان");
+  assert.equal(getPracticeAreaMetaTitle("property-law"), "بهترین وکیل ملکی اهواز؛ معیارهای انتخاب وکیل");
+  assert.equal(getPracticeAreaMetaTitle("criminal-law"), "بهترین وکیل کیفری اهواز؛ معیارهای انتخاب وکیل");
+  assert.equal(getPracticeAreaMetaTitle("legal-consultation"), "مشاوره حقوقی اهواز؛ هزینه، مراحل و انتخاب وکیل");
+  assert.equal(getPracticeAreaMetaTitle("unknown-area", "وکیل در اهواز"), "وکیل در اهواز");
   assert.equal(getPracticeAreaSearchTitle("property-law"), "وکیل ملکی در اهواز و خوزستان");
 });
