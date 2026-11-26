@@ -4,7 +4,7 @@ import { getSiteUrl } from "../../../lib/site-url.mjs";
 import { buildBreadcrumbSchema } from "../../../lib/seo/breadcrumb-schema.mjs";
 
 export const metadata = {
-  title: "وکیل در اهواز و خوزستان",
+  title: { absolute: "وکیل در اهواز و خوزستان | سید احمد موسوی" },
   description: "سید احمد موسوی، وکیل پایه یک دادگستری و عضو مرکز وکلای قوه قضائیه با شماره پروانه ۷۴۵۱۶؛ دفتر در اهواز و بررسی اولیه دعاوی کیفری، ملکی، خانواده و حقوقی.",
   alternates: { canonical: "/locations/khuzestan" },
   openGraph: {
