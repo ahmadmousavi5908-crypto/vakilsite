@@ -181,28 +181,28 @@ function buildUserResearchPositioningTerms() {
 
   for (const { subject, clusterId } of SERVICE_POSITIONING_SUBJECTS) {
     for (const modifier of USER_RESEARCH_COMPARISON_PREFIXES) {
-      entries.push(highRisk(\`\${modifier} وکیل \${subject} اهواز\`, clusterId, "اهواز"));
-      entries.push(highRisk(\`\${modifier} وکیل \${subject} در اهواز\`, clusterId, "اهواز"));
+      entries.push(highRisk(`${modifier} وکیل ${subject} اهواز`, clusterId, "اهواز"));
+      entries.push(highRisk(`${modifier} وکیل ${subject} در اهواز`, clusterId, "اهواز"));
     }
     for (const qualifier of USER_RESEARCH_QUALIFIERS) {
-      entries.push(highRisk(\`وکیل \${subject} \${qualifier} در اهواز\`, clusterId, "اهواز"));
+      entries.push(highRisk(`وکیل ${subject} ${qualifier} در اهواز`, clusterId, "اهواز"));
     }
   }
 
   for (const { subject, clusterId } of FUTURE_POSITIONING_SUBJECTS) {
     for (const modifier of ["بهترین", "برترین", "حرفه‌ای‌ترین", "حرفه ای ترین", "متخصص‌ترین", "باتجربه‌ترین", "معتبرترین"]) {
-      entries.push(highRisk(\`\${modifier} وکیل \${subject} اهواز\`, clusterId, "اهواز"));
-      entries.push(highRisk(\`\${modifier} وکیل \${subject} در اهواز\`, clusterId, "اهواز"));
+      entries.push(highRisk(`${modifier} وکیل ${subject} اهواز`, clusterId, "اهواز"));
+      entries.push(highRisk(`${modifier} وکیل ${subject} در اهواز`, clusterId, "اهواز"));
     }
     for (const qualifier of ["حرفه‌ای", "متخصص", "باتجربه", "مجرب", "معتبر", "کاربلد"]) {
-      entries.push(highRisk(\`وکیل \${subject} \${qualifier} در اهواز\`, clusterId, "اهواز"));
+      entries.push(highRisk(`وکیل ${subject} ${qualifier} در اهواز`, clusterId, "اهواز"));
     }
   }
 
   for (const city of KHUZESTAN_SEARCH_LOCATIONS) {
     for (const modifier of ["بهترین", "برترین", "حرفه‌ای‌ترین", "حرفه ای ترین", "باتجربه‌ترین", "متخصص‌ترین", "معتبرترین"]) {
-      entries.push(highRisk(\`\${modifier} وکیل \${city}\`, "lawyer-core", city));
-      entries.push(highRisk(\`\${modifier} وکیل در \${city}\`, "lawyer-core", city));
+      entries.push(highRisk(`${modifier} وکیل ${city}`, "lawyer-core", city));
+      entries.push(highRisk(`${modifier} وکیل در ${city}`, "lawyer-core", city));
     }
   }
 
