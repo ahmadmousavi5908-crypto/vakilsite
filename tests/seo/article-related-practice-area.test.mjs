@@ -36,11 +36,15 @@ test("does not invent a service link for unknown article slugs", () => {
 
 test("exposes existing static legal guides from their matching service pages", () => {
   const propertyGuides = getRelatedArticlesForPracticeArea("property-law");
-  assert.equal(propertyGuides.length, 1);
+  assert.equal(propertyGuides.length, 2);
   assert.equal(propertyGuides[0].slug, "property-dispute-documents");
   assert.equal(propertyGuides[0].title, articles.find((article) => article.slug === propertyGuides[0].slug)?.title);
   assert.equal(propertyGuides[0].href, "/articles/property-dispute-documents");
   assert.ok(propertyGuides[0].excerpt);
+  assert.equal(propertyGuides[1].slug, "difference-khale-yad-eviction-tasarruf-adwani");
+  assert.equal(propertyGuides[1].title, articles.find((article) => article.slug === propertyGuides[1].slug)?.title);
+  assert.equal(propertyGuides[1].href, "/articles/difference-khale-yad-eviction-tasarruf-adwani");
+  assert.ok(propertyGuides[1].excerpt);
 
   for (const areaSlug of ["family-law", "criminal-law", "contracts-and-obligations", "claims-and-enforcement", "legal-consultation"]) {
     const guides = getRelatedArticlesForPracticeArea(areaSlug);
