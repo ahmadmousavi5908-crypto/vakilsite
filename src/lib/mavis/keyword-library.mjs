@@ -159,7 +159,7 @@ const FUTURE_POSITIONING_SUBJECTS = Object.freeze([
 ]);
 
 const KHUZESTAN_SEARCH_LOCATIONS = Object.freeze([
-  "اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک",
+  "اهواز", "خوزستان", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک",
   "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه",
   "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان",
   "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک",
@@ -199,10 +199,15 @@ function buildUserResearchPositioningTerms() {
     }
   }
 
+  const ahvazCoreLocations = new Set([
+    "اهواز", "خوزستان", "زیتون کارمندی", "کیانپارس", "امانیه", "گلستان",
+    "نادری", "کیان‌آباد", "لشکرآباد", "کوروش", "پادادشهر"
+  ]);
   for (const city of KHUZESTAN_SEARCH_LOCATIONS) {
+    const ownerCluster = ahvazCoreLocations.has(city) ? "lawyer-core" : null;
     for (const modifier of ["بهترین", "برترین", "حرفه‌ای‌ترین", "حرفه ای ترین", "باتجربه‌ترین", "متخصص‌ترین", "معتبرترین"]) {
-      entries.push(highRisk(`${modifier} وکیل ${city}`, "lawyer-core", city));
-      entries.push(highRisk(`${modifier} وکیل در ${city}`, "lawyer-core", city));
+      entries.push(highRisk(`${modifier} وکیل ${city}`, ownerCluster, city));
+      entries.push(highRisk(`${modifier} وکیل در ${city}`, ownerCluster, city));
     }
   }
 
