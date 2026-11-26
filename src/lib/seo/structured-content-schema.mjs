@@ -60,6 +60,30 @@ export function normalizePublicOfficeName(value) {
   return compact === "وکیلسیداحمدموسوی" ? "وکیل سید احمد موسوی" : normalized;
 }
 
+const KHUZESTAN_SERVICE_CITIES = Object.freeze([
+  "اهواز",
+  "آبادان",
+  "خرمشهر",
+  "دزفول",
+  "شوشتر",
+  "اندیمشک",
+  "ماهشهر",
+  "بندر امام خمینی",
+  "بهبهان",
+  "رامهرمز",
+  "ایذه",
+  "مسجدسلیمان",
+  "شوش",
+  "هویزه",
+]);
+
+function buildKhuzestanAreaServed() {
+  return [
+    ...KHUZESTAN_SERVICE_CITIES.map((name) => ({ "@type": "City", name })),
+    { "@type": "AdministrativeArea", name: "استان خوزستان" },
+  ];
+}
+
 export function buildLegalServiceSchema(siteUrl, officeLocation) {
   const origin = getOrigin(siteUrl);
   if (!origin || !officeLocation || officeLocation.is_location_public !== true) return null;
@@ -119,11 +143,7 @@ export function buildLegalServiceSchema(siteUrl, officeLocation) {
       ? { geo: { "@type": "GeoCoordinates", latitude, longitude } }
       : {}),
     ...(hasMap ? { hasMap } : {}),
-    areaServed: [
-      { "@type": "City", name: "اهواز" },
-      { "@type": "AdministrativeArea", name: "استان خوزستان" },
-      { "@type": "Country", name: "ایران" },
-    ],
+    areaServed: buildKhuzestanAreaServed(),
     founder: { "@id": origin + "/#attorney" },
     inLanguage: "fa-IR",
   };
@@ -151,10 +171,7 @@ export function buildPracticeAreaServiceSchema(siteUrl, area) {
     url,
     inLanguage: "fa-IR",
     provider: { "@id": origin + "/#attorney" },
-    areaServed: [
-      { "@type": "City", name: "اهواز" },
-      { "@type": "AdministrativeArea", name: "استان خوزستان" },
-    ],
+    areaServed: buildKhuzestanAreaServed(),
   };
 }
 
