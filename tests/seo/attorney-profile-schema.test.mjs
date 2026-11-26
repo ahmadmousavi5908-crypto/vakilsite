@@ -16,7 +16,16 @@ test("builds a ProfilePage linked to the canonical attorney entity and portrait"
   assert.equal(schema.mainEntity.name, "سید احمد موسوی");
   assert.equal(schema.mainEntity.url, "https://vakilahmadmousavi.ir/about");
   assert.deepEqual(schema.mainEntity.sameAs, ["https://www.instagram.com/vakilahmadmousavi/"]);
-  assert.equal(schema.mainEntity.identifier, "74516");
+  assert.deepEqual(schema.mainEntity.identifier, {
+    "@type": "PropertyValue",
+    propertyID: "شماره پروانه وکالت صادره از مرکز وکلای قوه قضائیه",
+    value: "74516",
+  });
+  assert.deepEqual(schema.mainEntity.memberOf, {
+    "@type": "Organization",
+    name: "مرکز وکلای قوه قضائیه",
+    url: "https://www.23055.ir/",
+  });
   assert.deepEqual(schema.mainEntity.knowsAbout, ["حقوق جزا", "حقوق کیفری", "دعاوی کیفری"]);
   assert.equal(
     schema.mainEntity.description,
