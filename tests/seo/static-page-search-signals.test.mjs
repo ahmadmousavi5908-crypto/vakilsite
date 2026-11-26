@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
 import { getStaticPageSearchSignals } from "../../src/lib/seo/static-page-search-signals.mjs";
 
 const origin = "https://vakilahmadmousavi.ir";
@@ -41,4 +42,12 @@ test("does not invent image or update metadata for unrelated pages", () => {
 
 test("requires a safe HTTPS origin", () => {
   assert.throws(() => getStaticPageSearchSignals("/", "http://vakilahmadmousavi.ir"), /HTTPS/);
+});
+
+test("wires the regional page last-modified signal into the public sitemap", () => {
+  const sitemapSource = readFileSync(new URL("../../src/app/sitemap.js", import.meta.url), "utf8");
+  assert.match(
+    sitemapSource,
+    /path: "\/locations\/khuzestan",\s*\.\.\.getStaticPageSearchSignals\("\/locations\/khuzestan", siteUrl\)/,
+  );
 });

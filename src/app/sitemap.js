@@ -37,7 +37,7 @@ export default async function sitemap() {
     },
     { path: "/services", ...getStaticPageSearchSignals("/services", siteUrl), changeFrequency: "monthly", priority: 0.9 },
     { path: "/about", ...getStaticPageSearchSignals("/about", siteUrl), changeFrequency: "monthly", priority: 0.8 },
-    { path: "/locations/khuzestan", changeFrequency: "monthly", priority: 0.8 },
+    { path: "/locations/khuzestan", ...getStaticPageSearchSignals("/locations/khuzestan", siteUrl), changeFrequency: "monthly", priority: 0.8 },
     ...practiceAreas.map((area) => ({
       path: "/services/" + area.slug,
       ...getStaticPageSearchSignals("/services/" + area.slug, siteUrl),
