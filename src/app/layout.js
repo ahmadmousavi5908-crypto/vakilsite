@@ -86,7 +86,9 @@ export const metadata = {
     title: "وکیل سید احمد موسوی | اهواز و خوزستان",
     description: "معرفی سید احمد موسوی و راهنمای انتخاب بهترین وکیل در اهواز برای پرونده‌های کیفری، حقوقی، خانواده و ملکی.",
     siteName: "وکیل سید احمد موسوی",
+    images: [{ url: "/images/lawyer.jpg", alt: "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز" }],
   },
+  twitter: { card: "summary_large_image", images: [{ url: "/images/lawyer.jpg", alt: "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز" }] },
 };
 
 export default function RootLayout({ children }) {
