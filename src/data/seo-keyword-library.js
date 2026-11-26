@@ -510,6 +510,18 @@ const keywordLibrary = {
       "en": "Golestan",
       "physicalOffice": false,
       "localPageStatus": "neighborhood-research-only"
+    },
+    {
+      "fa": "زیتون",
+      "en": "Zeytoon",
+      "physicalOffice": false,
+      "localPageStatus": "neighborhood-alias-research-only"
+    },
+    {
+      "fa": "کیان پارس",
+      "en": "Kian Pars",
+      "physicalOffice": false,
+      "localPageStatus": "neighborhood-alias-research-only"
     }
   ],
   "locationTemplates": {
