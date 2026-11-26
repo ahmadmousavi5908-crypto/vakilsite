@@ -124,3 +124,27 @@ test("keeps the homepage visible brand, WebSite, Service and root metadata on th
   assert.ok(layout.includes('title: "وکیل سید احمد موسوی | اهواز و خوزستان"'));
   assert.ok(layout.includes('siteName: "وکیل سید احمد موسوی"'));
 });
+
+test("derives a public map link from verified coordinates when no map URL is configured", () => {
+  const schema = buildLegalServiceSchema(siteUrl, {
+    is_location_public: true,
+    office_name: "وکیل سید احمد موسوی",
+    address: "خوزستان اهواز",
+    city: "اهواز",
+    province: "خوزستان",
+    latitude: 31.3193376,
+    longitude: 48.6832329,
+    map_url: "",
+    phone: "09169165902",
+  });
+
+  assert.deepEqual(schema.geo, {
+    "@type": "GeoCoordinates",
+    latitude: 31.3193376,
+    longitude: 48.6832329,
+  });
+  assert.equal(
+    schema.hasMap,
+    "https://www.google.com/maps?q=31.3193376,48.6832329",
+  );
+});
