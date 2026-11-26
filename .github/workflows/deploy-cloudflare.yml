@@ -338,7 +338,7 @@ jobs:
             attorney["@id"] !== expectedOrigin + "/#attorney" ||
             attorney.name !== "سید احمد موسوی" ||
             attorney.url !== expectedOrigin + "/about" ||
-            attorney.identifier !== "74516"
+            (typeof attorney.identifier === "string" ? attorney.identifier : attorney.identifier?.value) !== "74516"
           ) {
             throw new Error("The public About page must expose the canonical Person ProfilePage and confirmed license identifier.");
           }
