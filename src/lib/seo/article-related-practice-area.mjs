@@ -49,6 +49,10 @@ const RELATED_PRACTICE_AREAS = Object.freeze({
     href: "/services/criminal-law",
     label: "دعاوی کیفری در اهواز و خوزستان",
   },
+  "difference-khale-yad-eviction-tasarruf-adwani": {
+    href: "/services/property-law",
+    label: "دعاوی ملکی و ثبتی در اهواز و خوزستان",
+  },
 });
 
 export function getRelatedPracticeAreaForArticle(slug) {
