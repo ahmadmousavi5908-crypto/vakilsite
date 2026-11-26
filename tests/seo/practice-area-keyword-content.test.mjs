@@ -200,7 +200,7 @@ test("assigns best-lawyer intent to each canonical service title and page keywor
     "property-law": "بهترین وکیل ملکی اهواز",
     "contracts-and-obligations": "بهترین وکیل قرارداد اهواز",
     "claims-and-enforcement": "بهترین وکیل چک و مطالبه وجه اهواز",
-    "legal-consultation": "بهترین وکیل اهواز"
+    "legal-consultation": "مشاوره حقوقی اهواز"
   };
 
   for (const [slug, phrase] of Object.entries(expected)) {
