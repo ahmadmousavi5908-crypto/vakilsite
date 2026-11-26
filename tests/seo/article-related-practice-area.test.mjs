@@ -36,11 +36,15 @@ test("does not invent a service link for unknown article slugs", () => {
 
 test("exposes existing static legal guides from their matching service pages", () => {
   const propertyGuides = getRelatedArticlesForPracticeArea("property-law");
-  assert.equal(propertyGuides.length, 1);
+  assert.equal(propertyGuides.length, 2);
   assert.equal(propertyGuides[0].slug, "property-dispute-documents");
   assert.equal(propertyGuides[0].title, articles.find((article) => article.slug === propertyGuides[0].slug)?.title);
   assert.equal(propertyGuides[0].href, "/articles/property-dispute-documents");
   assert.ok(propertyGuides[0].excerpt);
+  assert.equal(propertyGuides[1].slug, "difference-khale-yad-eviction-tasarruf-adwani");
+  assert.equal(propertyGuides[1].title, articles.find((article) => article.slug === propertyGuides[1].slug)?.title);
+  assert.equal(propertyGuides[1].href, "/articles/difference-khale-yad-eviction-tasarruf-adwani");
+  assert.ok(propertyGuides[1].excerpt);
 
   for (const areaSlug of ["family-law", "criminal-law", "contracts-and-obligations", "claims-and-enforcement", "legal-consultation"]) {
     const guides = getRelatedArticlesForPracticeArea(areaSlug);
@@ -54,4 +58,18 @@ test("returns no related guides for unknown service slugs", () => {
   assert.deepEqual(getRelatedArticlesForPracticeArea("unknown-area"), []);
   assert.deepEqual(getRelatedArticlesForPracticeArea(null), []);
   assert.deepEqual(getRelatedArticlesForPracticeArea(""), []);
+});
+
+
+test("publishes the new property guide with its target keyword and legal sources", () => {
+  const guide = articles.find((article) => article.slug === "difference-khale-yad-eviction-tasarruf-adwani");
+  assert.ok(guide);
+  assert.equal(guide.focusKeyword, "تفاوت خلع ید و تخلیه و تصرف عدوانی");
+  assert.equal(guide.authorName, "سید احمد موسوی");
+  assert.equal(guide.sections.length, 8);
+  assert.equal(guide.sources.length, 5);
+  assert.ok(guide.sections.some((section) => section.body.includes("رأی وحدت رویه شماره ۶۷۲")));
+  assert.ok(guide.sections.some((section) => section.body.includes("ماده ۱۵۸ قانون آیین دادرسی مدنی")));
+  assert.ok(guide.sections.some((section) => section.body.includes("قانون روابط موجر و مستأجر")));
+  assert.ok(guide.sources.every((source) => source.url.startsWith("https://")));
 });
