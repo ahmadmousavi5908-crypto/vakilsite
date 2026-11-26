@@ -5,7 +5,14 @@ const keywordLibrary = {
   "market": "Iran",
   "brand": "وکیل سید احمد موسوی",
   "domain": "vakilahmadmousavi.ir",
-  "generatedAt": "2026-11-25",
+  "generatedAt": "2026-11-27",
+  "userResearchExpansion": {
+    "source": "User-supplied Persian AI research keyword set",
+    "observedAt": "2026-11-27",
+    "status": "candidate-only-not-volume-validated",
+    "retention": "Preserve source wording and variants; existing library records are not deleted.",
+    "usage": "Route comparison and superlative query intent to the closest existing service page or an explicit future-content cluster. Use neutral selection guidance, never unsupported first-person superiority claims."
+  },
 
   "competitorResearch": {
     "schemaVersion": "1.0.0",
