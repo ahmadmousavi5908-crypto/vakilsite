@@ -101,7 +101,7 @@ export function buildLegalServiceSchema(siteUrl, officeLocation) {
 
   return {
     "@context": "https://schema.org",
-    "@type": "LegalService",
+    "@type": ["LegalService", "LocalBusiness"],
     "@id": origin + "/#legal-service-office",
     name: normalizePublicOfficeName(officeLocation.office_name),
     url: origin,

@@ -33,7 +33,7 @@ test("builds LegalService schema from complete public office details", () => {
     phone: "09169165902",
   });
 
-  assert.equal(schema["@type"], "LegalService");
+  assert.deepEqual(schema["@type"], ["LegalService", "LocalBusiness"]);
   assert.deepEqual(schema.sameAs, ["https://www.instagram.com/vakilahmadmousavi/"]);
   assert.equal(schema["@id"], siteUrl + "/#legal-service-office");
   assert.equal(schema.name, "دفتر خدمات حقوقی سید احمد موسوی");
@@ -98,7 +98,7 @@ test("omits incomplete or invalid optional office fields", () => {
     phone: "not-a-phone",
   });
 
-  assert.equal(schema["@type"], "LegalService");
+  assert.deepEqual(schema["@type"], ["LegalService", "LocalBusiness"]);
   assert.deepEqual(schema.sameAs, ["https://www.instagram.com/vakilahmadmousavi/"]);
   assert.equal("streetAddress" in schema.address, false);
   assert.equal("geo" in schema, false);
@@ -114,9 +114,11 @@ test("keeps the homepage visible brand, WebSite, Service and root metadata on th
   assert.equal(homepage.split('<strong>وکیل سید احمد موسوی</strong>').length - 1, 2);
   assert.equal(homepage.split('name: "وکیل سید احمد موسوی"').length - 1, 2);
   assert.ok(homepage.includes("sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL]"));
-  assert.ok(homepage.includes('formatIranianPhoneLabel(normalizedOfficeLocation?.phone || "")'));
-  assert.ok(homepage.includes('className="contact-assurance contact-phone-link"'));
-  assert.ok(homepage.includes('telephone: ["+98 916 916 5902", "+98 938 832 2230"]'));
+  assert.ok(homepage.includes("[normalizedOfficeLocation?.phone, ...PUBLIC_OFFICE_PHONE_FALLBACKS]"));
+  assert.ok(homepage.includes("telephone: officePhoneLabels,"));
+  assert.ok(homepage.includes('className="contact-assurance contact-phone-links"'));
+  assert.ok(homepage.includes("officePhoneLinks.map"));
+  assert.ok(homepage.includes("PUBLIC_OFFICE_PHONE_FALLBACKS"));
   assert.ok(layout.includes('default: "وکیل سید احمد موسوی | وکیل پایه یک در اهواز و خوزستان"'));
   assert.ok(layout.includes('applicationName: "وکیل سید احمد موسوی"'));
   assert.ok(layout.includes('title: "وکیل سید احمد موسوی | اهواز و خوزستان"'));
