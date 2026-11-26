@@ -200,8 +200,8 @@ function buildUserResearchPositioningTerms() {
   }
 
   const ahvazCoreLocations = new Set([
-    "اهواز", "خوزستان", "زیتون کارمندی", "کیانپارس", "امانیه", "گلستان",
-    "نادری", "کیان‌آباد", "لشکرآباد", "کوروش", "پادادشهر"
+    "اهواز", "خوزستان", "زیتون", "زیتون کارمندی", "کیانپارس", "کیان پارس",
+    "امانیه", "گلستان", "نادری", "کیان‌آباد", "لشکرآباد", "کوروش", "پادادشهر"
   ]);
   for (const city of KHUZESTAN_SEARCH_LOCATIONS) {
     const ownerCluster = ahvazCoreLocations.has(city) ? "lawyer-core" : null;
