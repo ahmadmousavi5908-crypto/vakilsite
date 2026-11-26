@@ -281,7 +281,7 @@ test("keeps broad attorney-positioning candidates separate and routes service-sp
     [criminal, "بهترین وکیل کلاهبرداری اهواز", "/services/criminal-law"],
     [searchKeywordLibrary({ clusterId: "civil-law-eight-domains", family: "positioning" }), "بهترین وکیل مدنی اهواز", "/services"],
     [searchKeywordLibrary({ clusterId: "civil-law-eight-domains", family: "positioning" }), "بهترین وکیل حقوقی اهواز", "/services"],
-    [criminal, "حرفه‌ای‌ترین وکیل کیفری اهواز", "/services/criminal-law"],
+    [searchKeywordLibrary({ clusterId: "criminal-procedure", family: "positioning" }), "حرفه‌ای‌ترین وکیل کیفری اهواز", "/services/criminal-law"],
     [family, "وکیل خانواده باتجربه در اهواز", "/services/family-law"],
     [property, "متخصص‌ترین وکیل ملکی اهواز", "/services/property-law"]
   ];
