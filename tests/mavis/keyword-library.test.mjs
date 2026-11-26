@@ -335,10 +335,27 @@ test("preserves user-supplied comparison modifiers and Khuzestan location varian
   assert.equal(khuzestan.location, "آبادان");
   assert.equal(khuzestan.userResearchSeed, true);
 
-  const neighborhood = all.find((entry) => entry.term === "بهترین وکیل کیانپارس");
-  assert.ok(neighborhood);
-  assert.equal(neighborhood.target, "/");
-  assert.equal(neighborhood.location, "کیانپارس");
+  const neighborhoodCases = [
+    ["کیانپارس", "بهترین وکیل کیانپارس"],
+    ["امانیه", "بهترین وکیل در امانیه"],
+    ["زیتون کارمندی", "بهترین وکیل زیتون کارمندی"],
+    ["گلستان", "بهترین وکیل گلستان"]
+  ];
+  for (const [location, phrase] of neighborhoodCases) {
+    const entry = all.find((item) => item.term === phrase);
+    assert.ok(entry, `Missing neighborhood phrase: ${phrase}`);
+    assert.equal(entry.target, "/");
+    assert.equal(entry.location, location);
+    assert.equal(entry.userResearchSeed, true);
+  }
+
+  const localNeighborhoods = searchKeywordLibrary({ family: "local", query: "کیانپارس" });
+  assert.ok(localNeighborhoods.some((entry) => entry.term === "وکیل تخلیه مغازه در کیانپارس"));
+  assert.ok(localNeighborhoods.some((entry) => entry.term === "تخلیه مغازه در کیانپارس"));
+  assert.ok(localNeighborhoods.every((entry) => entry.location === "کیانپارس"));
+  assert.ok(searchKeywordLibrary({ family: "local", query: "امانیه" }).length > 0);
+  assert.ok(searchKeywordLibrary({ family: "local", query: "زیتون کارمندی" }).length > 0);
+  assert.ok(searchKeywordLibrary({ family: "local", query: "گلستان" }).length > 0);
 });
 
 
