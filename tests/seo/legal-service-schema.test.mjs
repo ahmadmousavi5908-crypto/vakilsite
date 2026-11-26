@@ -126,6 +126,8 @@ test("keeps the homepage visible brand, WebSite, Service and root metadata on th
   assert.ok(deploymentWorkflow.includes('Array.isArray(legalService["@type"])'));
   assert.ok(deploymentWorkflow.includes('legalServiceTypes.includes("LegalService")'));
   assert.ok(deploymentWorkflow.includes('legalServiceTypes.includes("LocalBusiness")'));
+  assert.ok(deploymentWorkflow.includes("LegalService hasMap must be derived from the verified public coordinates."));
+  assert.ok(deploymentWorkflow.includes("Visible public phone numbers:"));
   assert.ok(layout.includes('default: "وکیل سید احمد موسوی | وکیل پایه یک در اهواز و خوزستان"'));
   assert.ok(layout.includes('applicationName: "وکیل سید احمد موسوی"'));
   assert.ok(layout.includes('title: "وکیل سید احمد موسوی | اهواز و خوزستان"'));
