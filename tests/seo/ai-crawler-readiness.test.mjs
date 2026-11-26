@@ -116,7 +116,7 @@ test("describes only public, canonical site resources in llms.txt", () => {
   ]) assert.ok(llms.includes(serviceName), `Missing exact service name ${serviceName}`);
 });
 
-test("uses a non-local Service schema when no public street address is provided", () => {
+test("uses a Service schema without inventing a public office address", () => {
   assert.match(home, /"@type": "Service"/);
   assert.doesNotMatch(home, /"@type": "LegalService"|"@type": "LocalBusiness"/);
 });
@@ -131,7 +131,7 @@ test("builds a page-specific Service entity without inventing a public office ad
   assert.equal(schema["@type"], "Service");
   assert.equal(schema.url, "https://vakilahmadmousavi.ir/services/property-law");
   assert.equal(schema.provider["@id"], "https://vakilahmadmousavi.ir/#attorney");
-  assert.deepEqual(schema.areaServed.map((area) => area.name), ["اهواز", "استان خوزستان"]);
+  assert.deepEqual(schema.areaServed.map((area) => area.name), ["اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "استان خوزستان"]);
   assert.equal("address" in schema, false);
   assert.equal("geo" in schema, false);
   assert.equal(buildPracticeAreaServiceSchema("not-a-url", {}), null);
