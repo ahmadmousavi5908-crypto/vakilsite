@@ -333,6 +333,7 @@ test("preserves user-supplied comparison modifiers and Khuzestan location varian
   assert.ok(khuzestan);
   assert.equal(khuzestan.target, "/");
   assert.equal(khuzestan.location, "آبادان");
+  assert.equal(khuzestan.userResearchSeed, true);
 });
 
 
