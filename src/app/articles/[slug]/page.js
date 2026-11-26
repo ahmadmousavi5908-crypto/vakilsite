@@ -23,10 +23,13 @@ export async function generateMetadata({ params }) {
   }
   const canonicalPath = "/articles/" + article.slug;
   const searchMetadata = getArticleSearchMetadata(article);
-  const imageForSearch = article.coverImageUseForSeo === true && article.coverImageUrl
+  const hasSeoCoverImage = article.coverImageUseForSeo === true && Boolean(article.coverImageUrl);
+  const imageForSearch = hasSeoCoverImage
     ? article.coverImageOgUrl || article.coverImageUrl
-    : "";
-  const imageAlt = article.coverImageAlt || article.title;
+    : "/images/lawyer.jpg";
+  const imageAlt = hasSeoCoverImage
+    ? article.coverImageAlt || article.title
+    : "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز";
   return {
     title: searchMetadata.title,
     description: searchMetadata.description,
@@ -36,20 +39,15 @@ export async function generateMetadata({ params }) {
       type: "article",
       title: searchMetadata.title,
       description: searchMetadata.description,
-      ...(imageForSearch ? {
-        images: [{
-          url: imageForSearch,
-          width: 1200,
-          height: 630,
-          alt: imageAlt,
-        }],
-      } : {}),
+      images: [{
+        url: imageForSearch,
+        alt: imageAlt,
+        ...(hasSeoCoverImage ? { width: 1200, height: 630 } : {}),
+      }],
       locale: "fa_IR",
       url: canonicalPath,
     },
-    twitter: imageForSearch
-      ? { card: "summary_large_image", images: [imageForSearch] }
-      : { card: "summary" },
+    twitter: { card: "summary_large_image", images: [{ url: imageForSearch, alt: imageAlt }] },
   };
 }
 

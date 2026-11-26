@@ -23,7 +23,7 @@ export async function generateMetadata({ params }) {
     description: area.description,
     keywords: PRACTICE_AREA_KEYWORDS[slug] || [],
     alternates: { canonical: "/services/" + area.slug },
-    openGraph: { type: "website", locale: "fa_IR", title: metaTitle, description: area.description },
+    openGraph: { type: "website", locale: "fa_IR", title: metaTitle, description: area.description, images: [{ url: "/images/lawyer.jpg", alt: "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز" }] },
   };
 }
 
