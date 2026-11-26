@@ -3,17 +3,30 @@ import JsonLd from "../../components/JsonLd";
 import { practiceAreas } from "../../data/practice-areas";
 import { getSiteUrl } from "../../lib/site-url.mjs";
 import { buildBreadcrumbSchema } from "../../lib/seo/breadcrumb-schema.mjs";
-import { SERVICES_HUB_TITLE } from "../../lib/seo/services-hub-title.mjs";
+import { SERVICES_HUB_DESCRIPTION, SERVICES_HUB_TITLE } from "../../lib/seo/services-hub-title.mjs";
 
 export const metadata = {
   title: SERVICES_HUB_TITLE,
-  description: "راهنمای انتخاب بهترین وکیل حقوقی و مدنی در اهواز؛ معرفی حوزه‌های دعاوی حقوقی، کیفری، ملکی، خانواده، قراردادها و مطالبات نزد سید احمد موسوی.",
+  description: SERVICES_HUB_DESCRIPTION,
   keywords: [
     "بهترین وکیل حقوقی اهواز", "بهترین وکیل مدنی اهواز", "بهترین وکیل در اهواز",
     "وکیل حقوقی در اهواز", "وکیل مدنی اهواز", "وکیل حرفه‌ای حقوقی اهواز",
     "وکیل باتجربه در اهواز", "وکیل متخصص اهواز", "وکیل دعاوی حقوقی اهواز"
   ],
   alternates: { canonical: "/services" },
+  openGraph: {
+    type: "website",
+    locale: "fa_IR",
+    url: "/services",
+    title: SERVICES_HUB_TITLE + " | موسوی",
+    description: SERVICES_HUB_DESCRIPTION,
+    siteName: "وکیل سید احمد موسوی",
+  },
+  twitter: {
+    card: "summary",
+    title: SERVICES_HUB_TITLE + " | موسوی",
+    description: SERVICES_HUB_DESCRIPTION,
+  },
 };
 
 export default function ServicesPage() {
