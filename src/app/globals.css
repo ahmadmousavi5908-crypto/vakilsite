@@ -108,6 +108,7 @@ button,input,select,textarea{font:inherit}
 .contact-copy p{color:#c1cbd4;font-size:12px;line-height:2.4;max-width:420px}
 .contact-assurance{display:flex;align-items:flex-start;gap:10px;color:#d6dce1;font-size:10px;margin-top:30px;max-width:420px}
 .contact-assurance span{color:#ddc99e;font-size:16px}
+.contact-phone-links{flex-wrap:wrap;gap:8px 14px}
 .request-form{background:#fffefa;padding:29px 32px;color:var(--navy);box-shadow:0 20px 60px rgba(0,0,0,.16)}
 .form-heading{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee8dc;padding-bottom:17px;margin-bottom:19px;font-size:16px;font-weight:800}
 .form-heading small{font-size:9px;color:#9b8358;background:#f4efe5;padding:5px 9px;font-weight:400}
