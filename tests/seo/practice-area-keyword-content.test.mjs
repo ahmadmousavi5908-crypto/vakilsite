@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
 import { practiceAreas } from "../../src/data/practice-areas.js";
 import { normalizePersianSearchText } from "../../src/lib/mavis/persian-text-normalization.mjs";
 
@@ -73,6 +74,11 @@ function visiblePracticeAreaText(area) {
     area.registrationNotice?.body,
     ...(area.legalSources || []).flatMap((source) => [source.title, source.summary]),
     ...(area.faqs || []).flatMap((faq) => [faq.question, faq.answer]),
+    ...(Object.values(area.sectionHeadings || {})),
+    area.contentAuthor,
+    area.contentAuthorRole,
+    area.lastReviewed,
+    area.lastReviewedLabel,
     area.note
   ].filter(Boolean).join(" "));
 }
@@ -139,8 +145,8 @@ test("does not count the internal searchTerms array as public page content", () 
 test("provides substantive legal distinctions and cited primary references for property disputes", () => {
   const property = practiceAreas.find((area) => area.slug === "property-law");
   assert.ok(property);
-  assert.equal(property.legalGuides.length, 3);
-  assert.equal(property.legalSources.length, 6);
+  assert.equal(property.legalGuides.length, 4);
+  assert.equal(property.legalSources.length, 7);
 
   const visibleText = visiblePracticeAreaText(property);
   for (const phrase of [
@@ -151,6 +157,10 @@ test("provides substantive legal distinctions and cited primary references for p
     "مواد ۱۵۸ و ۱۶۱",
     "مواد ۴۳ و ۴۴",
     "۱۴۰۵/۰۳/۰۱",
+    "ماده ۲۲ قانون ثبت اسناد و املاک",
+    "ماده ۲۲ قانون ثبت: مالک رسمی چگونه شناسایی می‌شود؟",
+    "۲۶ نوامبر ۲۰۲۶",
+    "سید احمد موسوی",
     "تاریخ شمول سایر املاک"
   ]) {
     assert.ok(visibleText.includes(normalizePersianSearchText(phrase)), "Missing property-law guidance: " + phrase);
@@ -160,4 +170,23 @@ test("provides substantive legal distinctions and cited primary references for p
     assert.ok(source.title && source.summary);
     assert.equal(new URL(source.url).protocol, "https:");
   }
+});
+
+test("adds verifiable author, review date and question-led headings to the property service page", () => {
+  const property = practiceAreas.find((area) => area.slug === "property-law");
+  assert.ok(property);
+  assert.equal(property.contentAuthor, "سید احمد موسوی");
+  assert.equal(property.contentAuthorRole, "وکیل پایه یک دادگستری");
+  assert.equal(property.lastReviewed, "2026-11-26");
+  assert.ok(property.sectionHeadings.topics.endsWith("؟"));
+  assert.ok(property.sectionHeadings.checks.endsWith("؟"));
+
+  const template = readFileSync(
+    new URL("../../src/app/services/[slug]/page.js", import.meta.url),
+    "utf8",
+  );
+  assert.ok(template.includes("dateModified: area.lastReviewed"));
+  assert.ok(template.includes('author: { "@id": siteUrl + "/#attorney" }'));
+  assert.ok(template.includes("area.contentAuthor"));
+  assert.ok(template.includes("area.sectionHeadings?.topics"));
 });
