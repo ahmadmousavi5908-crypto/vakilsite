@@ -486,6 +486,30 @@ const keywordLibrary = {
       "en": "Seydun",
       "physicalOffice": false,
       "localPageStatus": "no-separate-page-without-unique-local-value"
+    },
+    {
+      "fa": "کیانپارس",
+      "en": "Kianpars",
+      "physicalOffice": false,
+      "localPageStatus": "neighborhood-research-only"
+    },
+    {
+      "fa": "امانیه",
+      "en": "Amaniyeh",
+      "physicalOffice": false,
+      "localPageStatus": "neighborhood-research-only"
+    },
+    {
+      "fa": "زیتون کارمندی",
+      "en": "Zeytoon Karmandi",
+      "physicalOffice": false,
+      "localPageStatus": "neighborhood-research-only"
+    },
+    {
+      "fa": "گلستان",
+      "en": "Golestan",
+      "physicalOffice": false,
+      "localPageStatus": "neighborhood-research-only"
     }
   ],
   "locationTemplates": {
