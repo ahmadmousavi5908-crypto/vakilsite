@@ -339,6 +339,8 @@ test("preserves user-supplied comparison modifiers and Khuzestan location varian
     ["کیانپارس", "بهترین وکیل کیانپارس"],
     ["امانیه", "بهترین وکیل در امانیه"],
     ["زیتون کارمندی", "بهترین وکیل زیتون کارمندی"],
+    ["زیتون", "بهترین وکیل زیتون"],
+    ["کیان پارس", "بهترین وکیل کیان پارس"],
     ["گلستان", "بهترین وکیل گلستان"]
   ];
   for (const [location, phrase] of neighborhoodCases) {
