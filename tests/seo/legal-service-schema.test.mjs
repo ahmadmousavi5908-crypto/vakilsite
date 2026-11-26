@@ -119,6 +119,13 @@ test("keeps the homepage visible brand, WebSite, Service and root metadata on th
   assert.ok(homepage.includes('className="contact-assurance contact-phone-links"'));
   assert.ok(homepage.includes("officePhoneLinks.map"));
   assert.ok(homepage.includes("PUBLIC_OFFICE_PHONE_FALLBACKS"));
+  const deploymentWorkflow = readFileSync(
+    new URL("../../.github/workflows/deploy-cloudflare.yml", import.meta.url),
+    "utf8",
+  );
+  assert.ok(deploymentWorkflow.includes('Array.isArray(legalService["@type"])'));
+  assert.ok(deploymentWorkflow.includes('legalServiceTypes.includes("LegalService")'));
+  assert.ok(deploymentWorkflow.includes('legalServiceTypes.includes("LocalBusiness")'));
   assert.ok(layout.includes('default: "وکیل سید احمد موسوی | وکیل پایه یک در اهواز و خوزستان"'));
   assert.ok(layout.includes('applicationName: "وکیل سید احمد موسوی"'));
   assert.ok(layout.includes('title: "وکیل سید احمد موسوی | اهواز و خوزستان"'));
