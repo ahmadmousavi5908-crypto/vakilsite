@@ -240,7 +240,7 @@ test("publishes Ahvaz neighborhood and Khuzestan city coverage as visible region
   assert.ok(source.includes("openGraph: {"));
   assert.ok(source.includes('url: "/locations/khuzestan"'));
   assert.ok(source.includes('title: "وکیل در اهواز و خوزستان | سید احمد موسوی، وکیل پایه یک"'));
-  assert.ok(source.includes('title: "وکیل در اهواز و خوزستان"'));
+  assert.ok(source.includes('title: { absolute: "وکیل در اهواز و خوزستان | سید احمد موسوی" }'));
   assert.ok(source.includes("شماره پروانه وکالت ۷۴۵۱۶"));
   assert.ok(source.includes("مرکز وکلای قوه قضائیه"));
   assert.ok(!source.includes("سید ایمان موسوی"));
