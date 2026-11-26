@@ -8,8 +8,13 @@ export const PRACTICE_AREA_SEARCH_TITLES = Object.freeze({
 });
 
 export const PRACTICE_AREA_META_TITLES = Object.freeze({
-  "property-law": "وکیل ملکی در اهواز | خلع ید، تخلیه و دعاوی ثبتی"
-});
+  "family-law": "بهترین وکیل خانواده اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی",
+  "criminal-law": "بهترین وکیل کیفری اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی",
+  "property-law": "بهترین وکیل ملکی اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی",
+  "contracts-and-obligations": "بهترین وکیل قرارداد اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی",
+  "claims-and-enforcement": "بهترین وکیل چک و مطالبه وجه اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی",
+  "legal-consultation": "بهترین وکیل اهواز را چگونه انتخاب کنیم؟ | سید احمد موسوی"
+});;
 
 export function getPracticeAreaSearchTitle(slug, fallbackTitle = "") {
   return PRACTICE_AREA_SEARCH_TITLES[slug] || fallbackTitle;
