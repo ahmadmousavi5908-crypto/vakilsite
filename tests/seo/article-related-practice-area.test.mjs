@@ -59,3 +59,17 @@ test("returns no related guides for unknown service slugs", () => {
   assert.deepEqual(getRelatedArticlesForPracticeArea(null), []);
   assert.deepEqual(getRelatedArticlesForPracticeArea(""), []);
 });
+
+
+test("publishes the new property guide with its target keyword and legal sources", () => {
+  const guide = articles.find((article) => article.slug === "difference-khale-yad-eviction-tasarruf-adwani");
+  assert.ok(guide);
+  assert.equal(guide.focusKeyword, "تفاوت خلع ید و تخلیه و تصرف عدوانی");
+  assert.equal(guide.authorName, "سید احمد موسوی");
+  assert.equal(guide.sections.length, 7);
+  assert.equal(guide.sources.length, 5);
+  assert.ok(guide.sections.some((section) => section.body.includes("رأی وحدت رویه شماره ۶۷۲")));
+  assert.ok(guide.sections.some((section) => section.body.includes("ماده ۱۵۸ قانون آیین دادرسی مدنی")));
+  assert.ok(guide.sections.some((section) => section.body.includes("قانون روابط موجر و مستأجر")));
+  assert.ok(guide.sources.every((source) => source.url.startsWith("https://")));
+});
