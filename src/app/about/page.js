@@ -10,20 +10,20 @@ const profileImage = "/images/lawyer.jpg";
 const profileImageAlt = "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز";
 
 export const metadata = {
-  title: "سوابق حرفه‌ای و تحصیلی سید احمد موسوی | موسوی",
+  title: "سوابق تحصیلی و حرفه‌ای سید احمد موسوی",
   description: "اطلاعات تحصیلی، عضویت حرفه‌ای، شماره پروانه و آثار علمی سید احمد موسوی؛ دفتر فعالیت در اهواز، استان خوزستان.",
   alternates: { canonical: "/about" },
   openGraph: {
     type: "profile",
     locale: "fa_IR",
-    title: "سوابق حرفه‌ای و تحصیلی سید احمد موسوی | موسوی",
+    title: "سوابق تحصیلی و حرفه‌ای سید احمد موسوی",
     description: "سوابق تحصیلی، عضویت حرفه‌ای و آثار علمی سید احمد موسوی در اهواز و خوزستان.",
     url: "/about",
     images: [{ url: profileImage, alt: profileImageAlt }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "سوابق حرفه‌ای و تحصیلی سید احمد موسوی | موسوی",
+    title: "سوابق تحصیلی و حرفه‌ای سید احمد موسوی",
     description: "اطلاعات تحصیلی، حرفه‌ای و آثار علمی سید احمد موسوی در اهواز و خوزستان.",
     images: [{ url: profileImage, alt: profileImageAlt }],
   },
