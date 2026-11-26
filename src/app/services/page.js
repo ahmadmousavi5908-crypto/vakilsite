@@ -21,11 +21,13 @@ export const metadata = {
     title: SERVICES_HUB_TITLE + " | موسوی",
     description: SERVICES_HUB_DESCRIPTION,
     siteName: "وکیل سید احمد موسوی",
+    images: [{ url: "/images/lawyer.jpg", alt: "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز" }],
   },
   twitter: {
     card: "summary",
     title: SERVICES_HUB_TITLE + " | موسوی",
     description: SERVICES_HUB_DESCRIPTION,
+    images: [{ url: "/images/lawyer.jpg", alt: "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز" }],
   },
 };
 
