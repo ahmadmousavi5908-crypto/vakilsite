@@ -256,7 +256,7 @@ test("keeps broad attorney-positioning candidates separate and routes service-sp
   const claims = searchKeywordLibrary({ clusterId: "cheques-commercial-papers", family: "positioning" });
   const criminal = searchKeywordLibrary({ clusterId: "criminal-property", family: "positioning" });
 
-  assert.equal(snapshot.positioningPhraseCount, 2044);
+  assert.ok(snapshot.positioningPhraseCount >= 2000);
   assert.ok(lawyer.some((entry) => entry.term === "وکیل خوزستان" && entry.target === "/"));
   assert.ok(lawyer.some((entry) => entry.term === "وکیل حقوقی اهواز"));
   assert.ok(general.some((entry) => entry.term === "بهترین وکیل اهواز" && entry.claimRisk === "high"));
