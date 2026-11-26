@@ -31,7 +31,16 @@ export function buildAttorneyProfileSchema(siteUrl) {
       name: "سید احمد موسوی",
       url: profileUrl,
       sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL],
-      identifier: "74516",
+      identifier: {
+        "@type": "PropertyValue",
+        propertyID: "شماره پروانه وکالت صادره از مرکز وکلای قوه قضائیه",
+        value: "74516",
+      },
+      memberOf: {
+        "@type": "Organization",
+        name: "مرکز وکلای قوه قضائیه",
+        url: "https://www.23055.ir/",
+      },
       description: "وکیل پایه یک دادگستری و عضو مرکز وکلای قوه قضائیه؛ دارای کارشناسی ارشد حقوق جزا و فعالیت تخصصی در حوزه حقوق کیفری. محل فعالیت دفتر در اهواز، استان خوزستان.",
       knowsAbout: ["حقوق جزا", "حقوق کیفری", "دعاوی کیفری"],
       jobTitle: "وکیل پایه یک دادگستری",
