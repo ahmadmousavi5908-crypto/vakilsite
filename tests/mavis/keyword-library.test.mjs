@@ -517,3 +517,62 @@ test("rejects non-local and malformed keyword target destinations", () => {
   assert.equal(getKeywordEntryAction({ target: "//attacker.example", family: "lawyer", term: "وکیل" }), null);
   assert.equal(getKeywordEntryAction({ target: "محتوای آتی", family: "problem", term: "   " }), null);
 });
+
+test("preserves the user's exact Ahvaz, Khuzestan, neighborhood and comparison search phrases", () => {
+  const positioning = searchKeywordLibrary({ family: "positioning" });
+  const exactTerms = [
+    "بهترین وکیل اهواز",
+    "بهترین وکیل در اهواز",
+    "وکیل خوب در اهواز",
+    "وکیل حرفه‌ای در اهواز",
+    "وکیل باتجربه در اهواز",
+    "وکیل متخصص در اهواز",
+    "وکیل برجسته اهواز",
+    "وکیل سرشناس اهواز",
+    "وکیل معروف اهواز",
+    "معروف‌ترین وکیل اهواز",
+    "وکیل معتبر اهواز",
+    "وکیل مجرب اهواز",
+    "وکیل کاربلد اهواز",
+    "وکیل خبره اهواز",
+    "وکیل توانمند اهواز",
+    "وکیل باسابقه اهواز",
+    "وکیل پایه یک دادگستری اهواز",
+    "بهترین وکیل پایه یک دادگستری در اهواز",
+    "وکیل دادگستری در اهواز",
+    "وکیل رسمی دادگستری اهواز",
+    "مشاوره حقوقی در اهواز",
+    "مشاور حقوقی حرفه‌ای اهواز",
+    "دفتر وکالت در اهواز",
+    "وکیل خوب و قابل اعتماد در اهواز",
+    "وکیل متخصص دعاوی در اهواز",
+    "وکیل مجرب و باتجربه اهواز",
+    "وکیل کیانپارس اهواز",
+    "وکیل کیان پارس اهواز",
+    "وکیل امانیه اهواز",
+    "وکیل زیتون اهواز",
+    "وکیل زیتون کارمندی اهواز",
+    "وکیل گلستان اهواز",
+    "بهترین وکیل خرمشهر",
+    "بهترین وکیل آبادان",
+    "بهترین وکیل ملکی در زیتون اهواز",
+    "حرفه‌ای‌ترین وکیل خانواده در امانیه اهواز",
+    "متخصص‌ترین وکیل کیفری در کیانپارس اهواز"
+  ];
+
+  for (const term of exactTerms) {
+    assert.ok(positioning.some((entry) => entry.term === term), `Missing user-supplied phrase: ${term}`);
+  }
+
+  const localProperty = positioning.find((entry) =>
+    entry.term === "بهترین وکیل ملکی در زیتون اهواز"
+  );
+  assert.equal(localProperty?.target, "/services/property-law");
+  assert.equal(localProperty?.requiresComplianceReview, true);
+  assert.equal(localProperty?.neutralUseOnly, true);
+
+  const localFamily = positioning.find((entry) =>
+    entry.term === "حرفه‌ای‌ترین وکیل خانواده در امانیه اهواز"
+  );
+  assert.equal(localFamily?.target, "/services/family-law");
+});

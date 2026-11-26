@@ -168,6 +168,10 @@ const KHUZESTAN_SEARCH_LOCATIONS = Object.freeze([
   "گلستان", "نادری", "کیان‌آباد", "لشکرآباد", "کوروش", "پادادشهر"
 ]);
 
+const AHWAZ_NEIGHBORHOOD_SEARCH_LOCATIONS = Object.freeze([
+  "کیانپارس", "کیان پارس", "امانیه", "زیتون", "زیتون کارمندی", "گلستان"
+]);
+
 function buildUserResearchPositioningTerms() {
   const entries = [];
   const highRisk = (term, clusterId, location = undefined) => ({
@@ -219,17 +223,56 @@ function buildUserResearchPositioningTerms() {
     }
   }
 
+  for (const neighborhood of AHWAZ_NEIGHBORHOOD_SEARCH_LOCATIONS) {
+    const location = `${neighborhood} اهواز`;
+    entries.push(
+      highRisk(`وکیل ${location}`, "lawyer-core", location),
+      highRisk(`وکیل در ${neighborhood} اهواز`, "lawyer-core", location)
+    );
+
+    for (const modifier of USER_RESEARCH_COMPARISON_PREFIXES) {
+      entries.push(
+        highRisk(`${modifier} وکیل ${neighborhood} اهواز`, "lawyer-core", location),
+        highRisk(`${modifier} وکیل در ${neighborhood} اهواز`, "lawyer-core", location)
+      );
+    }
+
+    for (const qualifier of USER_RESEARCH_QUALIFIERS) {
+      entries.push(
+        highRisk(`وکیل ${qualifier} ${neighborhood} اهواز`, "lawyer-core", location),
+        highRisk(`وکیل ${qualifier} در ${neighborhood} اهواز`, "lawyer-core", location)
+      );
+    }
+
+    for (const { subject, clusterId } of [...SERVICE_POSITIONING_SUBJECTS, ...FUTURE_POSITIONING_SUBJECTS]) {
+      for (const modifier of USER_RESEARCH_COMPARISON_PREFIXES) {
+        entries.push(
+          highRisk(`${modifier} وکیل ${subject} ${neighborhood} اهواز`, clusterId, location),
+          highRisk(`${modifier} وکیل ${subject} در ${neighborhood} اهواز`, clusterId, location)
+        );
+      }
+      for (const qualifier of USER_RESEARCH_QUALIFIERS) {
+        entries.push(
+          highRisk(`وکیل ${subject} ${qualifier} در ${neighborhood} اهواز`, clusterId, location)
+        );
+      }
+    }
+  }
+
   for (const term of [
     "بهترین وکیل ایران", "بهترین وکیل در ایران", "معروف‌ترین وکیل ایران",
     "برترین وکیل ایران", "وکیل حرفه‌ای ایران", "حرفه‌ای‌ترین وکیل ایران",
     "بهترین وکیل پایه یک دادگستری در اهواز", "بهترین وکیل دادگستری اهواز",
+    "وکیل دادگستری در اهواز", "وکیل رسمی دادگستری اهواز",
+    "وکیل خوب و قابل اعتماد در اهواز", "وکیل متخصص دعاوی در اهواز",
+    "وکیل مجرب و باتجربه اهواز", "مشاوره حقوقی در اهواز",
     "بهترین وکیل در اهواز", "وکیل خوب در اهواز", "وکیل حرفه‌ای در اهواز",
     "وکیل باتجربه در اهواز", "وکیل متخصص در اهواز", "وکیل برجسته اهواز",
     "وکیل سرشناس اهواز", "وکیل معروف اهواز", "معروف‌ترین وکیل اهواز",
     "وکیل معتبر اهواز", "وکیل مجرب اهواز", "وکیل کاربلد اهواز",
     "وکیل خبره اهواز", "وکیل توانمند اهواز", "وکیل خوش‌نام اهواز",
     "وکیل باسابقه اهواز", "وکیل متبحر اهواز", "وکیل مسلط به قوانین و مقررات و رویه قضایی اهواز",
-    "بهترین دفتر وکالت اهواز", "بهترین دفتر وکالت در اهواز", "بهترین مشاور حقوقی اهواز",
+    "دفتر وکالت در اهواز", "بهترین دفتر وکالت اهواز", "بهترین دفتر وکالت در اهواز", "بهترین مشاور حقوقی اهواز",
     "مشاور حقوقی حرفه‌ای اهواز", "مشاور حقوقی باتجربه اهواز", "وکیل آقا در اهواز",
     "وکیل خانم در اهواز", "وکیل زن در اهواز", "وکیل مرد در اهواز",
     "وکیل شبانه‌روزی اهواز", "وکیل فوری اهواز", "مشاوره حقوقی تلفنی اهواز",
