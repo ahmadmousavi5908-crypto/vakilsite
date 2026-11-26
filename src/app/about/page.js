@@ -112,6 +112,15 @@ export default function AboutPage() {
                 </div>
               ))}
             </dl>
+            <p className="about-credential-verification">
+              <a
+                href="https://hub.23055.ir/search-lawyer"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                استعلام پروانه در سامانه رسمی مرکز وکلای قوه قضائیه
+              </a>
+            </p>
           </div>
         </div>
       </section>
