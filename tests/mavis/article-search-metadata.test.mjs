@@ -81,7 +81,7 @@ test("blank CMS SEO fields fall back to the article's editorial metadata", () =>
 
 test("all static public articles have non-empty search metadata", async () => {
   const { articles } = await import("../../src/data/articles.js");
-  assert.equal(articles.length, 10);
+  assert.equal(articles.length, 11);
 
   for (const article of articles) {
     const result = getArticleSearchMetadata(article);
