@@ -256,7 +256,7 @@ test("keeps broad attorney-positioning candidates separate and routes service-sp
   const claims = searchKeywordLibrary({ clusterId: "cheques-commercial-papers", family: "positioning" });
   const criminal = searchKeywordLibrary({ clusterId: "criminal-property", family: "positioning" });
 
-  assert.equal(snapshot.positioningPhraseCount, 46);
+  assert.ok(snapshot.positioningPhraseCount >= 2000);
   assert.ok(lawyer.some((entry) => entry.term === "وکیل خوزستان" && entry.target === "/"));
   assert.ok(lawyer.some((entry) => entry.term === "وکیل حقوقی اهواز"));
   assert.ok(general.some((entry) => entry.term === "بهترین وکیل اهواز" && entry.claimRisk === "high"));
@@ -278,7 +278,12 @@ test("keeps broad attorney-positioning candidates separate and routes service-sp
     [family, "چطور بهترین وکیل خانواده در اهواز را انتخاب کنم؟", "/services/family-law"],
     [contracts, "بهترین وکیل قرارداد اهواز", "/services/contracts-and-obligations"],
     [claims, "بهترین وکیل چک برگشتی اهواز", "/services/claims-and-enforcement"],
-    [criminal, "بهترین وکیل کلاهبرداری اهواز", "/services/criminal-law"]
+    [criminal, "بهترین وکیل کلاهبرداری اهواز", "/services/criminal-law"],
+    [searchKeywordLibrary({ clusterId: "civil-law-eight-domains", family: "positioning" }), "بهترین وکیل مدنی اهواز", "/services"],
+    [searchKeywordLibrary({ clusterId: "civil-law-eight-domains", family: "positioning" }), "بهترین وکیل حقوقی اهواز", "/services"],
+    [searchKeywordLibrary({ clusterId: "criminal-procedure", family: "positioning" }), "حرفه‌ای‌ترین وکیل کیفری اهواز", "/services/criminal-law"],
+    [family, "وکیل خانواده باتجربه در اهواز", "/services/family-law"],
+    [property, "متخصص‌ترین وکیل ملکی اهواز", "/services/property-law"]
   ];
   for (const [entries, term, target] of expectedMappings) {
     const entry = entries.find((item) => item.term === term);
@@ -298,6 +303,61 @@ test("keeps broad attorney-positioning candidates separate and routes service-sp
   assert.equal(getKeywordEntryAction(unsupportedSuperlative), null);
   const brief = getKeywordClusterSeoBrief({ clusterId: "registration-land", focusKeyword: "وکیل ملکی اهواز" });
   assert.ok(!brief.relatedKeywords.some((term) => /بهترین|برترین|نابغه|متخصص/.test(term)));
+});
+
+
+test("preserves user-supplied comparison modifiers and Khuzestan location variants as searchable intent", () => {
+  const all = searchKeywordLibrary({ family: "positioning" });
+  const expected = [
+    ["criminal-procedure", "بهترین وکیل کیفری اهواز", "/services/criminal-law"],
+    ["criminal-procedure", "حرفه‌ای‌ترین وکیل کیفری اهواز", "/services/criminal-law"],
+    ["criminal-procedure", "وکیل کیفری باتجربه در اهواز", "/services/criminal-law"],
+    ["family-law", "بهترین وکیل خانواده اهواز", "/services/family-law"],
+    ["family-law", "وکیل خانواده متخصص در اهواز", "/services/family-law"],
+    ["civil-law-eight-domains", "بهترین وکیل مدنی اهواز", "/services"],
+    ["civil-law-eight-domains", "بهترین وکیل حقوقی اهواز", "/services"],
+    ["registration-land", "بهترین وکیل ملکی اهواز", "/services/property-law"],
+    ["labor-administrative-tax", "بهترین وکیل اداره کار اهواز", "محتوای آتی"],
+    ["insurance-accident-torts", "بهترین وکیل قصور پزشکی اهواز", "محتوای آتی"]
+  ];
+
+  for (const [clusterId, term, target] of expected) {
+    const entry = all.find((item) => item.clusterId === clusterId && item.term === term);
+    assert.ok(entry, `Missing user-researched phrase: ${term}`);
+    assert.equal(entry.target, target);
+    assert.equal(entry.requiresComplianceReview, true);
+    assert.equal(entry.neutralUseOnly, true);
+  }
+
+  const khuzestan = all.find((entry) => entry.term === "بهترین وکیل آبادان");
+  assert.ok(khuzestan);
+  assert.equal(khuzestan.target, "محتوای آتی");
+  assert.equal(khuzestan.location, "آبادان");
+  assert.equal(khuzestan.userResearchSeed, true);
+
+  const neighborhoodCases = [
+    ["کیانپارس", "بهترین وکیل کیانپارس"],
+    ["امانیه", "بهترین وکیل در امانیه"],
+    ["زیتون کارمندی", "بهترین وکیل زیتون کارمندی"],
+    ["زیتون", "بهترین وکیل زیتون"],
+    ["کیان پارس", "بهترین وکیل کیان پارس"],
+    ["گلستان", "بهترین وکیل گلستان"]
+  ];
+  for (const [location, phrase] of neighborhoodCases) {
+    const entry = all.find((item) => item.term === phrase);
+    assert.ok(entry, `Missing neighborhood phrase: ${phrase}`);
+    assert.equal(entry.target, "/");
+    assert.equal(entry.location, location);
+    assert.equal(entry.userResearchSeed, true);
+  }
+
+  const localNeighborhoods = searchKeywordLibrary({ family: "local", query: "کیانپارس" });
+  assert.ok(localNeighborhoods.some((entry) => entry.term === "وکیل تخلیه مغازه در کیانپارس"));
+  assert.ok(localNeighborhoods.some((entry) => entry.term === "تخلیه مغازه در کیانپارس"));
+  assert.ok(localNeighborhoods.every((entry) => entry.location === "کیانپارس"));
+  assert.ok(searchKeywordLibrary({ family: "local", query: "امانیه" }).length > 0);
+  assert.ok(searchKeywordLibrary({ family: "local", query: "زیتون کارمندی" }).length > 0);
+  assert.ok(searchKeywordLibrary({ family: "local", query: "گلستان" }).length > 0);
 });
 
 

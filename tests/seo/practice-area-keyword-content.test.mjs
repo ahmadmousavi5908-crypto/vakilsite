@@ -3,6 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { practiceAreas } from "../../src/data/practice-areas.js";
 import { normalizePersianSearchText } from "../../src/lib/mavis/persian-text-normalization.mjs";
+import { PRACTICE_AREA_META_TITLES, PRACTICE_AREA_KEYWORDS } from "../../src/lib/seo/practice-area-search-titles.mjs";
 
 const requiredPhrasesByArea = {
   "family-law": [
@@ -189,4 +190,22 @@ test("adds verifiable author, review date and question-led headings to the prope
   assert.ok(template.includes('author: { "@id": siteUrl + "/#attorney" }'));
   assert.ok(template.includes("area.contentAuthor"));
   assert.ok(template.includes("area.sectionHeadings?.topics"));
+});
+
+
+test("assigns best-lawyer intent to each canonical service title and page keyword set", () => {
+  const expected = {
+    "family-law": "بهترین وکیل خانواده اهواز",
+    "criminal-law": "بهترین وکیل کیفری اهواز",
+    "property-law": "بهترین وکیل ملکی اهواز",
+    "contracts-and-obligations": "بهترین وکیل قرارداد اهواز",
+    "claims-and-enforcement": "بهترین وکیل چک و مطالبه وجه اهواز",
+    "legal-consultation": "مشاوره حقوقی اهواز"
+  };
+
+  for (const [slug, phrase] of Object.entries(expected)) {
+    assert.ok(PRACTICE_AREA_META_TITLES[slug].includes(phrase), `Missing title intent for ${slug}`);
+    assert.ok(PRACTICE_AREA_KEYWORDS[slug].includes(phrase), `Missing page keyword for ${slug}`);
+    assert.ok(PRACTICE_AREA_KEYWORDS[slug].some((term) => /حرفه‌ای|باتجربه|متخصص/.test(term)));
+  }
 });

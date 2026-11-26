@@ -5,8 +5,8 @@ import { SERVICES_HUB_TITLE } from "../../src/lib/seo/services-hub-title.mjs";
 const metadataTemplateSuffix = " | موسوی";
 
 test("services hub title targets the core local legal-services intent", () => {
-  assert.equal(SERVICES_HUB_TITLE, "وکیل حقوقی در اهواز و خوزستان");
-  assert.ok(SERVICES_HUB_TITLE.startsWith("وکیل حقوقی در اهواز"));
+  assert.equal(SERVICES_HUB_TITLE, "بهترین وکیل حقوقی و مدنی اهواز؛ معیارهای انتخاب وکیل");
+  assert.ok(SERVICES_HUB_TITLE.startsWith("بهترین وکیل حقوقی و مدنی اهواز"));
 });
 
 test("services hub title stays within the search title length budget after the site template", () => {

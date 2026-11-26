@@ -55,7 +55,7 @@ const COLLOQUIAL_SUBJECTS = Object.freeze({
   "criminal-property": ["ازم کلاهبرداری کردن، چطور پولمو پس بگیرم؟", "مالمو امانت دادم پس نمی‌ده، چیکار کنم؟", "یکی ازم پول گرفته و جواب نمی‌ده، می‌تونم شکایت کنم؟", "گوشیمو دزدیدن، برای شکایت چیکار کنم؟"]
 });
 
-const POSITIONING_TERMS = Object.freeze([
+const BASE_POSITIONING_TERMS = Object.freeze([
   { term: "وکیل خوزستان", intent: "regional-attorney-discovery", claimRisk: "low", clusterId: "lawyer-core" },
   { term: "وکیل اهواز", intent: "local-attorney-discovery", claimRisk: "low", clusterId: "lawyer-core" },
   { term: "وکیل حقوقی اهواز", intent: "local-attorney-discovery", claimRisk: "low", clusterId: "lawyer-core" },
@@ -102,6 +102,151 @@ const POSITIONING_TERMS = Object.freeze([
   { term: "معیارهای انتخاب بهترین وکیل ملکی در اهواز چیست؟", intent: "neutral-selection-guide", claimRisk: "low", clusterId: "registration-land", neutralUseOnly: true },
   { term: "چطور بهترین وکیل خانواده در اهواز را انتخاب کنم؟", intent: "neutral-selection-guide", claimRisk: "low", clusterId: "family-law", neutralUseOnly: true },
   { term: "برای انتخاب بهترین وکیل کیفری در اهواز چه معیارهایی مهم است؟", intent: "neutral-selection-guide", claimRisk: "low", clusterId: "criminal-procedure", neutralUseOnly: true }
+
+]);
+
+const USER_RESEARCH_COMPARISON_PREFIXES = Object.freeze([
+  "بهترین", "برترین", "حرفه‌ای‌ترین", "حرفه ای ترین", "حرفه‌ای ترین",
+  "متخصص‌ترین", "متخصص ترین", "باتجربه‌ترین", "باتجربه ترین",
+  "با‌تجربه‌ترین", "با تجربه‌ترین", "معتبرترین", "معتبر ترین",
+  "مجرب‌ترین", "مجرب ترین", "کاربلدترین", "خبره‌ترین",
+  "سرشناس‌ترین", "معروف‌ترین", "توانمندترین", "خوش‌نام‌ترین",
+  "متبحرترین", "باسابقه‌ترین", "برجسته‌ترین", "ممتازترین", "نخبه‌ترین"
+]);
+
+const USER_RESEARCH_QUALIFIERS = Object.freeze([
+  "خوب", "حرفه‌ای", "حرفه ای", "متخصص", "باتجربه", "با تجربه",
+  "مجرب", "معتبر", "کاربلد", "خبره", "سرشناس", "معروف",
+  "توانمند", "خوش‌نام", "باسابقه", "برجسته", "ممتاز", "متبحر"
+]);
+
+const SERVICE_POSITIONING_SUBJECTS = Object.freeze([
+  { subject: "کیفری", clusterId: "criminal-procedure" },
+  { subject: "جنایی", clusterId: "criminal-life-and-body" },
+  { subject: "حقوقی", clusterId: "civil-law-eight-domains" },
+  { subject: "مدنی", clusterId: "civil-law-eight-domains" },
+  { subject: "خانواده", clusterId: "family-law" },
+  { subject: "طلاق", clusterId: "family-law" },
+  { subject: "مهریه", clusterId: "family-law" },
+  { subject: "حضانت", clusterId: "family-law" },
+  { subject: "ملکی", clusterId: "registration-land" },
+  { subject: "دعاوی ملکی", clusterId: "registration-land" },
+  { subject: "ثبتی", clusterId: "registration-land" },
+  { subject: "قرارداد", clusterId: "civil-contracts-obligations" },
+  { subject: "چک و مطالبه وجه", clusterId: "cheques-commercial-papers" },
+  { subject: "چک برگشتی", clusterId: "cheques-commercial-papers" },
+  { subject: "مطالبه مطالبات", clusterId: "enforcement-debt" },
+  { subject: "مشاوره حقوقی", clusterId: "legal-consultation" }
+]);
+
+const FUTURE_POSITIONING_SUBJECTS = Object.freeze([
+  { subject: "اداره کار", clusterId: "labor-administrative-tax" },
+  { subject: "کارگر و کارفرما", clusterId: "labor-administrative-tax" },
+  { subject: "تأمین اجتماعی", clusterId: "labor-administrative-tax" },
+  { subject: "مالیاتی", clusterId: "labor-administrative-tax" },
+  { subject: "دیوان عدالت اداری", clusterId: "labor-administrative-tax" },
+  { subject: "بیمه", clusterId: "insurance-accident-torts" },
+  { subject: "قصور پزشکی", clusterId: "insurance-accident-torts" },
+  { subject: "تصادفات", clusterId: "insurance-accident-torts" },
+  { subject: "گمرک", clusterId: "international-foreign-nationals" },
+  { subject: "مهاجرت", clusterId: "international-foreign-nationals" },
+  { subject: "مالکیت فکری", clusterId: "intellectual-digital-commerce" },
+  { subject: "تجاری", clusterId: "commercial-law" },
+  { subject: "ارث", clusterId: "inheritance-estate" },
+  { subject: "ورزشی", clusterId: "commercial-law" },
+  { subject: "رسانه", clusterId: "intellectual-digital-commerce" },
+  { subject: "رمزارز", clusterId: "criminal-cyber" }
+]);
+
+const KHUZESTAN_SEARCH_LOCATIONS = Object.freeze([
+  "اهواز", "خوزستان", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک",
+  "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه",
+  "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان",
+  "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک",
+  "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا",
+  "رامشیر", "هفتکل", "زیتون", "زیتون کارمندی", "کیانپارس", "کیان پارس", "امانیه",
+  "گلستان", "نادری", "کیان‌آباد", "لشکرآباد", "کوروش", "پادادشهر"
+]);
+
+function buildUserResearchPositioningTerms() {
+  const entries = [];
+  const highRisk = (term, clusterId, location = undefined) => ({
+    term,
+    intent: "user-research-comparison",
+    claimRisk: "high",
+    clusterId,
+    ...(location ? { location } : {}),
+    userResearchSeed: true
+  });
+
+  for (const { subject, clusterId } of SERVICE_POSITIONING_SUBJECTS) {
+    for (const modifier of USER_RESEARCH_COMPARISON_PREFIXES) {
+      entries.push(highRisk(`${modifier} وکیل ${subject} اهواز`, clusterId, "اهواز"));
+      entries.push(highRisk(`${modifier} وکیل ${subject} در اهواز`, clusterId, "اهواز"));
+    }
+    for (const qualifier of USER_RESEARCH_QUALIFIERS) {
+      entries.push(highRisk(`وکیل ${subject} ${qualifier} در اهواز`, clusterId, "اهواز"));
+    }
+  }
+
+  for (const { subject, clusterId } of FUTURE_POSITIONING_SUBJECTS) {
+    for (const modifier of ["بهترین", "برترین", "حرفه‌ای‌ترین", "حرفه ای ترین", "متخصص‌ترین", "باتجربه‌ترین", "معتبرترین"]) {
+      entries.push(highRisk(`${modifier} وکیل ${subject} اهواز`, clusterId, "اهواز"));
+      entries.push(highRisk(`${modifier} وکیل ${subject} در اهواز`, clusterId, "اهواز"));
+    }
+    for (const qualifier of ["حرفه‌ای", "متخصص", "باتجربه", "مجرب", "معتبر", "کاربلد"]) {
+      entries.push(highRisk(`وکیل ${subject} ${qualifier} در اهواز`, clusterId, "اهواز"));
+    }
+  }
+
+  const ahvazCoreLocations = new Set([
+    "اهواز", "خوزستان", "زیتون", "زیتون کارمندی", "کیانپارس", "کیان پارس",
+    "امانیه", "گلستان", "نادری", "کیان‌آباد", "لشکرآباد", "کوروش", "پادادشهر"
+  ]);
+  for (const city of KHUZESTAN_SEARCH_LOCATIONS) {
+    const ownerCluster = ahvazCoreLocations.has(city) ? "lawyer-core" : null;
+    entries.push(
+      highRisk(`وکیل ${city}`, ownerCluster, city),
+      highRisk(`وکیل در ${city}`, ownerCluster, city)
+    );
+    for (const modifier of USER_RESEARCH_COMPARISON_PREFIXES) {
+      entries.push(highRisk(`${modifier} وکیل ${city}`, ownerCluster, city));
+      entries.push(highRisk(`${modifier} وکیل در ${city}`, ownerCluster, city));
+    }
+    for (const qualifier of USER_RESEARCH_QUALIFIERS) {
+      entries.push(highRisk(`وکیل ${qualifier} ${city}`, ownerCluster, city));
+      entries.push(highRisk(`وکیل ${qualifier} در ${city}`, ownerCluster, city));
+    }
+  }
+
+  for (const term of [
+    "بهترین وکیل ایران", "بهترین وکیل در ایران", "معروف‌ترین وکیل ایران",
+    "برترین وکیل ایران", "وکیل حرفه‌ای ایران", "حرفه‌ای‌ترین وکیل ایران",
+    "بهترین وکیل پایه یک دادگستری در اهواز", "بهترین وکیل دادگستری اهواز",
+    "بهترین وکیل در اهواز", "وکیل خوب در اهواز", "وکیل حرفه‌ای در اهواز",
+    "وکیل باتجربه در اهواز", "وکیل متخصص در اهواز", "وکیل برجسته اهواز",
+    "وکیل سرشناس اهواز", "وکیل معروف اهواز", "معروف‌ترین وکیل اهواز",
+    "وکیل معتبر اهواز", "وکیل مجرب اهواز", "وکیل کاربلد اهواز",
+    "وکیل خبره اهواز", "وکیل توانمند اهواز", "وکیل خوش‌نام اهواز",
+    "وکیل باسابقه اهواز", "وکیل متبحر اهواز", "وکیل مسلط به قوانین و مقررات و رویه قضایی اهواز",
+    "بهترین دفتر وکالت اهواز", "بهترین دفتر وکالت در اهواز", "بهترین مشاور حقوقی اهواز",
+    "مشاور حقوقی حرفه‌ای اهواز", "مشاور حقوقی باتجربه اهواز", "وکیل آقا در اهواز",
+    "وکیل خانم در اهواز", "وکیل زن در اهواز", "وکیل مرد در اهواز",
+    "وکیل شبانه‌روزی اهواز", "وکیل فوری اهواز", "مشاوره حقوقی تلفنی اهواز",
+    "مشاوره حقوقی آنلاین اهواز", "مشاوره حقوقی حضوری اهواز", "هزینه مشاوره حقوقی اهواز",
+    "حق‌الوکاله مناسب اهواز", "وکیل برای پرونده کیفری اهواز", "وکیل برای پرونده ملکی اهواز",
+    "وکیل برای پرونده خانوادگی اهواز", "وکیل نزدیک من اهواز", "رتبه اول وکلا",
+    "وکیل رتبه یک ایران", "استاد فن دفاع حقوقی", "وکیل نابغه حقوق"
+  ]) {
+    entries.push(highRisk(term, "lawyer-core", "اهواز"));
+  }
+
+  return entries;
+}
+
+const POSITIONING_TERMS = Object.freeze([
+  ...BASE_POSITIONING_TERMS,
+  ...buildUserResearchPositioningTerms()
 ]);
 
 const QUESTION_TEMPLATES = Object.freeze([
@@ -299,6 +444,8 @@ export function searchKeywordLibrary({ query = "", clusterId = "all", family = "
         family: "positioning",
         origin: "curated-search-language-candidate",
         claimRisk: item.claimRisk,
+        ...(item.location ? { location: item.location } : {}),
+        userResearchSeed: item.userResearchSeed === true,
         observedInGsc: item.observedInGsc === true,
         requiresComplianceReview: true,
         neutralUseOnly: true
