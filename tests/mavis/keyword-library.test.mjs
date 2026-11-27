@@ -27,7 +27,7 @@ test("exposes current metric and Search Console evidence status to the internal 
   const snapshot = getKeywordLibrarySnapshot();
   assert.equal(snapshot.metricsStatus, "پیشنهادی؛ حجم جست‌وجو و سختی تأیید نشده");
   assert.match(snapshot.gscStatus, /8 عبارت/);
-  assert.match(snapshot.gscStatus, /20 صفحه/);
+  assert.match(snapshot.gscStatus, /23 صفحه/);
 });
 
 test("keeps observed Search Console queries separate from editorial candidates and classifies risk", () => {
