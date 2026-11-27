@@ -67,6 +67,7 @@ function visiblePracticeAreaText(area) {
     area.shortTitle,
     area.description,
     area.intro,
+    area.searchIntentGuidance,
     ...(area.topics || []),
     ...(area.checks || []),
     ...(area.reviewSteps || []),
@@ -108,6 +109,14 @@ test("covers best-lawyer search intent with neutral selection guidance across ex
   assert.ok(criminal.includes(normalizePersianSearchText("بهترین وکیل کیفری اهواز")));
   assert.ok(contracts.includes(normalizePersianSearchText("بهترین وکیل قرارداد اهواز")));
   assert.ok(claims.includes(normalizePersianSearchText("بهترین وکیل چک برگشتی اهواز")));
+  for (const [area, phrase] of [
+    [property, "وکیل حرفه‌ای ملکی اهواز"],
+    [family, "وکیل متخصص خانواده اهواز"],
+    [criminal, "وکیل باتجربه کیفری اهواز"],
+    [contracts, "وکیل برتر قرارداد اهواز"],
+    [claims, "وکیل متخصص چک و سفته اهواز"]
+  ]) assert.ok(area.includes(normalizePersianSearchText(phrase)), `Missing public lawyer-first modifier: ${phrase}`);
+  assert.ok(property.includes(normalizePersianSearchText("متخصص‌ترین وکیل ملکی اهواز")));
   for (const content of [property, family, criminal]) {
     assert.ok(content.includes(normalizePersianSearchText("اعتبار پروانه")));
     assert.ok(content.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
@@ -226,6 +235,11 @@ test("publishes Ahvaz neighborhood and Khuzestan city coverage as visible region
     "وکیل گلستان",
     "بهترین وکیل اهواز",
     "وکیل خوب در اهواز",
+    "وکیل حرفه‌ای اهواز",
+    "وکیل متخصص اهواز",
+    "وکیل برتر اهواز",
+    "حرفه‌ای‌ترین وکیل اهواز",
+    "متخصص‌ترین وکیل اهواز",
     "وکیل باتجربه در اهواز",
     "بهترین وکیل خرمشهر",
     "بهترین وکیل آبادان",
