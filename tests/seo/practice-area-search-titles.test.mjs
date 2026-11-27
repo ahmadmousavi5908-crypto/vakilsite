@@ -11,12 +11,12 @@ import {
 
 test("practice area search titles are descriptive and locally accurate", () => {
   assert.deepEqual(PRACTICE_AREA_SEARCH_TITLES, {
-    "family-law": "وکیل خانواده در اهواز و خوزستان",
-    "criminal-law": "وکیل کیفری در اهواز و خوزستان",
-    "property-law": "وکیل ملکی در اهواز و خوزستان",
-    "contracts-and-obligations": "وکیل قرارداد در اهواز و خوزستان",
-    "claims-and-enforcement": "وکیل چک و مطالبه وجه در اهواز",
-    "legal-consultation": "مشاوره حقوقی در اهواز و خوزستان"
+    "family-law": "بهترین وکیل خانواده اهواز؛ معیارهای انتخاب",
+    "criminal-law": "بهترین وکیل کیفری اهواز؛ معیارهای انتخاب",
+    "property-law": "بهترین وکیل ملکی اهواز؛ معیارهای انتخاب",
+    "contracts-and-obligations": "بهترین وکیل قرارداد اهواز؛ معیارهای انتخاب",
+    "claims-and-enforcement": "بهترین وکیل چک و مطالبه وجه اهواز؛ معیارهای انتخاب",
+    "legal-consultation": "بهترین وکیل حقوقی اهواز؛ معیارهای انتخاب"
   });
 });
 
@@ -25,23 +25,23 @@ test("unknown practice areas keep their existing neutral title", () => {
 });
 
 
-test("service metadata titles stay neutral while preserving descriptive visible H1 titles", () => {
+test("service metadata titles lead with best-lawyer search intent and frame it as selection guidance", () => {
   assert.deepEqual(PRACTICE_AREA_META_TITLES, {
-    "family-law": "وکیل خانواده اهواز؛ انتخاب بهترین وکیل",
-    "criminal-law": "وکیل کیفری اهواز؛ انتخاب بهترین وکیل",
-    "property-law": "وکیل ملکی اهواز؛ انتخاب بهترین وکیل",
-    "contracts-and-obligations": "وکیل قرارداد اهواز؛ انتخاب بهترین وکیل",
-    "claims-and-enforcement": "وکیل چک اهواز؛ انتخاب بهترین وکیل",
-    "legal-consultation": "وکیل و مشاوره حقوقی اهواز؛ راهنمای انتخاب"
+    "family-law": "بهترین وکیل خانواده اهواز؛ راهنمای انتخاب",
+    "criminal-law": "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب",
+    "property-law": "بهترین وکیل ملکی اهواز؛ راهنمای انتخاب",
+    "contracts-and-obligations": "بهترین وکیل قرارداد اهواز؛ راهنمای انتخاب",
+    "claims-and-enforcement": "بهترین وکیل چک اهواز؛ راهنمای انتخاب",
+    "legal-consultation": "بهترین وکیل حقوقی اهواز؛ راهنمای انتخاب"
   });
-  assert.equal(getPracticeAreaMetaTitle("property-law"), "وکیل ملکی اهواز؛ انتخاب بهترین وکیل");
-  assert.equal(getPracticeAreaMetaTitle("criminal-law"), "وکیل کیفری اهواز؛ انتخاب بهترین وکیل");
-  assert.equal(getPracticeAreaMetaTitle("legal-consultation"), "وکیل و مشاوره حقوقی اهواز؛ راهنمای انتخاب");
+  assert.equal(getPracticeAreaMetaTitle("property-law"), "بهترین وکیل ملکی اهواز؛ راهنمای انتخاب");
+  assert.equal(getPracticeAreaMetaTitle("criminal-law"), "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب");
+  assert.equal(getPracticeAreaMetaTitle("legal-consultation"), "بهترین وکیل حقوقی اهواز؛ راهنمای انتخاب");
   assert.equal(getPracticeAreaMetaTitle("unknown-area", "وکیل در اهواز"), "وکیل در اهواز");
-  assert.equal(getPracticeAreaSearchTitle("property-law"), "وکیل ملکی در اهواز و خوزستان");
+  assert.equal(getPracticeAreaSearchTitle("property-law"), "بهترین وکیل ملکی اهواز؛ معیارهای انتخاب");
   for (const title of Object.values(PRACTICE_AREA_META_TITLES)) {
-    assert.ok(title.startsWith("وکیل ") || title.startsWith("مشاوره "), `Titles must lead with the service term: ${title}`);
-    assert.ok(!title.includes("بهترین وکیل") || title.includes("انتخاب"), `Best-lawyer wording must be framed as selection guidance: ${title}`);
+    assert.ok(title.startsWith("بهترین وکیل "), `Titles must lead with the primary best-lawyer phrase: ${title}`);
+    assert.ok(title.includes("راهنمای انتخاب"), `Best-lawyer wording must be framed as selection guidance: ${title}`);
     assert.ok(`${title} | سید احمد موسوی`.length <= 60, `Service title exceeds 60 characters: ${title}`);
   }
 });

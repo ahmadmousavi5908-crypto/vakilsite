@@ -205,20 +205,24 @@ test("adds verifiable author, review date and question-led headings to the prope
 
 test("keeps service titles neutral while preserving best-lawyer phrases in page keywords", () => {
   const expected = {
-    "family-law": { title: "وکیل خانواده اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل خانواده اهواز" },
-    "criminal-law": { title: "وکیل کیفری اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل کیفری اهواز" },
-    "property-law": { title: "وکیل ملکی اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل ملکی اهواز" },
-    "contracts-and-obligations": { title: "وکیل قرارداد اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل قرارداد اهواز" },
-    "claims-and-enforcement": { title: "وکیل چک اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل چک و مطالبه وجه اهواز" },
-    "legal-consultation": { title: "وکیل و مشاوره حقوقی اهواز؛ راهنمای انتخاب", keyword: "مشاوره حقوقی اهواز" }
+    "family-law": { title: "بهترین وکیل خانواده اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل خانواده اهواز" },
+    "criminal-law": { title: "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل کیفری اهواز" },
+    "property-law": { title: "بهترین وکیل ملکی اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل ملکی اهواز" },
+    "contracts-and-obligations": { title: "بهترین وکیل قرارداد اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل قرارداد اهواز" },
+    "claims-and-enforcement": { title: "بهترین وکیل چک اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل چک و مطالبه وجه اهواز" },
+    "legal-consultation": { title: "بهترین وکیل حقوقی اهواز؛ راهنمای انتخاب", keyword: "مشاوره حقوقی اهواز" }
   };
 
   for (const [slug, { title, keyword }] of Object.entries(expected)) {
     assert.equal(PRACTICE_AREA_META_TITLES[slug], title, `Unexpected neutral title for ${slug}`);
-    assert.ok(title.startsWith("وکیل ") || title.startsWith("مشاوره "), `Title must lead with the service term for ${slug}`);
-    assert.ok(!title.includes("بهترین وکیل") || title.includes("انتخاب"), `Best-lawyer wording must remain selection guidance for ${slug}`);
+    assert.ok(title.startsWith("بهترین وکیل "), `Title must lead with the primary best-lawyer phrase for ${slug}`);
+    assert.ok(title.includes("راهنمای انتخاب"), `Best-lawyer wording must remain selection guidance for ${slug}`);
     assert.ok(PRACTICE_AREA_KEYWORDS[slug].includes(keyword), `Missing page keyword for ${slug}`);
-    assert.ok(PRACTICE_AREA_KEYWORDS[slug].some((term) => /حرفه‌ای|باتجربه|متخصص/.test(term)));
+    assert.deepEqual(PRACTICE_AREA_KEYWORDS[slug].slice(0, 3), [
+      expectedPrimaryPhrase(slug),
+      expectedProfessionalSuperlative(slug),
+      expectedSpecialistSuperlative(slug)
+    ]);
   }
 });
 
@@ -283,4 +287,46 @@ test("preserves superlative phrases as publishable search intent without making 
   assert.ok(expansion.lawyerFirstVariants.includes("وکیل حرفه‌ای اهواز"));
   assert.match(expansion.publicUsagePolicy, /may appear publicly as relevant user-search intent/u);
   assert.match(expansion.publicUsagePolicy, /unsupported first-person superiority/u);
+  assert.deepEqual(expansion.priorityClusters, {
+    "family-law": ["بهترین وکیل خانواده اهواز", "حرفه‌ای‌ترین وکیل خانواده اهواز", "متخصص‌ترین وکیل خانواده اهواز"],
+    "criminal-law": ["بهترین وکیل کیفری اهواز", "حرفه‌ای‌ترین وکیل کیفری اهواز", "متخصص‌ترین وکیل کیفری اهواز"],
+    "property-law": ["بهترین وکیل ملکی اهواز", "حرفه‌ای‌ترین وکیل ملکی اهواز", "متخصص‌ترین وکیل ملکی اهواز"],
+    "contracts-and-obligations": ["بهترین وکیل قرارداد اهواز", "حرفه‌ای‌ترین وکیل قرارداد اهواز", "متخصص‌ترین وکیل قرارداد اهواز"],
+    "claims-and-enforcement": ["بهترین وکیل چک اهواز", "حرفه‌ای‌ترین وکیل چک اهواز", "متخصص‌ترین وکیل چک اهواز"],
+    "legal-consultation": ["بهترین وکیل حقوقی اهواز", "حرفه‌ای‌ترین وکیل حقوقی اهواز", "متخصص‌ترین وکیل حقوقی اهواز"]
+  });
 });
+
+
+function expectedPrimaryPhrase(slug) {
+  return {
+    "family-law": "بهترین وکیل خانواده اهواز",
+    "criminal-law": "بهترین وکیل کیفری اهواز",
+    "property-law": "بهترین وکیل ملکی اهواز",
+    "contracts-and-obligations": "بهترین وکیل قرارداد اهواز",
+    "claims-and-enforcement": "بهترین وکیل چک اهواز",
+    "legal-consultation": "بهترین وکیل حقوقی اهواز"
+  }[slug];
+}
+
+function expectedProfessionalSuperlative(slug) {
+  return {
+    "family-law": "حرفه‌ای‌ترین وکیل خانواده اهواز",
+    "criminal-law": "حرفه‌ای‌ترین وکیل کیفری اهواز",
+    "property-law": "حرفه‌ای‌ترین وکیل ملکی اهواز",
+    "contracts-and-obligations": "حرفه‌ای‌ترین وکیل قرارداد اهواز",
+    "claims-and-enforcement": "حرفه‌ای‌ترین وکیل چک اهواز",
+    "legal-consultation": "حرفه‌ای‌ترین وکیل حقوقی اهواز"
+  }[slug];
+}
+
+function expectedSpecialistSuperlative(slug) {
+  return {
+    "family-law": "متخصص‌ترین وکیل خانواده اهواز",
+    "criminal-law": "متخصص‌ترین وکیل کیفری اهواز",
+    "property-law": "متخصص‌ترین وکیل ملکی اهواز",
+    "contracts-and-obligations": "متخصص‌ترین وکیل قرارداد اهواز",
+    "claims-and-enforcement": "متخصص‌ترین وکیل چک اهواز",
+    "legal-consultation": "متخصص‌ترین وکیل حقوقی اهواز"
+  }[slug];
+}
