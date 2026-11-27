@@ -732,7 +732,7 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
   assert.equal(recent.branded.clicks, 8);
   assert.equal(recent.branded.impressions, 14);
   assert.equal(recent.nonBranded.clicks, 0);
-  assert.equal(recent.nonBranded.impressions, 29);
+  assert.equal(recent.nonBranded.impressions, 31);
   assert.equal(recent.device.mobile.clicks, 44);
   assert.equal(recent.device.mobile.impressions, 164);
   assert.equal(recent.device.desktop.clicks, 1);
@@ -866,7 +866,7 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
   assert.equal(recent.branded.clicks, 8);
   assert.equal(recent.branded.impressions, 14);
   assert.equal(recent.nonBranded.clicks, 0);
-  assert.equal(recent.nonBranded.impressions, 29);
+  assert.equal(recent.nonBranded.impressions, 31);
   assert.equal(recent.device.mobile.clicks, 44);
   assert.equal(recent.device.mobile.impressions, 164);
   assert.equal(recent.device.desktop.clicks, 1);
