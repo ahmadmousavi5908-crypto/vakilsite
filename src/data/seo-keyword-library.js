@@ -12,6 +12,14 @@ const keywordLibrary = {
     "status": "candidate-only-not-volume-validated",
     "retention": "Preserve source wording and variants; existing library records are not deleted.",
     "usage": "Route comparison and superlative query intent to the closest existing service page or an explicit future-content cluster. Use neutral selection guidance, never unsupported first-person superiority claims.",
+    "priorityClusters": {
+      "family-law": ["بهترین وکیل خانواده اهواز", "حرفه‌ای‌ترین وکیل خانواده اهواز", "متخصص‌ترین وکیل خانواده اهواز"],
+      "criminal-law": ["بهترین وکیل کیفری اهواز", "حرفه‌ای‌ترین وکیل کیفری اهواز", "متخصص‌ترین وکیل کیفری اهواز"],
+      "property-law": ["بهترین وکیل ملکی اهواز", "حرفه‌ای‌ترین وکیل ملکی اهواز", "متخصص‌ترین وکیل ملکی اهواز"],
+      "contracts-and-obligations": ["بهترین وکیل قرارداد اهواز", "حرفه‌ای‌ترین وکیل قرارداد اهواز", "متخصص‌ترین وکیل قرارداد اهواز"],
+      "claims-and-enforcement": ["بهترین وکیل چک اهواز", "حرفه‌ای‌ترین وکیل چک اهواز", "متخصص‌ترین وکیل چک اهواز"],
+      "legal-consultation": ["بهترین وکیل حقوقی اهواز", "حرفه‌ای‌ترین وکیل حقوقی اهواز", "متخصص‌ترین وکیل حقوقی اهواز"]
+    },
     "exactPhrases": [
       "بهترین وکیل اهواز",
       "بهترین وکیل در اهواز",
