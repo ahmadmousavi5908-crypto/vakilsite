@@ -175,17 +175,15 @@ jobs:
           if (!location.city?.trim() || !location.province?.trim()) {
             throw new Error("Public office-location API must include city and province.");
           }
-          const latitude = Number(location.latitude);
-          const longitude = Number(location.longitude);
-          if (
-            !Number.isFinite(latitude) ||
-            !Number.isFinite(longitude) ||
-            latitude < -90 ||
-            latitude > 90 ||
-            longitude < -180 ||
-            longitude > 180
-          ) {
-            throw new Error("Public office-location API must include valid geographic coordinates.");
+          const privateLocationFields = ["address", "latitude", "longitude", "map_url", "phone"];
+          const exposedPrivateFields = privateLocationFields.filter((field) =>
+            Object.hasOwn(location, field)
+          );
+          if (exposedPrivateFields.length) {
+            throw new Error(
+              "Public office-location API must not expose private location fields: " +
+              exposedPrivateFields.join(", ")
+            );
           }
           if (Object.hasOwn(location, "phone")) {
             throw new Error("The public office-location API must not expose a phone field.");
@@ -239,16 +237,11 @@ jobs:
             throw new Error("LegalService address must match the public office-location API.");
           }
           if (
-            Number(legalService.geo?.latitude) !== latitude ||
-            Number(legalService.geo?.longitude) !== longitude
+            Object.hasOwn(legalService.address || {}, "streetAddress") ||
+            Object.hasOwn(legalService, "geo") ||
+            Object.hasOwn(legalService, "hasMap")
           ) {
-            throw new Error("LegalService geo coordinates must match the public office-location API.");
-          }
-          if (
-            !location.map_url?.trim() &&
-            legalService.hasMap !== "https://www.google.com/maps?q=" + latitude + "," + longitude
-          ) {
-            throw new Error("LegalService hasMap must be derived from the verified public coordinates.");
+            throw new Error("LegalService JSON-LD must not expose streetAddress, geo or hasMap.");
           }
           const legalServiceTypes = Array.isArray(legalService["@type"])
             ? legalService["@type"]
@@ -276,32 +269,6 @@ jobs:
           ) {
             throw new Error("LegalService JSON-LD must include the verified official social profile.");
           }
-          const normalizeAddress = (value) =>
-            typeof value === "string"
-              ? value.trim().replace(/[\\s،,]+/g, " ").toLocaleLowerCase("fa")
-              : "";
-          const normalizedAddress = normalizeAddress(location.address);
-          const genericAddressValues = new Set([
-            normalizeAddress(location.city),
-            normalizeAddress(location.province),
-            normalizeAddress(location.city + " " + location.province),
-            normalizeAddress(location.province + " " + location.city),
-          ]);
-          const hasSpecificStreetAddress =
-            normalizedAddress && !genericAddressValues.has(normalizedAddress);
-          if (
-            hasSpecificStreetAddress &&
-            legalService.address?.streetAddress !== location.address
-          ) {
-            throw new Error("LegalService street address must match the public office-location API.");
-          }
-          if (
-            !hasSpecificStreetAddress &&
-            legalService.address?.streetAddress
-          ) {
-            throw new Error("City/province-only data must not be emitted as a street address.");
-          }
-
           console.log("Public office-location API and initial HTML LegalService JSON-LD verified.");
           NODE
 
