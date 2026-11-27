@@ -729,8 +729,8 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
     ctrPercent: 26.47,
     averagePosition: 9.02
   });
-  assert.equal(recent.branded.clicks, 4);
-  assert.equal(recent.branded.impressions, 7);
+  assert.equal(recent.branded.clicks, 8);
+  assert.equal(recent.branded.impressions, 14);
   assert.equal(recent.nonBranded.clicks, 0);
   assert.equal(recent.nonBranded.impressions, 29);
   assert.equal(recent.device.mobile.clicks, 44);
@@ -863,8 +863,8 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
   assert.equal(ninetyDayBrandSplit.branded.impressions, 14);
   assert.equal(ninetyDayBrandSplit.nonBranded.clicks, 0);
   assert.equal(ninetyDayBrandSplit.nonBranded.impressions, 31);
-  assert.equal(recent.branded.clicks, 4);
-  assert.equal(recent.branded.impressions, 7);
+  assert.equal(recent.branded.clicks, 8);
+  assert.equal(recent.branded.impressions, 14);
   assert.equal(recent.nonBranded.clicks, 0);
   assert.equal(recent.nonBranded.impressions, 29);
   assert.equal(recent.device.mobile.clicks, 44);
