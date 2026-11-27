@@ -32,11 +32,11 @@ test("service metadata titles stay neutral while preserving descriptive visible 
     "property-law": "وکیل ملکی اهواز؛ انتخاب بهترین وکیل",
     "contracts-and-obligations": "وکیل قرارداد اهواز؛ انتخاب بهترین وکیل",
     "claims-and-enforcement": "وکیل چک اهواز؛ انتخاب بهترین وکیل",
-    "legal-consultation": "وکیل مشاوره حقوقی اهواز؛ هزینه و انتخاب"
+    "legal-consultation": "وکیل و مشاوره حقوقی اهواز؛ راهنمای انتخاب"
   });
   assert.equal(getPracticeAreaMetaTitle("property-law"), "وکیل ملکی اهواز؛ انتخاب بهترین وکیل");
   assert.equal(getPracticeAreaMetaTitle("criminal-law"), "وکیل کیفری اهواز؛ انتخاب بهترین وکیل");
-  assert.equal(getPracticeAreaMetaTitle("legal-consultation"), "وکیل مشاوره حقوقی اهواز؛ هزینه و انتخاب");
+  assert.equal(getPracticeAreaMetaTitle("legal-consultation"), "وکیل و مشاوره حقوقی اهواز؛ راهنمای انتخاب");
   assert.equal(getPracticeAreaMetaTitle("unknown-area", "وکیل در اهواز"), "وکیل در اهواز");
   assert.equal(getPracticeAreaSearchTitle("property-law"), "وکیل ملکی در اهواز و خوزستان");
   for (const title of Object.values(PRACTICE_AREA_META_TITLES)) {
