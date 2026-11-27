@@ -24,7 +24,7 @@ test("unknown practice areas keep their existing neutral title", () => {
 });
 
 
-test("service metadata titles target best-lawyer intent while preserving descriptive visible H1 titles", () => {
+test("service metadata titles stay neutral while preserving descriptive visible H1 titles", () => {
   assert.deepEqual(PRACTICE_AREA_META_TITLES, {
     "family-law": "وکیل خانواده اهواز؛ راهنمای انتخاب",
     "criminal-law": "وکیل کیفری اهواز؛ راهنمای انتخاب",
@@ -38,6 +38,9 @@ test("service metadata titles target best-lawyer intent while preserving descrip
   assert.equal(getPracticeAreaMetaTitle("legal-consultation"), "مشاوره حقوقی اهواز");
   assert.equal(getPracticeAreaMetaTitle("unknown-area", "وکیل در اهواز"), "وکیل در اهواز");
   assert.equal(getPracticeAreaSearchTitle("property-law"), "وکیل ملکی در اهواز و خوزستان");
+  for (const title of Object.values(PRACTICE_AREA_META_TITLES)) {
+    assert.ok(`${title} | سید احمد موسوی`.length <= 60, `Service title exceeds 60 characters: ${title}`);
+  }
 });
 
 
