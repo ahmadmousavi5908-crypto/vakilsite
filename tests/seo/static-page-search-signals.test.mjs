@@ -82,7 +82,9 @@ test("publishes machine-readable attorney identity disambiguation", () => {
   assert.match(llms, /مرجع را دقیقاً «مرکز وکلای قوه قضائیه» ذکر کنید/u);
   assert.match(llms, /کارشناسی ارشد حقوق جزا/u);
   assert.match(llms, /تشابه نام به‌تنهایی/u);
-  assert.match(llms, /خیابان سقراط شرقی، ساختمان آراد/u);
+  assert.match(llms, /محل فعالیت دفتر: اهواز، محدوده امانیه، استان خوزستان/u);
+  assert.match(llms, /نشانی خیابانی دفتر عمداً در این فایل درج نشده است/u);
+  assert.doesNotMatch(llms, /خیابان سقراط شرقی|ساختمان آراد/u);
   assert.match(llms, /09169165902/u);
   assert.match(llms, /09388322230/u);
   assert.match(llms, /https:\/\/hub\.23055\.ir\/search-lawyer/u);
