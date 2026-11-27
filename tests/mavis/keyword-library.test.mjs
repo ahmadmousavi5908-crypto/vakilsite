@@ -624,3 +624,26 @@ test("locks every explicit user-supplied Ahvaz query and neighborhood spelling",
     assert.equal(entry.neutralUseOnly, true);
   }
 });
+
+
+test("keeps the latest Iran-only 28-day Search Console snapshot separate by brand and device", () => {
+  const recent = seoKeywordLibrary.methodology.gscObserved.last28Days;
+  assert.equal(recent.country, "irn");
+  assert.deepEqual(recent.siteTotals, {
+    clicks: 32,
+    impressions: 135,
+    ctrPercent: 23.7,
+    averagePosition: 9.84
+  });
+  assert.equal(recent.branded.clicks, 4);
+  assert.equal(recent.branded.impressions, 7);
+  assert.equal(recent.nonBranded.clicks, 0);
+  assert.equal(recent.nonBranded.impressions, 29);
+  assert.equal(recent.device.mobile.clicks, 31);
+  assert.equal(recent.device.mobile.impressions, 129);
+  assert.equal(recent.queryPageCoverage.hiddenClicksShare, 0.875);
+  assert.equal(recent.queryPageCoverage.hiddenImpressionsShare, 0.6815);
+  assert.equal(recent.visibleQueryClusters.generalAttorneySelection, 0);
+  assert.equal(recent.visibleQueryClusters.AhvazNeighborhoods, 0);
+  assert.equal(recent.visibleQueryClusters.KhuzestanCities, 0);
+});
