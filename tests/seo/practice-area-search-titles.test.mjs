@@ -27,20 +27,21 @@ test("unknown practice areas keep their existing neutral title", () => {
 
 test("service metadata titles stay neutral while preserving descriptive visible H1 titles", () => {
   assert.deepEqual(PRACTICE_AREA_META_TITLES, {
-    "family-law": "بهترین وکیل خانواده اهواز؛ راهنمای انتخاب",
-    "criminal-law": "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب",
-    "property-law": "بهترین وکیل ملکی اهواز؛ راهنمای انتخاب",
-    "contracts-and-obligations": "بهترین وکیل قرارداد اهواز؛ راهنمای انتخاب",
-    "claims-and-enforcement": "بهترین وکیل چک اهواز؛ راهنمای انتخاب",
-    "legal-consultation": "مشاوره حقوقی اهواز؛ هزینه و انتخاب وکیل"
+    "family-law": "وکیل خانواده اهواز؛ انتخاب بهترین وکیل",
+    "criminal-law": "وکیل کیفری اهواز؛ انتخاب بهترین وکیل",
+    "property-law": "وکیل ملکی اهواز؛ انتخاب بهترین وکیل",
+    "contracts-and-obligations": "وکیل قرارداد اهواز؛ انتخاب بهترین وکیل",
+    "claims-and-enforcement": "وکیل چک اهواز؛ انتخاب بهترین وکیل",
+    "legal-consultation": "وکیل مشاوره حقوقی اهواز؛ هزینه و انتخاب"
   });
-  assert.equal(getPracticeAreaMetaTitle("property-law"), "بهترین وکیل ملکی اهواز؛ راهنمای انتخاب");
-  assert.equal(getPracticeAreaMetaTitle("criminal-law"), "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب");
-  assert.equal(getPracticeAreaMetaTitle("legal-consultation"), "مشاوره حقوقی اهواز؛ هزینه و انتخاب وکیل");
+  assert.equal(getPracticeAreaMetaTitle("property-law"), "وکیل ملکی اهواز؛ انتخاب بهترین وکیل");
+  assert.equal(getPracticeAreaMetaTitle("criminal-law"), "وکیل کیفری اهواز؛ انتخاب بهترین وکیل");
+  assert.equal(getPracticeAreaMetaTitle("legal-consultation"), "وکیل مشاوره حقوقی اهواز؛ هزینه و انتخاب");
   assert.equal(getPracticeAreaMetaTitle("unknown-area", "وکیل در اهواز"), "وکیل در اهواز");
   assert.equal(getPracticeAreaSearchTitle("property-law"), "وکیل ملکی در اهواز و خوزستان");
   for (const title of Object.values(PRACTICE_AREA_META_TITLES)) {
-    assert.ok(!title.includes("بهترین وکیل") || title.includes("راهنمای انتخاب"), `Best-lawyer wording must be framed as a selection guide: ${title}`);
+    assert.ok(title.startsWith("وکیل ") || title.startsWith("مشاوره "), `Titles must lead with the service term: ${title}`);
+    assert.ok(!title.includes("بهترین وکیل") || title.includes("انتخاب"), `Best-lawyer wording must be framed as selection guidance: ${title}`);
     assert.ok(`${title} | سید احمد موسوی`.length <= 60, `Service title exceeds 60 characters: ${title}`);
   }
 });
