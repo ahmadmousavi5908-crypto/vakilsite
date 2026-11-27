@@ -669,3 +669,42 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
   assert.equal(recent.visibleQueryClusters.AhvazNeighborhoods, 0);
   assert.equal(recent.visibleQueryClusters.KhuzestanCities, 0);
 });
+
+
+test("preserves every exact user-supplied phrase in the primary SEO research library", () => {
+  const expansion = seoKeywordLibrary.userResearchExpansion;
+  const requiredPhrases = [
+    "بهترین وکیل اهواز",
+    "بهترین وکیل در اهواز",
+    "وکیل خوب در اهواز",
+    "وکیل حرفه‌ای در اهواز",
+    "وکیل باتجربه در اهواز",
+    "وکیل متخصص در اهواز",
+    "وکیل برجسته اهواز",
+    "وکیل سرشناس اهواز",
+    "وکیل معروف اهواز",
+    "معروف‌ترین وکیل اهواز",
+    "وکیل معتبر اهواز",
+    "وکیل مجرب اهواز",
+    "وکیل کاربلد اهواز",
+    "وکیل خبره اهواز",
+    "حرفه‌ای‌ترین وکیل اهواز",
+    "متخصص‌ترین وکیل اهواز",
+    "وکیل نابغه",
+    "وکیل نابغه اهواز",
+    "استاد فن دفاع حقوقی",
+    "استاد فن دفاع حقوقی اهواز",
+    "وکیل کیانپارس اهواز",
+    "وکیل کیان پارس اهواز",
+    "وکیل امانیه اهواز",
+    "وکیل زیتون اهواز",
+    "وکیل زیتون کارمندی اهواز",
+    "وکیل گلستان اهواز"
+  ];
+  for (const phrase of requiredPhrases) {
+    assert.ok(expansion.exactPhrases.includes(phrase), `Missing exact phrase in SEO research library: ${phrase}`);
+  }
+  assert.equal(expansion.exactPhrases.length, requiredPhrases.length);
+  assert.equal(expansion.highRiskPhrases.length, 6);
+  assert.match(expansion.publicUsagePolicy, /research-only/u);
+});
