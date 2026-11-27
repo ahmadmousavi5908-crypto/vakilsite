@@ -1,6 +1,6 @@
 // Internal editorial/search-planning taxonomy. Never render it as a public keyword block.
 const keywordLibrary = {
-  "schemaVersion": "1.1.0",
+  "schemaVersion": "1.2.0",
   "locale": "fa-IR",
   "market": "Iran",
   "brand": "وکیل سید احمد موسوی",
