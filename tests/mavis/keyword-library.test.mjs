@@ -846,7 +846,9 @@ test("preserves every exact user-supplied phrase in the primary SEO research lib
   assert.deepEqual(expansion.officePhrases, ["دفتر وکالت کیانپارس", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه", "دفتر وکالت امانیه اهواز"]);
   assert.equal(expansion.highRiskPhrases.length, 23);
   assert.equal(expansion.practiceAreaSubjects.length, 64);
-  assert.match(expansion.publicUsagePolicy, /research-only/u);
+  assert.match(expansion.publicUsagePolicy, /may appear publicly as relevant user-search intent/u);
+  assert.match(expansion.publicUsagePolicy, /unsupported first-person superiority/u);
+  assert.ok(expansion.lawyerFirstVariants.includes("وکیل حرفه‌ای اهواز"));
 });
 
 test("keeps the latest Iran-only 28-day Search Console snapshot separate by brand and device", () => {

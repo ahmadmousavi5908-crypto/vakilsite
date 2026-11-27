@@ -83,6 +83,12 @@ export default async function PracticeAreaPage({ params }) {
             </div>
           ) : null}
           <h2>{area.sectionHeadings?.intro || "درباره این حوزه"}</h2><p>{area.intro}</p>
+          {area.searchIntentGuidance ? (
+            <section className="practice-search-intent" aria-labelledby="practice-search-intent-title">
+              <h2 id="practice-search-intent-title">عبارت‌های رایج جست‌وجو و معیار انتخاب</h2>
+              <p>{area.searchIntentGuidance}</p>
+            </section>
+          ) : null}
           <h2>{area.sectionHeadings?.topics || "موضوعات قابل بررسی"}</h2>
           <ul className="practice-topic-list">{area.topics.map((topic) => <li key={topic}>{topic}</li>)}</ul>
           <h2>{area.sectionHeadings?.checks || "برای بررسی اولیه چه مدارکی آماده کنید؟"}</h2>

@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { practiceAreas } from "../../src/data/practice-areas.js";
 import { normalizePersianSearchText } from "../../src/lib/mavis/persian-text-normalization.mjs";
 import { PRACTICE_AREA_META_TITLES, PRACTICE_AREA_KEYWORDS } from "../../src/lib/seo/practice-area-search-titles.mjs";
+import { seoKeywordLibrary } from "../../src/data/seo-keyword-library.js";
 
 const requiredPhrasesByArea = {
   "family-law": [
@@ -67,6 +68,7 @@ function visiblePracticeAreaText(area) {
     area.shortTitle,
     area.description,
     area.intro,
+    area.searchIntentGuidance,
     ...(area.topics || []),
     ...(area.checks || []),
     ...(area.reviewSteps || []),
@@ -108,6 +110,14 @@ test("covers best-lawyer search intent with neutral selection guidance across ex
   assert.ok(criminal.includes(normalizePersianSearchText("بهترین وکیل کیفری اهواز")));
   assert.ok(contracts.includes(normalizePersianSearchText("بهترین وکیل قرارداد اهواز")));
   assert.ok(claims.includes(normalizePersianSearchText("بهترین وکیل چک برگشتی اهواز")));
+  for (const [area, phrase] of [
+    [property, "وکیل حرفه‌ای ملکی اهواز"],
+    [family, "وکیل متخصص خانواده اهواز"],
+    [criminal, "وکیل باتجربه کیفری اهواز"],
+    [contracts, "وکیل برتر قرارداد اهواز"],
+    [claims, "وکیل متخصص چک و سفته اهواز"]
+  ]) assert.ok(area.includes(normalizePersianSearchText(phrase)), `Missing public lawyer-first modifier: ${phrase}`);
+  assert.ok(property.includes(normalizePersianSearchText("متخصص‌ترین وکیل ملکی اهواز")));
   for (const content of [property, family, criminal]) {
     assert.ok(content.includes(normalizePersianSearchText("اعتبار پروانه")));
     assert.ok(content.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
@@ -195,17 +205,18 @@ test("adds verifiable author, review date and question-led headings to the prope
 
 test("keeps service titles neutral while preserving best-lawyer phrases in page keywords", () => {
   const expected = {
-    "family-law": { title: "بهترین وکیل خانواده اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل خانواده اهواز" },
-    "criminal-law": { title: "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل کیفری اهواز" },
-    "property-law": { title: "بهترین وکیل ملکی اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل ملکی اهواز" },
-    "contracts-and-obligations": { title: "بهترین وکیل قرارداد اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل قرارداد اهواز" },
-    "claims-and-enforcement": { title: "بهترین وکیل چک اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل چک و مطالبه وجه اهواز" },
-    "legal-consultation": { title: "مشاوره حقوقی اهواز؛ هزینه و انتخاب وکیل", keyword: "مشاوره حقوقی اهواز" }
+    "family-law": { title: "وکیل خانواده اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل خانواده اهواز" },
+    "criminal-law": { title: "وکیل کیفری اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل کیفری اهواز" },
+    "property-law": { title: "وکیل ملکی اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل ملکی اهواز" },
+    "contracts-and-obligations": { title: "وکیل قرارداد اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل قرارداد اهواز" },
+    "claims-and-enforcement": { title: "وکیل چک اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل چک و مطالبه وجه اهواز" },
+    "legal-consultation": { title: "وکیل و مشاوره حقوقی اهواز؛ راهنمای انتخاب", keyword: "مشاوره حقوقی اهواز" }
   };
 
   for (const [slug, { title, keyword }] of Object.entries(expected)) {
     assert.equal(PRACTICE_AREA_META_TITLES[slug], title, `Unexpected neutral title for ${slug}`);
-    assert.ok(!title.includes("بهترین وکیل") || title.includes("راهنمای انتخاب"), `Unqualified best-lawyer claim found for ${slug}`);
+    assert.ok(title.startsWith("وکیل ") || title.startsWith("مشاوره "), `Title must lead with the service term for ${slug}`);
+    assert.ok(!title.includes("بهترین وکیل") || title.includes("انتخاب"), `Best-lawyer wording must remain selection guidance for ${slug}`);
     assert.ok(PRACTICE_AREA_KEYWORDS[slug].includes(keyword), `Missing page keyword for ${slug}`);
     assert.ok(PRACTICE_AREA_KEYWORDS[slug].some((term) => /حرفه‌ای|باتجربه|متخصص/.test(term)));
   }
@@ -226,6 +237,11 @@ test("publishes Ahvaz neighborhood and Khuzestan city coverage as visible region
     "وکیل گلستان",
     "بهترین وکیل اهواز",
     "وکیل خوب در اهواز",
+    "وکیل حرفه‌ای اهواز",
+    "وکیل متخصص اهواز",
+    "وکیل برتر اهواز",
+    "حرفه‌ای‌ترین وکیل اهواز",
+    "متخصص‌ترین وکیل اهواز",
     "وکیل باتجربه در اهواز",
     "بهترین وکیل خرمشهر",
     "بهترین وکیل آبادان",
@@ -246,4 +262,25 @@ test("publishes Ahvaz neighborhood and Khuzestan city coverage as visible region
   assert.ok(source.includes("مرکز وکلای قوه قضائیه"));
   assert.ok(!source.includes("سید ایمان موسوی"));
   assert.ok(source.includes("twitter: {"));
+});
+
+
+test("preserves superlative phrases as publishable search intent without making unsupported self-claims", () => {
+  const expansion = seoKeywordLibrary.userResearchExpansion;
+  for (const phrase of [
+    "بهترین وکیل اهواز",
+    "بهترین وکیل در اهواز",
+    "حرفه‌ای‌ترین وکیل اهواز",
+    "متخصص‌ترین وکیل اهواز",
+    "وکیل نابغه اهواز",
+    "وکیل ممتاز اهواز",
+    "وکیل نخبه اهواز",
+    "وکیل کیانپارس اهواز",
+    "وکیل امانیه اهواز",
+    "وکیل زیتون اهواز",
+    "وکیل گلستان اهواز"
+  ]) assert.ok(expansion.exactPhrases.includes(phrase), "Deleted user phrase: " + phrase);
+  assert.ok(expansion.lawyerFirstVariants.includes("وکیل حرفه‌ای اهواز"));
+  assert.match(expansion.publicUsagePolicy, /may appear publicly as relevant user-search intent/u);
+  assert.match(expansion.publicUsagePolicy, /unsupported first-person superiority/u);
 });

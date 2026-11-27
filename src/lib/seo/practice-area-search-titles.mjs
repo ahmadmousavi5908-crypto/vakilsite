@@ -8,12 +8,12 @@ export const PRACTICE_AREA_SEARCH_TITLES = Object.freeze({
 });
 
 export const PRACTICE_AREA_META_TITLES = Object.freeze({
-  "family-law": "بهترین وکیل خانواده اهواز؛ راهنمای انتخاب",
-  "criminal-law": "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب",
-  "property-law": "بهترین وکیل ملکی اهواز؛ راهنمای انتخاب",
-  "contracts-and-obligations": "بهترین وکیل قرارداد اهواز؛ راهنمای انتخاب",
-  "claims-and-enforcement": "بهترین وکیل چک اهواز؛ راهنمای انتخاب",
-  "legal-consultation": "مشاوره حقوقی اهواز؛ هزینه و انتخاب وکیل"
+  "family-law": "وکیل خانواده اهواز؛ انتخاب بهترین وکیل",
+  "criminal-law": "وکیل کیفری اهواز؛ انتخاب بهترین وکیل",
+  "property-law": "وکیل ملکی اهواز؛ انتخاب بهترین وکیل",
+  "contracts-and-obligations": "وکیل قرارداد اهواز؛ انتخاب بهترین وکیل",
+  "claims-and-enforcement": "وکیل چک اهواز؛ انتخاب بهترین وکیل",
+  "legal-consultation": "وکیل و مشاوره حقوقی اهواز؛ راهنمای انتخاب"
 });
 
 export const PRACTICE_AREA_KEYWORDS = Object.freeze({

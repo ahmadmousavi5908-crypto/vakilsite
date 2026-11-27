@@ -115,7 +115,8 @@ const keywordLibrary = {
       "وکیل شناخته‌شده", "وکیل شناخته‌شده اهواز", "وکیل متخصص و باتجربه", "وکیل متخصص و باتجربه اهواز",
       "نابغه حقوق", "وکیل متبحر", "وکیل متبحر اهواز", "وکیل خوش‌نام", "وکیل خوش‌نام اهواز"
     ],
-    "publicUsagePolicy": "High-risk superlatives remain research-only. Public copy may use neutral selection guidance and must not assert unsupported superiority."
+    "lawyerFirstVariants": ["وکیل حرفه‌ای اهواز", "وکیل متخصص اهواز", "وکیل باتجربه اهواز", "وکیل برتر اهواز", "وکیل برجسته اهواز", "وکیل سرشناس اهواز", "وکیل معروف اهواز", "وکیل معتبر اهواز", "وکیل مجرب اهواز", "وکیل کاربلد اهواز", "وکیل خبره اهواز", "وکیل نابغه اهواز", "وکیل ممتاز اهواز", "وکیل نخبه اهواز", "وکیل متبحر اهواز", "حرفه‌ای‌ترین وکیل اهواز", "متخصص‌ترین وکیل اهواز"],
+    "publicUsagePolicy": "All superlative and modifier phrases are preserved and may appear publicly as relevant user-search intent or neutral selection guidance. Do not turn them into unsupported first-person superiority, credential, or outcome claims."
   },
 
   "competitorResearch": {
@@ -157,7 +158,7 @@ const keywordLibrary = {
       "National patterns do not imply nationwide service availability.",
       "Local variants may only be assigned to an existing canonical page when genuinely useful Ahvaz/Khuzestan-specific content supports them.",
       "Do not create city doorway pages or public keyword blocks.",
-      "Best/top/specialist wording is intent research only and must not become an unsupported self-claim.",
+      "Best/top/specialist wording may be published as relevant user-search intent or neutral selection guidance; it must not become an unsupported first-person superiority or credential claim.",
       "Legally distinct causes of action must remain separate; legal review and human approval are required before publication."
     ]
   },
@@ -419,7 +420,7 @@ const keywordLibrary = {
     "rules": [
       "Never render this library as public or hidden keyword blocks.",
       "Google does not use meta keywords for ranking.",
-      "Search phrases containing best/top are searcher-intent candidates only; never turn them into unsupported first-person superiority claims. Prefer neutral selection criteria and evidence.",
+      "Search phrases containing best/top remain searcher-intent candidates and may appear in relevant public guidance; never turn them into unsupported first-person superiority claims. Prefer neutral selection criteria and evidence.",
       "One primary intent maps to one canonical URL; close variants belong on the same useful page.",
       "Do not create city doorway pages by replacing only the city name.",
       "Do not claim any practice specialty or service only because a phrase appears here.",
