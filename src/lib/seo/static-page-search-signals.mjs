@@ -3,7 +3,7 @@ const ATTORNEY_IMAGE_PATH = "/images/lawyer.jpg";
 // Update these values only when the corresponding public page content changes.
 const STATIC_PAGE_LAST_MODIFIED = Object.freeze({
   "/": "2026-11-26",
-  "/about": "2026-11-26",
+  "/about": "2026-11-27",
   "/locations/khuzestan": "2026-11-27",
   "/services": "2026-11-24",
   "/services/family-law": "2026-11-24",

@@ -11,7 +11,62 @@ const keywordLibrary = {
     "observedAt": "2026-11-27",
     "status": "candidate-only-not-volume-validated",
     "retention": "Preserve source wording and variants; existing library records are not deleted.",
-    "usage": "Route comparison and superlative query intent to the closest existing service page or an explicit future-content cluster. Use neutral selection guidance, never unsupported first-person superiority claims."
+    "usage": "Route comparison and superlative query intent to the closest existing service page or an explicit future-content cluster. Use neutral selection guidance, never unsupported first-person superiority claims.",
+    "exactPhrases": [
+      "بهترین وکیل اهواز",
+      "بهترین وکیل در اهواز",
+      "وکیل خوب در اهواز",
+      "وکیل حرفه‌ای در اهواز",
+      "وکیل باتجربه در اهواز",
+      "وکیل متخصص در اهواز",
+      "وکیل برجسته اهواز",
+      "وکیل سرشناس اهواز",
+      "وکیل معروف اهواز",
+      "معروف‌ترین وکیل اهواز",
+      "وکیل معتبر اهواز",
+      "وکیل مجرب اهواز",
+      "وکیل کاربلد اهواز",
+      "وکیل خبره اهواز",
+      "حرفه‌ای‌ترین وکیل اهواز",
+      "متخصص‌ترین وکیل اهواز",
+      "وکیل نابغه",
+      "وکیل نابغه اهواز",
+      "استاد فن دفاع حقوقی",
+      "استاد فن دفاع حقوقی اهواز",
+      "وکیل کیانپارس اهواز",
+      "وکیل کیان پارس اهواز",
+      "وکیل امانیه اهواز",
+      "وکیل زیتون اهواز",
+      "وکیل زیتون کارمندی اهواز",
+      "وکیل گلستان اهواز",
+      "وکیل کیانپارس", "وکیل کیان پارس", "وکیل امانیه", "وکیل زیتون", "وکیل زیتون کارمندی", "وکیل گلستان",
+      "وکیل در کیانپارس", "وکیل در کیان پارس", "وکیل در امانیه", "وکیل در زیتون", "وکیل در زیتون کارمندی", "وکیل در گلستان",
+      "وکیل ممتاز", "وکیل ممتاز اهواز", "وکیل نخبه", "وکیل نخبه اهواز",
+      "وکیل کارآزموده", "وکیل کارآزموده اهواز", "وکیل هوشمند", "وکیل هوشمند اهواز",
+      "وکیل خوش‌نام", "وکیل شناخته‌شده", "وکیل شناخته‌شده اهواز",
+      "وکیل متخصص و باتجربه", "وکیل متخصص و باتجربه اهواز", "نابغه حقوق",
+      "وکیل متبحر", "وکیل متبحر اهواز", "وکیل پایه یک دادگستری اهواز",
+      "بهترین وکیل پایه یک دادگستری در اهواز", "وکیل دادگستری در اهواز",
+      "وکیل رسمی دادگستری اهواز", "مشاوره حقوقی در اهواز", "مشاور حقوقی حرفه‌ای اهواز",
+      "دفتر وکالت در اهواز", "وکیل خوب و قابل اعتماد در اهواز",
+      "وکیل متخصص دعاوی در اهواز", "وکیل مجرب و باتجربه اهواز",
+      "دفتر وکالت کیانپارس", "دفتر وکالت زیتون کارمندی", "دفتر وکالت امانیه",
+      "وکیل خوش‌نام اهواز", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه اهواز"
+    ],
+    "khuzestanCities": [
+      "اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان", "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک", "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا", "رامشیر", "هفتکل"
+    ],
+    "neighborhoods": ["کیانپارس", "کیان پارس", "امانیه", "زیتون", "زیتون کارمندی", "گلستان"],
+    "officePhrases": ["دفتر وکالت کیانپارس", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه", "دفتر وکالت امانیه اهواز"],
+    "highRiskPhrases": [
+      "حرفه‌ای‌ترین وکیل اهواز", "متخصص‌ترین وکیل اهواز",
+      "وکیل نابغه", "وکیل نابغه اهواز", "استاد فن دفاع حقوقی", "استاد فن دفاع حقوقی اهواز",
+      "وکیل ممتاز", "وکیل ممتاز اهواز", "وکیل نخبه", "وکیل نخبه اهواز",
+      "وکیل کارآزموده", "وکیل کارآزموده اهواز", "وکیل هوشمند", "وکیل هوشمند اهواز",
+      "وکیل شناخته‌شده", "وکیل شناخته‌شده اهواز", "وکیل متخصص و باتجربه", "وکیل متخصص و باتجربه اهواز",
+      "نابغه حقوق", "وکیل متبحر", "وکیل متبحر اهواز", "وکیل خوش‌نام", "وکیل خوش‌نام اهواز"
+    ],
+    "publicUsagePolicy": "High-risk superlatives remain research-only. Public copy may use neutral selection guidance and must not assert unsupported superiority."
   },
 
   "competitorResearch": {
@@ -87,6 +142,65 @@ const keywordLibrary = {
         "visibleImpressionsShare": 0.2647,
         "hiddenClicksShare": 0.8222,
         "hiddenImpressionsShare": 0.7353
+      },
+      "brandSplit90Days": {
+        "period": "2026-08-25 to 2026-11-24",
+        "branded": { "clicks": 8, "impressions": 14, "ctrPercent": 57.14, "averagePosition": 1.5 },
+        "nonBranded": { "clicks": 0, "impressions": 31, "ctrPercent": 0, "averagePosition": 20.94 },
+        "note": "Brand and non-brand query filters are query-level aggregates; they do not reconcile with query-page totals because anonymized queries are omitted."
+      },
+      "last28Days": {
+        "period": "2026-10-27 to 2026-11-23",
+        "settledThrough": "2026-11-24",
+        "country": "irn",
+        "brandFilterKeywords": [
+          "وکیل سید احمد موسوی",
+          "وکیل سید احمد موسوی اهواز",
+          "سید احمد موسوی وکیل",
+          "سید احمد موسوی اهواز وکیل",
+          "وکیل پایه یک سید احمد موسوی",
+          "سید احمد موسوی پروانه ۷۴۵۱۶"
+        ],
+        "siteTotals": {
+          "clicks": 32,
+          "impressions": 135,
+          "ctrPercent": 23.7,
+          "averagePosition": 9.84
+        },
+        "branded": {
+          "clicks": 4,
+          "impressions": 7,
+          "ctrPercent": 57.14,
+          "averagePosition": 1.57
+        },
+        "nonBranded": {
+          "clicks": 0,
+          "impressions": 29,
+          "ctrPercent": 0,
+          "averagePosition": 20.9
+        },
+        "device": {
+          "mobile": { "clicks": 31, "impressions": 129 },
+          "desktop": { "clicks": 1, "impressions": 6 }
+        },
+        "queryPageCoverage": {
+          "visibleRows": 9,
+          "hiddenClicksShare": 0.875,
+          "hiddenImpressionsShare": 0.6815
+        },
+        "visibleQueryClusters": {
+          "generalAttorneySelection": 0,
+          "AhvazNeighborhoods": 0,
+          "KhuzestanCities": 0
+        },
+        "pagePerformance": [
+          { "path": "/", "clicks": 24, "impressions": 48, "ctrPercent": 50, "averagePosition": 2.88 },
+          { "path": "/about", "clicks": 4, "impressions": 76, "ctrPercent": 5.26, "averagePosition": 6.16 },
+          { "path": "/articles/criminal-court-authority-restitution-real-estate-third-party-deed-annulment", "clicks": 3, "impressions": 22, "ctrPercent": 13.64, "averagePosition": 7.77 },
+          { "path": "/locations/khuzestan", "clicks": 1, "impressions": 6, "ctrPercent": 16.67, "averagePosition": 9.17 },
+          { "path": "/services/property-law", "clicks": 0, "impressions": 4, "ctrPercent": 0, "averagePosition": 42.5 }
+        ],
+        "note": "The immediately preceding 28-day comparison window returned zero clicks and impressions, so no growth rate is inferred. Query and query-page aggregates are not interchangeable."
       },
       "observedQueries": [
         {

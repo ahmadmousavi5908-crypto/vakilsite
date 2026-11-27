@@ -535,6 +535,24 @@ test("preserves the user's exact Ahvaz, Khuzestan, neighborhood and comparison s
     "وکیل مجرب اهواز",
     "وکیل کاربلد اهواز",
     "وکیل خبره اهواز",
+    "وکیل ممتاز", "وکیل ممتاز اهواز", "وکیل نخبه", "وکیل نخبه اهواز",
+    "وکیل کارآزموده", "وکیل کارآزموده اهواز", "وکیل هوشمند", "وکیل هوشمند اهواز",
+    "وکیل خوش‌نام", "وکیل شناخته‌شده", "وکیل شناخته‌شده اهواز",
+    "وکیل متخصص و باتجربه", "وکیل متخصص و باتجربه اهواز", "نابغه حقوق",
+    "وکیل متبحر", "وکیل متبحر اهواز", "وکیل پایه یک دادگستری اهواز",
+    "بهترین وکیل پایه یک دادگستری در اهواز", "وکیل دادگستری در اهواز",
+    "وکیل رسمی دادگستری اهواز", "مشاوره حقوقی در اهواز", "مشاور حقوقی حرفه‌ای اهواز",
+    "دفتر وکالت در اهواز", "وکیل خوب و قابل اعتماد در اهواز",
+    "وکیل متخصص دعاوی در اهواز", "وکیل مجرب و باتجربه اهواز",
+    "دفتر وکالت کیانپارس", "دفتر وکالت زیتون کارمندی", "دفتر وکالت امانیه",
+    "وکیل نابغه",
+    "استاد فن دفاع حقوقی",
+    "وکیل نابغه",
+    "استاد فن دفاع حقوقی",
+    "حرفه‌ای‌ترین وکیل اهواز",
+    "متخصص‌ترین وکیل اهواز",
+    "وکیل نابغه اهواز",
+    "استاد فن دفاع حقوقی اهواز",
     "وکیل توانمند اهواز",
     "وکیل باسابقه اهواز",
     "وکیل پایه یک دادگستری اهواز",
@@ -553,6 +571,8 @@ test("preserves the user's exact Ahvaz, Khuzestan, neighborhood and comparison s
     "وکیل زیتون اهواز",
     "وکیل زیتون کارمندی اهواز",
     "وکیل گلستان اهواز",
+    "وکیل کیانپارس", "وکیل کیان پارس", "وکیل امانیه", "وکیل زیتون", "وکیل زیتون کارمندی", "وکیل گلستان",
+    "وکیل در کیانپارس", "وکیل در کیان پارس", "وکیل در امانیه", "وکیل در زیتون", "وکیل در زیتون کارمندی", "وکیل در گلستان",
     "بهترین وکیل خرمشهر",
     "بهترین وکیل آبادان",
     "بهترین وکیل ملکی در زیتون اهواز",
@@ -600,11 +620,29 @@ test("locks every explicit user-supplied Ahvaz query and neighborhood spelling",
     "وکیل امانیه اهواز",
     "وکیل زیتون اهواز",
     "وکیل زیتون کارمندی اهواز",
-    "وکیل گلستان اهواز"
+    "وکیل گلستان اهواز",
+    "وکیل کیانپارس", "وکیل کیان پارس", "وکیل امانیه", "وکیل زیتون", "وکیل زیتون کارمندی", "وکیل گلستان",
+    "وکیل در کیانپارس", "وکیل در کیان پارس", "وکیل در امانیه", "وکیل در زیتون", "وکیل در زیتون کارمندی", "وکیل در گلستان",
+    "وکیل خوش‌نام اهواز",
+    "دفتر وکالت کیانپارس", "دفتر وکالت کیانپارس اهواز",
+    "دفتر وکالت زیتون کارمندی", "دفتر وکالت زیتون کارمندی اهواز",
+    "دفتر وکالت امانیه", "دفتر وکالت امانیه اهواز"
   ];
 
   for (const term of requiredPhrases) {
     assert.ok(all.some((entry) => entry.term === term), `Missing exact user-supplied phrase: ${term}`);
+  }
+
+  const khuzestanCities = ["اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان", "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک", "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا", "رامشیر", "هفتکل"];
+  for (const city of khuzestanCities) {
+    assert.ok(all.some((entry) => entry.term === `وکیل در ${city}`), `Missing city phrase: ${city}`);
+  }
+
+  for (const term of seoKeywordLibrary.userResearchExpansion.highRiskPhrases) {
+    const entry = all.find((item) => item.term === term);
+    assert.ok(entry, `Missing high-risk phrase in MAVIS: ${term}`);
+    assert.equal(entry.requiresComplianceReview, true);
+    assert.equal(entry.neutralUseOnly, true);
   }
 
   const neighborhoodPhrases = [
@@ -623,4 +661,112 @@ test("locks every explicit user-supplied Ahvaz query and neighborhood spelling",
     assert.equal(entry.requiresComplianceReview, true);
     assert.equal(entry.neutralUseOnly, true);
   }
+});
+
+
+test("keeps the latest Iran-only 28-day Search Console snapshot separate by brand and device", () => {
+  const recent = seoKeywordLibrary.methodology.gscObserved.last28Days;
+  assert.equal(recent.country, "irn");
+  assert.equal(recent.brandFilterKeywords.length, 6);
+  assert.ok(!recent.brandFilterKeywords.includes("سید احمد موسوی"));
+  assert.deepEqual(recent.siteTotals, {
+    clicks: 32,
+    impressions: 135,
+    ctrPercent: 23.7,
+    averagePosition: 9.84
+  });
+  assert.equal(recent.branded.clicks, 4);
+  assert.equal(recent.branded.impressions, 7);
+  assert.equal(recent.nonBranded.clicks, 0);
+  assert.equal(recent.nonBranded.impressions, 29);
+  assert.equal(recent.device.mobile.clicks, 31);
+  assert.equal(recent.device.mobile.impressions, 129);
+  assert.equal(recent.queryPageCoverage.hiddenClicksShare, 0.875);
+  assert.equal(recent.queryPageCoverage.hiddenImpressionsShare, 0.6815);
+  assert.equal(recent.visibleQueryClusters.generalAttorneySelection, 0);
+  assert.equal(recent.visibleQueryClusters.AhvazNeighborhoods, 0);
+  assert.equal(recent.visibleQueryClusters.KhuzestanCities, 0);
+});
+
+
+test("preserves every exact user-supplied phrase in the primary SEO research library", () => {
+  const expansion = seoKeywordLibrary.userResearchExpansion;
+  const requiredPhrases = [
+    "بهترین وکیل اهواز",
+    "بهترین وکیل در اهواز",
+    "وکیل خوب در اهواز",
+    "وکیل حرفه‌ای در اهواز",
+    "وکیل باتجربه در اهواز",
+    "وکیل متخصص در اهواز",
+    "وکیل برجسته اهواز",
+    "وکیل سرشناس اهواز",
+    "وکیل معروف اهواز",
+    "معروف‌ترین وکیل اهواز",
+    "وکیل معتبر اهواز",
+    "وکیل مجرب اهواز",
+    "وکیل کاربلد اهواز",
+    "وکیل خبره اهواز",
+    "حرفه‌ای‌ترین وکیل اهواز",
+    "متخصص‌ترین وکیل اهواز",
+    "وکیل نابغه",
+    "وکیل نابغه اهواز",
+    "استاد فن دفاع حقوقی",
+    "استاد فن دفاع حقوقی اهواز",
+    "وکیل کیانپارس اهواز",
+    "وکیل کیان پارس اهواز",
+    "وکیل امانیه اهواز",
+    "وکیل زیتون اهواز",
+    "وکیل زیتون کارمندی اهواز",
+    "وکیل گلستان اهواز",
+    "وکیل کیانپارس", "وکیل کیان پارس", "وکیل امانیه", "وکیل زیتون", "وکیل زیتون کارمندی", "وکیل گلستان",
+    "وکیل در کیانپارس", "وکیل در کیان پارس", "وکیل در امانیه", "وکیل در زیتون", "وکیل در زیتون کارمندی", "وکیل در گلستان",
+    "وکیل ممتاز", "وکیل ممتاز اهواز", "وکیل نخبه", "وکیل نخبه اهواز",
+    "وکیل کارآزموده", "وکیل کارآزموده اهواز", "وکیل هوشمند", "وکیل هوشمند اهواز",
+    "وکیل خوش‌نام", "وکیل شناخته‌شده", "وکیل شناخته‌شده اهواز",
+    "وکیل متخصص و باتجربه", "وکیل متخصص و باتجربه اهواز", "نابغه حقوق",
+    "وکیل متبحر", "وکیل متبحر اهواز", "وکیل پایه یک دادگستری اهواز",
+    "بهترین وکیل پایه یک دادگستری در اهواز", "وکیل دادگستری در اهواز",
+    "وکیل رسمی دادگستری اهواز", "مشاوره حقوقی در اهواز", "مشاور حقوقی حرفه‌ای اهواز",
+    "دفتر وکالت در اهواز", "وکیل خوب و قابل اعتماد در اهواز",
+    "وکیل متخصص دعاوی در اهواز", "وکیل مجرب و باتجربه اهواز",
+    "دفتر وکالت کیانپارس", "دفتر وکالت زیتون کارمندی", "دفتر وکالت امانیه",
+    "وکیل خوش‌نام اهواز", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه اهواز"
+  ];
+  for (const phrase of requiredPhrases) {
+    assert.ok(expansion.exactPhrases.includes(phrase), `Missing exact phrase in SEO research library: ${phrase}`);
+  }
+  assert.equal(expansion.exactPhrases.length, requiredPhrases.length);
+  assert.deepEqual(expansion.khuzestanCities, ["اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان", "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک", "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا", "رامشیر", "هفتکل"]);
+  assert.deepEqual(expansion.officePhrases, ["دفتر وکالت کیانپارس", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه", "دفتر وکالت امانیه اهواز"]);
+  assert.equal(expansion.highRiskPhrases.length, 23);
+  assert.match(expansion.publicUsagePolicy, /research-only/u);
+});
+
+test("keeps the latest Iran-only 28-day Search Console snapshot separate by brand and device", () => {
+  const recent = seoKeywordLibrary.methodology.gscObserved.last28Days;
+  assert.equal(recent.country, "irn");
+  assert.equal(recent.brandFilterKeywords.length, 6);
+  assert.ok(!recent.brandFilterKeywords.includes("سید احمد موسوی"));
+  assert.deepEqual(recent.siteTotals, {
+    clicks: 32,
+    impressions: 135,
+    ctrPercent: 23.7,
+    averagePosition: 9.84
+  });
+  const ninetyDayBrandSplit = seoKeywordLibrary.methodology.gscObserved.brandSplit90Days;
+  assert.equal(ninetyDayBrandSplit.branded.clicks, 8);
+  assert.equal(ninetyDayBrandSplit.branded.impressions, 14);
+  assert.equal(ninetyDayBrandSplit.nonBranded.clicks, 0);
+  assert.equal(ninetyDayBrandSplit.nonBranded.impressions, 31);
+  assert.equal(recent.branded.clicks, 4);
+  assert.equal(recent.branded.impressions, 7);
+  assert.equal(recent.nonBranded.clicks, 0);
+  assert.equal(recent.nonBranded.impressions, 29);
+  assert.equal(recent.device.mobile.clicks, 31);
+  assert.equal(recent.device.mobile.impressions, 129);
+  assert.equal(recent.queryPageCoverage.hiddenClicksShare, 0.875);
+  assert.equal(recent.queryPageCoverage.hiddenImpressionsShare, 0.6815);
+  assert.equal(recent.visibleQueryClusters.generalAttorneySelection, 0);
+  assert.equal(recent.visibleQueryClusters.AhvazNeighborhoods, 0);
+  assert.equal(recent.visibleQueryClusters.KhuzestanCities, 0);
 });

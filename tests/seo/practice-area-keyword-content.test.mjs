@@ -204,7 +204,12 @@ test("assigns best-lawyer intent to each canonical service title and page keywor
   };
 
   for (const [slug, phrase] of Object.entries(expected)) {
-    assert.ok(PRACTICE_AREA_META_TITLES[slug].includes(phrase), `Missing title intent for ${slug}`);
+    if (slug === "claims-and-enforcement") {
+      assert.equal(PRACTICE_AREA_META_TITLES[slug], "وکیل چک و مطالبه وجه اهواز؛ راهنمای انتخاب");
+      assert.ok(!PRACTICE_AREA_META_TITLES[slug].includes("بهترین"));
+    } else {
+      assert.ok(PRACTICE_AREA_META_TITLES[slug].includes(phrase), `Missing title intent for ${slug}`);
+    }
     assert.ok(PRACTICE_AREA_KEYWORDS[slug].includes(phrase), `Missing page keyword for ${slug}`);
     assert.ok(PRACTICE_AREA_KEYWORDS[slug].some((term) => /حرفه‌ای|باتجربه|متخصص/.test(term)));
   }

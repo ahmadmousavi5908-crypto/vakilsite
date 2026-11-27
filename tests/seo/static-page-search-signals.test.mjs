@@ -11,7 +11,7 @@ test("publishes the homepage update date without associating the attorney portra
     lastModified: "2026-11-26",
   });
   assert.deepEqual(getStaticPageSearchSignals("/about", origin), {
-    lastModified: "2026-11-26",
+    lastModified: "2026-11-27",
     images: [portrait],
   });
   assert.deepEqual(getStaticPageSearchSignals("/locations/khuzestan", origin), {
@@ -61,4 +61,27 @@ test("keeps the attorney profile title absolute and the social titles explicit",
   );
   assert.match(aboutSource, /openGraph:\s*\{[\s\S]*?title:\s*"سید احمد موسوی، وکیل پایه یک در اهواز \| پروانه ۷۴۵۱۶"/u);
   assert.match(aboutSource, /twitter:\s*\{[\s\S]*?title:\s*"سید احمد موسوی، وکیل پایه یک در اهواز \| پروانه ۷۴۵۱۶"/u);
+});
+
+
+test("keeps the homepage meta description within the search snippet budget", () => {
+  const layoutSource = readFileSync(new URL("../../src/app/layout.js", import.meta.url), "utf8");
+  const description = layoutSource.match(/description:\s*"([^"]+)"/u)?.[1];
+  assert.ok(description, "Homepage meta description must be present");
+  assert.ok(description.length <= 160, `Homepage meta description is too long: ${description.length}`);
+  assert.match(description, /سید احمد موسوی/u);
+  assert.match(description, /اهواز/u);
+});
+
+
+test("publishes machine-readable attorney identity disambiguation", () => {
+  const llms = readFileSync(new URL("../../public/llms.txt", import.meta.url), "utf8");
+  assert.match(llms, /شماره پروانه وکالت درج‌شده در وب‌سایت: ۷۴۵۱۶/u);
+  assert.match(llms, /مرجع عضویت حرفه‌ای: مرکز وکلای قوه قضائیه/u);
+  assert.match(llms, /کارشناسی ارشد حقوق جزا/u);
+  assert.match(llms, /تشابه نام به‌تنهایی/u);
+  assert.match(llms, /خیابان سقراط شرقی، ساختمان آراد/u);
+  assert.match(llms, /09169165902/u);
+  assert.match(llms, /09388322230/u);
+  assert.match(llms, /https:\/\/hub\.23055\.ir\/search-lawyer/u);
 });
