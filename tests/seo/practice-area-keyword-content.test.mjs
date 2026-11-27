@@ -104,6 +104,7 @@ test("covers best-lawyer search intent with neutral selection guidance across ex
   const criminal = visiblePracticeAreaText(bySlug.get("criminal-law"));
   const contracts = visiblePracticeAreaText(bySlug.get("contracts-and-obligations"));
   const claims = visiblePracticeAreaText(bySlug.get("claims-and-enforcement"));
+  const consultation = visiblePracticeAreaText(bySlug.get("legal-consultation"));
 
   assert.ok(property.includes(normalizePersianSearchText("بهترین وکیل ملکی اهواز")));
   assert.ok(family.includes(normalizePersianSearchText("بهترین وکیل خانواده اهواز")));
@@ -128,6 +129,27 @@ test("covers best-lawyer search intent with neutral selection guidance across ex
   }
   assert.ok(family.includes(normalizePersianSearchText("حفظ محرمانگی")));
   assert.ok(property.includes(normalizePersianSearchText("پرهیز از تضمین نتیجه")));
+
+  const preservedPriorPhrases = [
+    [family, "وکیل معتبر خانواده اهواز"],
+    [criminal, "وکیل مجرب کیفری اهواز"],
+    [contracts, "وکیل حرفه‌ای قرارداد اهواز"],
+    [contracts, "وکیل باتجربه قرارداد اهواز"],
+    [claims, "وکیل حرفه‌ای چک اهواز"],
+    [claims, "وکیل باتجربه وصول مطالبات اهواز"],
+    [claims, "وکیل برتر چک اهواز"],
+    [consultation, "وکیل حرفه‌ای اهواز"],
+    [consultation, "وکیل متخصص اهواز"],
+    [consultation, "وکیل باتجربه اهواز"],
+    [consultation, "وکیل برتر اهواز"],
+    [consultation, "وکیل معتبر اهواز"],
+    [consultation, "بهترین وکیل اهواز"],
+    [consultation, "حرفه‌ای‌ترین وکیل اهواز"],
+    [consultation, "متخصص‌ترین وکیل اهواز"]
+  ];
+  for (const [area, phrase] of preservedPriorPhrases) {
+    assert.ok(area.includes(normalizePersianSearchText(phrase)), "Previously published phrase was removed: " + phrase);
+  }
 });
 
 test("adds a visible, bounded case-review workflow to the property service page", () => {
