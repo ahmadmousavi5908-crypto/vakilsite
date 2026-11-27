@@ -671,6 +671,11 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
     ctrPercent: 23.7,
     averagePosition: 9.84
   });
+  const ninetyDayBrandSplit = seoKeywordLibrary.methodology.gscObserved.brandSplit90Days;
+  assert.equal(ninetyDayBrandSplit.branded.clicks, 8);
+  assert.equal(ninetyDayBrandSplit.branded.impressions, 14);
+  assert.equal(ninetyDayBrandSplit.nonBranded.clicks, 0);
+  assert.equal(ninetyDayBrandSplit.nonBranded.impressions, 31);
   assert.equal(recent.branded.clicks, 4);
   assert.equal(recent.branded.impressions, 7);
   assert.equal(recent.nonBranded.clicks, 0);
