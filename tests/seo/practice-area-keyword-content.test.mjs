@@ -209,7 +209,7 @@ test("keeps service titles neutral while preserving best-lawyer phrases in page 
     "property-law": { title: "وکیل ملکی اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل ملکی اهواز" },
     "contracts-and-obligations": { title: "وکیل قرارداد اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل قرارداد اهواز" },
     "claims-and-enforcement": { title: "وکیل چک اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل چک و مطالبه وجه اهواز" },
-    "legal-consultation": { title: "وکیل مشاوره حقوقی اهواز؛ هزینه و انتخاب", keyword: "مشاوره حقوقی اهواز" }
+    "legal-consultation": { title: "وکیل و مشاوره حقوقی اهواز؛ راهنمای انتخاب", keyword: "مشاوره حقوقی اهواز" }
   };
 
   for (const [slug, { title, keyword }] of Object.entries(expected)) {
