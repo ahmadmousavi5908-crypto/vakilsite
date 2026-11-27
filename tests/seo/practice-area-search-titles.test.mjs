@@ -27,19 +27,20 @@ test("unknown practice areas keep their existing neutral title", () => {
 
 test("service metadata titles stay neutral while preserving descriptive visible H1 titles", () => {
   assert.deepEqual(PRACTICE_AREA_META_TITLES, {
-    "family-law": "وکیل خانواده اهواز؛ راهنمای انتخاب",
-    "criminal-law": "وکیل کیفری اهواز؛ راهنمای انتخاب",
-    "property-law": "وکیل ملکی اهواز؛ راهنمای انتخاب",
-    "contracts-and-obligations": "وکیل قرارداد و تعهدات اهواز",
-    "claims-and-enforcement": "وکیل چک و مطالبه وجه اهواز؛ راهنمای انتخاب",
-    "legal-consultation": "مشاوره حقوقی اهواز"
+    "family-law": "بهترین وکیل خانواده اهواز؛ راهنمای انتخاب",
+    "criminal-law": "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب",
+    "property-law": "بهترین وکیل ملکی اهواز؛ راهنمای انتخاب",
+    "contracts-and-obligations": "بهترین وکیل قرارداد اهواز؛ راهنمای انتخاب",
+    "claims-and-enforcement": "بهترین وکیل چک اهواز؛ راهنمای انتخاب",
+    "legal-consultation": "مشاوره حقوقی اهواز؛ هزینه و انتخاب وکیل"
   });
-  assert.equal(getPracticeAreaMetaTitle("property-law"), "وکیل ملکی اهواز؛ راهنمای انتخاب");
-  assert.equal(getPracticeAreaMetaTitle("criminal-law"), "وکیل کیفری اهواز؛ راهنمای انتخاب");
-  assert.equal(getPracticeAreaMetaTitle("legal-consultation"), "مشاوره حقوقی اهواز");
+  assert.equal(getPracticeAreaMetaTitle("property-law"), "بهترین وکیل ملکی اهواز؛ راهنمای انتخاب");
+  assert.equal(getPracticeAreaMetaTitle("criminal-law"), "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب");
+  assert.equal(getPracticeAreaMetaTitle("legal-consultation"), "مشاوره حقوقی اهواز؛ هزینه و انتخاب وکیل");
   assert.equal(getPracticeAreaMetaTitle("unknown-area", "وکیل در اهواز"), "وکیل در اهواز");
   assert.equal(getPracticeAreaSearchTitle("property-law"), "وکیل ملکی در اهواز و خوزستان");
   for (const title of Object.values(PRACTICE_AREA_META_TITLES)) {
+    assert.ok(!title.includes("بهترین وکیل") || title.includes("راهنمای انتخاب"), `Best-lawyer wording must be framed as a selection guide: ${title}`);
     assert.ok(`${title} | سید احمد موسوی`.length <= 60, `Service title exceeds 60 characters: ${title}`);
   }
 });
