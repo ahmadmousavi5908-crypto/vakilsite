@@ -69,6 +69,7 @@ test("resolves metadata in the initial HTML for allowed AI search crawlers and g
     "ChatGPT-User",
     "Claude-User",
     "Perplexity-User",
+    "Firecrawl/1.0",
     "ExampleCrawler/1.0",
     "ExampleBot/1.0",
   ]) assert.match(agent, HTML_LIMITED_BOT_USER_AGENT);
