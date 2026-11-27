@@ -91,10 +91,10 @@ test("keeps private street address, exact coordinates and map URLs out of every 
   assert.match(officeLocationData, /office_name,city,province,is_location_public/);
   assert.match(officeLocationData, /office_name,city,province,phone,is_location_public/);
   assert.doesNotMatch(officeLocationData, /address|latitude|longitude|map_url/i);
-  assert.doesNotMatch(home, /address: normalizedOfficeLocation\\.address|latitude: normalizedOfficeLocation\\.latitude|longitude: normalizedOfficeLocation\\.longitude|map_url: normalizedOfficeLocation\\.map_url/);
-  assert.doesNotMatch(officeLocation, /location\\.(address|latitude|longitude|map_url)/);
-  assert.match(officeLocation, /maps\\/search\\/\\?api=1&query=/);
-  assert.match(officeLocationApi, /getPublicOfficeLocation\\(\\)/);
+  assert.doesNotMatch(home, /address: normalizedOfficeLocation\.address|latitude: normalizedOfficeLocation\.latitude|longitude: normalizedOfficeLocation\.longitude|map_url: normalizedOfficeLocation\.map_url/);
+  assert.doesNotMatch(officeLocation, /location\.(address|latitude|longitude|map_url)/);
+  assert.match(officeLocation, /maps\/search\/\?api=1&query=/);
+  assert.match(officeLocationApi, /getPublicOfficeLocation\(\)/);
   assert.doesNotMatch(officeLocationApi, /address|latitude|longitude|map_url/i);
 });
 
