@@ -629,6 +629,8 @@ test("locks every explicit user-supplied Ahvaz query and neighborhood spelling",
 test("keeps the latest Iran-only 28-day Search Console snapshot separate by brand and device", () => {
   const recent = seoKeywordLibrary.methodology.gscObserved.last28Days;
   assert.equal(recent.country, "irn");
+  assert.equal(recent.brandFilterKeywords.length, 6);
+  assert.ok(!recent.brandFilterKeywords.includes("سید احمد موسوی"));
   assert.deepEqual(recent.siteTotals, {
     clicks: 32,
     impressions: 135,
