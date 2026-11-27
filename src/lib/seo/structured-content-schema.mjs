@@ -37,22 +37,6 @@ function normalizePublicTelephone(value) {
   );
 }
 
-function normalizeHttpsUrl(value) {
-  if (typeof value !== "string" || !value.trim()) return null;
-  try {
-    const url = new URL(value.trim());
-    return url.protocol === "https:" ? url.href : null;
-  } catch {
-    return null;
-  }
-}
-
-function normalizeAddressText(value) {
-  return typeof value === "string"
-    ? value.trim().replace(/[\s،,]+/g, " ").toLocaleLowerCase("fa")
-    : "";
-}
-
 export function normalizePublicOfficeName(value) {
   if (typeof value !== "string" || !value.trim()) return "خدمات حقوقی سید احمد موسوی";
   const normalized = value.trim().replace(/\s+/g, " ");
@@ -88,41 +72,11 @@ export function buildLegalServiceSchema(siteUrl, officeLocation) {
   const origin = getOrigin(siteUrl);
   if (!origin || !officeLocation || officeLocation.is_location_public !== true) return null;
 
-  const rawStreetAddress = typeof officeLocation.address === "string" ? officeLocation.address.trim() : "";
   const city = typeof officeLocation.city === "string" ? officeLocation.city.trim() : "";
   const region = typeof officeLocation.province === "string" ? officeLocation.province.trim() : "";
   if (!city || !region) return null;
 
-  const normalizedAddress = normalizeAddressText(rawStreetAddress);
-  const genericAddressValues = new Set([
-    normalizeAddressText(city),
-    normalizeAddressText(region),
-    normalizeAddressText(city + " " + region),
-    normalizeAddressText(region + " " + city),
-  ]);
-  const streetAddress = normalizedAddress && !genericAddressValues.has(normalizedAddress)
-    ? rawStreetAddress
-    : null;
-
-  const latitude = Number(officeLocation.latitude);
-  const longitude = Number(officeLocation.longitude);
-  const hasCoordinateValues = officeLocation.latitude !== null
-    && officeLocation.latitude !== undefined
-    && String(officeLocation.latitude).trim() !== ""
-    && officeLocation.longitude !== null
-    && officeLocation.longitude !== undefined
-    && String(officeLocation.longitude).trim() !== "";
-  const hasValidCoordinates = hasCoordinateValues
-    && Number.isFinite(latitude)
-    && Number.isFinite(longitude)
-    && latitude >= -90
-    && latitude <= 90
-    && longitude >= -180
-    && longitude <= 180;
-
   const telephone = normalizePublicTelephone(officeLocation.phone);
-  const hasMap = normalizeHttpsUrl(officeLocation.map_url)
-    || (hasValidCoordinates ? "https://www.google.com/maps?q=" + latitude + "," + longitude : null);
 
   return {
     "@context": "https://schema.org",
@@ -133,16 +87,11 @@ export function buildLegalServiceSchema(siteUrl, officeLocation) {
     sameAs: [ATTORNEY_OFFICIAL_SOCIAL_PROFILE_URL],
     address: {
       "@type": "PostalAddress",
-      ...(streetAddress ? { streetAddress } : {}),
       addressLocality: city,
       addressRegion: region,
       addressCountry: "IR",
     },
     ...(telephone ? { telephone } : {}),
-    ...(hasValidCoordinates
-      ? { geo: { "@type": "GeoCoordinates", latitude, longitude } }
-      : {}),
-    ...(hasMap ? { hasMap } : {}),
     areaServed: buildKhuzestanAreaServed(),
     founder: { "@id": origin + "/#attorney" },
     inLanguage: "fa-IR",
