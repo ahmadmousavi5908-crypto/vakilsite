@@ -347,8 +347,9 @@ const keywordLibrary = {
           "lastChecked": "2026-11-27",
           "requestIndexingViaConnectedApi": false
         }
-      },
-      "paidKeywordResearch": {
+      }
+    },
+    "paidKeywordResearch": {
       "provider": "OpenSEO",
       "creditsRemaining": 2,
       "status": "not-run-insufficient-credit-budget"
@@ -1984,7 +1985,7 @@ const keywordLibrary = {
       ]
     }
   ]
-}};
+};
 const practiceAreaClusterMap = {
   "family-law": ["family-law"],
   "criminal-law": [
