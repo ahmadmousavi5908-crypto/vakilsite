@@ -199,7 +199,7 @@ const keywordLibrary = {
         "note": "Brand and non-brand query filters are query-level aggregates; they do not reconcile with query-page totals because anonymized queries are omitted."
       },
       "last28Days": {
-        "period": "2026-10-27 to 2026-11-23",
+        "period": "2026-10-28 to 2026-11-24",
         "settledThrough": "2026-11-24",
         "country": "irn",
         "brandFilterKeywords": [
@@ -211,31 +211,34 @@ const keywordLibrary = {
           "سید احمد موسوی پروانه ۷۴۵۱۶"
         ],
         "siteTotals": {
-          "clicks": 32,
-          "impressions": 135,
-          "ctrPercent": 23.7,
-          "averagePosition": 9.84
+          "clicks": 45,
+          "impressions": 170,
+          "ctrPercent": 26.47,
+          "averagePosition": 9.02
         },
         "branded": {
-          "clicks": 4,
-          "impressions": 7,
+          "clicks": 8,
+          "impressions": 14,
           "ctrPercent": 57.14,
-          "averagePosition": 1.57
+          "averagePosition": 1.5
         },
         "nonBranded": {
           "clicks": 0,
-          "impressions": 29,
+          "impressions": 31,
           "ctrPercent": 0,
-          "averagePosition": 20.9
+          "averagePosition": 20.94
         },
         "device": {
-          "mobile": { "clicks": 31, "impressions": 129 },
-          "desktop": { "clicks": 1, "impressions": 6 }
+          "mobile": { "clicks": 44, "impressions": 164, "ctrPercent": 26.83, "averagePosition": 8.85 },
+          "desktop": { "clicks": 1, "impressions": 6, "ctrPercent": 16.67, "averagePosition": 13.5 }
         },
         "queryPageCoverage": {
-          "visibleRows": 9,
-          "hiddenClicksShare": 0.875,
-          "hiddenImpressionsShare": 0.6815
+          "visibleRows": 8,
+          "hiddenClicks": 37,
+          "hiddenImpressions": 125,
+          "hiddenClicksShare": 0.8222,
+          "hiddenImpressionsShare": 0.7353,
+          "rowLimitTruncation": false
         },
         "visibleQueryClusters": {
           "generalAttorneySelection": 0,
@@ -243,13 +246,17 @@ const keywordLibrary = {
           "KhuzestanCities": 0
         },
         "pagePerformance": [
-          { "path": "/", "clicks": 24, "impressions": 48, "ctrPercent": 50, "averagePosition": 2.88 },
-          { "path": "/about", "clicks": 4, "impressions": 76, "ctrPercent": 5.26, "averagePosition": 6.16 },
-          { "path": "/articles/criminal-court-authority-restitution-real-estate-third-party-deed-annulment", "clicks": 3, "impressions": 22, "ctrPercent": 13.64, "averagePosition": 7.77 },
+          { "path": "/", "clicks": 35, "impressions": 67, "ctrPercent": 52.24, "averagePosition": 2.81 },
+          { "path": "/about", "clicks": 5, "impressions": 95, "ctrPercent": 5.26, "averagePosition": 6.07 },
+          { "path": "/articles/criminal-court-authority-restitution-real-estate-third-party-deed-annulment", "clicks": 4, "impressions": 26, "ctrPercent": 15.38, "averagePosition": 7.77 },
+          { "path": "/articles", "clicks": 2, "impressions": 5, "ctrPercent": 40, "averagePosition": 2.2 },
+          { "path": "/articles/criminal-investigation-lawyer", "clicks": 1, "impressions": 3, "ctrPercent": 33.33, "averagePosition": 2.33 },
+          { "path": "/lawyer-cooperation", "clicks": 1, "impressions": 5, "ctrPercent": 20, "averagePosition": 8.6 },
           { "path": "/locations/khuzestan", "clicks": 1, "impressions": 6, "ctrPercent": 16.67, "averagePosition": 9.17 },
-          { "path": "/services/property-law", "clicks": 0, "impressions": 4, "ctrPercent": 0, "averagePosition": 42.5 }
+          { "path": "/privacy", "clicks": 1, "impressions": 4, "ctrPercent": 25, "averagePosition": 3 },
+          { "path": "/services/property-law", "clicks": 0, "impressions": 5, "ctrPercent": 0, "averagePosition": 42.4 }
         ],
-        "note": "The immediately preceding 28-day comparison window returned zero clicks and impressions, so no growth rate is inferred. Query and query-page aggregates are not interchangeable."
+        "note": "GSC data settled through 2026-11-24. 37 of 45 clicks (82.2%) and 125 of 170 impressions (73.5%) are anonymized query traffic; no row-limit truncation. 44 of 45 clicks are mobile. Page-level rows are diagnostic and do not reconcile exactly to property totals. Service pages remain low-visibility; property-law had 5 impressions, average position 42.4 and zero clicks. The immediately preceding 28-day comparison window returned zero clicks and impressions, so no growth rate is inferred."
       },
       "observedQueries": [
         {
@@ -317,7 +324,7 @@ const keywordLibrary = {
           "landingPages": [
             { "path": "/about", "clicks": 0, "impressions": 22, "ctr": 0, "averagePosition": 8.27 }
           ],
-          "note": "Do not count this query as branded demand for the lawyer; it reflects the separately credited co-author name."
+          "note": "This exact name is absent from the live about-page HTML; treat it as an unrelated Google query association, not the attorney\u2019s identity or branded demand."
         }
       ],
       "indexInspection": {
@@ -325,10 +332,23 @@ const keywordLibrary = {
         "indexedPass": 10,
         "robotsAllowed": 10,
         "successfulFetch": 10,
-        "lastCrawlWindow": "2026-11-20 to 2026-11-24"
-      }
-    },
-    "paidKeywordResearch": {
+        "lastCrawlWindow": "2026-11-20 to 2026-11-24",
+        "aboutPage": {
+          "indexed": true,
+          "lastGoogleCrawl": "2026-11-20",
+          "sitemapLastmod": "2026-11-27"
+        },
+        "knownUnknownUrl": {
+          "url": "https://vakilahmadmousavi.ir/articles/difference-khale-yad-eviction-tasarruf-adwani",
+          "verdict": "NEUTRAL",
+          "coverageState": "URL is unknown to Google",
+          "sitemapListed": true,
+          "serverRenderedInternalLinkFrom": "/services/property-law",
+          "lastChecked": "2026-11-27",
+          "requestIndexingViaConnectedApi": false
+        }
+      },
+      "paidKeywordResearch": {
       "provider": "OpenSEO",
       "creditsRemaining": 2,
       "status": "not-run-insufficient-credit-budget"
@@ -345,6 +365,33 @@ const keywordLibrary = {
       "country": "Iran",
       "locationsFound": 0,
       "status": "Ahvaz city location unavailable in OpenSEO; Ahrefs Keywords Explorer rejected Iran (IR) as an unsupported country code, so no Iran-local volume or difficulty is claimed"
+    },
+    "offPageAuthority": {
+      "provider": "Ahrefs public Domain Rating",
+      "retrievedOn": "2026-11-27",
+      "site": { "domain": "vakilahmadmousavi.ir", "domainRating": 0 },
+      "comparisonDirectories": [
+        { "domain": "vakilbin.com", "domainRating": 27 },
+        { "domain": "mastervakil.com", "domainRating": 22 },
+        { "domain": "behtarinvakilshahr.ir", "domainRating": 21 },
+        { "domain": "dadpardaz.com", "domainRating": 12 },
+        { "domain": "bilbooard.ir", "domainRating": 8 },
+        { "domain": "novinvokala.com", "domainRating": 7 },
+        { "domain": "vakilhast.ir", "domainRating": 1.5 },
+        { "domain": "marjaevokala.com", "domainRating": 1.4 }
+      ],
+      "listingOpportunities": [
+        { "domain": "bilbooard.ir", "status": "no matching listing found", "registration": "free", "verification": "SMS", "url": "https://bilbooard.ir/add-business" },
+        { "domain": "vakilhast.ir", "status": "no matching listing found", "registration": "fee not disclosed", "verification": "SMS", "url": "https://vakilhast.ir/v1/lawyer/register" },
+        { "domain": "vakilbin.com", "status": "public advertising route found; no free self-service registration confirmed" },
+        { "domain": "mastervakil.com", "status": "registration form found; profile edits unavailable after submission" },
+        { "domain": "dadpardaz.com", "status": "10% commission on fees collected through the platform; do not register without explicit approval" }
+      ],
+      "googleBusinessProfile": {
+        "status": "unsupported for an Ahvaz-based business in Iran",
+        "source": "https://support.google.com/business/answer/6270107"
+      },
+      "interpretation": "Ahrefs Domain Rating is a proprietary backlink-strength estimate, not a Google ranking factor. Use it only to prioritize legitimate citations and editorial links; never buy bulk links."
     },
     "metrics": {
       "searchVolume": null,
