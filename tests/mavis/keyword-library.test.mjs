@@ -724,19 +724,21 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
   assert.equal(recent.brandFilterKeywords.length, 6);
   assert.ok(!recent.brandFilterKeywords.includes("سید احمد موسوی"));
   assert.deepEqual(recent.siteTotals, {
-    clicks: 32,
-    impressions: 135,
-    ctrPercent: 23.7,
-    averagePosition: 9.84
+    clicks: 45,
+    impressions: 170,
+    ctrPercent: 26.47,
+    averagePosition: 9.02
   });
   assert.equal(recent.branded.clicks, 4);
   assert.equal(recent.branded.impressions, 7);
   assert.equal(recent.nonBranded.clicks, 0);
   assert.equal(recent.nonBranded.impressions, 29);
-  assert.equal(recent.device.mobile.clicks, 31);
-  assert.equal(recent.device.mobile.impressions, 129);
-  assert.equal(recent.queryPageCoverage.hiddenClicksShare, 0.875);
-  assert.equal(recent.queryPageCoverage.hiddenImpressionsShare, 0.6815);
+  assert.equal(recent.device.mobile.clicks, 44);
+  assert.equal(recent.device.mobile.impressions, 164);
+  assert.equal(recent.device.desktop.clicks, 1);
+  assert.equal(recent.device.desktop.impressions, 6);
+  assert.equal(recent.queryPageCoverage.hiddenClicksShare, 0.8222);
+  assert.equal(recent.queryPageCoverage.hiddenImpressionsShare, 0.7353);
   assert.equal(recent.visibleQueryClusters.generalAttorneySelection, 0);
   assert.equal(recent.visibleQueryClusters.AhvazNeighborhoods, 0);
   assert.equal(recent.visibleQueryClusters.KhuzestanCities, 0);
@@ -851,10 +853,10 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
   assert.equal(recent.brandFilterKeywords.length, 6);
   assert.ok(!recent.brandFilterKeywords.includes("سید احمد موسوی"));
   assert.deepEqual(recent.siteTotals, {
-    clicks: 32,
-    impressions: 135,
-    ctrPercent: 23.7,
-    averagePosition: 9.84
+    clicks: 45,
+    impressions: 170,
+    ctrPercent: 26.47,
+    averagePosition: 9.02
   });
   const ninetyDayBrandSplit = seoKeywordLibrary.methodology.gscObserved.brandSplit90Days;
   assert.equal(ninetyDayBrandSplit.branded.clicks, 8);
@@ -865,10 +867,12 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
   assert.equal(recent.branded.impressions, 7);
   assert.equal(recent.nonBranded.clicks, 0);
   assert.equal(recent.nonBranded.impressions, 29);
-  assert.equal(recent.device.mobile.clicks, 31);
-  assert.equal(recent.device.mobile.impressions, 129);
-  assert.equal(recent.queryPageCoverage.hiddenClicksShare, 0.875);
-  assert.equal(recent.queryPageCoverage.hiddenImpressionsShare, 0.6815);
+  assert.equal(recent.device.mobile.clicks, 44);
+  assert.equal(recent.device.mobile.impressions, 164);
+  assert.equal(recent.device.desktop.clicks, 1);
+  assert.equal(recent.device.desktop.impressions, 6);
+  assert.equal(recent.queryPageCoverage.hiddenClicksShare, 0.8222);
+  assert.equal(recent.queryPageCoverage.hiddenImpressionsShare, 0.7353);
   assert.equal(recent.visibleQueryClusters.generalAttorneySelection, 0);
   assert.equal(recent.visibleQueryClusters.AhvazNeighborhoods, 0);
   assert.equal(recent.visibleQueryClusters.KhuzestanCities, 0);
@@ -876,7 +880,7 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
 
 
 test("records current GSC coverage, mobile dependence and off-page authority evidence", () => {
-  const snapshot = seoKeywordLibrary.gscObserved.last28Days;
+  const snapshot = seoKeywordLibrary.methodology.gscObserved.last28Days;
   assert.equal(snapshot.siteTotals.clicks, 45);
   assert.equal(snapshot.siteTotals.impressions, 170);
   assert.equal(snapshot.branded.clicks, 8);
@@ -887,11 +891,11 @@ test("records current GSC coverage, mobile dependence and off-page authority evi
   assert.equal(snapshot.queryPageCoverage.hiddenImpressionsShare, 0.7353);
   assert.equal(snapshot.device.mobile.clicks, 44);
   assert.equal(snapshot.device.desktop.clicks, 1);
-  const unrelated = seoKeywordLibrary.gscObserved.observedQueries.find((item) => item.query === "یونس نادمی");
+  const unrelated = seoKeywordLibrary.methodology.gscObserved.observedQueries.find((item) => item.query === "یونس نادمی");
   assert.match(unrelated.note, /absent from the live about-page HTML/u);
-  assert.equal(seoKeywordLibrary.gscObserved.indexInspection.knownUnknownUrl.coverageState, "URL is unknown to Google");
-  assert.equal(seoKeywordLibrary.gscObserved.indexInspection.aboutPage.sitemapLastmod, "2026-11-27");
-  assert.equal(seoKeywordLibrary.offPageAuthority.site.domainRating, 0);
-  assert.equal(seoKeywordLibrary.offPageAuthority.comparisonDirectories.find((item) => item.domain === "vakilbin.com").domainRating, 27);
-  assert.equal(seoKeywordLibrary.offPageAuthority.googleBusinessProfile.status, "unsupported for an Ahvaz-based business in Iran");
+  assert.equal(seoKeywordLibrary.methodology.gscObserved.indexInspection.knownUnknownUrl.coverageState, "URL is unknown to Google");
+  assert.equal(seoKeywordLibrary.methodology.gscObserved.indexInspection.aboutPage.sitemapLastmod, "2026-11-27");
+  assert.equal(seoKeywordLibrary.methodology.offPageAuthority.site.domainRating, 0);
+  assert.equal(seoKeywordLibrary.methodology.offPageAuthority.comparisonDirectories.find((item) => item.domain === "vakilbin.com").domainRating, 27);
+  assert.equal(seoKeywordLibrary.methodology.offPageAuthority.googleBusinessProfile.status, "unsupported for an Ahvaz-based business in Iran");
 });
