@@ -135,6 +135,7 @@ const SERVICE_POSITIONING_SUBJECTS = Object.freeze([
   { subject: "قرارداد", clusterId: "civil-contracts-obligations" },
   { subject: "چک و مطالبه وجه", clusterId: "cheques-commercial-papers" },
   { subject: "چک برگشتی", clusterId: "cheques-commercial-papers" },
+  { subject: "چک و سفته", clusterId: "cheques-commercial-papers" },
   { subject: "مطالبه مطالبات", clusterId: "enforcement-debt" },
   { subject: "مشاوره حقوقی", clusterId: "legal-consultation" }
 ]);
@@ -145,17 +146,48 @@ const FUTURE_POSITIONING_SUBJECTS = Object.freeze([
   { subject: "تأمین اجتماعی", clusterId: "labor-administrative-tax" },
   { subject: "مالیاتی", clusterId: "labor-administrative-tax" },
   { subject: "دیوان عدالت اداری", clusterId: "labor-administrative-tax" },
+  { subject: "شهرداری", clusterId: "labor-administrative-tax" },
   { subject: "بیمه", clusterId: "insurance-accident-torts" },
   { subject: "قصور پزشکی", clusterId: "insurance-accident-torts" },
   { subject: "تصادفات", clusterId: "insurance-accident-torts" },
+  { subject: "محاسبه خسارت", clusterId: "insurance-accident-torts" },
   { subject: "گمرک", clusterId: "international-foreign-nationals" },
   { subject: "مهاجرت", clusterId: "international-foreign-nationals" },
+  { subject: "بین‌الملل", clusterId: "international-foreign-nationals" },
   { subject: "مالکیت فکری", clusterId: "intellectual-digital-commerce" },
   { subject: "تجاری", clusterId: "commercial-law" },
+  { subject: "اختلافات تجاری", clusterId: "commercial-law" },
+  { subject: "قراردادهای پیمانکاری", clusterId: "civil-contracts-obligations" },
   { subject: "ارث", clusterId: "inheritance-estate" },
   { subject: "ورزشی", clusterId: "commercial-law" },
   { subject: "رسانه", clusterId: "intellectual-digital-commerce" },
-  { subject: "رمزارز", clusterId: "criminal-cyber" }
+  { subject: "رمزارز", clusterId: "criminal-cyber" },
+  { subject: "کلاهبرداری", clusterId: "criminal-procedure" },
+  { subject: "خیانت در امانت", clusterId: "criminal-procedure" },
+  { subject: "جعل", clusterId: "criminal-procedure" },
+  { subject: "سرقت", clusterId: "criminal-life-and-body" },
+  { subject: "قتل", clusterId: "criminal-life-and-body" },
+  { subject: "ضرب و جرح", clusterId: "criminal-life-and-body" },
+  { subject: "دیه", clusterId: "criminal-life-and-body" },
+  { subject: "مواد مخدر", clusterId: "criminal-life-and-body" },
+  { subject: "قاچاق کالا", clusterId: "criminal-life-and-body" },
+  { subject: "جرایم اقتصادی", clusterId: "criminal-cyber" },
+  { subject: "جرایم رایانه‌ای", clusterId: "criminal-cyber" },
+  { subject: "جرایم اینترنتی", clusterId: "criminal-cyber" },
+  { subject: "تهدید", clusterId: "criminal-life-and-body" },
+  { subject: "توهین", clusterId: "criminal-life-and-body" },
+  { subject: "افترا", clusterId: "criminal-life-and-body" },
+  { subject: "نشر اکاذیب", clusterId: "criminal-life-and-body" },
+  { subject: "قذف", clusterId: "criminal-life-and-body" },
+  { subject: "دادسرا", clusterId: "criminal-procedure" },
+  { subject: "تحقیقات مقدماتی", clusterId: "criminal-procedure" },
+  { subject: "تجدیدنظر", clusterId: "criminal-procedure" },
+  { subject: "اعتراض به قرار", clusterId: "criminal-procedure" },
+  { subject: "فرجام‌خواهی", clusterId: "criminal-procedure" },
+  { subject: "اعاده دادرسی", clusterId: "criminal-procedure" },
+  { subject: "لایحه دفاع", clusterId: "criminal-procedure" },
+  { subject: "لایحه دفاعیه", clusterId: "criminal-procedure" },
+  { subject: "الزام به انجام تعهد", clusterId: "civil-contracts-obligations" }
 ]);
 
 const KHUZESTAN_SEARCH_LOCATIONS = Object.freeze([
@@ -183,7 +215,25 @@ function buildUserResearchPositioningTerms() {
     userResearchSeed: true
   });
 
+  const knownTerms = new Set(BASE_POSITIONING_TERMS.map((item) => item.term));
+  const generatedBaseTerms = new Set();
+  const addBasePhrases = (subject, clusterId) => {
+    for (const term of [`وکیل ${subject} اهواز`, `وکیل ${subject} در اهواز`]) {
+      if (knownTerms.has(term) || generatedBaseTerms.has(term)) continue;
+      generatedBaseTerms.add(term);
+      entries.push({
+        term,
+        intent: "user-research-service-intent",
+        claimRisk: "low",
+        clusterId,
+        location: "اهواز",
+        userResearchSeed: true
+      });
+    }
+  };
+
   for (const { subject, clusterId } of SERVICE_POSITIONING_SUBJECTS) {
+    addBasePhrases(subject, clusterId);
     for (const modifier of USER_RESEARCH_COMPARISON_PREFIXES) {
       entries.push(highRisk(`${modifier} وکیل ${subject} اهواز`, clusterId, "اهواز"));
       entries.push(highRisk(`${modifier} وکیل ${subject} در اهواز`, clusterId, "اهواز"));
@@ -194,6 +244,7 @@ function buildUserResearchPositioningTerms() {
   }
 
   for (const { subject, clusterId } of FUTURE_POSITIONING_SUBJECTS) {
+    addBasePhrases(subject, clusterId);
     for (const modifier of ["بهترین", "برترین", "حرفه‌ای‌ترین", "حرفه ای ترین", "متخصص‌ترین", "باتجربه‌ترین", "معتبرترین"]) {
       entries.push(highRisk(`${modifier} وکیل ${subject} اهواز`, clusterId, "اهواز"));
       entries.push(highRisk(`${modifier} وکیل ${subject} در اهواز`, clusterId, "اهواز"));

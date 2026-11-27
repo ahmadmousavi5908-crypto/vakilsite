@@ -51,13 +51,62 @@ const keywordLibrary = {
       "دفتر وکالت در اهواز", "وکیل خوب و قابل اعتماد در اهواز",
       "وکیل متخصص دعاوی در اهواز", "وکیل مجرب و باتجربه اهواز",
       "دفتر وکالت کیانپارس", "دفتر وکالت زیتون کارمندی", "دفتر وکالت امانیه",
-      "وکیل خوش‌نام اهواز", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه اهواز"
+      "وکیل خوش‌نام اهواز", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه اهواز",
+      "وکیل کلاهبرداری اهواز",
+      "وکیل خیانت در امانت اهواز",
+      "وکیل جعل اهواز",
+      "وکیل سرقت اهواز",
+      "وکیل قتل اهواز",
+      "وکیل ضرب و جرح اهواز",
+      "وکیل دیه اهواز",
+      "وکیل مواد مخدر اهواز",
+      "وکیل قاچاق کالا اهواز",
+      "وکیل جرایم اقتصادی اهواز",
+      "وکیل جرایم رایانه‌ای اهواز",
+      "وکیل جرایم اینترنتی اهواز",
+      "وکیل تهدید اهواز",
+      "وکیل توهین اهواز",
+      "وکیل افترا اهواز",
+      "وکیل نشر اکاذیب اهواز",
+      "وکیل قذف اهواز",
+      "وکیل دادسرا اهواز",
+      "وکیل تحقیقات مقدماتی اهواز",
+      "وکیل تجدیدنظر اهواز",
+      "وکیل اعتراض به قرار اهواز",
+      "وکیل فرجام‌خواهی اهواز",
+      "وکیل اعاده دادرسی اهواز",
+      "وکیل لایحه دفاع اهواز",
+      "وکیل لایحه دفاعیه اهواز",
+      "وکیل الزام به انجام تعهد اهواز",
+      "وکیل چک و سفته اهواز",
+      "وکیل شهرداری اهواز",
+      "وکیل اختلافات تجاری اهواز",
+      "وکیل بین‌الملل اهواز",
+      "وکیل مهاجرت اهواز",
+      "وکیل گمرک اهواز",
+      "وکیل مالکیت فکری اهواز",
+      "وکیل بیمه اهواز",
+      "وکیل قصور پزشکی اهواز",
+      "وکیل تأمین اجتماعی اهواز",
+      "وکیل دیوان عدالت اداری اهواز",
+      "وکیل ارث اهواز",
+      "وکیل اداره کار اهواز",
+      "وکیل کارگر و کارفرما اهواز",
+      "وکیل ورزشی اهواز",
+      "وکیل رسانه اهواز",
+      "وکیل رمزارز اهواز",
+      "وکیل تصادفات اهواز",
+      "وکیل مالیاتی اهواز",
+      "وکیل تجاری اهواز",
+      "وکیل قراردادهای پیمانکاری اهواز",
+      "وکیل محاسبه خسارت اهواز"
     ],
     "khuzestanCities": [
-      "اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان", "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک", "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا", "رامشیر", "هفتکل"
+      "اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان", "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک", "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا", "رامشیر", "هفتکل", "صیدون"
     ],
     "neighborhoods": ["کیانپارس", "کیان پارس", "امانیه", "زیتون", "زیتون کارمندی", "گلستان"],
     "officePhrases": ["دفتر وکالت کیانپارس", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه", "دفتر وکالت امانیه اهواز"],
+    "practiceAreaSubjects": ["کیفری", "جنایی", "حقوقی", "مدنی", "خانواده", "طلاق", "مهریه", "حضانت", "ملکی", "دعاوی ملکی", "ثبتی", "قرارداد", "چک و مطالبه وجه", "چک برگشتی", "چک و سفته", "مطالبه مطالبات", "مشاوره حقوقی", "اداره کار", "کارگر و کارفرما", "تأمین اجتماعی", "مالیاتی", "دیوان عدالت اداری", "شهرداری", "بیمه", "قصور پزشکی", "تصادفات", "محاسبه خسارت", "گمرک", "مهاجرت", "بین‌الملل", "مالکیت فکری", "تجاری", "اختلافات تجاری", "قراردادهای پیمانکاری", "ارث", "ورزشی", "رسانه", "رمزارز", "کلاهبرداری", "خیانت در امانت", "جعل", "سرقت", "قتل", "ضرب و جرح", "دیه", "مواد مخدر", "قاچاق کالا", "جرایم اقتصادی", "جرایم رایانه‌ای", "جرایم اینترنتی", "تهدید", "توهین", "افترا", "نشر اکاذیب", "قذف", "دادسرا", "تحقیقات مقدماتی", "تجدیدنظر", "اعتراض به قرار", "فرجام‌خواهی", "اعاده دادرسی", "لایحه دفاع", "لایحه دفاعیه", "الزام به انجام تعهد" ],
     "highRiskPhrases": [
       "حرفه‌ای‌ترین وکیل اهواز", "متخصص‌ترین وکیل اهواز",
       "وکیل نابغه", "وکیل نابغه اهواز", "استاد فن دفاع حقوقی", "استاد فن دفاع حقوقی اهواز",
@@ -122,9 +171,18 @@ const keywordLibrary = {
       "period": "2026-08-25 to 2026-11-24",
       "queryRows": 8,
       "pageRows": 23,
-      "status": "connected; latest complete 92-day window refreshed on 2026-11-27; visible query rows remain incomplete because Google omits anonymized and low-volume queries",
+      "status": "connected; requested 92-day window refreshed on 2026-11-27, but actual Search Console records begin on 2026-11-17 (8 days with data); visible query rows remain incomplete because Google omits anonymized and low-volume queries",
       "connectionVerified": true,
       "permissionLevel": "siteOwner",
+      "dataCoverage": {
+        "firstDataDate": "2026-11-17",
+        "lastDataDate": "2026-11-24",
+        "daysWithData": 8,
+        "requestedWindowDays": 92,
+        "last28DayWindowDays": 28,
+        "previous28DayComparisonHasData": false,
+        "interpretation": "The 28-day and 92-day request windows contain only 8 days of actual GSC records; ranking changes marked new are not evidence of growth because the previous comparison window has no data."
+      },
       "lastThreeMonths": {
         "period": "2026-08-25 to 2026-11-24",
         "queryRows": 8,
@@ -146,11 +204,12 @@ const keywordLibrary = {
       "brandSplit90Days": {
         "period": "2026-08-25 to 2026-11-24",
         "branded": { "clicks": 8, "impressions": 14, "ctrPercent": 57.14, "averagePosition": 1.5 },
-        "nonBranded": { "clicks": 0, "impressions": 31, "ctrPercent": 0, "averagePosition": 20.94 },
-        "note": "Brand and non-brand query filters are query-level aggregates; they do not reconcile with query-page totals because anonymized queries are omitted."
+        "nonBranded": { "clicks": 37, "impressions": 156, "ctrPercent": 23.72, "averagePosition": 9.69 },
+        "anonymized": { "clicks": 37, "impressions": 125, "ctrPercent": 29.6, "averagePosition": 6.904 },
+        "note": "Non-branded totals are the property total minus branded traffic and include anonymized queries. Anonymized is a diagnostic subset of non-branded traffic and must not be added again; query-page rows omit anonymized and low-volume queries."
       },
       "last28Days": {
-        "period": "2026-10-27 to 2026-11-23",
+        "period": "2026-10-28 to 2026-11-24",
         "settledThrough": "2026-11-24",
         "country": "irn",
         "brandFilterKeywords": [
@@ -162,31 +221,40 @@ const keywordLibrary = {
           "سید احمد موسوی پروانه ۷۴۵۱۶"
         ],
         "siteTotals": {
-          "clicks": 32,
-          "impressions": 135,
-          "ctrPercent": 23.7,
-          "averagePosition": 9.84
+          "clicks": 45,
+          "impressions": 170,
+          "ctrPercent": 26.47,
+          "averagePosition": 9.02
         },
         "branded": {
-          "clicks": 4,
-          "impressions": 7,
+          "clicks": 8,
+          "impressions": 14,
           "ctrPercent": 57.14,
-          "averagePosition": 1.57
+          "averagePosition": 1.5
         },
         "nonBranded": {
-          "clicks": 0,
-          "impressions": 29,
-          "ctrPercent": 0,
-          "averagePosition": 20.9
+          "clicks": 37,
+          "impressions": 156,
+          "ctrPercent": 23.72,
+          "averagePosition": 9.69
+        },
+        "anonymized": {
+          "clicks": 37,
+          "impressions": 125,
+          "ctrPercent": 29.6,
+          "averagePosition": 6.904
         },
         "device": {
-          "mobile": { "clicks": 31, "impressions": 129 },
-          "desktop": { "clicks": 1, "impressions": 6 }
+          "mobile": { "clicks": 44, "impressions": 164, "ctrPercent": 26.83, "averagePosition": 8.85 },
+          "desktop": { "clicks": 1, "impressions": 6, "ctrPercent": 16.67, "averagePosition": 13.5 }
         },
         "queryPageCoverage": {
-          "visibleRows": 9,
-          "hiddenClicksShare": 0.875,
-          "hiddenImpressionsShare": 0.6815
+          "visibleRows": 8,
+          "hiddenClicks": 37,
+          "hiddenImpressions": 125,
+          "hiddenClicksShare": 0.8222,
+          "hiddenImpressionsShare": 0.7353,
+          "rowLimitTruncation": false
         },
         "visibleQueryClusters": {
           "generalAttorneySelection": 0,
@@ -194,13 +262,17 @@ const keywordLibrary = {
           "KhuzestanCities": 0
         },
         "pagePerformance": [
-          { "path": "/", "clicks": 24, "impressions": 48, "ctrPercent": 50, "averagePosition": 2.88 },
-          { "path": "/about", "clicks": 4, "impressions": 76, "ctrPercent": 5.26, "averagePosition": 6.16 },
-          { "path": "/articles/criminal-court-authority-restitution-real-estate-third-party-deed-annulment", "clicks": 3, "impressions": 22, "ctrPercent": 13.64, "averagePosition": 7.77 },
+          { "path": "/", "clicks": 35, "impressions": 67, "ctrPercent": 52.24, "averagePosition": 2.81 },
+          { "path": "/about", "clicks": 5, "impressions": 95, "ctrPercent": 5.26, "averagePosition": 6.07 },
+          { "path": "/articles/criminal-court-authority-restitution-real-estate-third-party-deed-annulment", "clicks": 4, "impressions": 26, "ctrPercent": 15.38, "averagePosition": 7.77 },
+          { "path": "/articles", "clicks": 2, "impressions": 5, "ctrPercent": 40, "averagePosition": 2.2 },
+          { "path": "/articles/criminal-investigation-lawyer", "clicks": 1, "impressions": 3, "ctrPercent": 33.33, "averagePosition": 2.33 },
+          { "path": "/lawyer-cooperation", "clicks": 1, "impressions": 5, "ctrPercent": 20, "averagePosition": 8.6 },
           { "path": "/locations/khuzestan", "clicks": 1, "impressions": 6, "ctrPercent": 16.67, "averagePosition": 9.17 },
-          { "path": "/services/property-law", "clicks": 0, "impressions": 4, "ctrPercent": 0, "averagePosition": 42.5 }
+          { "path": "/privacy", "clicks": 1, "impressions": 4, "ctrPercent": 25, "averagePosition": 3 },
+          { "path": "/services/property-law", "clicks": 0, "impressions": 5, "ctrPercent": 0, "averagePosition": 42.4 }
         ],
-        "note": "The immediately preceding 28-day comparison window returned zero clicks and impressions, so no growth rate is inferred. Query and query-page aggregates are not interchangeable."
+        "note": "GSC data settled through 2026-11-24, but actual records begin on 2026-11-17: only 8 of the requested 28 days contain data. The immediately preceding 28-day comparison window has no records, so new-query labels and growth rates are not evidence of a trend. 37 of 45 clicks (82.2%) and 125 of 170 impressions (73.5%) are anonymized query traffic; no row-limit truncation. 44 of 45 clicks are mobile. Page-level rows are diagnostic and do not reconcile exactly to property totals. Service pages remain low-visibility; property-law had 5 impressions, average position 42.4 and zero clicks."
       },
       "observedQueries": [
         {
@@ -268,7 +340,7 @@ const keywordLibrary = {
           "landingPages": [
             { "path": "/about", "clicks": 0, "impressions": 22, "ctr": 0, "averagePosition": 8.27 }
           ],
-          "note": "Do not count this query as branded demand for the lawyer; it reflects the separately credited co-author name."
+          "note": "Do not count this as the attorney\u2019s identity or branded demand: the exact name is absent from the live about-page HTML and is an unrelated Google query association."
         }
       ],
       "indexInspection": {
@@ -276,7 +348,21 @@ const keywordLibrary = {
         "indexedPass": 10,
         "robotsAllowed": 10,
         "successfulFetch": 10,
-        "lastCrawlWindow": "2026-11-20 to 2026-11-24"
+        "lastCrawlWindow": "2026-11-20 to 2026-11-24",
+        "aboutPage": {
+          "indexed": true,
+          "lastGoogleCrawl": "2026-11-20",
+          "sitemapLastmod": "2026-11-27"
+        },
+        "knownUnknownUrl": {
+          "url": "https://vakilahmadmousavi.ir/articles/difference-khale-yad-eviction-tasarruf-adwani",
+          "verdict": "NEUTRAL",
+          "coverageState": "URL is unknown to Google",
+          "sitemapListed": true,
+          "serverRenderedInternalLinkFrom": "/services/property-law",
+          "lastChecked": "2026-11-27",
+          "requestIndexingViaConnectedApi": false
+        }
       }
     },
     "paidKeywordResearch": {
@@ -296,6 +382,33 @@ const keywordLibrary = {
       "country": "Iran",
       "locationsFound": 0,
       "status": "Ahvaz city location unavailable in OpenSEO; Ahrefs Keywords Explorer rejected Iran (IR) as an unsupported country code, so no Iran-local volume or difficulty is claimed"
+    },
+    "offPageAuthority": {
+      "provider": "Ahrefs public Domain Rating",
+      "retrievedOn": "2026-11-27",
+      "site": { "domain": "vakilahmadmousavi.ir", "domainRating": 0 },
+      "comparisonDirectories": [
+        { "domain": "vakilbin.com", "domainRating": 27 },
+        { "domain": "mastervakil.com", "domainRating": 22 },
+        { "domain": "behtarinvakilshahr.ir", "domainRating": 21 },
+        { "domain": "dadpardaz.com", "domainRating": 12 },
+        { "domain": "bilbooard.ir", "domainRating": 8 },
+        { "domain": "novinvokala.com", "domainRating": 7 },
+        { "domain": "vakilhast.ir", "domainRating": 1.5 },
+        { "domain": "marjaevokala.com", "domainRating": 1.4 }
+      ],
+      "listingOpportunities": [
+        { "domain": "bilbooard.ir", "status": "no matching listing found", "registration": "free", "verification": "SMS", "url": "https://bilbooard.ir/add-business" },
+        { "domain": "vakilhast.ir", "status": "no matching listing found", "registration": "fee not disclosed", "verification": "SMS", "url": "https://vakilhast.ir/v1/lawyer/register" },
+        { "domain": "vakilbin.com", "status": "public advertising route found; no free self-service registration confirmed" },
+        { "domain": "mastervakil.com", "status": "registration form found; profile edits unavailable after submission" },
+        { "domain": "dadpardaz.com", "status": "10% commission on fees collected through the platform; do not register without explicit approval" }
+      ],
+      "googleBusinessProfile": {
+        "status": "unsupported for an Ahvaz-based business in Iran",
+        "source": "https://support.google.com/business/answer/6270107"
+      },
+      "interpretation": "Ahrefs Domain Rating is a proprietary backlink-strength estimate, not a Google ranking factor. Use it only to prioritize legitimate citations and editorial links; never buy bulk links."
     },
     "metrics": {
       "searchVolume": null,
