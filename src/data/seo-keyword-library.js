@@ -1984,7 +1984,7 @@ const keywordLibrary = {
       ]
     }
   ]
-};
+}};
 const practiceAreaClusterMap = {
   "family-law": ["family-law"],
   "criminal-law": [
