@@ -25,7 +25,7 @@ test("unknown practice areas keep their existing neutral title", () => {
 });
 
 
-test("service metadata titles stay neutral while preserving descriptive visible H1 titles", () => {
+test("service metadata titles lead with best-lawyer search intent and frame it as selection guidance", () => {
   assert.deepEqual(PRACTICE_AREA_META_TITLES, {
     "family-law": "بهترین وکیل خانواده اهواز؛ راهنمای انتخاب",
     "criminal-law": "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب",
