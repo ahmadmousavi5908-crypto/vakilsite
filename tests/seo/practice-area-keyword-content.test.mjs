@@ -193,24 +193,20 @@ test("adds verifiable author, review date and question-led headings to the prope
 });
 
 
-test("assigns best-lawyer intent to each canonical service title and page keyword set", () => {
+test("keeps service titles neutral while preserving best-lawyer phrases in page keywords", () => {
   const expected = {
-    "family-law": "بهترین وکیل خانواده اهواز",
-    "criminal-law": "بهترین وکیل کیفری اهواز",
-    "property-law": "بهترین وکیل ملکی اهواز",
-    "contracts-and-obligations": "بهترین وکیل قرارداد اهواز",
-    "claims-and-enforcement": "بهترین وکیل چک و مطالبه وجه اهواز",
-    "legal-consultation": "مشاوره حقوقی اهواز"
+    "family-law": { title: "وکیل خانواده اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل خانواده اهواز" },
+    "criminal-law": { title: "وکیل کیفری اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل کیفری اهواز" },
+    "property-law": { title: "وکیل ملکی اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل ملکی اهواز" },
+    "contracts-and-obligations": { title: "وکیل قرارداد و تعهدات اهواز", keyword: "بهترین وکیل قرارداد اهواز" },
+    "claims-and-enforcement": { title: "وکیل چک و مطالبه وجه اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل چک و مطالبه وجه اهواز" },
+    "legal-consultation": { title: "مشاوره حقوقی اهواز", keyword: "مشاوره حقوقی اهواز" }
   };
 
-  for (const [slug, phrase] of Object.entries(expected)) {
-    if (slug === "claims-and-enforcement") {
-      assert.equal(PRACTICE_AREA_META_TITLES[slug], "وکیل چک و مطالبه وجه اهواز؛ راهنمای انتخاب");
-      assert.ok(!PRACTICE_AREA_META_TITLES[slug].includes("بهترین"));
-    } else {
-      assert.ok(PRACTICE_AREA_META_TITLES[slug].includes(phrase), `Missing title intent for ${slug}`);
-    }
-    assert.ok(PRACTICE_AREA_KEYWORDS[slug].includes(phrase), `Missing page keyword for ${slug}`);
+  for (const [slug, { title, keyword }] of Object.entries(expected)) {
+    assert.equal(PRACTICE_AREA_META_TITLES[slug], title, `Unexpected neutral title for ${slug}`);
+    assert.ok(!title.includes("بهترین"), `Self-superlative title found for ${slug}`);
+    assert.ok(PRACTICE_AREA_KEYWORDS[slug].includes(keyword), `Missing page keyword for ${slug}`);
     assert.ok(PRACTICE_AREA_KEYWORDS[slug].some((term) => /حرفه‌ای|باتجربه|متخصص/.test(term)));
   }
 });
