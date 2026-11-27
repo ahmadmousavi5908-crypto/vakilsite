@@ -214,7 +214,8 @@ test("keeps service titles neutral while preserving best-lawyer phrases in page 
 
   for (const [slug, { title, keyword }] of Object.entries(expected)) {
     assert.equal(PRACTICE_AREA_META_TITLES[slug], title, `Unexpected neutral title for ${slug}`);
-    assert.ok(!title.includes("بهترین وکیل") || title.includes("راهنمای انتخاب"), `Unqualified best-lawyer claim found for ${slug}`);
+    assert.ok(title.startsWith("وکیل ") || title.startsWith("مشاوره "), `Title must lead with the service term for ${slug}`);
+    assert.ok(!title.includes("بهترین وکیل") || title.includes("انتخاب"), `Best-lawyer wording must remain selection guidance for ${slug}`);
     assert.ok(PRACTICE_AREA_KEYWORDS[slug].includes(keyword), `Missing page keyword for ${slug}`);
     assert.ok(PRACTICE_AREA_KEYWORDS[slug].some((term) => /حرفه‌ای|باتجربه|متخصص/.test(term)));
   }
