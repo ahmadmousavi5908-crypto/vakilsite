@@ -62,3 +62,13 @@ test("keeps the attorney profile title absolute and the social titles explicit",
   assert.match(aboutSource, /openGraph:\s*\{[\s\S]*?title:\s*"سید احمد موسوی، وکیل پایه یک در اهواز \| پروانه ۷۴۵۱۶"/u);
   assert.match(aboutSource, /twitter:\s*\{[\s\S]*?title:\s*"سید احمد موسوی، وکیل پایه یک در اهواز \| پروانه ۷۴۵۱۶"/u);
 });
+
+
+test("keeps the homepage meta description within the search snippet budget", () => {
+  const layoutSource = readFileSync(new URL("../../src/app/layout.js", import.meta.url), "utf8");
+  const description = layoutSource.match(/description:\\s*"([^"]+)"/u)?.[1];
+  assert.ok(description, "Homepage meta description must be present");
+  assert.ok(description.length <= 160, `Homepage meta description is too long: ${description.length}`);
+  assert.match(description, /سید احمد موسوی/u);
+  assert.match(description, /اهواز/u);
+});
