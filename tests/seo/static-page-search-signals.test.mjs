@@ -11,7 +11,7 @@ test("publishes the homepage update date without associating the attorney portra
     lastModified: "2026-11-26",
   });
   assert.deepEqual(getStaticPageSearchSignals("/about", origin), {
-    lastModified: "2026-11-26",
+    lastModified: "2026-11-27",
     images: [portrait],
   });
   assert.deepEqual(getStaticPageSearchSignals("/locations/khuzestan", origin), {
