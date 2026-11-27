@@ -625,7 +625,7 @@ test("locks every explicit user-supplied Ahvaz query and neighborhood spelling",
     assert.ok(all.some((entry) => entry.term === term), `Missing exact user-supplied phrase: ${term}`);
   }
 
-  const khuzestanCities = ["آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه"];
+  const khuzestanCities = ["اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان", "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک", "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا", "رامشیر", "هفتکل"];
   for (const city of khuzestanCities) {
     assert.ok(all.some((entry) => entry.term === `وکیل در ${city}`), `Missing city phrase: ${city}`);
   }
@@ -730,7 +730,7 @@ test("preserves every exact user-supplied phrase in the primary SEO research lib
     assert.ok(expansion.exactPhrases.includes(phrase), `Missing exact phrase in SEO research library: ${phrase}`);
   }
   assert.equal(expansion.exactPhrases.length, requiredPhrases.length);
-  assert.deepEqual(expansion.khuzestanCities, ["آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه"]);
+  assert.deepEqual(expansion.khuzestanCities, ["اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان", "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک", "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا", "رامشیر", "هفتکل"]);
   assert.deepEqual(expansion.officePhrases, ["دفتر وکالت کیانپارس", "دفتر وکالت زیتون کارمندی", "دفتر وکالت امانیه"]);
   assert.equal(expansion.highRiskPhrases.length, 6);
   assert.match(expansion.publicUsagePolicy, /research-only/u);
