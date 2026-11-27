@@ -873,3 +873,25 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
   assert.equal(recent.visibleQueryClusters.AhvazNeighborhoods, 0);
   assert.equal(recent.visibleQueryClusters.KhuzestanCities, 0);
 });
+
+
+test("records current GSC coverage, mobile dependence and off-page authority evidence", () => {
+  const snapshot = seoKeywordLibrary.gscObserved.last28Days;
+  assert.equal(snapshot.siteTotals.clicks, 45);
+  assert.equal(snapshot.siteTotals.impressions, 170);
+  assert.equal(snapshot.branded.clicks, 8);
+  assert.equal(snapshot.nonBranded.impressions, 31);
+  assert.equal(snapshot.queryPageCoverage.hiddenClicks, 37);
+  assert.equal(snapshot.queryPageCoverage.hiddenImpressions, 125);
+  assert.equal(snapshot.queryPageCoverage.hiddenClicksShare, 0.8222);
+  assert.equal(snapshot.queryPageCoverage.hiddenImpressionsShare, 0.7353);
+  assert.equal(snapshot.device.mobile.clicks, 44);
+  assert.equal(snapshot.device.desktop.clicks, 1);
+  const unrelated = seoKeywordLibrary.gscObserved.observedQueries.find((item) => item.query === "یونس نادمی");
+  assert.match(unrelated.note, /absent from the live about-page HTML/u);
+  assert.equal(seoKeywordLibrary.gscObserved.indexInspection.knownUnknownUrl.coverageState, "URL is unknown to Google");
+  assert.equal(seoKeywordLibrary.gscObserved.indexInspection.aboutPage.sitemapLastmod, "2026-11-27");
+  assert.equal(seoKeywordLibrary.offPageAuthority.site.domainRating, 0);
+  assert.equal(seoKeywordLibrary.offPageAuthority.comparisonDirectories.find((item) => item.domain === "vakilbin.com").domainRating, 27);
+  assert.equal(seoKeywordLibrary.offPageAuthority.googleBusinessProfile.status, "unsupported for an Ahvaz-based business in Iran");
+});
