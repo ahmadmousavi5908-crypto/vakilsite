@@ -287,6 +287,14 @@ test("preserves superlative phrases as publishable search intent without making 
   assert.ok(expansion.lawyerFirstVariants.includes("وکیل حرفه‌ای اهواز"));
   assert.match(expansion.publicUsagePolicy, /may appear publicly as relevant user-search intent/u);
   assert.match(expansion.publicUsagePolicy, /unsupported first-person superiority/u);
+  assert.deepEqual(expansion.priorityClusters, {
+    "family-law": ["بهترین وکیل خانواده اهواز", "حرفه‌ای‌ترین وکیل خانواده اهواز", "متخصص‌ترین وکیل خانواده اهواز"],
+    "criminal-law": ["بهترین وکیل کیفری اهواز", "حرفه‌ای‌ترین وکیل کیفری اهواز", "متخصص‌ترین وکیل کیفری اهواز"],
+    "property-law": ["بهترین وکیل ملکی اهواز", "حرفه‌ای‌ترین وکیل ملکی اهواز", "متخصص‌ترین وکیل ملکی اهواز"],
+    "contracts-and-obligations": ["بهترین وکیل قرارداد اهواز", "حرفه‌ای‌ترین وکیل قرارداد اهواز", "متخصص‌ترین وکیل قرارداد اهواز"],
+    "claims-and-enforcement": ["بهترین وکیل چک اهواز", "حرفه‌ای‌ترین وکیل چک اهواز", "متخصص‌ترین وکیل چک اهواز"],
+    "legal-consultation": ["بهترین وکیل حقوقی اهواز", "حرفه‌ای‌ترین وکیل حقوقی اهواز", "متخصص‌ترین وکیل حقوقی اهواز"]
+  });
 });
 
 
