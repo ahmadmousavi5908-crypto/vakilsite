@@ -64,27 +64,39 @@ const keywordLibrary = {
     "candidateCountNote": "5,651 is the total of internally generated editorial candidates across lawyer, base, problem, local, positioning, colloquial and legal taxonomy expansions; it is not search volume, observed query count, indexable URL count, or proof of demand.",
     "gscObserved": {
       "property": "sc-domain:vakilahmadmousavi.ir",
-      "period": "2026-10-26 to 2026-11-22",
+      "period": "2026-08-25 to 2026-11-24",
       "queryRows": 8,
-      "pageRows": 20,
-      "status": "connected; latest complete 28-day window refreshed on 2026-11-25; visible query rows remain incomplete because Google omits anonymized and low-volume queries",
+      "pageRows": 23,
+      "status": "connected; latest complete 92-day window refreshed on 2026-11-27; visible query rows remain incomplete because Google omits anonymized and low-volume queries",
       "connectionVerified": true,
       "permissionLevel": "siteOwner",
       "lastThreeMonths": {
-        "period": "2026-08-22 to 2026-11-22",
+        "period": "2026-08-25 to 2026-11-24",
         "queryRows": 8,
-        "pageRows": 20
+        "pageRows": 23
       },
       "queryPageRows": 9,
+      "siteTotals": {
+        "clicks": 45,
+        "impressions": 170,
+        "ctrPercent": 26.47,
+        "averagePosition": 9.02
+      },
+      "queryCoverage": {
+        "visibleClicksShare": 0.1778,
+        "visibleImpressionsShare": 0.2647,
+        "hiddenClicksShare": 0.8222,
+        "hiddenImpressionsShare": 0.7353
+      },
       "observedQueries": [
         {
           "query": "وکیل سید احمد موسوی",
           "classification": "brand",
           "landingPages": [
-            { "path": "/", "clicks": 4, "impressions": 7, "ctr": 0.5714, "averagePosition": 1.6 },
-            { "path": "/about", "clicks": 0, "impressions": 7, "ctr": 0, "averagePosition": 4.9 }
+            { "path": "/", "clicks": 8, "impressions": 14, "ctr": 0.5714, "averagePosition": 1.5 },
+            { "path": "/about", "clicks": 1, "impressions": 14, "ctr": 0.0714, "averagePosition": 5.43 }
           ],
-          "note": "Page-level rows are diagnostic and do not reconcile to the query aggregate; do not sum them into query totals."
+          "note": "Visible query-level aggregate is 8 clicks and 14 impressions; page-level rows are diagnostic and do not reconcile to the query aggregate."
         },
         {
           "query": "ادای توضیح دعوی به طرفیت",
@@ -99,7 +111,7 @@ const keywordLibrary = {
           "classification": "service-intent-with-claim-risk",
           "requiresComplianceReview": true,
           "landingPages": [
-            { "path": "/services/property-law", "clicks": 0, "impressions": 2, "ctr": 0, "averagePosition": 47.5 }
+            { "path": "/services/property-law", "clicks": 0, "impressions": 3, "ctr": 0, "averagePosition": 45.67 }
           ],
           "note": "Observed search wording only, not an endorsement or permission to claim the lawyer is best."
         },
@@ -140,7 +152,7 @@ const keywordLibrary = {
           "query": "یونس نادمی",
           "classification": "unrelated-entity-or-author-query",
           "landingPages": [
-            { "path": "/about", "clicks": 0, "impressions": 21, "ctr": 0, "averagePosition": 8.6 }
+            { "path": "/about", "clicks": 0, "impressions": 22, "ctr": 0, "averagePosition": 8.27 }
           ],
           "note": "Do not count this query as branded demand for the lawyer; it reflects the separately credited co-author name."
         }
