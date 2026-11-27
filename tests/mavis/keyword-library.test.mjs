@@ -618,7 +618,11 @@ test("locks every explicit user-supplied Ahvaz query and neighborhood spelling",
     "وکیل امانیه اهواز",
     "وکیل زیتون اهواز",
     "وکیل زیتون کارمندی اهواز",
-    "وکیل گلستان اهواز"
+    "وکیل گلستان اهواز",
+    "وکیل خوش‌نام اهواز",
+    "دفتر وکالت کیانپارس", "دفتر وکالت کیانپارس اهواز",
+    "دفتر وکالت زیتون کارمندی", "دفتر وکالت زیتون کارمندی اهواز",
+    "دفتر وکالت امانیه", "دفتر وکالت امانیه اهواز"
   ];
 
   for (const term of requiredPhrases) {
@@ -630,14 +634,9 @@ test("locks every explicit user-supplied Ahvaz query and neighborhood spelling",
     assert.ok(all.some((entry) => entry.term === `وکیل در ${city}`), `Missing city phrase: ${city}`);
   }
 
-  const highRiskPhrases = [
-    "حرفه‌ای‌ترین وکیل اهواز",
-    "متخصص‌ترین وکیل اهواز",
-    "وکیل نابغه اهواز",
-    "استاد فن دفاع حقوقی اهواز"
-  ];
-  for (const term of highRiskPhrases) {
+  for (const term of seoKeywordLibrary.userResearchExpansion.highRiskPhrases) {
     const entry = all.find((item) => item.term === term);
+    assert.ok(entry, `Missing high-risk phrase in MAVIS: ${term}`);
     assert.equal(entry.requiresComplianceReview, true);
     assert.equal(entry.neutralUseOnly, true);
   }
@@ -724,14 +723,15 @@ test("preserves every exact user-supplied phrase in the primary SEO research lib
     "وکیل رسمی دادگستری اهواز", "مشاوره حقوقی در اهواز", "مشاور حقوقی حرفه‌ای اهواز",
     "دفتر وکالت در اهواز", "وکیل خوب و قابل اعتماد در اهواز",
     "وکیل متخصص دعاوی در اهواز", "وکیل مجرب و باتجربه اهواز",
-    "دفتر وکالت کیانپارس", "دفتر وکالت زیتون کارمندی", "دفتر وکالت امانیه"
+    "دفتر وکالت کیانپارس", "دفتر وکالت زیتون کارمندی", "دفتر وکالت امانیه",
+    "وکیل خوش‌نام اهواز", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه اهواز"
   ];
   for (const phrase of requiredPhrases) {
     assert.ok(expansion.exactPhrases.includes(phrase), `Missing exact phrase in SEO research library: ${phrase}`);
   }
   assert.equal(expansion.exactPhrases.length, requiredPhrases.length);
   assert.deepEqual(expansion.khuzestanCities, ["اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان", "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک", "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا", "رامشیر", "هفتکل"]);
-  assert.deepEqual(expansion.officePhrases, ["دفتر وکالت کیانپارس", "دفتر وکالت زیتون کارمندی", "دفتر وکالت امانیه"]);
-  assert.equal(expansion.highRiskPhrases.length, 6);
+  assert.deepEqual(expansion.officePhrases, ["دفتر وکالت کیانپارس", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه", "دفتر وکالت امانیه اهواز"]);
+  assert.equal(expansion.highRiskPhrases.length, 23);
   assert.match(expansion.publicUsagePolicy, /research-only/u);
 });
