@@ -226,6 +226,8 @@ function buildUserResearchPositioningTerms() {
   for (const neighborhood of AHWAZ_NEIGHBORHOOD_SEARCH_LOCATIONS) {
     const location = `${neighborhood} اهواز`;
     entries.push(
+      highRisk(`وکیل ${neighborhood}`, "lawyer-core", location),
+      highRisk(`وکیل در ${neighborhood}`, "lawyer-core", location),
       highRisk(`وکیل ${location}`, "lawyer-core", location),
       highRisk(`وکیل در ${neighborhood} اهواز`, "lawyer-core", location),
       highRisk(`دفتر وکالت ${neighborhood}`, "lawyer-core", location),
