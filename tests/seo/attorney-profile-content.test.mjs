@@ -8,7 +8,8 @@ const homepage = readFileSync(new URL("../../src/app/page.js", import.meta.url),
 test("publishes the confirmed criminal-law master's degree consistently in the attorney profile", () => {
   assert.ok(aboutPage.includes("کارشناسی ارشد حقوق جزا"));
   assert.ok(aboutPage.includes('["تحصیلات", "کارشناسی ارشد حقوق جزا"]'));
-  assert.ok(homepage.includes("دارای کارشناسی ارشد حقوق جزا"));
+  assert.ok(homepage.includes("دارای کارشناسی ارشد حقوق جزا و نویسنده مقاله و کتاب است."));
+  assert.ok(homepage.includes('<div><span>تحصیلات</span><strong>کارشناسی ارشد حقوق جزا</strong></div>'));
   assert.ok(homepage.includes('knowsAbout: ["حقوق جزا", "حقوق کیفری", "دعاوی کیفری"]'));
 });
 
