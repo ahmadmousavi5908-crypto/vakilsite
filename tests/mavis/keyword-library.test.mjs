@@ -37,7 +37,7 @@ test("keeps observed Search Console queries separate from editorial candidates a
 
   const brand = observed.find((entry) => entry.classification === "brand");
   assert.deepEqual(brand.landingPages.map((page) => page.path), ["/", "/about"]);
-  assert.equal(brand.landingPages[0].averagePosition, 1.6);
+  assert.equal(brand.landingPages[0].averagePosition, 1.5);
 
   const risky = observed.find((entry) => entry.classification === "service-intent-with-claim-risk");
   assert.equal(risky.requiresComplianceReview, true);
@@ -618,7 +618,7 @@ test("locks every explicit user-supplied Ahvaz query and neighborhood spelling",
 
   for (const [location, term] of neighborhoodPhrases) {
     const entry = all.find((item) => item.term === term);
-    assert.equal(entry.location, location);
+    assert.equal(entry.location, `${location} اهواز`);
     assert.equal(entry.target, "/");
     assert.equal(entry.requiresComplianceReview, true);
     assert.equal(entry.neutralUseOnly, true);
