@@ -115,7 +115,8 @@ const keywordLibrary = {
       "وکیل شناخته‌شده", "وکیل شناخته‌شده اهواز", "وکیل متخصص و باتجربه", "وکیل متخصص و باتجربه اهواز",
       "نابغه حقوق", "وکیل متبحر", "وکیل متبحر اهواز", "وکیل خوش‌نام", "وکیل خوش‌نام اهواز"
     ],
-    "publicUsagePolicy": "High-risk superlatives remain research-only. Public copy may use neutral selection guidance and must not assert unsupported superiority."
+    "lawyerFirstVariants": ["وکیل حرفه‌ای اهواز", "وکیل متخصص اهواز", "وکیل باتجربه اهواز", "وکیل برتر اهواز", "وکیل برجسته اهواز", "وکیل سرشناس اهواز", "وکیل معروف اهواز", "وکیل معتبر اهواز", "وکیل مجرب اهواز", "وکیل کاربلد اهواز", "وکیل خبره اهواز", "وکیل نابغه اهواز", "وکیل ممتاز اهواز", "وکیل نخبه اهواز", "وکیل متبحر اهواز", "حرفه‌ای‌ترین وکیل اهواز", "متخصص‌ترین وکیل اهواز"],
+    "publicUsagePolicy": "All superlative and modifier phrases are preserved and may appear publicly as relevant user-search intent or neutral selection guidance. Do not turn them into unsupported first-person superiority, credential, or outcome claims."
   },
 
   "competitorResearch": {
