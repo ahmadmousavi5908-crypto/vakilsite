@@ -89,15 +89,22 @@ test("renders the public office identity as server HTML without a client fetch",
 });
 
 test("keeps private street address, exact coordinates and map URLs out of every public location path", () => {
-  assert.match(officeLocationData, /office_name,city,province,is_location_public/);
-  assert.match(officeLocationData, /office_name,city,province,phone,is_location_public/);
-  assert.doesNotMatch(officeLocationData, /address|latitude|longitude|map_url/i);
-  assert.doesNotMatch(home, /address: normalizedOfficeLocation\.address|latitude: normalizedOfficeLocation\.latitude|longitude: normalizedOfficeLocation\.longitude|map_url: normalizedOfficeLocation\.map_url/);
-  assert.doesNotMatch(officeLocation, /location\.(address|latitude|longitude|map_url)/);
-  assert.match(officeLocation, /maps\/search\/\?api=1&query=/);
-  assert.match(officeLocationApi, /getPublicOfficeLocation\(\)/);
-  assert.doesNotMatch(officeLocationApi, /address|latitude|longitude|map_url/i);
+  assert.ok(officeLocationData.includes("office_name,city,province,is_location_public"));
+  assert.ok(officeLocationData.includes("office_name,city,province,phone,is_location_public"));
+  assert.ok(!/address|latitude|longitude|map_url/i.test(officeLocationData));
+  assert.ok(!home.includes("address: normalizedOfficeLocation.address"));
+  assert.ok(!home.includes("latitude: normalizedOfficeLocation.latitude"));
+  assert.ok(!home.includes("longitude: normalizedOfficeLocation.longitude"));
+  assert.ok(!home.includes("map_url: normalizedOfficeLocation.map_url"));
+  assert.ok(!officeLocation.includes("location.address"));
+  assert.ok(!officeLocation.includes("location.latitude"));
+  assert.ok(!officeLocation.includes("location.longitude"));
+  assert.ok(!officeLocation.includes("location.map_url"));
+  assert.ok(officeLocation.includes("maps/search/?api=1&query="));
+  assert.ok(officeLocationApi.includes("getPublicOfficeLocation()"));
+  assert.ok(!/address|latitude|longitude|map_url/i.test(officeLocationApi));
 });
+
 
 test("describes only public, canonical site resources in llms.txt", () => {
   assert.ok(llms.startsWith("# وکیل سید احمد موسوی"));
