@@ -39,11 +39,13 @@ test("builds LegalService schema from complete public office details", () => {
   assert.equal(schema.name, "دفتر خدمات حقوقی سید احمد موسوی");
   assert.deepEqual(schema.address, {
     "@type": "PostalAddress",
-    streetAddress: "کیانپارس، خیابان نمونه",
     addressLocality: "اهواز",
     addressRegion: "خوزستان",
     addressCountry: "IR",
   });
+  assert.equal("streetAddress" in schema.address, false);
+  assert.equal("geo" in schema, false);
+  assert.equal("hasMap" in schema, false);
   assert.equal(schema.telephone, "+98 916 916 5902");
   assert.deepEqual(
     schema.areaServed.filter((area) => area["@type"] === "City").map((area) => area.name),
@@ -143,28 +145,28 @@ test("keeps the homepage visible brand, WebSite, Service and root metadata on th
   assert.ok(layout.includes('siteName: "وکیل سید احمد موسوی"'));
 });
 
-test("derives a public map link from verified coordinates when no map URL is configured", () => {
+test("never exposes exact office coordinates or map URLs in public structured data", () => {
   const schema = buildLegalServiceSchema(siteUrl, {
     is_location_public: true,
     office_name: "وکیل سید احمد موسوی",
-    address: "خوزستان اهواز",
+    address: "نشانی دقیق خصوصی",
     city: "اهواز",
     province: "خوزستان",
     latitude: 31.3193376,
     longitude: 48.6832329,
-    map_url: "",
+    map_url: "https://maps.google.com/?q=31.3193376,48.6832329",
     phone: "09169165902",
   });
 
-  assert.deepEqual(schema.geo, {
-    "@type": "GeoCoordinates",
-    latitude: 31.3193376,
-    longitude: 48.6832329,
+  assert.deepEqual(schema.address, {
+    "@type": "PostalAddress",
+    addressLocality: "اهواز",
+    addressRegion: "خوزستان",
+    addressCountry: "IR",
   });
-  assert.equal(
-    schema.hasMap,
-    "https://www.google.com/maps?q=31.3193376,48.6832329",
-  );
+  assert.equal("streetAddress" in schema.address, false);
+  assert.equal("geo" in schema, false);
+  assert.equal("hasMap" in schema, false);
 });
 
 test("uses the same verified Khuzestan service area for practice-area pages", () => {
