@@ -13,7 +13,7 @@ export const PRACTICE_AREA_META_TITLES = Object.freeze({
   "property-law": "وکیل ملکی اهواز؛ انتخاب بهترین وکیل",
   "contracts-and-obligations": "وکیل قرارداد اهواز؛ انتخاب بهترین وکیل",
   "claims-and-enforcement": "وکیل چک اهواز؛ انتخاب بهترین وکیل",
-  "legal-consultation": "وکیل مشاوره حقوقی اهواز؛ هزینه و انتخاب"
+  "legal-consultation": "وکیل و مشاوره حقوقی اهواز؛ راهنمای انتخاب"
 });
 
 export const PRACTICE_AREA_KEYWORDS = Object.freeze({
