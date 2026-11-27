@@ -66,7 +66,7 @@ test("keeps the attorney profile title absolute and the social titles explicit",
 
 test("keeps the homepage meta description within the search snippet budget", () => {
   const layoutSource = readFileSync(new URL("../../src/app/layout.js", import.meta.url), "utf8");
-  const description = layoutSource.match(/description:\\s*"([^"]+)"/u)?.[1];
+  const description = layoutSource.match(/description:\s*"([^"]+)"/u)?.[1];
   assert.ok(description, "Homepage meta description must be present");
   assert.ok(description.length <= 160, `Homepage meta description is too long: ${description.length}`);
   assert.match(description, /سید احمد موسوی/u);
