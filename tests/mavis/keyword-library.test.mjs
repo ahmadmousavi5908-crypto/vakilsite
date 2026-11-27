@@ -535,6 +535,10 @@ test("preserves the user's exact Ahvaz, Khuzestan, neighborhood and comparison s
     "وکیل مجرب اهواز",
     "وکیل کاربلد اهواز",
     "وکیل خبره اهواز",
+    "حرفه‌ای‌ترین وکیل اهواز",
+    "متخصص‌ترین وکیل اهواز",
+    "وکیل نابغه اهواز",
+    "استاد فن دفاع حقوقی اهواز",
     "وکیل توانمند اهواز",
     "وکیل باسابقه اهواز",
     "وکیل پایه یک دادگستری اهواز",
@@ -605,6 +609,18 @@ test("locks every explicit user-supplied Ahvaz query and neighborhood spelling",
 
   for (const term of requiredPhrases) {
     assert.ok(all.some((entry) => entry.term === term), `Missing exact user-supplied phrase: ${term}`);
+  }
+
+  const highRiskPhrases = [
+    "حرفه‌ای‌ترین وکیل اهواز",
+    "متخصص‌ترین وکیل اهواز",
+    "وکیل نابغه اهواز",
+    "استاد فن دفاع حقوقی اهواز"
+  ];
+  for (const term of highRiskPhrases) {
+    const entry = all.find((item) => item.term === term);
+    assert.equal(entry.requiresComplianceReview, true);
+    assert.equal(entry.neutralUseOnly, true);
   }
 
   const neighborhoodPhrases = [
