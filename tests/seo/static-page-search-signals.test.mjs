@@ -72,3 +72,13 @@ test("keeps the homepage meta description within the search snippet budget", () 
   assert.match(description, /سید احمد موسوی/u);
   assert.match(description, /اهواز/u);
 });
+
+
+test("publishes machine-readable attorney identity disambiguation", () => {
+  const llms = readFileSync(new URL("../../public/llms.txt", import.meta.url), "utf8");
+  assert.match(llms, /شماره پروانه وکالت درج‌شده در وب‌سایت: ۷۴۵۱۶/u);
+  assert.match(llms, /مرجع عضویت حرفه‌ای: مرکز وکلای قوه قضائیه/u);
+  assert.match(llms, /کارشناسی ارشد حقوق جزا/u);
+  assert.match(llms, /تشابه نام به‌تنهایی/u);
+  assert.match(llms, /https:\/\/hub\.23055\.ir\/search-lawyer/u);
+});
