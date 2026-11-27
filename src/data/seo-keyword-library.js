@@ -11,7 +11,44 @@ const keywordLibrary = {
     "observedAt": "2026-11-27",
     "status": "candidate-only-not-volume-validated",
     "retention": "Preserve source wording and variants; existing library records are not deleted.",
-    "usage": "Route comparison and superlative query intent to the closest existing service page or an explicit future-content cluster. Use neutral selection guidance, never unsupported first-person superiority claims."
+    "usage": "Route comparison and superlative query intent to the closest existing service page or an explicit future-content cluster. Use neutral selection guidance, never unsupported first-person superiority claims.",
+    "exactPhrases": [
+      "بهترین وکیل اهواز",
+      "بهترین وکیل در اهواز",
+      "وکیل خوب در اهواز",
+      "وکیل حرفه‌ای در اهواز",
+      "وکیل باتجربه در اهواز",
+      "وکیل متخصص در اهواز",
+      "وکیل برجسته اهواز",
+      "وکیل سرشناس اهواز",
+      "وکیل معروف اهواز",
+      "معروف‌ترین وکیل اهواز",
+      "وکیل معتبر اهواز",
+      "وکیل مجرب اهواز",
+      "وکیل کاربلد اهواز",
+      "وکیل خبره اهواز",
+      "حرفه‌ای‌ترین وکیل اهواز",
+      "متخصص‌ترین وکیل اهواز",
+      "وکیل نابغه",
+      "وکیل نابغه اهواز",
+      "استاد فن دفاع حقوقی",
+      "استاد فن دفاع حقوقی اهواز",
+      "وکیل کیانپارس اهواز",
+      "وکیل کیان پارس اهواز",
+      "وکیل امانیه اهواز",
+      "وکیل زیتون اهواز",
+      "وکیل زیتون کارمندی اهواز",
+      "وکیل گلستان اهواز"
+    ],
+    "highRiskPhrases": [
+      "حرفه‌ای‌ترین وکیل اهواز",
+      "متخصص‌ترین وکیل اهواز",
+      "وکیل نابغه",
+      "وکیل نابغه اهواز",
+      "استاد فن دفاع حقوقی",
+      "استاد فن دفاع حقوقی اهواز"
+    ],
+    "publicUsagePolicy": "High-risk superlatives remain research-only. Public copy may use neutral selection guidance and must not assert unsupported superiority."
   },
 
   "competitorResearch": {
