@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { practiceAreas } from "../../src/data/practice-areas.js";
 import { normalizePersianSearchText } from "../../src/lib/mavis/persian-text-normalization.mjs";
 import { PRACTICE_AREA_META_TITLES, PRACTICE_AREA_KEYWORDS } from "../../src/lib/seo/practice-area-search-titles.mjs";
+import { seoKeywordLibrary } from "../../src/data/seo-keyword-library.js";
 
 const requiredPhrasesByArea = {
   "family-law": [
@@ -261,4 +262,25 @@ test("publishes Ahvaz neighborhood and Khuzestan city coverage as visible region
   assert.ok(source.includes("مرکز وکلای قوه قضائیه"));
   assert.ok(!source.includes("سید ایمان موسوی"));
   assert.ok(source.includes("twitter: {"));
+});
+
+
+test("preserves superlative phrases as publishable search intent without making unsupported self-claims", () => {
+  const expansion = seoKeywordLibrary.userResearchExpansion;
+  for (const phrase of [
+    "بهترین وکیل اهواز",
+    "بهترین وکیل در اهواز",
+    "حرفه‌ای‌ترین وکیل اهواز",
+    "متخصص‌ترین وکیل اهواز",
+    "وکیل نابغه اهواز",
+    "وکیل ممتاز اهواز",
+    "وکیل نخبه اهواز",
+    "وکیل کیانپارس اهواز",
+    "وکیل امانیه اهواز",
+    "وکیل زیتون اهواز",
+    "وکیل گلستان اهواز"
+  ]) assert.ok(expansion.exactPhrases.includes(phrase), "Deleted user phrase: " + phrase);
+  assert.ok(expansion.lawyerFirstVariants.includes("وکیل حرفه‌ای اهواز"));
+  assert.match(expansion.publicUsagePolicy, /may appear publicly as relevant user-search intent/u);
+  assert.match(expansion.publicUsagePolicy, /unsupported first-person superiority/u);
 });
