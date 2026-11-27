@@ -204,12 +204,12 @@ test("adds verifiable author, review date and question-led headings to the prope
 
 test("keeps service titles neutral while preserving best-lawyer phrases in page keywords", () => {
   const expected = {
-    "family-law": { title: "بهترین وکیل خانواده اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل خانواده اهواز" },
-    "criminal-law": { title: "بهترین وکیل کیفری اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل کیفری اهواز" },
-    "property-law": { title: "بهترین وکیل ملکی اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل ملکی اهواز" },
-    "contracts-and-obligations": { title: "بهترین وکیل قرارداد اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل قرارداد اهواز" },
-    "claims-and-enforcement": { title: "بهترین وکیل چک اهواز؛ راهنمای انتخاب", keyword: "بهترین وکیل چک و مطالبه وجه اهواز" },
-    "legal-consultation": { title: "مشاوره حقوقی اهواز؛ هزینه و انتخاب وکیل", keyword: "مشاوره حقوقی اهواز" }
+    "family-law": { title: "وکیل خانواده اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل خانواده اهواز" },
+    "criminal-law": { title: "وکیل کیفری اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل کیفری اهواز" },
+    "property-law": { title: "وکیل ملکی اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل ملکی اهواز" },
+    "contracts-and-obligations": { title: "وکیل قرارداد اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل قرارداد اهواز" },
+    "claims-and-enforcement": { title: "وکیل چک اهواز؛ انتخاب بهترین وکیل", keyword: "بهترین وکیل چک و مطالبه وجه اهواز" },
+    "legal-consultation": { title: "وکیل مشاوره حقوقی اهواز؛ هزینه و انتخاب", keyword: "مشاوره حقوقی اهواز" }
   };
 
   for (const [slug, { title, keyword }] of Object.entries(expected)) {
