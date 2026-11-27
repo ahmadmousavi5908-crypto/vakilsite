@@ -18,12 +18,14 @@ export async function generateMetadata({ params }) {
   if (!area) return { title: "حوزه خدمات پیدا نشد" };
   const searchTitle = getPracticeAreaSearchTitle(slug, area.title);
   const metaTitle = getPracticeAreaMetaTitle(slug, searchTitle);
+  const fullTitle = `${metaTitle} | سید احمد موسوی`;
   return {
-    title: metaTitle,
+    title: { absolute: fullTitle },
     description: area.description,
     keywords: PRACTICE_AREA_KEYWORDS[slug] || [],
     alternates: { canonical: "/services/" + area.slug },
-    openGraph: { type: "website", locale: "fa_IR", title: metaTitle, description: area.description, images: [{ url: "/images/lawyer.jpg", alt: "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز" }] },
+    openGraph: { type: "website", locale: "fa_IR", title: fullTitle, description: area.description, images: [{ url: "/images/lawyer.jpg", alt: "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز" }] },
+    twitter: { card: "summary_large_image", title: fullTitle, description: area.description, images: ["/images/lawyer.jpg"] },
   };
 }
 
