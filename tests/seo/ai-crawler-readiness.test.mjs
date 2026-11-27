@@ -13,6 +13,8 @@ const home = readFileSync(new URL("../../src/app/page.js", import.meta.url), "ut
 const servicePage = readFileSync(new URL("../../src/app/services/[slug]/page.js", import.meta.url), "utf8");
 const layout = readFileSync(new URL("../../src/app/layout.js", import.meta.url), "utf8");
 const officeLocation = readFileSync(new URL("../../src/components/OfficeLocationPublic.jsx", import.meta.url), "utf8");
+const officeLocationData = readFileSync(new URL("../../src/lib/public-office-location.js", import.meta.url), "utf8");
+const officeLocationApi = readFileSync(new URL("../../src/app/api/office-location/route.js", import.meta.url), "utf8");
 const loading = readFileSync(new URL("../../src/app/loading.js", import.meta.url), "utf8");
 
 test("provides non-empty title and description for every legacy article", () => {
