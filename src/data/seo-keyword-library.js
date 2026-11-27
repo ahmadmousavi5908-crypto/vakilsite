@@ -331,7 +331,7 @@ const keywordLibrary = {
           "landingPages": [
             { "path": "/about", "clicks": 0, "impressions": 22, "ctr": 0, "averagePosition": 8.27 }
           ],
-          "note": "This exact name is absent from the live about-page HTML; treat it as an unrelated Google query association, not the attorney\u2019s identity or branded demand."
+          "note": "Do not count this as the attorney\u2019s identity or branded demand: the exact name is absent from the live about-page HTML and is an unrelated Google query association."
         }
       ],
       "indexInspection": {
