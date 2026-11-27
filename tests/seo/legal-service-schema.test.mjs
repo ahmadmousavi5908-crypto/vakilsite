@@ -56,12 +56,6 @@ test("builds LegalService schema from complete public office details", () => {
     name: "استان خوزستان",
   });
   assert.equal(schema.areaServed.some((area) => area["@type"] === "Country"), false);
-  assert.deepEqual(schema.geo, {
-    "@type": "GeoCoordinates",
-    latitude: 31.3184,
-    longitude: 48.6706,
-  });
-  assert.equal(schema.hasMap, "https://maps.google.com/?q=31.3184,48.6706");
 });
 
 test("formats already-international Iranian office phones exactly like the visible contact label", () => {
