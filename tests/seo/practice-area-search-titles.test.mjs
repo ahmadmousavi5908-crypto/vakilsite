@@ -29,7 +29,7 @@ test("service metadata titles target best-lawyer intent while preserving descrip
     "criminal-law": "بهترین وکیل کیفری اهواز؛ معیارهای انتخاب وکیل",
     "property-law": "بهترین وکیل ملکی اهواز؛ معیارهای انتخاب وکیل",
     "contracts-and-obligations": "بهترین وکیل قرارداد اهواز؛ معیارهای انتخاب وکیل",
-    "claims-and-enforcement": "بهترین وکیل چک و مطالبه وجه اهواز؛ راهنمای انتخاب",
+    "claims-and-enforcement": "وکیل چک و مطالبه وجه اهواز؛ راهنمای انتخاب",
     "legal-consultation": "مشاوره حقوقی اهواز؛ هزینه، مراحل و انتخاب وکیل"
   });
   assert.equal(getPracticeAreaMetaTitle("property-law"), "بهترین وکیل ملکی اهواز؛ معیارهای انتخاب وکیل");
