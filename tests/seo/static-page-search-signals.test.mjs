@@ -17,11 +17,11 @@ test("publishes the homepage update date without associating the attorney portra
   assert.deepEqual(getStaticPageSearchSignals("/locations/khuzestan", origin), {
     lastModified: "2026-11-27",
   });
-  assert.deepEqual(getStaticPageSearchSignals("/services", origin), { lastModified: "2026-11-24" });
+  assert.deepEqual(getStaticPageSearchSignals("/services", origin), { lastModified: "2026-11-27" });
 });
 
 test("publishes accurate last-modified dates for service pages by their latest content change", () => {
-  const pathsUpdatedOnNovember24 = [
+  const pathsUpdatedOnNovember27 = [
     "/services",
     "/services/family-law",
     "/services/criminal-law",
@@ -29,10 +29,10 @@ test("publishes accurate last-modified dates for service pages by their latest c
     "/services/claims-and-enforcement",
     "/services/legal-consultation",
   ];
-  for (const path of pathsUpdatedOnNovember24) {
-    assert.equal(getStaticPageSearchSignals(path, origin).lastModified, "2026-11-24");
+  for (const path of pathsUpdatedOnNovember27) {
+    assert.equal(getStaticPageSearchSignals(path, origin).lastModified, "2026-11-27");
   }
-  assert.equal(getStaticPageSearchSignals("/services/property-law", origin).lastModified, "2026-11-26");
+  assert.equal(getStaticPageSearchSignals("/services/property-law", origin).lastModified, "2026-11-27");
 });
 
 test("does not invent image or update metadata for unrelated pages", () => {
