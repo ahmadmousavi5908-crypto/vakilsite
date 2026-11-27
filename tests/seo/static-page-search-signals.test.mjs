@@ -51,3 +51,14 @@ test("wires the regional page last-modified signal into the public sitemap", () 
     /path: "\/locations\/khuzestan",\s*\.\.\.getStaticPageSearchSignals\("\/locations\/khuzestan", siteUrl\)/,
   );
 });
+
+
+test("keeps the attorney profile title absolute and the social titles explicit", () => {
+  const aboutSource = readFileSync(new URL("../../src/app/about/page.js", import.meta.url), "utf8");
+  assert.match(
+    aboutSource,
+    /title:\s*\{\s*absolute:\s*"سید احمد موسوی، وکیل پایه یک در اهواز \| پروانه ۷۴۵۱۶"\s*\}/u,
+  );
+  assert.match(aboutSource, /openGraph:\s*\{[\s\S]*?title:\s*"سید احمد موسوی، وکیل پایه یک در اهواز \| پروانه ۷۴۵۱۶"/u);
+  assert.match(aboutSource, /twitter:\s*\{[\s\S]*?title:\s*"سید احمد موسوی، وکیل پایه یک در اهواز \| پروانه ۷۴۵۱۶"/u);
+});
