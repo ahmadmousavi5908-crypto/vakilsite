@@ -195,8 +195,9 @@ const keywordLibrary = {
       "brandSplit90Days": {
         "period": "2026-08-25 to 2026-11-24",
         "branded": { "clicks": 8, "impressions": 14, "ctrPercent": 57.14, "averagePosition": 1.5 },
-        "nonBranded": { "clicks": 0, "impressions": 31, "ctrPercent": 0, "averagePosition": 20.94 },
-        "note": "Brand and non-brand query filters are query-level aggregates; they do not reconcile with query-page totals because anonymized queries are omitted."
+        "nonBranded": { "clicks": 37, "impressions": 156, "ctrPercent": 23.72, "averagePosition": 9.69 },
+        "anonymized": { "clicks": 37, "impressions": 125, "ctrPercent": 29.6, "averagePosition": 6.904 },
+        "note": "Non-branded totals are the property total minus branded traffic and include anonymized queries. Anonymized is a diagnostic subset of non-branded traffic and must not be added again; query-page rows omit anonymized and low-volume queries."
       },
       "last28Days": {
         "period": "2026-10-28 to 2026-11-24",
@@ -223,10 +224,16 @@ const keywordLibrary = {
           "averagePosition": 1.5
         },
         "nonBranded": {
-          "clicks": 0,
-          "impressions": 31,
-          "ctrPercent": 0,
-          "averagePosition": 20.94
+          "clicks": 37,
+          "impressions": 156,
+          "ctrPercent": 23.72,
+          "averagePosition": 9.69
+        },
+        "anonymized": {
+          "clicks": 37,
+          "impressions": 125,
+          "ctrPercent": 29.6,
+          "averagePosition": 6.904
         },
         "device": {
           "mobile": { "clicks": 44, "impressions": 164, "ctrPercent": 26.83, "averagePosition": 8.85 },
