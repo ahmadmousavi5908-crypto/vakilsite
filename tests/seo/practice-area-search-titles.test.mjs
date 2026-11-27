@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   getPracticeAreaMetaTitle,
   getPracticeAreaSearchTitle,
+  PRACTICE_AREA_KEYWORDS,
   PRACTICE_AREA_META_TITLES,
   PRACTICE_AREA_SEARCH_TITLES
 } from "../../src/lib/seo/practice-area-search-titles.mjs";
@@ -50,4 +51,16 @@ test("service page titles and social metadata always use the full attorney ident
   assert.match(source, /openGraph:\s*\{[^\n]*title:\s*fullTitle/u);
   assert.match(source, /twitter:\s*\{[^\n]*title:\s*fullTitle/u);
   assert.match(source, /const fullTitle = `\$\{metaTitle\} \| سید احمد موسوی`/u);
+});
+
+
+test("criminal and civil service metadata retain explicit user-requested legal topics", () => {
+  for (const phrase of [
+    "وکیل مواد مخدر اهواز", "وکیل قاچاق کالا اهواز", "وکیل جرایم رایانه‌ای اهواز",
+    "وکیل جرایم اینترنتی اهواز", "وکیل خیانت در امانت اهواز", "وکیل سرقت اهواز",
+    "وکیل دیه اهواز", "وکیل تهدید اهواز", "وکیل قذف اهواز", "وکیل فرجام‌خواهی اهواز",
+    "وکیل اعاده دادرسی اهواز", "وکیل لایحه دفاعیه اهواز"
+  ]) assert.ok(PRACTICE_AREA_KEYWORDS["criminal-law"].includes(phrase), `Missing criminal keyword: ${phrase}`);
+  assert.ok(PRACTICE_AREA_KEYWORDS["contracts-and-obligations"].includes("وکیل الزام به انجام تعهد اهواز"));
+  assert.ok(PRACTICE_AREA_KEYWORDS["claims-and-enforcement"].includes("وکیل چک و سفته اهواز"));
 });
