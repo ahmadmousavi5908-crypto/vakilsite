@@ -13,6 +13,8 @@ const home = readFileSync(new URL("../../src/app/page.js", import.meta.url), "ut
 const servicePage = readFileSync(new URL("../../src/app/services/[slug]/page.js", import.meta.url), "utf8");
 const layout = readFileSync(new URL("../../src/app/layout.js", import.meta.url), "utf8");
 const officeLocation = readFileSync(new URL("../../src/components/OfficeLocationPublic.jsx", import.meta.url), "utf8");
+const officeLocationData = readFileSync(new URL("../../src/lib/public-office-location.js", import.meta.url), "utf8");
+const officeLocationApi = readFileSync(new URL("../../src/app/api/office-location/route.js", import.meta.url), "utf8");
 const loading = readFileSync(new URL("../../src/app/loading.js", import.meta.url), "utf8");
 
 test("provides non-empty title and description for every legacy article", () => {
@@ -67,6 +69,7 @@ test("resolves metadata in the initial HTML for allowed AI search crawlers and g
     "ChatGPT-User",
     "Claude-User",
     "Perplexity-User",
+    "Firecrawl/1.0",
     "ExampleCrawler/1.0",
     "ExampleBot/1.0",
   ]) assert.match(agent, HTML_LIMITED_BOT_USER_AGENT);
@@ -84,6 +87,24 @@ test("renders the public office identity as server HTML without a client fetch",
   assert.match(home, /<OfficeLocationPublic initialLocation=\{officeLocationForDisplay\} \/>/);
   assert.match(home, /normalizePublicOfficeName\(officeLocation\.office_name\)/);
 });
+
+test("keeps private street address, exact coordinates and map URLs out of every public location path", () => {
+  assert.ok(officeLocationData.includes("office_name,city,province,is_location_public"));
+  assert.ok(officeLocationData.includes("office_name,city,province,phone,is_location_public"));
+  assert.ok(!/address|latitude|longitude|map_url/i.test(officeLocationData));
+  assert.ok(!home.includes("address: normalizedOfficeLocation.address"));
+  assert.ok(!home.includes("latitude: normalizedOfficeLocation.latitude"));
+  assert.ok(!home.includes("longitude: normalizedOfficeLocation.longitude"));
+  assert.ok(!home.includes("map_url: normalizedOfficeLocation.map_url"));
+  assert.ok(!officeLocation.includes("location.address"));
+  assert.ok(!officeLocation.includes("location.latitude"));
+  assert.ok(!officeLocation.includes("location.longitude"));
+  assert.ok(!officeLocation.includes("location.map_url"));
+  assert.ok(officeLocation.includes("maps/search/?api=1&query="));
+  assert.ok(officeLocationApi.includes("getPublicOfficeLocation()"));
+  assert.ok(!/address|latitude|longitude|map_url/i.test(officeLocationApi));
+});
+
 
 test("describes only public, canonical site resources in llms.txt", () => {
   assert.ok(llms.startsWith("# وکیل سید احمد موسوی"));

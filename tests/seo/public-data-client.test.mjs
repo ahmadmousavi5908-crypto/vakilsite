@@ -19,8 +19,12 @@ test("public server data loaders use a stateless Supabase client", () => {
   assert.ok(office.includes("createPublicClient()"));
   assert.ok(office.includes('.eq("is_location_public", true)'));
   assert.ok(office.includes(".select(columns)"));
-  assert.ok(office.includes('PUBLIC_OFFICE_LOCATION_COLUMNS =\n  "office_name,address,city,province,latitude,longitude,map_url,is_location_public"'));
-  assert.ok(office.includes('STRUCTURED_DATA_OFFICE_LOCATION_COLUMNS =\n  "office_name,address,city,province,latitude,longitude,map_url,phone,is_location_public"'));
+  assert.ok(office.includes('PUBLIC_OFFICE_LOCATION_COLUMNS =\n  "office_name,city,province,is_location_public"'));
+  assert.ok(office.includes('STRUCTURED_DATA_OFFICE_LOCATION_COLUMNS =\n  "office_name,city,province,phone,is_location_public"'));
+  assert.ok(!office.includes("address,"));
+  assert.ok(!office.includes("latitude"));
+  assert.ok(!office.includes("longitude"));
+  assert.ok(!office.includes("map_url"));
   assert.ok(office.includes("export async function getPublicOfficeLocation()"));
   assert.ok(office.includes("export async function getOfficeLocationForStructuredData()"));
   assert.ok(!office.includes("supabase/server"));

@@ -64,12 +64,8 @@ export default async function Home() {
   const officeLocationForDisplay = normalizedOfficeLocation
     ? {
         office_name: normalizedOfficeLocation.office_name,
-        address: normalizedOfficeLocation.address,
         city: normalizedOfficeLocation.city,
         province: normalizedOfficeLocation.province,
-        latitude: normalizedOfficeLocation.latitude,
-        longitude: normalizedOfficeLocation.longitude,
-        map_url: normalizedOfficeLocation.map_url,
         is_location_public: normalizedOfficeLocation.is_location_public,
       }
     : null;

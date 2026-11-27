@@ -2,9 +2,9 @@ import { createPublicClient } from "./supabase/public";
 import { getInMemoryCachedValue } from "./cache/in-memory-cache.mjs";
 
 const PUBLIC_OFFICE_LOCATION_COLUMNS =
-  "office_name,address,city,province,latitude,longitude,map_url,is_location_public";
+  "office_name,city,province,is_location_public";
 const STRUCTURED_DATA_OFFICE_LOCATION_COLUMNS =
-  "office_name,address,city,province,latitude,longitude,map_url,phone,is_location_public";
+  "office_name,city,province,phone,is_location_public";
 
 async function loadOfficeLocation(columns) {
   const supabase = createPublicClient();
