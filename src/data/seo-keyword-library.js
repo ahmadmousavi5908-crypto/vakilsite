@@ -143,6 +143,12 @@ const keywordLibrary = {
         "hiddenClicksShare": 0.8222,
         "hiddenImpressionsShare": 0.7353
       },
+      "brandSplit90Days": {
+        "period": "2026-08-25 to 2026-11-24",
+        "branded": { "clicks": 8, "impressions": 14, "ctrPercent": 57.14, "averagePosition": 1.5 },
+        "nonBranded": { "clicks": 0, "impressions": 31, "ctrPercent": 0, "averagePosition": 20.94 },
+        "note": "Brand and non-brand query filters are query-level aggregates; they do not reconcile with query-page totals because anonymized queries are omitted."
+      },
       "last28Days": {
         "period": "2026-10-27 to 2026-11-23",
         "settledThrough": "2026-11-24",
