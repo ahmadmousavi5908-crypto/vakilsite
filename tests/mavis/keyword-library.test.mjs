@@ -842,7 +842,7 @@ test("preserves every exact user-supplied phrase in the primary SEO research lib
     assert.ok(expansion.exactPhrases.includes(phrase), `Missing exact phrase in SEO research library: ${phrase}`);
   }
   assert.equal(expansion.exactPhrases.length, requiredPhrases.length);
-  assert.deepEqual(expansion.khuzestanCities, ["اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان", "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک", "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا", "رامشیر", "هفتکل"]);
+  assert.deepEqual(expansion.khuzestanCities, ["اهواز", "آبادان", "خرمشهر", "دزفول", "شوشتر", "اندیمشک", "ماهشهر", "بندر امام خمینی", "بهبهان", "رامهرمز", "ایذه", "مسجدسلیمان", "شوش", "هویزه", "سوسنگرد", "شادگان", "امیدیه", "آغاجاری", "هندیجان", "دشت آزادگان", "باغ‌ملک", "لالی", "گتوند", "حمیدیه", "باوی", "کارون", "اندیکا", "رامشیر", "هفتکل", "صیدون"]);
   assert.deepEqual(expansion.officePhrases, ["دفتر وکالت کیانپارس", "دفتر وکالت کیانپارس اهواز", "دفتر وکالت زیتون کارمندی", "دفتر وکالت زیتون کارمندی اهواز", "دفتر وکالت امانیه", "دفتر وکالت امانیه اهواز"]);
   assert.equal(expansion.highRiskPhrases.length, 23);
   assert.equal(expansion.practiceAreaSubjects.length, 64);
