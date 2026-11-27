@@ -886,7 +886,12 @@ test("keeps the latest Iran-only 28-day Search Console snapshot separate by bran
 
 
 test("records current GSC coverage, mobile dependence and off-page authority evidence", () => {
-  const snapshot = seoKeywordLibrary.methodology.gscObserved.last28Days;
+  const observed = seoKeywordLibrary.methodology.gscObserved;
+  const snapshot = observed.last28Days;
+  assert.equal(observed.dataCoverage.firstDataDate, "2026-11-17");
+  assert.equal(observed.dataCoverage.daysWithData, 8);
+  assert.equal(observed.dataCoverage.previous28DayComparisonHasData, false);
+  assert.match(snapshot.note, /only 8 of the requested 28 days contain data/u);
   assert.equal(snapshot.siteTotals.clicks, 45);
   assert.equal(snapshot.siteTotals.impressions, 170);
   assert.equal(snapshot.branded.clicks, 8);
