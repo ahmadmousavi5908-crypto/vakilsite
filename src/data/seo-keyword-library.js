@@ -171,9 +171,18 @@ const keywordLibrary = {
       "period": "2026-08-25 to 2026-11-24",
       "queryRows": 8,
       "pageRows": 23,
-      "status": "connected; latest complete 92-day window refreshed on 2026-11-27; visible query rows remain incomplete because Google omits anonymized and low-volume queries",
+      "status": "connected; requested 92-day window refreshed on 2026-11-27, but actual Search Console records begin on 2026-11-17 (8 days with data); visible query rows remain incomplete because Google omits anonymized and low-volume queries",
       "connectionVerified": true,
       "permissionLevel": "siteOwner",
+      "dataCoverage": {
+        "firstDataDate": "2026-11-17",
+        "lastDataDate": "2026-11-24",
+        "daysWithData": 8,
+        "requestedWindowDays": 92,
+        "last28DayWindowDays": 28,
+        "previous28DayComparisonHasData": false,
+        "interpretation": "The 28-day and 92-day request windows contain only 8 days of actual GSC records; ranking changes marked new are not evidence of growth because the previous comparison window has no data."
+      },
       "lastThreeMonths": {
         "period": "2026-08-25 to 2026-11-24",
         "queryRows": 8,
@@ -263,7 +272,7 @@ const keywordLibrary = {
           { "path": "/privacy", "clicks": 1, "impressions": 4, "ctrPercent": 25, "averagePosition": 3 },
           { "path": "/services/property-law", "clicks": 0, "impressions": 5, "ctrPercent": 0, "averagePosition": 42.4 }
         ],
-        "note": "GSC data settled through 2026-11-24. 37 of 45 clicks (82.2%) and 125 of 170 impressions (73.5%) are anonymized query traffic; no row-limit truncation. 44 of 45 clicks are mobile. Page-level rows are diagnostic and do not reconcile exactly to property totals. Service pages remain low-visibility; property-law had 5 impressions, average position 42.4 and zero clicks. The immediately preceding 28-day comparison window returned zero clicks and impressions, so no growth rate is inferred."
+        "note": "GSC data settled through 2026-11-24, but actual records begin on 2026-11-17: only 8 of the requested 28 days contain data. The immediately preceding 28-day comparison window has no records, so new-query labels and growth rates are not evidence of a trend. 37 of 45 clicks (82.2%) and 125 of 170 impressions (73.5%) are anonymized query traffic; no row-limit truncation. 44 of 45 clicks are mobile. Page-level rows are diagnostic and do not reconcile exactly to property totals. Service pages remain low-visibility; property-law had 5 impressions, average position 42.4 and zero clicks."
       },
       "observedQueries": [
         {
