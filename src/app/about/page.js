@@ -10,7 +10,7 @@ const profileImage = "/images/lawyer.jpg";
 const profileImageAlt = "تصویر سید احمد موسوی، وکیل پایه یک دادگستری در اهواز";
 
 export const metadata = {
-  title: "سید احمد موسوی، وکیل پایه یک در اهواز | پروانه ۷۴۵۱۶",
+  title: { absolute: "سید احمد موسوی، وکیل پایه یک در اهواز | پروانه ۷۴۵۱۶" },
   description: "معرفی سید احمد موسوی، وکیل پایه یک دادگستری و عضو مرکز وکلای قوه قضائیه؛ شماره پروانه ۷۴۵۱۶، کارشناسی ارشد حقوق جزا و محل فعالیت دفتر در اهواز، خوزستان.",
   alternates: { canonical: "/about" },
   openGraph: {
