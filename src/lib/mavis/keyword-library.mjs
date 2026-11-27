@@ -229,6 +229,7 @@ function buildUserResearchPositioningTerms() {
       highRisk(`وکیل ${location}`, "lawyer-core", location),
       highRisk(`وکیل در ${neighborhood} اهواز`, "lawyer-core", location),
       highRisk(`دفتر وکالت ${neighborhood}`, "lawyer-core", location),
+      highRisk(`دفتر وکالت ${neighborhood} اهواز`, "lawyer-core", location),
       highRisk(`دفتر وکالت در ${neighborhood} اهواز`, "lawyer-core", location)
     );
 
