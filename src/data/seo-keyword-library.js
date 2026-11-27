@@ -88,6 +88,51 @@ const keywordLibrary = {
         "hiddenClicksShare": 0.8222,
         "hiddenImpressionsShare": 0.7353
       },
+      "last28Days": {
+        "period": "2026-10-27 to 2026-11-23",
+        "settledThrough": "2026-11-24",
+        "country": "irn",
+        "siteTotals": {
+          "clicks": 32,
+          "impressions": 135,
+          "ctrPercent": 23.7,
+          "averagePosition": 9.84
+        },
+        "branded": {
+          "clicks": 4,
+          "impressions": 7,
+          "ctrPercent": 57.14,
+          "averagePosition": 1.57
+        },
+        "nonBranded": {
+          "clicks": 0,
+          "impressions": 29,
+          "ctrPercent": 0,
+          "averagePosition": 20.9
+        },
+        "device": {
+          "mobile": { "clicks": 31, "impressions": 129 },
+          "desktop": { "clicks": 1, "impressions": 6 }
+        },
+        "queryPageCoverage": {
+          "visibleRows": 9,
+          "hiddenClicksShare": 0.875,
+          "hiddenImpressionsShare": 0.6815
+        },
+        "visibleQueryClusters": {
+          "generalAttorneySelection": 0,
+          "AhvazNeighborhoods": 0,
+          "KhuzestanCities": 0
+        },
+        "pagePerformance": [
+          { "path": "/", "clicks": 24, "impressions": 48, "ctrPercent": 50, "averagePosition": 2.88 },
+          { "path": "/about", "clicks": 4, "impressions": 76, "ctrPercent": 5.26, "averagePosition": 6.16 },
+          { "path": "/articles/criminal-court-authority-restitution-real-estate-third-party-deed-annulment", "clicks": 3, "impressions": 22, "ctrPercent": 13.64, "averagePosition": 7.77 },
+          { "path": "/locations/khuzestan", "clicks": 1, "impressions": 6, "ctrPercent": 16.67, "averagePosition": 9.17 },
+          { "path": "/services/property-law", "clicks": 0, "impressions": 4, "ctrPercent": 0, "averagePosition": 42.5 }
+        ],
+        "note": "The immediately preceding 28-day comparison window returned zero clicks and impressions, so no growth rate is inferred. Query and query-page aggregates are not interchangeable."
+      },
       "observedQueries": [
         {
           "query": "وکیل سید احمد موسوی",
