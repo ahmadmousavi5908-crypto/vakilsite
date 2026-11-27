@@ -78,6 +78,8 @@ test("publishes machine-readable attorney identity disambiguation", () => {
   const llms = readFileSync(new URL("../../public/llms.txt", import.meta.url), "utf8");
   assert.match(llms, /شماره پروانه وکالت درج‌شده در وب‌سایت: ۷۴۵۱۶/u);
   assert.match(llms, /مرجع عضویت حرفه‌ای: مرکز وکلای قوه قضائیه/u);
+  assert.match(llms, /این مرجع عضویت با «کانون وکلای دادگستری» متفاوت است/u);
+  assert.match(llms, /مرجع را دقیقاً «مرکز وکلای قوه قضائیه» ذکر کنید/u);
   assert.match(llms, /کارشناسی ارشد حقوق جزا/u);
   assert.match(llms, /تشابه نام به‌تنهایی/u);
   assert.match(llms, /خیابان سقراط شرقی، ساختمان آراد/u);
