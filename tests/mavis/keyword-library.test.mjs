@@ -576,3 +576,51 @@ test("preserves the user's exact Ahvaz, Khuzestan, neighborhood and comparison s
   );
   assert.equal(localFamily?.target, "/services/family-law");
 });
+
+
+test("locks every explicit user-supplied Ahvaz query and neighborhood spelling", () => {
+  const all = searchKeywordLibrary({ family: "positioning" });
+  const requiredPhrases = [
+    "بهترین وکیل اهواز",
+    "بهترین وکیل در اهواز",
+    "وکیل خوب در اهواز",
+    "وکیل حرفه‌ای در اهواز",
+    "وکیل باتجربه در اهواز",
+    "وکیل متخصص در اهواز",
+    "وکیل برجسته اهواز",
+    "وکیل سرشناس اهواز",
+    "وکیل معروف اهواز",
+    "معروف‌ترین وکیل اهواز",
+    "وکیل معتبر اهواز",
+    "وکیل مجرب اهواز",
+    "وکیل کاربلد اهواز",
+    "وکیل خبره اهواز",
+    "وکیل کیانپارس اهواز",
+    "وکیل کیان پارس اهواز",
+    "وکیل امانیه اهواز",
+    "وکیل زیتون اهواز",
+    "وکیل زیتون کارمندی اهواز",
+    "وکیل گلستان اهواز"
+  ];
+
+  for (const term of requiredPhrases) {
+    assert.ok(all.some((entry) => entry.term === term), `Missing exact user-supplied phrase: ${term}`);
+  }
+
+  const neighborhoodPhrases = [
+    ["کیانپارس", "وکیل کیانپارس اهواز"],
+    ["کیان پارس", "وکیل کیان پارس اهواز"],
+    ["امانیه", "وکیل امانیه اهواز"],
+    ["زیتون", "وکیل زیتون اهواز"],
+    ["زیتون کارمندی", "وکیل زیتون کارمندی اهواز"],
+    ["گلستان", "وکیل گلستان اهواز"]
+  ];
+
+  for (const [location, term] of neighborhoodPhrases) {
+    const entry = all.find((item) => item.term === term);
+    assert.equal(entry.location, location);
+    assert.equal(entry.target, "/");
+    assert.equal(entry.requiresComplianceReview, true);
+    assert.equal(entry.neutralUseOnly, true);
+  }
+});
