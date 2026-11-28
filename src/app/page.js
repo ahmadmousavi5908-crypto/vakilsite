@@ -177,8 +177,8 @@ export default async function Home() {
                 <Image
                   src="/images/lawyer.webp"
                   alt="سید احمد موسوی، وکیل پایه یک دادگستری"
-                  width={800}
-                  height={1000}
+                  width={720}
+                  height={720}
                   preload
                   unoptimized
                   className="lawyer-photo-image"
