@@ -114,10 +114,10 @@ export default function AttorneyProfileDock() {
           transform: scale(.96);
         }
         @keyframes attorney-cta-beat {
-          0%, 100% { transform: scale(1); box-shadow: 0 6px 20px rgba(5,20,35,.28), inset 0 1px 0 rgba(255,255,255,.18); }
-          12% { transform: scale(1.075); box-shadow: 0 8px 25px rgba(5,20,35,.34), 0 0 17px rgba(213,181,110,.42); }
+          0%, 100% { transform: scale(1); }
+          12% { transform: scale(1.075); }
           24% { transform: scale(1); }
-          36% { transform: scale(1.045); box-shadow: 0 7px 22px rgba(5,20,35,.3), 0 0 11px rgba(213,181,110,.3); }
+          36% { transform: scale(1.045); }
           48%, 100% { transform: scale(1); }
         }
         @keyframes attorney-cta-ring {

@@ -35,7 +35,7 @@ export default function GoogleAnalytics({ measurementId }) {
   if (!id || !pathname || pathname.startsWith("/admin")) return null;
 
   return (
-    <Script id="vakilsite-google-analytics-init" strategy="afterInteractive">
+    <Script id="vakilsite-google-analytics-init" strategy="lazyOnload">
       {`window.dataLayer = window.dataLayer || [];
 window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
 if (${JSON.stringify(PRODUCTION_ANALYTICS_HOSTS)}.includes(window.location.hostname)) {
