@@ -21,7 +21,7 @@ const result = spawnSync(
     "--format",
     "webp",
     "--quality",
-    "84",
+    "80",
   ],
   { stdio: "inherit" },
 );
