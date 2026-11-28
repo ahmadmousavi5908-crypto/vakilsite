@@ -179,7 +179,8 @@ export default async function Home() {
                   alt="سید احمد موسوی، وکیل پایه یک دادگستری"
                   width={720}
                   height={720}
-                  preload
+                  loading="eager"
+                  fetchPriority="high"
                   unoptimized
                   className="lawyer-photo-image"
                   style={{ objectFit: "cover", objectPosition: "center 25%" }}
