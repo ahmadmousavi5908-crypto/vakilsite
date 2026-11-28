@@ -154,40 +154,9 @@
 
 /* Golden double heartbeat for the MAVIS portrait only. */
 @keyframes mavis-golden-heartbeat {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow:
-      0 5px 16px rgba(8, 27, 43, .28),
-      0 0 6px rgba(214, 189, 123, .42),
-      0 0 12px rgba(214, 189, 123, .18);
-  }
-  7% {
-    transform: scale(1.045);
-    box-shadow:
-      0 5px 16px rgba(8, 27, 43, .28),
-      0 0 10px rgba(214, 189, 123, .88),
-      0 0 24px rgba(214, 189, 123, .52),
-      0 0 34px rgba(214, 189, 123, .22);
-  }
-  14% {
-    transform: scale(1);
-    box-shadow:
-      0 5px 16px rgba(8, 27, 43, .28),
-      0 0 6px rgba(214, 189, 123, .42),
-      0 0 12px rgba(214, 189, 123, .18);
-  }
-  21% {
-    transform: scale(1.028);
-    box-shadow:
-      0 5px 16px rgba(8, 27, 43, .28),
-      0 0 9px rgba(214, 189, 123, .76),
-      0 0 20px rgba(214, 189, 123, .42);
-  }
-  28% {
-    transform: scale(1);
-    box-shadow:
-      0 5px 16px rgba(8, 27, 43, .28),
-      0 0 6px rgba(214, 189, 123, .42),
-      0 0 12px rgba(214, 189, 123, .18);
-  }
+  0%, 100% { transform: scale(1); }
+  7% { transform: scale(1.045); }
+  14% { transform: scale(1); }
+  21% { transform: scale(1.028); }
+  28% { transform: scale(1); }
 }
