@@ -4508,24 +4508,11 @@ textarea:focus-visible,
 }
 
 @keyframes contact-dock-nudge {
-  0%, 45%, 100% {
-    transform: translateY(0) scale(1);
-    box-shadow: 0 7px 22px rgba(22,163,74,.34), 0 3px 10px rgba(5,20,35,.20);
-  }
-  7% {
-    transform: translateY(-6px) scale(1.045);
-    box-shadow: 0 11px 28px rgba(22,163,74,.48), 0 5px 13px rgba(5,20,35,.18);
-  }
-  14% {
-    transform: translateY(0) scale(1);
-  }
-  23% {
-    transform: translateY(-4px) scale(1.025);
-    box-shadow: 0 10px 25px rgba(22,163,74,.42), 0 4px 12px rgba(5,20,35,.18);
-  }
-  30% {
-    transform: translateY(0) scale(1);
-  }
+  0%, 45%, 100% { transform: translateY(0) scale(1); }
+  7% { transform: translateY(-6px) scale(1.045); }
+  14% { transform: translateY(0) scale(1); }
+  23% { transform: translateY(-4px) scale(1.025); }
+  30% { transform: translateY(0) scale(1); }
 }
 
 @keyframes contact-dock-ring {
@@ -4606,3 +4593,34 @@ textarea:focus-visible,
 .practice-related-articles a{color:#304b65;font-size:13px;font-weight:700;line-height:2}
 .practice-related-articles p{margin:3px 0 0;color:#667483;font-size:11px;line-height:2.1}
 @media(max-width:560px){.practice-related-articles{margin-top:26px;padding-top:19px}.practice-related-articles a{font-size:12px}}
+
+
+/* PageSpeed accessibility contrast remediation */
+header.site-header small,
+.brand-copy small {
+  color: #536273;
+}
+
+#service-finder .section-kicker,
+#service-finder .finder-step-meta,
+#service-finder .finder-summary li span,
+#service-finder .finder-summary > small,
+.feature-entry-section .section-kicker,
+.feature-entry-section em,
+.feature-entry-section .lawyer-entry b {
+  color: #765b37;
+}
+
+#service-finder p,
+#service-finder .finder-progress-item,
+#service-finder .finder-progress-item small,
+#service-finder .finder-option-copy small,
+#service-finder .finder-summary > p,
+#articles p,
+.home-article-accordion-title small,
+.feature-entry-section p,
+form.request-form small,
+form.request-form .optional,
+form.request-form .form-hint {
+  color: #536273;
+}
