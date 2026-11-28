@@ -22,6 +22,9 @@ const result = spawnSync(
     "webp",
     "--quality",
     "80",
+    "resize",
+    "720",
+    "720",
   ],
   { stdio: "inherit" },
 );
